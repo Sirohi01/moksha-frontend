@@ -58,6 +58,9 @@ export const removeToken = () => {
 
 // Enhanced API utility functions with retry and error handling
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
+  console.log('🌐 API Request:', url);
+  console.log('📋 Options:', options);
+  
   const token = getToken();
   
   const defaultOptions: RequestInit = {
@@ -76,8 +79,13 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
     },
   };
 
+  console.log('🔧 Final options:', finalOptions);
+
   try {
+    console.log('📡 Making fetch request...');
     const response = await fetch(url, finalOptions);
+    console.log('📨 Response status:', response.status);
+    console.log('📨 Response ok:', response.ok);
 
     // Handle 401 - Token expired
     if (response.status === 401) {
@@ -95,8 +103,11 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
       throw new Error(error.message || 'API request failed');
     }
 
-    return response.json();
+    const result = await response.json();
+    console.log('✅ API Response:', result);
+    return result;
   } catch (error) {
+    console.error('❌ API Request failed:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error('Network error. Please check your connection.');
     }

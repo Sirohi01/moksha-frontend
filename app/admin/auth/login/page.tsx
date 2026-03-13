@@ -22,8 +22,14 @@ export default function AdminLogin() {
     setLoading(true);
     setError('');
 
+    console.log('🔍 Login attempt started');
+    console.log('📧 Email:', formData.email);
+    console.log('🔗 Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL);
+
     try {
+      console.log('🚀 Calling authAPI.login...');
       const data = await authAPI.login(formData.email, formData.password);
+      console.log('✅ Login response:', data);
 
       if (data.success) {
         // Store tokens
@@ -36,7 +42,9 @@ export default function AdminLogin() {
         setError(data.message || 'Login failed');
       }
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
+      console.error('❌ Error message:', error.message);
+      console.error('❌ Error stack:', error.stack);
       setError(error.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
