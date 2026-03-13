@@ -183,31 +183,29 @@ export default function VolunteerPage() {
 
         setLoading(true);
         try {
-            const volunteerData = {
+            let volunteerData: any = {
                 ...form,
                 volunteerTypes: selectedTypes
             };
 
             // Remove empty group fields for individual registration
             if (form.registrationType === 'individual') {
-                delete volunteerData.groupName;
-                delete volunteerData.groupSize;
-                delete volunteerData.groupType;
-                delete volunteerData.groupLeaderName;
-                delete volunteerData.groupLeaderPhone;
-                delete volunteerData.groupLeaderEmail;
+                const { groupName, groupSize, groupType, groupLeaderName, groupLeaderPhone, groupLeaderEmail, ...individualData } = volunteerData;
+                volunteerData = individualData;
             } else if (form.registrationType === 'group') {
                 // Convert groupSize to number for group registration
                 volunteerData.groupSize = parseInt(form.groupSize) || 0;
             }
 
             // Remove empty optional fields to avoid validation issues
+            const cleanedData: any = {};
             Object.keys(volunteerData).forEach(key => {
                 const value = volunteerData[key as keyof typeof volunteerData];
-                if (value === '' || value === null || value === undefined) {
-                    delete volunteerData[key as keyof typeof volunteerData];
+                if (value !== '' && value !== null && value !== undefined) {
+                    cleanedData[key] = value;
                 }
             });
+            volunteerData = cleanedData;
 
             console.log('Submitting volunteer data:', volunteerData);
 
