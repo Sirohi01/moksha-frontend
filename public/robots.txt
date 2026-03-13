@@ -8,16 +8,19 @@ Sitemap: https://moksha-seva.org/sitemap.xml
 Disallow: /admin/
 Disallow: /api/
 Disallow: /_next/
+Disallow: /static/
 Disallow: /private/
 
 # Allow important pages
 Allow: /
 Allow: /about
-Allow: /donate
 Allow: /contact
-Allow: /gallery
-Allow: /campaigns
 Allow: /volunteer
+Allow: /donate
+Allow: /gallery
+Allow: /press
+Allow: /reports
+Allow: /campaigns
 Allow: /transparency
 Allow: /impact
 
