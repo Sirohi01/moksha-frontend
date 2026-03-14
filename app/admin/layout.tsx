@@ -85,8 +85,9 @@ export default function AdminLayout({
     if (!user) return [];
     const baseItems = [
       { name: 'Dashboard', href: '/admin/dashboard', icon: '🏠', gradient: 'from-blue-500 to-blue-600' },
-      { name: 'Reports', href: '/admin/reports', icon: '📊', gradient: 'from-emerald-500 to-emerald-600' },
-      { name: 'Board Applications', href: '/admin/board', icon: '👔', gradient: 'from-purple-500 to-purple-600' },
+      { name: 'Tasks', href: '/admin/tasks', icon: '🎯', gradient: 'from-indigo-500 to-purple-600' },
+      { name: 'Reports', href: '/admin/reports', icon: '�', gradient: 'from-emerald-500 to-emerald-600' },
+      { name: 'Board Applications', href: '/admin/board', icon: '�', gradient: 'from-purple-500 to-purple-600' },
       { name: 'Feedback', href: '/admin/feedback', icon: '💬', gradient: 'from-pink-500 to-pink-600' },
       { name: 'Government Schemes', href: '/admin/schemes', icon: '🏛️', gradient: 'from-indigo-500 to-indigo-600' },
       { name: 'Contacts', href: '/admin/contacts', icon: '📞', gradient: 'from-teal-500 to-teal-600' },
