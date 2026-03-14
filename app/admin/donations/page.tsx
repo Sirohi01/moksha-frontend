@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { PageHeader, DataTable, LoadingSpinner, ActionButton, StatsCard } from '@/components/admin/AdminComponents';
+import ReceiptModal from '@/components/ReceiptModal';
 
 interface Donation {
   _id: string;
@@ -23,6 +25,8 @@ export default function DonationsManagement() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [stats, setStats] = useState({
     totalAmount: 0,
     totalDonations: 0,
@@ -81,73 +85,183 @@ export default function DonationsManagement() {
     }
   };
 
+  const viewReceipt = (donation: Donation) => {
+    setSelectedDonation(donation);
+    setShowReceiptModal(true);
+  };
+
+  const refundDonation = async (donationId: string) => {
+    if (!confirm('Are you sure you want to process a refund for this donation?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/donations/${donationId}/refund`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        alert('Refund processed successfully!');
+        fetchDonations();
+      } else {
+        const error = await response.json();
+        alert(`Failed to process refund: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Failed to process refund:', error);
+      alert('Failed to process refund. Please try again.');
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <LoadingSpinner size="lg" message="Loading donations..." />;
   }
+
+  const columns = [
+    {
+      key: 'donation',
+      label: 'Donation Details',
+      render: (_value: any, donation: Donation) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{donation.donationId}</div>
+          <div className="text-sm text-gray-500">Receipt: {donation.receiptNumber}</div>
+          <div className="text-sm text-gray-500">{new Date(donation.createdAt).toLocaleDateString('en-IN')}</div>
+        </div>
+      )
+    },
+    {
+      key: 'donor',
+      label: 'Donor Information',
+      render: (_value: any, donation: Donation) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{donation.name}</div>
+          <div className="text-sm text-gray-500">{donation.email}</div>
+          <div className="text-sm text-gray-500">{donation.phone}</div>
+        </div>
+      )
+    },
+    {
+      key: 'amount',
+      label: 'Amount & Payment',
+      render: (_value: any, donation: Donation) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">₹{donation.amount.toLocaleString('en-IN')}</div>
+          <div className="text-sm text-gray-500">{donation.paymentMethod.toUpperCase()}</div>
+        </div>
+      )
+    },
+    {
+      key: 'purpose',
+      label: 'Purpose & Type',
+      render: (_value: any, donation: Donation) => (
+        <div>
+          <div className="text-sm text-gray-900">{donation.purpose.replace('_', ' ').toUpperCase()}</div>
+          <div className="text-sm text-gray-500">{donation.donationType.replace('_', ' ').toUpperCase()}</div>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (_value: any, donation: Donation) => (
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.paymentStatus)}`}>
+          {donation.paymentStatus}
+        </span>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (_value: any, donation: Donation) => (
+        <div className="flex space-x-2">
+          <ActionButton
+            onClick={() => viewReceipt(donation)}
+            variant="primary"
+            size="sm"
+          >
+            View Receipt
+          </ActionButton>
+          <ActionButton
+            onClick={() => viewReceipt(donation)}
+            variant="success"
+            size="sm"
+          >
+            Print
+          </ActionButton>
+          {donation.paymentStatus === 'completed' && (
+            <ActionButton
+              onClick={() => refundDonation(donation._id)}
+              variant="danger"
+              size="sm"
+            >
+              Refund
+            </ActionButton>
+          )}
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">💰 Donations Management</h1>
-            <p className="text-gray-600">Track and manage donations</p>
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Donations Management" 
+        description="Track and manage donations"
+        icon="💰"
+      >
+        <ActionButton 
+          onClick={fetchDonations}
+          variant="secondary"
+          icon="🔄"
+        >
+          Refresh
+        </ActionButton>
+      </PageHeader>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <span className="text-2xl">💰</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Amount</p>
-              <p className="text-2xl font-bold text-gray-900">₹{stats.totalAmount.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <span className="text-2xl">📊</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Donations</p>
-              <p className="text-2xl font-bold text-gray-900">{stats.totalDonations}</p>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <span className="text-2xl">📈</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Average Donation</p>
-              <p className="text-2xl font-bold text-gray-900">₹{Math.round(stats.avgDonation).toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
+        <StatsCard
+          title="Total Amount"
+          value={`₹${stats.totalAmount.toLocaleString('en-IN')}`}
+          icon="💰"
+          gradient="from-green-500 to-emerald-600"
+          change="+12%"
+          changeType="positive"
+        />
+        <StatsCard
+          title="Total Donations"
+          value={stats.totalDonations}
+          icon="📊"
+          gradient="from-blue-500 to-blue-600"
+          change="+8%"
+          changeType="positive"
+        />
+        <StatsCard
+          title="Average Donation"
+          value={`₹${Math.round(stats.avgDonation).toLocaleString('en-IN')}`}
+          icon="📈"
+          gradient="from-purple-500 to-purple-600"
+          change="+5%"
+          changeType="positive"
+        />
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Filters</h3>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Status</option>
               <option value="completed">Completed</option>
@@ -161,7 +275,7 @@ export default function DonationsManagement() {
             <select
               value={filters.type}
               onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Types</option>
               <option value="one_time">One Time</option>
@@ -174,7 +288,7 @@ export default function DonationsManagement() {
             <select
               value={filters.purpose}
               onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Purposes</option>
               <option value="general">General</option>
@@ -188,104 +302,54 @@ export default function DonationsManagement() {
       </div>
 
       {/* Donations Table */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Donation Details
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Donor Information
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount & Payment
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Purpose & Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {donations.map((donation) => (
-                <tr key={donation._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {donation.donationId}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Receipt: {donation.receiptNumber}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {new Date(donation.createdAt).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {donation.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {donation.email}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {donation.phone}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        ₹{donation.amount.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {donation.paymentMethod.toUpperCase()}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm text-gray-900">
-                        {donation.purpose.replace('_', ' ').toUpperCase()}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {donation.donationType.replace('_', ' ').toUpperCase()}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(donation.paymentStatus)}`}>
-                      {donation.paymentStatus}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-4">
-                      View Receipt
-                    </button>
-                    <button className="text-green-600 hover:text-green-900 mr-4">
-                      Download
-                    </button>
-                    {donation.paymentStatus === 'completed' && (
-                      <button className="text-red-600 hover:text-red-900">
-                        Refund
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <DataTable 
+        columns={columns}
+        data={donations}
+        loading={loading}
+        emptyMessage="No donations found"
+      />
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div className="text-sm text-gray-700">
+              Page <span className="font-medium">{currentPage}</span> of{' '}
+              <span className="font-medium">{totalPages}</span>
+            </div>
+            <div className="flex space-x-2">
+              <ActionButton
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                variant="secondary"
+                size="sm"
+              >
+                Previous
+              </ActionButton>
+              <ActionButton
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                variant="secondary"
+                size="sm"
+              >
+                Next
+              </ActionButton>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Receipt Modal */}
+      {selectedDonation && (
+        <ReceiptModal
+          isOpen={showReceiptModal}
+          onClose={() => {
+            setShowReceiptModal(false);
+            setSelectedDonation(null);
+          }}
+          donation={selectedDonation}
+        />
+      )}
     </div>
   );
 }
