@@ -4,14 +4,9 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
 import { Video, Mail, Phone, ChevronRight, Play, Clock, Heart, Award } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { documentariesConfig } from "@/config/documentaries.config";
 
 export default function DocumentariesPage() {
-    const films = [
-        { title: "One Last Rite", duration: "18:00", type: "Main Feature", year: "2024", desc: "A cinematic deep-dive into the founding philosophy of Moksha Seva and the people who make it possible.", image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2000&auto=format&fit=crop" },
-        { title: "The City of Shadows", duration: "12:45", type: "City Series", year: "2023", desc: "Exploring the life and death of those in the busiest hubs of Mumbai, and how our teams respond in the urban chaos.", image: "https://images.unsplash.com/photo-1533158307587-828f0a76ef46?q=80&w=2000&auto=format&fit=crop" },
-        { title: "Ganga's Quiet Tears", duration: "15:30", type: "Regional Story", year: "2023", desc: "A spiritual exploration of final rites in Varanasi and the transition from identified to unidentified cases.", image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2000&auto=format&fit=crop" },
-    ];
-
     return (
         <main className="min-h-screen bg-stone-50">
             {/* Hero Section */}
@@ -20,12 +15,11 @@ export default function DocumentariesPage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-amber-100 border border-amber-200 mb-6">
-                            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">CINEMATIC SERIES</p>
+                            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{documentariesConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">HUMAN <br /><span className="text-amber-700">DOCUMENTARIES</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{documentariesConfig.hero.title} <br /><span className="text-amber-700">{documentariesConfig.hero.subtitle}</span></h1>
                         <p className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed">
-                            We capture the raw, emotional, and powerful moments of our mission through
-                            cinematic storytelling. Watch the truth of dignity in departure.
+                            {documentariesConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -35,7 +29,7 @@ export default function DocumentariesPage() {
             <section className="py-16 bg-stone-100">
                 <Container>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {films.map((film, i) => (
+                        {documentariesConfig.films.items.map((film, i) => (
                             <div key={i} className="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-lg hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden relative text-left flex flex-col">
                                 <div className="aspect-[4/5] relative">
                                     <Image src={film.image} alt={film.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -47,7 +41,7 @@ export default function DocumentariesPage() {
                                         <Play className="fill-white ml-0.5" size={18} />
                                     </button>
                                     <div className="absolute top-4 left-4">
-                                        <div className="bg-amber-800 text-white px-2 py-1 rounded text-[7px] font-black uppercase tracking-widest shadow-sm">New</div>
+                                        <div className="bg-amber-800 text-white px-2 py-1 rounded text-[7px] font-black uppercase tracking-widest shadow-sm">{documentariesConfig.films.newBadge}</div>
                                     </div>
                                 </div>
 
@@ -60,7 +54,7 @@ export default function DocumentariesPage() {
                                     <p className="text-gray-500 font-medium text-sm leading-relaxed mb-6">
                                         {film.desc}
                                     </p>
-                                    <button className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all">WATCH FILM</button>
+                                    <button className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all">{documentariesConfig.films.watchButton}</button>
                                 </div>
                             </div>
                         ))}
@@ -74,20 +68,15 @@ export default function DocumentariesPage() {
                     <div className="text-center mb-12">
                         <Award className="text-amber-100 mx-auto mb-6" size={48} />
                         <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-[0.85] mb-4 text-white">
-                            Festival <span className="text-amber-100">Selections</span>
+                            {documentariesConfig.festivalSelections.title} <span className="text-amber-100">{documentariesConfig.festivalSelections.subtitle}</span>
                         </h2>
                         <p className="text-white/80 text-base max-w-2xl mx-auto font-medium">
-                            Our documentaries have been recognized at prestigious film festivals worldwide
+                            {documentariesConfig.festivalSelections.description}
                         </p>
                     </div>
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {[
-                            { name: "Sundance", subtitle: "Official Selection", year: "2024" },
-                            { name: "Cannes", subtitle: "Impact Award", year: "2023" },
-                            { name: "Human Rights", subtitle: "Best Documentary", year: "2024" },
-                            { name: "Docs World", subtitle: "Audience Choice", year: "2023" }
-                        ].map((festival, idx) => (
+                        {documentariesConfig.festivalSelections.festivals.map((festival, idx) => (
                             <div key={idx} className="group text-center">
                                 <div className="w-20 h-20 mx-auto rounded-full border-2 border-white/30 flex items-center justify-center mb-3 group-hover:border-amber-100 group-hover:bg-amber-100/10 transition-all duration-300 backdrop-blur-sm">
                                     <Award className="w-6 h-6 text-white/60 group-hover:text-amber-100 transition-colors" />
@@ -103,16 +92,16 @@ export default function DocumentariesPage() {
 
                     <div className="mt-12 text-center">
                         <p className="text-white/60 text-sm font-medium mb-4">
-                            Recognized for authentic storytelling and humanitarian impact
+                            {documentariesConfig.festivalSelections.recognitionText}
                         </p>
                         <div className="flex justify-center gap-3">
                             <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                                <span className="text-amber-100 font-black text-base">4</span>
-                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">Awards</span>
+                                <span className="text-amber-100 font-black text-base">{documentariesConfig.festivalSelections.stats.awards}</span>
+                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{documentariesConfig.festivalSelections.statsLabels.awards}</span>
                             </div>
                             <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                                <span className="text-amber-100 font-black text-base">12</span>
-                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">Selections</span>
+                                <span className="text-amber-100 font-black text-base">{documentariesConfig.festivalSelections.stats.selections}</span>
+                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{documentariesConfig.festivalSelections.statsLabels.selections}</span>
                             </div>
                         </div>
                     </div>

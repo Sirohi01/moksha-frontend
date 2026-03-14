@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import { MapPin, Globe, ShieldCheck, ChevronRight, X, UsersIcon } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { ourReachConfig } from "@/config/our-reach.config";
 
 export default function OurReachPage() {
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -117,13 +118,7 @@ export default function OurReachPage() {
         });
     };
 
-    const regions = [
-        { name: "North India", cities: ["Delhi", "Lucknow", "Ghaziabad", "Kanpur", "Varanasi"], density: "High Response Hub", stats: "1,200+ Served" },
-        { name: "South India", cities: ["Bangalore", "Chennai", "Hyderabad", "Kochi", "Mysore"], density: "Tier 1 Center", stats: "800+ Served" },
-        { name: "West India", cities: ["Mumbai", "Pune", "Ahmedabad", "Nashik", "Surat"], density: "State Command Center", stats: "1,500+ Served" },
-        { name: "East India", cities: ["Kolkata", "Patna", "Ranchi", "Bhubaneswar", "Guwahati"], density: "Growing Hub", stats: "400+ Served" },
-        { name: "Central India", cities: ["Bhopal", "Indore", "Nagpur", "Jabalpur", "Raipur"], density: "Response Center", stats: "600+ Served" },
-    ];
+    const regions = ourReachConfig.regions;
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -133,12 +128,11 @@ export default function OurReachPage() {
                 <Container>
                     <div className="max-w-3xl">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">OUR SERVICE NETWORK</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{ourReachConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">OUR GLOBAL <span className="text-[#7ab800]">REACH</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{ourReachConfig.hero.title} <span className="text-[#7ab800]">{ourReachConfig.hero.titleHighlight}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            Moksha Seva operates across 38+ major cities in India, with a dedicated
-                            Force of 400+ Saathis ready to respond to any call for dignity.
+                            {ourReachConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -157,7 +151,7 @@ export default function OurReachPage() {
                                 </div>
                                 <h3 className="text-2xl font-black uppercase tracking-tighter mb-1 text-stone-800 leading-none">{region.name}</h3>
                                 <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-widest mb-6">{region.density}</p>
-                                <p className="text-stone-400 font-bold text-[9px] uppercase tracking-widest mb-10 leading-none">ACTIVE SERVICE CITIES:</p>
+                                <p className="text-stone-400 font-bold text-[9px] uppercase tracking-widest mb-10 leading-none">{ourReachConfig.labels.activeCities}</p>
                                 <div className="flex flex-wrap gap-2 mb-10 pb-8 border-b border-stone-50">
                                     {region.cities.map((city, idx) => (
                                         <span key={idx} className="bg-stone-50 px-4 py-2 rounded-full text-stone-700 font-black text-[10px] uppercase tracking-widest hover:bg-[#7ab800] hover:text-white transition-all">
@@ -169,7 +163,7 @@ export default function OurReachPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex flex-col">
                                         <p className="font-black text-2xl tracking-tighter text-stone-800 leading-none mb-1">{region.stats}</p>
-                                        <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">Permanent Impact</p>
+                                        <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">{ourReachConfig.labels.permanentImpact}</p>
                                     </div>
                                     <button 
                                         onClick={() => setSelectedRegion(region.name)}
@@ -187,15 +181,15 @@ export default function OurReachPage() {
                             <div className="w-20 h-20 rounded-full bg-[#7ab800] flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(122,184,0,0.3)] border border-white/20">
                                 <Globe size={32} className="text-white" />
                             </div>
-                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 leading-none text-white">WANT US IN YOUR CITY?</h3>
+                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 leading-none text-white">{ourReachConfig.expansionCard.title}</h3>
                             <p className="text-stone-400 font-medium text-sm leading-relaxed mb-8">
-                                Help us expand the &apos;Force of Dignity&apos; to your city. We provide infrastructure, training, and legal support.
+                                {ourReachConfig.expansionCard.description}
                             </p>
                             <Button 
                                 onClick={() => setShowExpansionForm(true)}
                                 className="w-full bg-white text-stone-900 font-black py-4 hover:shadow-[0_20px_40px_rgba(255,255,255,0.2)]"
                             >
-                                REQUEST EXPANSION
+                                {ourReachConfig.expansionCard.buttonText}
                             </Button>
                         </div>
                     </div>
@@ -206,26 +200,16 @@ export default function OurReachPage() {
             <section className="py-20 border-t border-stone-200 bg-white">
                 <Container>
                     <div className="max-w-4xl mx-auto text-center mb-16 px-4">
-                        <h4 className="text-[#7ab800] font-black text-[11px] uppercase tracking-[0.4em] mb-4">TOTAL SERVICE REACH</h4>
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-none">THE LARGEST RESPONSE <span className="text-[#7ab800]">FORGOTTEN</span> NETWORK IN INDIA</h2>
+                        <h4 className="text-[#7ab800] font-black text-[11px] uppercase tracking-[0.4em] mb-4">{ourReachConfig.networkStats.badge}</h4>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-none">{ourReachConfig.networkStats.title} <span className="text-[#7ab800]">{ourReachConfig.networkStats.titleHighlight}</span> NETWORK IN INDIA</h2>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div className="text-center p-8 bg-stone-50 rounded-3xl border border-stone-100 shadow-inner">
-                            <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">38+</p>
-                            <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">Active Cities</p>
-                        </div>
-                        <div className="text-center p-8 bg-stone-50 rounded-3xl border border-stone-100 shadow-inner">
-                            <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">400+</p>
-                            <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">Saathi Force</p>
-                        </div>
-                        <div className="text-center p-8 bg-stone-50 rounded-3xl border border-stone-100 shadow-inner">
-                            <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">8,500+</p>
-                            <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">Total Services</p>
-                        </div>
-                        <div className="text-center p-8 bg-stone-50 rounded-3xl border border-stone-100 shadow-inner">
-                            <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">24/7</p>
-                            <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">Response Units</p>
-                        </div>
+                        {ourReachConfig.networkStats.stats.map((stat, index) => (
+                            <div key={index} className="text-center p-8 bg-stone-50 rounded-3xl border border-stone-100 shadow-inner">
+                                <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">{stat.number}</p>
+                                <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>
+                            </div>
+                        ))}
                     </div>
                 </Container>
             </section>
@@ -243,17 +227,14 @@ export default function OurReachPage() {
 
                         <div className="p-12">
                             <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-4">
-                                <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">REGIONAL HUB</p>
+                                <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{ourReachConfig.modal.badge}</p>
                             </div>
                             <h2 className="text-3xl font-black uppercase tracking-tighter text-stone-900 mb-6 leading-none">{selectedRegion}</h2>
                             
                             <div className="space-y-6">
                                 <div className="p-6 bg-stone-50 rounded-2xl">
                                     <p className="text-stone-600 font-medium leading-relaxed">
-                                        Our {selectedRegion} operations serve as a critical hub in our national network, 
-                                        providing 24/7 dignified cremation services across multiple cities. Each region 
-                                        is supported by dedicated volunteers, ambulance units, and partnerships with 
-                                        local authorities.
+                                        {ourReachConfig.modal.regionModalDescription.replace('{regionName}', selectedRegion)}
                                     </p>
                                 </div>
 
@@ -263,14 +244,14 @@ export default function OurReachPage() {
                                         <p className="text-2xl font-black text-stone-900 mb-1">
                                             {regions.find(r => r.name === selectedRegion)?.cities.length}+
                                         </p>
-                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">Active Cities</p>
+                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">{ourReachConfig.labels.activeCitiesCount}</p>
                                     </div>
                                     <div className="p-6 bg-white border-2 border-stone-100 rounded-2xl">
                                         <UsersIcon className="text-[#7ab800] mb-3" size={24} />
                                         <p className="text-2xl font-black text-stone-900 mb-1">
                                             {regions.find(r => r.name === selectedRegion)?.stats}
                                         </p>
-                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">Total Services</p>
+                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">{ourReachConfig.labels.totalServices}</p>
                                     </div>
                                 </div>
 
@@ -281,7 +262,7 @@ export default function OurReachPage() {
                                     }}
                                     className="w-full bg-[#7ab800] text-white py-4 font-black uppercase tracking-widest"
                                 >
-                                    REQUEST EXPANSION IN THIS REGION
+                                    {ourReachConfig.modal.expansionButtonText}
                                 </Button>
                             </div>
                         </div>
@@ -306,17 +287,16 @@ export default function OurReachPage() {
                                     <div className="w-24 h-24 rounded-full bg-[#7ab800] flex items-center justify-center mx-auto mb-8">
                                         <ShieldCheck className="text-white" size={48} />
                                     </div>
-                                    <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">REQUEST RECEIVED!</h2>
+                                    <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">{ourReachConfig.form.successTitle}</h2>
                                     <p className="text-stone-500 text-xs font-black uppercase tracking-widest mb-6 leading-none">
-                                        Request ID: <span className="font-mono font-bold text-[#7ab800]">EXP-2024-{Math.floor(Math.random() * 900) + 100}</span>
+                                        {ourReachConfig.form.successRequestId} <span className="font-mono font-bold text-[#7ab800]">EXP-2024-{Math.floor(Math.random() * 900) + 100}</span>
                                     </p>
                                     <p className="text-stone-600 font-medium text-lg leading-relaxed mb-8">
-                                        Thank you for your interest in bringing Moksha Seva to your city. Our expansion team 
-                                        will review your request and contact you within 5-7 business days.
+                                        {ourReachConfig.form.successDescription}
                                     </p>
                                     <div className="flex flex-wrap gap-4 justify-center">
                                         <Button onClick={closeForm} className="bg-stone-900 text-white px-10 py-5 font-black uppercase tracking-widest">
-                                            CLOSE
+                                            {ourReachConfig.form.closeButtonText}
                                         </Button>
                                     </div>
                                 </div>
@@ -324,118 +304,87 @@ export default function OurReachPage() {
                                 <div className="p-8 md:p-12">
                                     <div className="mb-8">
                                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-4">
-                                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">EXPANSION REQUEST</p>
+                                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{ourReachConfig.labels.expansionRequestBadge}</p>
                                         </div>
                                         <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">
-                                            BRING MOKSHA SEVA<br />
-                                            <span className="text-[#7ab800]">TO YOUR CITY</span>
+                                            {ourReachConfig.form.title}<br />
+                                            <span className="text-[#7ab800]">{ourReachConfig.form.titleHighlight}</span>
                                         </h2>
                                         <p className="text-stone-500 font-medium leading-relaxed">
-                                            Help us expand our mission of dignity. We&apos;ll work with local partners, volunteers, 
-                                            and authorities to establish operations in your city.
+                                            {ourReachConfig.form.description}
                                         </p>
                                     </div>
 
                                     <form onSubmit={handleSubmit} className="space-y-6">
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">FULL NAME *</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.fullName}</label>
                                             <input
                                                 type="text"
                                                 required
                                                 value={form.name}
                                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                placeholder="Enter your full name"
+                                                placeholder={ourReachConfig.form.placeholders.fullName}
                                             />
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">EMAIL ADDRESS *</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.email}</label>
                                                 <input
                                                     type="email"
                                                     required
                                                     value={form.email}
                                                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                    placeholder="your.email@example.com"
+                                                    placeholder={ourReachConfig.form.placeholders.email}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">PHONE NUMBER *</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.phone}</label>
                                                 <input
                                                     type="tel"
                                                     required
                                                     value={form.phone}
                                                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                    placeholder="+91 98765 43210"
+                                                    placeholder={ourReachConfig.form.placeholders.phone}
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">CITY NAME *</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.city}</label>
                                                 <input
                                                     type="text"
                                                     required
                                                     value={form.requestedCity}
                                                     onChange={(e) => setForm({ ...form, requestedCity: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                    placeholder="Enter city name"
+                                                    placeholder={ourReachConfig.form.placeholders.city}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">STATE *</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.state}</label>
                                                 <select
                                                     required
                                                     value={form.requestedState}
                                                     onChange={(e) => setForm({ ...form, requestedState: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                                                 >
-                                                    <option value="">Select state</option>
-                                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                    <option value="Assam">Assam</option>
-                                                    <option value="Bihar">Bihar</option>
-                                                    <option value="Chhattisgarh">Chhattisgarh</option>
-                                                    <option value="Goa">Goa</option>
-                                                    <option value="Gujarat">Gujarat</option>
-                                                    <option value="Haryana">Haryana</option>
-                                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                    <option value="Jharkhand">Jharkhand</option>
-                                                    <option value="Karnataka">Karnataka</option>
-                                                    <option value="Kerala">Kerala</option>
-                                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                    <option value="Maharashtra">Maharashtra</option>
-                                                    <option value="Manipur">Manipur</option>
-                                                    <option value="Meghalaya">Meghalaya</option>
-                                                    <option value="Mizoram">Mizoram</option>
-                                                    <option value="Nagaland">Nagaland</option>
-                                                    <option value="Odisha">Odisha</option>
-                                                    <option value="Punjab">Punjab</option>
-                                                    <option value="Rajasthan">Rajasthan</option>
-                                                    <option value="Sikkim">Sikkim</option>
-                                                    <option value="Tamil Nadu">Tamil Nadu</option>
-                                                    <option value="Telangana">Telangana</option>
-                                                    <option value="Tripura">Tripura</option>
-                                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                    <option value="Uttarakhand">Uttarakhand</option>
-                                                    <option value="West Bengal">West Bengal</option>
-                                                    <option value="Delhi">Delhi</option>
-                                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                    <option value="Ladakh">Ladakh</option>
-                                                    <option value="Puducherry">Puducherry</option>
-                                                    <option value="Chandigarh">Chandigarh</option>
+                                                    <option value="">{ourReachConfig.form.placeholders.selectState}</option>
+                                                    {ourReachConfig.form.states.map((state) => (
+                                                        <option key={state} value={state}>{state}</option>
+                                                    ))}
                                                 </select>
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">POPULATION (OPTIONAL)</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.population}</label>
                                             <input
                                                 type="text"
                                                 value={form.population}
@@ -445,69 +394,67 @@ export default function OurReachPage() {
                                                         ? 'border-red-500 focus:border-red-500' 
                                                         : 'border-stone-200 focus:border-[#7ab800]'
                                                 }`}
-                                                placeholder="e.g., 5 lakhs, 2 million (minimum 1000)"
+                                                placeholder={ourReachConfig.form.placeholders.population}
                                             />
                                             <div className="flex justify-between items-center mt-1">
-                                                <p className="text-stone-500 text-xs">Minimum population: 1,000 people</p>
+                                                <p className="text-stone-500 text-xs">{ourReachConfig.form.validationMessages.populationMinimum}</p>
                                                 {form.population && parseInt(form.population.replace(/[^\d]/g, '')) > 0 && parseInt(form.population.replace(/[^\d]/g, '')) < 1000 && (
                                                     <p className="text-red-500 text-xs">
-                                                        Too small: {parseInt(form.population.replace(/[^\d]/g, ''))} (need 1000+)
+                                                        {ourReachConfig.form.validationMessages.populationTooSmall.replace('{population}', parseInt(form.population.replace(/[^\d]/g, '')).toString())}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">ORGANIZATION (OPTIONAL)</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.organization}</label>
                                             <input
                                                 type="text"
                                                 value={form.organization}
                                                 onChange={(e) => setForm({ ...form, organization: e.target.value })}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                placeholder="NGO, Trust, or Community Group"
+                                                placeholder={ourReachConfig.form.placeholders.organization}
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">LOCAL SUPPORT TYPE</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.localSupport}</label>
                                             <select
                                                 value={form.localSupport}
                                                 onChange={(e) => setForm({ ...form, localSupport: e.target.value })}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                                             >
-                                                <option value="individual">Individual</option>
-                                                <option value="organization">Organization</option>
-                                                <option value="government">Government</option>
-                                                <option value="community">Community</option>
-                                                <option value="multiple">Multiple</option>
+                                                {ourReachConfig.form.supportTypes.map((type) => (
+                                                    <option key={type.value} value={type.value}>{type.label}</option>
+                                                ))}
                                             </select>
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">WHY YOUR CITY NEEDS US? *</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.whyNeeded}</label>
                                             <textarea
                                                 required
                                                 value={form.whyNeeded}
                                                 onChange={(e) => setForm({ ...form, whyNeeded: e.target.value })}
                                                 rows={4}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium resize-none"
-                                                placeholder="Tell us about the need for dignified cremation services in your city... (minimum 50 characters)"
+                                                placeholder={ourReachConfig.form.placeholders.whyNeeded}
                                             />
                                             <div className="flex justify-between items-center mt-1">
                                                 <p className="text-stone-500 text-xs">
-                                                    Minimum 50 characters required
+                                                    {ourReachConfig.form.validationMessages.whyNeededMinimum}
                                                 </p>
                                                 <p className={`text-xs ${form.whyNeeded.trim().length < 50 ? 'text-red-500' : form.whyNeeded.trim().length > 2000 ? 'text-red-500' : 'text-green-600'}`}>
-                                                    {form.whyNeeded.trim().length}/2000 {form.whyNeeded.trim().length < 50 ? `(need ${50 - form.whyNeeded.trim().length} more)` : ''}
+                                                    {ourReachConfig.form.validationMessages.whyNeededCounter
+                                                        .replace('{current}', form.whyNeeded.trim().length.toString())
+                                                        .replace('{remaining}', form.whyNeeded.trim().length < 50 ? `(need ${50 - form.whyNeeded.trim().length} more)` : '')}
                                                 </p>
                                             </div>
                                         </div>
 
                                         <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6">
                                             <p className="text-blue-800 text-sm font-medium leading-relaxed">
-                                                <strong className="font-black">What we provide:</strong> Training for volunteers, 
-                                                ambulance coordination, legal support, and ongoing operational guidance. 
-                                                All services remain 100% free for beneficiaries.
+                                                <strong className="font-black">{ourReachConfig.form.whatWeProvideText}</strong>
                                             </p>
                                         </div>
 
@@ -527,11 +474,11 @@ export default function OurReachPage() {
                                             )}
                                             className="w-full bg-[#7ab800] hover:bg-[#5b8a00] text-white py-5 font-black uppercase tracking-widest shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#7ab800]"
                                         >
-                                            {loading ? 'SUBMITTING...' : 'SUBMIT EXPANSION REQUEST'}
+                                            {loading ? ourReachConfig.form.loadingText : ourReachConfig.form.submitButtonText}
                                         </Button>
 
                                         <p className="text-stone-400 text-[10px] text-center uppercase tracking-widest leading-relaxed">
-                                            Our expansion team will review your request and contact you within 5-7 business days.
+                                            {ourReachConfig.form.footerText}
                                         </p>
                                     </form>
                                 </div>

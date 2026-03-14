@@ -1,45 +1,20 @@
 import { Container } from "@/components/ui/Elements";
-import { TrendingUp, Users, MapPin, Heart, Calendar, Award } from "lucide-react";
 import Image from 'next/image';
+import { impactConfig } from "@/config/impact.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function Impact() {
-  const impactStats = [
-    { icon: Heart, number: "2,840+", label: "Sacred Rites Completed", color: "text-red-500" },
-    { icon: MapPin, number: "38+", label: "Cities Actively Served", color: "text-blue-500" },
-    { icon: Users, number: "400+", label: "Trained Volunteers", color: "text-[#20b2aa]" },
-    { icon: Calendar, number: "8+", label: "Years of Service", color: "text-orange-500" },
-    { icon: Award, number: "100%", label: "Legal Compliance", color: "text-green-500" },
-    { icon: TrendingUp, number: "24/7", label: "Emergency Response", color: "text-purple-500" }
-  ];
+  const impactStats = impactConfig.impactStats.stats.map(stat => ({
+    icon: getIcon(stat.icon),
+    number: stat.number,
+    label: stat.label,
+    color: stat.color,
+    description: stat.description
+  }));
 
-  const yearlyData = [
-    { year: "2018", rites: 45, cities: 1, volunteers: 5 },
-    { year: "2019", rites: 180, cities: 3, volunteers: 25 },
-    { year: "2020", rites: 520, cities: 8, volunteers: 60 },
-    { year: "2021", rites: 890, cities: 15, volunteers: 120 },
-    { year: "2022", rites: 1240, cities: 22, volunteers: 200 },
-    { year: "2023", rites: 1680, cities: 30, volunteers: 300 },
-    { year: "2024", rites: 2150, cities: 35, volunteers: 380 },
-    { year: "2025", rites: 2840, cities: 38, volunteers: 400 }
-  ];
+  const yearlyData = impactConfig.growthTimeline.yearlyData;
 
-  const testimonials = [
-    {
-      quote: "Moksha Seva gave my father the dignified farewell he deserved when we had nowhere else to turn.",
-      author: "Priya Sharma, Delhi",
-      role: "Beneficiary Family"
-    },
-    {
-      quote: "Working with Moksha Seva has been the most fulfilling experience of my life. Every soul matters.",
-      author: "Rajesh Kumar, Volunteer",
-      role: "5 Years of Service"
-    },
-    {
-      quote: "Their transparency and dedication to traditional rites is unmatched in humanitarian work.",
-      author: "Dr. Anita Verma",
-      role: "Social Worker"
-    }
-  ];
+  const testimonials = impactConfig.testimonials.testimonials;
 
   return (
     <div className="min-h-screen bg-white">
@@ -50,43 +25,43 @@ export default function Impact() {
             <div className="space-y-8">
               <div>
                 <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-6 text-gray-900">
-                  Our <span className="text-amber-700">Impact</span>
+                  {impactConfig.hero.title} <span className="text-amber-700">{impactConfig.hero.highlightText}</span>
                 </h1>
                 <p className="text-xl font-medium max-w-2xl leading-relaxed text-gray-700 mb-8">
-                  Measuring the difference we make in ensuring dignity for every soul's final journey across India
+                  {impactConfig.hero.description}
                 </p>
               </div>
 
               {/* Key Stats */}
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                  <div className="text-2xl font-black text-amber-700">2,840+</div>
-                  <div className="text-sm text-gray-600">Lives Honored</div>
+                  <div className="text-2xl font-black text-amber-700">{impactConfig.hero.keyStats.livesHonored.number}</div>
+                  <div className="text-sm text-gray-600">{impactConfig.hero.keyStats.livesHonored.label}</div>
                 </div>
                 <div className="text-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                  <div className="text-2xl font-black text-amber-700">38+</div>
-                  <div className="text-sm text-gray-600">Cities</div>
+                  <div className="text-2xl font-black text-amber-700">{impactConfig.hero.keyStats.cities.number}</div>
+                  <div className="text-sm text-gray-600">{impactConfig.hero.keyStats.cities.label}</div>
                 </div>
                 <div className="text-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                  <div className="text-2xl font-black text-amber-700">8+</div>
-                  <div className="text-sm text-gray-600">Years</div>
+                  <div className="text-2xl font-black text-amber-700">{impactConfig.hero.keyStats.years.number}</div>
+                  <div className="text-sm text-gray-600">{impactConfig.hero.keyStats.years.label}</div>
                 </div>
               </div>
 
               {/* Mission Statement */}
               <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100">
-                <h3 className="text-lg font-black text-gray-900 mb-3">Our Mission Impact</h3>
+                <h3 className="text-lg font-black text-gray-900 mb-3">{impactConfig.hero.missionImpact.title}</h3>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  Every number represents a family we've supported, a community we've served, and a life we've honored with dignity and respect.
+                  {impactConfig.hero.missionImpact.description}
                 </p>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-600">100% Free Service</span>
+                    <span className="text-gray-600">{impactConfig.hero.missionImpact.features.freeService}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-gray-600">24/7 Available</span>
+                    <span className="text-gray-600">{impactConfig.hero.missionImpact.features.available247}</span>
                   </div>
                 </div>
               </div>
@@ -94,16 +69,16 @@ export default function Impact() {
               {/* Quick Actions */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
-                  href="/volunteer" 
+                  href={impactConfig.hero.actions.joinMission.href}
                   className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-3 rounded-lg font-semibold transition-all text-center"
                 >
-                  Join Our Mission
+                  {impactConfig.hero.actions.joinMission.text}
                 </a>
                 <a 
-                  href="/donate" 
+                  href={impactConfig.hero.actions.supportWork.href}
                   className="border-2 border-amber-700 text-amber-700 hover:bg-amber-700 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all text-center"
                 >
-                  Support Our Work
+                  {impactConfig.hero.actions.supportWork.text}
                 </a>
               </div>
             </div>
@@ -111,8 +86,8 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src="/gallery/image2.png" 
-                  alt="Our impact in serving communities" 
+                  src={impactConfig.hero.image}
+                  alt={impactConfig.hero.imageAlt}
                   className="w-full h-full object-cover"
                   width={400}
                   height={400}
@@ -123,13 +98,13 @@ export default function Impact() {
               
               {/* Floating stats */}
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
-                <div className="text-lg font-black text-amber-700">400+</div>
-                <div className="text-xs text-gray-600">Volunteers</div>
+                <div className="text-lg font-black text-amber-700">{impactConfig.hero.floatingStats.volunteers.number}</div>
+                <div className="text-xs text-gray-600">{impactConfig.hero.floatingStats.volunteers.label}</div>
               </div>
               
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
-                <div className="text-lg font-black text-green-600">100%</div>
-                <div className="text-xs text-gray-600">Compliance</div>
+                <div className="text-lg font-black text-green-600">{impactConfig.hero.floatingStats.compliance.number}</div>
+                <div className="text-xs text-gray-600">{impactConfig.hero.floatingStats.compliance.label}</div>
               </div>
             </div>
           </div>
@@ -141,11 +116,11 @@ export default function Impact() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-              Our Impact in Numbers
+              {impactConfig.impactStats.title}
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto mb-6"></div>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Every number represents a life touched, a family supported, and dignity restored in the most sacred moments.
+              {impactConfig.impactStats.description}
             </p>
           </div>
 
@@ -171,12 +146,7 @@ export default function Impact() {
                   
                   {/* Add descriptive text for each stat */}
                   <div className="text-xs text-gray-500 leading-relaxed">
-                    {index === 0 && "Sacred rites performed with dignity and respect"}
-                    {index === 1 && "Cities where we actively serve communities"}
-                    {index === 2 && "Dedicated volunteers across India"}
-                    {index === 3 && "Years of compassionate service"}
-                    {index === 4 && "Adherence to legal and ethical standards"}
-                    {index === 5 && "Round-the-clock emergency response"}
+                    {stat.description}
                   </div>
                 </div>
               </div>
@@ -188,34 +158,34 @@ export default function Impact() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="group">
                 <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-amber-700 font-black text-lg">₹0</span>
+                  <span className="text-amber-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.freeService.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">Free Service</div>
-                <div className="text-xs text-gray-500">No cost to families in need</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.freeService.title}</div>
+                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.freeService.description}</div>
               </div>
               
               <div className="group">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-green-700 font-black text-lg">✓</span>
+                  <span className="text-green-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.certified.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">80G Certified</div>
-                <div className="text-xs text-gray-500">Tax exemption for donors</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.certified.title}</div>
+                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.certified.description}</div>
               </div>
               
               <div className="group">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-blue-700 font-black text-lg">∞</span>
+                  <span className="text-blue-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.available247.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">24/7 Available</div>
-                <div className="text-xs text-gray-500">Always ready to serve</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.available247.title}</div>
+                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.available247.description}</div>
               </div>
               
               <div className="group">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-purple-700 font-black text-lg">♥</span>
+                  <span className="text-purple-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.withDignity.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">With Dignity</div>
-                <div className="text-xs text-gray-500">Every soul honored equally</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.withDignity.title}</div>
+                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.withDignity.description}</div>
               </div>
             </div>
           </div>
@@ -228,21 +198,15 @@ export default function Impact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-                Our Growth Journey
+                {impactConfig.growthTimeline.title}
               </h2>
               <div className="w-20 h-1 bg-amber-700 mb-6"></div>
               <p className="text-gray-600 mb-8">
-                From humble beginnings in 2018 to serving 38+ cities today, our journey reflects 
-                the growing trust communities place in our mission of dignity and compassion.
+                {impactConfig.growthTimeline.description}
               </p>
               
               <div className="grid grid-cols-2 gap-6">
-                {[
-                  { year: "2018", rites: 45, cities: 1 },
-                  { year: "2021", rites: 890, cities: 15 },
-                  { year: "2024", rites: 2150, cities: 35 },
-                  { year: "2025", rites: 2840, cities: 38 }
-                ].map((data, index) => (
+                {impactConfig.growthTimeline.highlightedYears.map((data, index) => (
                   <div key={index} className="bg-white p-4 rounded-xl border border-stone-200 hover:shadow-lg transition-all">
                     <div className="text-lg font-black text-amber-700 mb-2">{data.year}</div>
                     <div className="space-y-1 text-sm">
@@ -257,8 +221,8 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src="/gallery/image3.png" 
-                  alt="Our growth across cities" 
+                  src={impactConfig.growthTimeline.image}
+                  alt={impactConfig.growthTimeline.imageAlt}
                   className="w-full h-full object-cover"
                   width={500}
                   height={375}
@@ -275,7 +239,7 @@ export default function Impact() {
         <Container>
           <div className="text-center mb-8">
             <h2 className="text-3xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-              Voices of Impact
+              {impactConfig.testimonials.title}
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
           </div>
@@ -286,7 +250,7 @@ export default function Impact() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden">
                     <Image 
-                      src={`/gallery/image${(index % 3) + 4}.png`} 
+                      src={testimonial.image}
                       alt={testimonial.author}
                       className="w-full h-full object-cover"
                       width={48}
@@ -319,31 +283,31 @@ export default function Impact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-white">
-                Be Part of Our Impact
+                {impactConfig.callToAction.title}
               </h2>
               <p className="text-lg mb-6 text-white/90">
-                Every contribution, every volunteer hour, every shared story amplifies our impact in serving humanity.
+                {impactConfig.callToAction.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
-                  href="/volunteer" 
+                  href={impactConfig.callToAction.actions.joinMission.href}
                   className="bg-amber-100 hover:bg-white text-amber-800 px-6 py-3 rounded-lg font-black uppercase tracking-widest transition-all text-center"
                 >
-                  Join Our Mission
+                  {impactConfig.callToAction.actions.joinMission.text}
                 </a>
                 <a 
-                  href="/donate" 
+                  href={impactConfig.callToAction.actions.supportWork.href}
                   className="border-2 border-white text-white hover:bg-white hover:text-amber-800 px-6 py-3 rounded-lg font-black uppercase tracking-widest transition-all text-center"
                 >
-                  Support Our Work
+                  {impactConfig.callToAction.actions.supportWork.text}
                 </a>
               </div>
             </div>
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src="/gallery/image1.png" 
-                  alt="Join our mission" 
+                  src={impactConfig.callToAction.image}
+                  alt={impactConfig.callToAction.imageAlt}
                   className="w-full h-full object-cover"
                   width={500}
                   height={375}

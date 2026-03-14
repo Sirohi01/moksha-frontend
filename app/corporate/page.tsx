@@ -3,16 +3,18 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
-import { Heart, Globe, ShieldCheck, Mail, Phone, ChevronRight, Briefcase, BarChart3 } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { corporateConfig } from "@/config/corporate.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function CorporatePage() {
-    const models = [
-        { title: "City Sponsorship", desc: "Adopt an entire city's operations for a year. Cover fuel, rituals, and logistics for every case in that region.", icon: Globe },
-        { title: "Employee Giving", desc: "Enable payroll giving where your employees can contribute a small amount monthly to the 'Dignity Fund'.", icon: Heart },
-        { title: "Infrastructure Grant", desc: "Help us build 'Moksha Kendras'—dignified storage and response centers in cities with high needs.", icon: Briefcase },
-        { title: "CSR Reporting", desc: "We provide comprehensive Impact Reports, Audit Certificates, and 80G documentation for your board.", icon: BarChart3 },
-    ];
+    const models = corporateConfig.models.map(model => ({
+        ...model,
+        icon: getIcon(model.icon)
+    }));
+
+    const TrustIcon = getIcon(corporateConfig.trust.icon);
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -22,12 +24,11 @@ export default function CorporatePage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">STRATEGIC PARTNERSHIPS</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{corporateConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">CORPORATE <br /><span className="text-[#7ab800]">IMPACT</span> PARTNERS</h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{corporateConfig.hero.title} <br /><span className="text-[#7ab800]">{corporateConfig.hero.subtitle}</span> {corporateConfig.hero.partnersText}</h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            Scale your CSR impact by supporting the most fundamental human right:
-                            the right to a dignified departure. Partner with India&apos;s largest response network.
+                            {corporateConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -49,9 +50,9 @@ export default function CorporatePage() {
                                     {model.desc}
                                 </p>
 
-                                <Link href="/contact">
+                                <Link href={corporateConfig.buttons.contactLink}>
                                     <button className="flex items-center justify-between w-full px-10 py-5 rounded-full bg-stone-900 border border-transparent text-white text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">
-                                        Get Partnership Deck <ChevronRight size={14} />
+                                        {corporateConfig.buttons.getPartnershipDeck} <ChevronRight size={14} />
                                     </button>
                                 </Link>
                             </div>
@@ -65,28 +66,27 @@ export default function CorporatePage() {
                 <Container>
                     <div className="flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[4rem] p-12 md:p-20 border border-stone-200 shadow-xl text-left overflow-hidden relative">
                         <div className="lg:w-1/2">
-                            <ShieldCheck className="text-[#7ab800] mb-8" size={64} />
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">ABSOLUTE <span className="text-[#7ab800]">TRANS- PARENCY</span> FOR CSR</h2>
+                            <TrustIcon className="text-[#7ab800] mb-8" size={64} />
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{corporateConfig.trust.title} <span className="text-[#7ab800]">{corporateConfig.trust.subtitle}</span> {corporateConfig.trust.forCSRText}</h2>
                             <p className="text-stone-500 font-medium text-lg leading-relaxed mb-10">
-                                We provide real-time dashboards for our corporate partners. Track every rupee
-                                and every case sponsored by your organization.
+                                {corporateConfig.trust.description}
                             </p>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
-                                    <p className="text-[#7ab800] text-3xl font-black mb-1">80G</p>
-                                    <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">Tax Exemption</p>
+                                    <p className="text-[#7ab800] text-3xl font-black mb-1">{corporateConfig.trust.certifications.taxExemption.value}</p>
+                                    <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">{corporateConfig.trust.certifications.taxExemption.label}</p>
                                 </div>
                                 <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
-                                    <p className="text-[#7ab800] text-3xl font-black mb-1">12A</p>
-                                    <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">Permanent Reg.</p>
+                                    <p className="text-[#7ab800] text-3xl font-black mb-1">{corporateConfig.trust.certifications.permanentReg.value}</p>
+                                    <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">{corporateConfig.trust.certifications.permanentReg.label}</p>
                                 </div>
                             </div>
                         </div>
                         <div className="lg:w-1/2 w-full">
                             <div className="aspect-video rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                                <Image src="https://images.unsplash.com/photo-1556761175-b413da4baf72?q=80&w=2000&auto=format&fit=crop" alt="Corporate Partnership" fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />
+                                <Image src={corporateConfig.trust.imageUrl} alt={corporateConfig.trust.imageAlt} fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />
                                 <div className="absolute inset-0 bg-stone-900/40 flex items-center justify-center">
-                                    <Link href="/documentaries">
+                                    <Link href={corporateConfig.trust.videoButtonLink}>
                                         <button className="bg-white w-20 h-20 rounded-full flex items-center justify-center text-[#7ab800] shadow-2xl hover:scale-110 transition-all">
                                             <ChevronRight size={32} />
                                         </button>

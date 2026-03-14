@@ -3,140 +3,21 @@
 import { useState, useEffect } from 'react';
 import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
-import { X, Maximize2, Camera, MapPin, Calendar, Heart, Download, Share2 } from "lucide-react";
+import { galleryConfig } from "@/config/gallery.config";
+import { getIcon } from "@/config/icons.config";
 
-const galleryImages = [
-    {
-        src: "/gallery/gallery_cremation_ceremony_1772861295131.png",
-        title: "Dignified Farewell Ceremony",
-        category: "Services",
-        location: "Nigambodh Ghat, Delhi",
-        date: "Jan 2024",
-        height: 400,
-    },
-    {
-        src: "/gallery/gallery_volunteer_service_1772861316550.png",
-        title: "Compassionate Volunteers",
-        category: "Team",
-        location: "Community Center, Delhi",
-        date: "Feb 2024",
-        height: 280,
-    },
-    {
-        src: "/gallery/gallery_peaceful_departure_1772861335733.png",
-        title: "Serene Landscapes of Peace",
-        category: "Spirituality",
-        location: "Yamuna Bank",
-        date: "Mar 2024",
-        height: 350,
-    },
-    {
-        src: "/gallery/gallery_ambulance_unit_1772862517482.png",
-        title: "Moksha Seva Mobile Unit",
-        category: "Infrastructure",
-        location: "Service Station",
-        date: "Feb 2024",
-        height: 320,
-    },
-    {
-        src: "/gallery/gallery_community_support_1772861359875.png",
-        title: "Community of Support",
-        category: "Community",
-        location: "Ghaziabad Hub",
-        date: "Mar 2024",
-        height: 250,
-    },
-    {
-        src: "/gallery/gallery_volunteer_meeting_1772862633347.png",
-        title: "The Heart of Service",
-        category: "Team",
-        location: "Ghaziabad Office",
-        date: "Dec 2023",
-        height: 380,
-    },
-    {
-        src: "/gallery/gallery_memorial_site_1772862535416.png",
-        title: "Sacred Memorial Space",
-        category: "Spirituality",
-        location: "Memorial Park",
-        date: "Jan 2024",
-        height: 300,
-    },
-    {
-        src: "/gallery/hero_ambulance.png",
-        title: "Emergency Response Vehicle",
-        category: "Infrastructure",
-        location: "Delhi NCR",
-        date: "Nov 2023",
-        height: 260,
-    },
-    {
-        src: "/gallery/hero_mission_1.png",
-        title: "Our Mission in Action",
-        category: "Services",
-        location: "Multiple Cities",
-        date: "2023",
-        height: 420,
-    },
-    {
-        src: "/gallery/hero_moksha_1.png",
-        title: "Moksha Seva Team",
-        category: "Team",
-        location: "Head Office",
-        date: "Oct 2023",
-        height: 290,
-    },
-    {
-        src: "/gallery/image1.png",
-        title: "Serving with Dignity",
-        category: "Services",
-        location: "Varanasi",
-        date: "Sep 2023",
-        height: 340,
-    },
-    {
-        src: "/gallery/image2.png",
-        title: "Community Outreach",
-        category: "Community",
-        location: "Mumbai",
-        date: "Aug 2023",
-        height: 310,
-    },
-    {
-        src: "/gallery/image3.png",
-        title: "Volunteer Training",
-        category: "Team",
-        location: "Bangalore",
-        date: "Jul 2023",
-        height: 270,
-    },
-    {
-        src: "/gallery/image4.png",
-        title: "Sacred Rituals",
-        category: "Spirituality",
-        location: "Haridwar",
-        date: "Jun 2023",
-        height: 390,
-    },
-    {
-        src: "/gallery/image5.png",
-        title: "Support Network",
-        category: "Community",
-        location: "Pune",
-        date: "May 2023",
-        height: 330,
-    },
-    {
-        src: "/gallery/image6.png",
-        title: "Compassionate Care",
-        category: "Services",
-        location: "Kolkata",
-        date: "Apr 2023",
-        height: 360,
-    },
-];
+const galleryImages = galleryConfig.gallery.images;
+const categories = galleryConfig.gallery.categories;
 
-const categories = ["All", "Services", "Team", "Community", "Spirituality", "Infrastructure"];
+// Get icons
+const Camera = getIcon('Camera');
+const Heart = getIcon('Heart');
+const Share2 = getIcon('Share2');
+const Maximize2 = getIcon('Maximize2');
+const MapPin = getIcon('MapPin');
+const Calendar = getIcon('Calendar');
+const X = getIcon('X');
+const Download = getIcon('Download');
 
 export default function GalleryPage() {
     const [selectedImg, setSelectedImg] = useState<null | typeof galleryImages[0]>(null);
@@ -158,19 +39,7 @@ export default function GalleryPage() {
                 {/* Animated Background Grid */}
                 <div className="absolute inset-0">
                     <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 h-full gap-1">
-                        {[
-                            "/gallery/image1.png", "/gallery/image2.png", "/gallery/image3.png", 
-                            "/gallery/image4.png", "/gallery/image5.png", "/gallery/image6.png",
-                            "/gallery/gallery_cremation_ceremony_1772861295131.png",
-                            "/gallery/gallery_volunteer_service_1772861316550.png",
-                            "/gallery/gallery_peaceful_departure_1772861335733.png",
-                            "/gallery/gallery_ambulance_unit_1772862517482.png",
-                            "/gallery/gallery_community_support_1772861359875.png",
-                            "/gallery/gallery_volunteer_meeting_1772862633347.png",
-                            "/gallery/gallery_memorial_site_1772862535416.png",
-                            "/gallery/hero_ambulance.png", "/gallery/hero_mission_1.png",
-                            "/gallery/hero_moksha_1.png"
-                        ].map((src, idx) => (
+                        {galleryConfig.hero.backgroundImages.map((src, idx) => (
                             <div 
                                 key={idx} 
                                 className="relative overflow-hidden opacity-20 hover:opacity-40 transition-all duration-1000 aspect-square"
@@ -199,31 +68,31 @@ export default function GalleryPage() {
                             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-8">
                                 <Camera className="w-5 h-5 text-yellow-400" />
                                 <span className="text-white text-sm font-bold tracking-wider uppercase">
-                                    Visual Journey
+                                    {galleryConfig.hero.badge}
                                 </span>
                             </div>
 
                             {/* Main Title */}
                             <div className="mb-8">
                                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-tight mb-4">
-                                    <span className="block">Moments</span>
-                                    <span className="text-yellow-400">of</span>
-                                    <span className="text-teal-400 ml-4">Grace</span>
+                                    <span className="block">{galleryConfig.hero.title.line1}</span>
+                                    <span className="text-yellow-400">{galleryConfig.hero.title.line2}</span>
+                                    <span className="text-teal-400 ml-4">{galleryConfig.hero.title.line3}</span>
                                 </h1>
                             </div>
 
                             {/* Subtitle */}
                             <p className="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed opacity-90 mb-12">
-                                Every frame captures the essence of compassion, dignity, and the sacred bond between humanity and service
+                                {galleryConfig.hero.description}
                             </p>
 
                             {/* Stats */}
                             <div className="flex flex-wrap justify-center gap-8">
                                 {[
-                                    { number: "2,840+", label: "Moments Captured" },
-                                    { number: "16", label: "Photo Categories" },
-                                    { number: "38+", label: "Cities Documented" },
-                                    { number: "400+", label: "Stories Told" }
+                                    galleryConfig.hero.stats.momentsCaptured,
+                                    galleryConfig.hero.stats.categories,
+                                    galleryConfig.hero.stats.citiesDocumented,
+                                    galleryConfig.hero.stats.storiesTold
                                 ].map((stat, idx) => (
                                     <div key={idx} className="text-center">
                                         <div className="text-2xl md:text-3xl font-black text-yellow-400 mb-1">
@@ -335,7 +204,7 @@ export default function GalleryPage() {
                     {/* Load More Button */}
                     <div className="text-center mt-12">
                         <button className="bg-yellow-400 hover:bg-yellow-500 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm transition-all shadow-lg hover:shadow-xl">
-                            Load More Images
+                            {galleryConfig.gallery.loadMoreText}
                         </button>
                     </div>
                 </Container>

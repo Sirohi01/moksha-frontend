@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Container } from "@/components/ui/Elements";
-import { BookOpen, ShieldCheck, Mail, Phone, ChevronRight, Scale, Gavel, HelpCircle, X, User, FileText, MapPin, IndianRupee, Building2, Users } from "lucide-react";
+import { X, HelpCircle, ChevronRight, Phone, Mail, Building2, MapPin, ShieldCheck } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { schemesConfig } from "@/config/schemes.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function SchemesPage() {
   const [selectedScheme, setSelectedScheme] = useState<string | null>(null);
@@ -49,7 +51,7 @@ export default function SchemesPage() {
     
     // Validation
     if (!form.name || !form.email || !form.phone || !form.address || !form.city || !form.state || !form.pincode) {
-      alert('Please fill in all required fields');
+      alert(schemesConfig.form.validation.fillRequiredFields);
       return;
     }
 
@@ -121,229 +123,26 @@ export default function SchemesPage() {
     document.body.style.overflow = 'unset';
   };
 
-  const centralSchemes = [
-    {
-      title: "National Family Benefit Scheme (NFBS)",
-      authority: "National Social Assistance Programme",
-      benefit: "₹20,000 lump sum",
-      eligibility: "BPL family, Breadwinner death (age 18-64)",
-      purpose: "Family को death के बाद financial help",
-      status: "Active",
-      icon: Users,
-      color: "text-[#f4c430]"
-    },
-    {
-      title: "Antyesti / Antim Sanskar Assistance",
-      authority: "Central Government",
-      benefit: "₹3,000 – ₹5,000 funeral expense",
-      eligibility: "Poor / destitute families",
-      purpose: "Implemented mostly through state governments",
-      status: "Active",
-      icon: BookOpen,
-      color: "text-[#20b2aa]"
-    }
-  ];
+  const centralSchemes = schemesConfig.centralSchemes.map(scheme => ({
+    ...scheme,
+    icon: getIcon(scheme.icon)
+  }));
 
-  const stateSchemes = [
-    {
-      state: "Uttar Pradesh",
-      schemes: [
-        {
-          title: "Raja Harishchandra Antyeshti Sahayata Yojana",
-          benefit: "₹3,000 funeral expense",
-          eligibility: "Poor families",
-          icon: Building2,
-          description: "UP government की यह योजना गरीब परिवारों को अंतिम संस्कार के लिए वित्तीय सहायता प्रदान करती है।"
-        },
-        {
-          title: "Dattopant Thengadi Mratak Shramik Sahayata",
-          benefit: "Financial help for construction workers",
-          eligibility: "Construction workers के death पर",
-          icon: Users,
-          description: "निर्माण श्रमिकों की मृत्यु पर उनके परिवार को वित्तीय सहायता प्रदान की जाती है।"
-        }
-      ]
-    },
-    {
-      state: "Rajasthan",
-      schemes: [
-        {
-          title: "Antyesti Sahayata Yojana",
-          benefit: "₹5,000 funeral expense",
-          eligibility: "BPL families",
-          icon: IndianRupee,
-          description: "राजस्थान सरकार द्वारा BPL परिवारों को अंतिम संस्कार हेतु वित्तीय सहायता।"
-        }
-      ]
-    },
-    {
-      state: "Madhya Pradesh",
-      schemes: [
-        {
-          title: "Antyeshti Sahayata Yojana",
-          benefit: "₹5,000",
-          eligibility: "Poor families",
-          icon: BookOpen,
-          description: "मध्य प्रदेश में गरीब परिवारों के लिए अंतिम संस्कार सहायता योजना।"
-        }
-      ]
-    },
-    {
-      state: "Bihar",
-      schemes: [
-        {
-          title: "Kabir Antyeshti Anudan Yojana",
-          benefit: "₹3,000",
-          eligibility: "BPL families - Direct payment family को",
-          icon: Users,
-          description: "बिहार सरकार की यह योजना BPL परिवारों को सीधे भुगतान के रूप में सहायता प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Jharkhand",
-      schemes: [
-        {
-          title: "Mukhyamantri Antyeshti Sahayata",
-          benefit: "₹3,000 – ₹5,000",
-          eligibility: "Poor families",
-          icon: Building2,
-          description: "झारखंड के मुख्यमंत्री अंतिम संस्कार सहायता योजना।"
-        }
-      ]
-    },
-    {
-      state: "Chhattisgarh",
-      schemes: [
-        {
-          title: "Antyeshti Sahayata Scheme",
-          benefit: "₹2,000 – ₹5,000",
-          eligibility: "BPL families",
-          icon: IndianRupee,
-          description: "छत्तीसगढ़ सरकार की अंतिम संस्कार सहायता योजना।"
-        }
-      ]
-    },
-    {
-      state: "West Bengal",
-      schemes: [
-        {
-          title: "Samobyathi Scheme",
-          benefit: "₹2,000 funeral assistance",
-          eligibility: "Poor families",
-          icon: BookOpen,
-          description: "पश्चिम बंगाल की समोब्यथी योजना गरीब परिवारों को अंतिम संस्कार सहायता प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Odisha",
-      schemes: [
-        {
-          title: "Harischandra Sahayata Yojana",
-          benefit: "₹2,000 cash + Free cremation facilities",
-          eligibility: "Destitute families",
-          icon: Users,
-          description: "ओडिशा की हरिश्चंद्र सहायता योजना नकद राशि और मुफ्त दाह संस्कार की सुविधा प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Gujarat",
-      schemes: [
-        {
-          title: "Manav Garima / Funeral Assistance",
-          benefit: "Funeral cost support",
-          eligibility: "Poor families",
-          icon: Building2,
-          description: "गुजरात की मानव गरिमा योजना गरीब परिवारों को अंतिम संस्कार की लागत में सहायता प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Maharashtra",
-      schemes: [
-        {
-          title: "Sanjay Gandhi Niradhar Anudan Yojana",
-          benefit: "Death assistance + funeral support",
-          eligibility: "Destitute families",
-          icon: IndianRupee,
-          description: "महाराष्ट्र की संजय गांधी निराधार अनुदान योजना मृत्यु सहायता और अंतिम संस्कार सहायता प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Tamil Nadu",
-      schemes: [
-        {
-          title: "Perunthalaivar Kamarajar Funeral Assistance Scheme",
-          benefit: "₹15,000 funeral expense",
-          eligibility: "Poor families",
-          icon: BookOpen,
-          description: "तमिलनाडु की पेरुंथलैवर कामराज अंतिम संस्कार सहायता योजना सबसे अधिक राशि प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Karnataka",
-      schemes: [
-        {
-          title: "Sandhya Suraksha / Death Assistance",
-          benefit: "Financial help",
-          eligibility: "Poor families",
-          icon: Users,
-          description: "कर्नाटक की संध्या सुरक्षा योजना गरीब परिवारों को मृत्यु सहायता प्रदान करती है।"
-        }
-      ]
-    },
-    {
-      state: "Delhi",
-      schemes: [
-        {
-          title: "Municipal Cremation Support",
-          benefit: "Electric / CNG crematorium free या subsidized",
-          eligibility: "Poor families को free cremation facility",
-          icon: Building2,
-          description: "दिल्ली नगर निगम गरीब परिवारों को मुफ्त या सब्सिडी वाली दाह संस्कार सुविधा प्रदान करता है।"
-        }
-      ]
-    }
-  ];
+  const stateSchemes = schemesConfig.stateSchemes.map(stateData => ({
+    ...stateData,
+    schemes: stateData.schemes.map(scheme => ({
+      ...scheme,
+      icon: getIcon(scheme.icon)
+    }))
+  }));
 
-  const otherSchemes = [
-    {
-      title: "Construction Worker Welfare Board",
-      benefit: "₹5,000-₹10,000 funeral assistance",
-      eligibility: "Registered construction workers",
-      description: "निर्माण श्रमिक कल्याण बोर्ड के तहत पंजीकृत श्रमिकों को अंतिम संस्कार सहायता।"
-    },
-    {
-      title: "SC/ST Welfare Department",
-      benefit: "₹2,000-₹5,000 funeral assistance",
-      eligibility: "SC/ST families",
-      description: "अनुसूचित जाति/जनजाति कल्याण विभाग द्वारा अंतिम संस्कार सहायता।"
-    },
-    {
-      title: "Panchayat Relief Fund",
-      benefit: "Emergency death assistance",
-      eligibility: "Village level support",
-      description: "पंचायत राहत कोष से आपातकालीन मृत्यु सहायता प्रदान की जाती है।"
-    }
-  ];
+  const otherSchemes = schemesConfig.otherSchemes.map(scheme => ({
+    ...scheme,
+    icon: getIcon(scheme.icon)
+  }));
 
-  const assistanceTypes = [
-    { type: "BPL funeral assistance", amount: "₹2,000 – ₹5,000" },
-    { type: "Labour welfare funeral", amount: "₹5,000 – ₹10,000" },
-    { type: "State special schemes", amount: "₹3,000 – ₹15,000" },
-    { type: "National Family Benefit", amount: "₹20,000" }
-  ];
-
-  const helpSources = [
-    "Panchayat",
-    "Municipal Corporation", 
-    "District Magistrate office",
-    "Social Welfare Department"
-  ];
+  const assistanceTypes = schemesConfig.assistanceTypes;
+  const helpSources = schemesConfig.helpSources;
 
   return (
     <main className="min-h-screen bg-white">
@@ -353,11 +152,11 @@ export default function SchemesPage() {
         <Container>
           <div className="max-w-4xl text-center mx-auto">
             <div className="inline-block px-4 py-1.5 rounded-full bg-amber-100 border border-amber-200 mb-6">
-              <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">GOVERNMENT RESOURCES</p>
+              <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{schemesConfig.hero.badge}</p>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">FUNERAL ASSISTANCE <br /><span className="text-amber-700">SCHEMES</span></h1>
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{schemesConfig.hero.title} <br /><span className="text-amber-700">{schemesConfig.hero.subtitle}</span></h1>
             <p className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-3xl mx-auto">
-              Complete guide to Central and State government schemes providing financial assistance for funeral expenses and family support
+              {schemesConfig.hero.description}
             </p>
           </div>
         </Container>
@@ -375,7 +174,7 @@ export default function SchemesPage() {
                   : 'bg-white text-gray-600 hover:bg-stone-50'
               }`}
             >
-              Central Government Schemes
+              {schemesConfig.tabs.central}
             </button>
             <button
               onClick={() => setActiveTab('state')}
@@ -385,7 +184,7 @@ export default function SchemesPage() {
                   : 'bg-white text-gray-600 hover:bg-stone-50'
               }`}
             >
-              State-Wise Schemes
+              {schemesConfig.tabs.state}
             </button>
           </div>
         </Container>
@@ -397,7 +196,7 @@ export default function SchemesPage() {
           <Container>
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-                Central Government Schemes (All India)
+                {schemesConfig.sections.centralTitle}
               </h2>
               <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
             </div>
@@ -438,7 +237,7 @@ export default function SchemesPage() {
                           onClick={() => openForm(scheme.title)}
                           className="flex items-center gap-2 text-[#20b2aa] hover:text-[#1a9b94] font-medium transition-colors"
                         >
-                          Apply for this scheme <ChevronRight size={16} />
+                          {schemesConfig.buttons.applyForScheme} <ChevronRight size={16} />
                         </button>
                       </div>
                     </div>
@@ -450,7 +249,7 @@ export default function SchemesPage() {
             {/* Other Government Assistance */}
             <div className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-8 mb-16">
               <h3 className="text-2xl font-black uppercase tracking-tighter text-stone-900 mb-6">
-                Other Government Funeral Assistance
+                {schemesConfig.sections.otherAssistanceTitle}
               </h3>
               <div className="grid md:grid-cols-3 gap-6">
                 {otherSchemes.map((scheme, i) => (
@@ -465,7 +264,7 @@ export default function SchemesPage() {
                       onClick={() => openForm(scheme.title)}
                       className="flex items-center gap-2 text-[#20b2aa] hover:text-[#1a9b94] font-medium transition-colors text-sm"
                     >
-                      Apply for assistance <ChevronRight size={16} />
+                      {schemesConfig.buttons.applyForAssistance} <ChevronRight size={16} />
                     </button>
                   </div>
                 ))}
@@ -475,14 +274,14 @@ export default function SchemesPage() {
             {/* Typical Assistance Amounts */}
             <div className="bg-white rounded-2xl border border-blue-100 p-8">
               <h3 className="text-2xl font-black uppercase tracking-tighter text-stone-900 mb-6">
-                💰 Typical Government Funeral Assistance (India)
+                {schemesConfig.sections.assistanceAmountsTitle}
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-stone-200">
-                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">Scheme Type</th>
-                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">Amount</th>
+                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">{schemesConfig.tableHeaders.schemeType}</th>
+                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">{schemesConfig.tableHeaders.amount}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -506,7 +305,7 @@ export default function SchemesPage() {
           <Container>
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-4">
-                🗺️ State-Wise Funeral / Cremation Schemes
+                {schemesConfig.sections.stateTitle}
               </h2>
               <div className="w-20 h-1 bg-[#20b2aa] mx-auto"></div>
             </div>
@@ -545,7 +344,7 @@ export default function SchemesPage() {
                                 onClick={() => openForm(scheme.title)}
                                 className="flex items-center gap-2 text-[#20b2aa] hover:text-[#1a9b94] font-medium transition-colors text-sm"
                               >
-                                Apply for this scheme <ChevronRight size={16} />
+                                {schemesConfig.buttons.applyForScheme} <ChevronRight size={16} />
                               </button>
                               <div className="text-xs text-stone-400 font-medium">
                                 {stateData.state}
@@ -568,10 +367,10 @@ export default function SchemesPage() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black uppercase tracking-tighter text-stone-900 mb-4">
-              ✅ Where to Get Help
+              {schemesConfig.sections.helpSourcesTitle}
             </h2>
             <p className="text-stone-600 max-w-2xl mx-auto">
-              Poor families को usually help milti hai through these government offices:
+              {schemesConfig.sections.helpSourcesDescription}
             </p>
           </div>
           
@@ -602,36 +401,35 @@ export default function SchemesPage() {
                   <HelpCircle size={28} className="text-black" />
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-                  NEED HELP <br />
-                  <span className="text-[#f4c430]">FOR APPLYING?</span>
+                  {schemesConfig.help.title} <br />
+                  <span className="text-[#f4c430]">{schemesConfig.help.subtitle}</span>
                 </h2>
                 <p className="text-blue-100 font-medium text-lg leading-relaxed max-w-xl">
-                  Dealing with government paperwork can be overwhelming during a crisis.
-                  Our trained volunteers will help you navigate the entire process, 100% free.
+                  {schemesConfig.help.description}
                 </p>
               </div>
 
               <div className="lg:w-2/5 w-full">
                 <div className="space-y-10">
                   {/* Call Action */}
-                  <a href="tel:+911800123456" className="flex items-center gap-6 group/link">
+                  <a href={`tel:+91${schemesConfig.help.phone.replace(/\D/g, '')}`} className="flex items-center gap-6 group/link">
                     <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover/link:border-[#f4c430] group-hover/link:bg-[#f4c430]/10 transition-all">
                       <Phone className="text-white group-hover/link:text-[#f4c430] transition-colors" size={24} />
                     </div>
                     <div className="text-left">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">CALL US</p>
-                      <p className="text-2xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">1800-123-456</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">{schemesConfig.help.callLabel}</p>
+                      <p className="text-2xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">{schemesConfig.help.phone}</p>
                     </div>
                   </a>
 
                   {/* Email Action */}
-                  <a href="mailto:schemes@mokshaseva.org" className="flex items-center gap-6 group/link">
+                  <a href={`mailto:${schemesConfig.help.email}`} className="flex items-center gap-6 group/link">
                     <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover/link:border-[#f4c430] group-hover/link:bg-[#f4c430]/10 transition-all">
                       <Mail className="text-white group-hover/link:text-[#f4c430] transition-colors" size={24} />
                     </div>
                     <div className="text-left">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">EMAIL SUPPORT</p>
-                      <p className="text-xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">schemes@mokshaseva.org</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">{schemesConfig.help.emailLabel}</p>
+                      <p className="text-xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">{schemesConfig.help.email}</p>
                     </div>
                   </a>
                 </div>
@@ -668,19 +466,19 @@ export default function SchemesPage() {
                 <div className="w-24 h-24 rounded-full bg-[#f4c430] flex items-center justify-center mx-auto mb-8">
                   <ShieldCheck className="text-black" size={48} />
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-6 leading-none">REQUEST RECEIVED!</h2>
+                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-6 leading-none">{schemesConfig.form.success.title}</h2>
                 <p className="text-stone-600 font-medium text-lg leading-relaxed mb-8">
-                  Thank you for reaching out. Our schemes assistance team will contact you within 24 hours to help you with the application process.
+                  {schemesConfig.form.success.description}
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Button onClick={closeForm} className="bg-stone-900 text-white px-10 py-5 font-black uppercase tracking-widest">
-                    CLOSE
+                    {schemesConfig.form.success.closeButton}
                   </Button>
                   <button 
                     onClick={() => setSubmitted(false)} 
                     className="bg-white border-2 border-stone-200 text-stone-900 px-10 py-5 rounded-full font-black uppercase tracking-widest text-[12px] hover:border-[#7ab800] transition-all"
                   >
-                    SUBMIT ANOTHER REQUEST
+                    {schemesConfig.form.success.submitAnotherButton}
                   </button>
                 </div>
               </div>
@@ -689,138 +487,105 @@ export default function SchemesPage() {
               <div className="p-8 md:p-12">
                 <div className="mb-8">
                   <div className="inline-block px-4 py-1.5 rounded-full bg-[#f4c430]/10 border border-[#f4c430]/20 mb-4">
-                    <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] leading-none">SCHEME ASSISTANCE</p>
+                    <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{schemesConfig.form.formHeader.badge}</p>
                   </div>
                   <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">
-                    REQUEST HELP FOR<br />
+                    {schemesConfig.form.formHeader.title}<br />
                     <span className="text-[#f4c430]">{selectedScheme}</span>
                   </h2>
                   <p className="text-stone-500 font-medium leading-relaxed">
-                    Fill in your details and our team will guide you through the entire application process.
+                    {schemesConfig.form.formHeader.description}
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">FULL NAME *</label>
+                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.fullName} *</label>
                     <input
                       type="text"
                       required
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                      placeholder="Enter your full name"
+                      placeholder={schemesConfig.form.placeholders.fullName}
                     />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">EMAIL ADDRESS *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.emailAddress} *</label>
                       <input
                         type="email"
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder="your.email@example.com"
+                        placeholder={schemesConfig.form.placeholders.email}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">PHONE NUMBER *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.phoneNumber} *</label>
                       <input
                         type="tel"
                         required
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder="+91 98765 43210"
+                        placeholder={schemesConfig.form.placeholders.phone}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">FULL ADDRESS *</label>
+                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.fullAddress} *</label>
                     <textarea
                       required
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
                       rows={3}
                       className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium resize-none"
-                      placeholder="Complete address"
+                      placeholder={schemesConfig.form.placeholders.address}
                     />
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">CITY *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.city} *</label>
                       <input
                         type="text"
                         required
                         value={form.city}
                         onChange={(e) => setForm({ ...form, city: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder="City name"
+                        placeholder={schemesConfig.form.placeholders.city}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">STATE *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.state} *</label>
                       <select
                         required
                         value={form.state}
                         onChange={(e) => setForm({ ...form, state: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                       >
-                        <option value="">Select state</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                        <option value="Assam">Assam</option>
-                        <option value="Bihar">Bihar</option>
-                        <option value="Chhattisgarh">Chhattisgarh</option>
-                        <option value="Goa">Goa</option>
-                        <option value="Gujarat">Gujarat</option>
-                        <option value="Haryana">Haryana</option>
-                        <option value="Himachal Pradesh">Himachal Pradesh</option>
-                        <option value="Jharkhand">Jharkhand</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Kerala">Kerala</option>
-                        <option value="Madhya Pradesh">Madhya Pradesh</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                        <option value="Manipur">Manipur</option>
-                        <option value="Meghalaya">Meghalaya</option>
-                        <option value="Mizoram">Mizoram</option>
-                        <option value="Nagaland">Nagaland</option>
-                        <option value="Odisha">Odisha</option>
-                        <option value="Punjab">Punjab</option>
-                        <option value="Rajasthan">Rajasthan</option>
-                        <option value="Sikkim">Sikkim</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                        <option value="Telangana">Telangana</option>
-                        <option value="Tripura">Tripura</option>
-                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        <option value="Uttarakhand">Uttarakhand</option>
-                        <option value="West Bengal">West Bengal</option>
-                        <option value="Delhi">Delhi</option>
-                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                        <option value="Ladakh">Ladakh</option>
-                        <option value="Puducherry">Puducherry</option>
-                        <option value="Chandigarh">Chandigarh</option>
-                        <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
-                        <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
-                        <option value="Lakshadweep">Lakshadweep</option>
+                        <option value="">{schemesConfig.form.labels.selectState}</option>
+                        {schemesConfig.states.map((state) => (
+                          <option key={state} value={state}>{state}</option>
+                        ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">PINCODE *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.pincode} *</label>
                       <input
                         type="text"
                         required
                         value={form.pincode}
                         onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder="123456"
+                        placeholder={schemesConfig.form.placeholders.pincode}
                         pattern="[0-9]{6}"
                         maxLength={6}
                       />
@@ -828,19 +593,19 @@ export default function SchemesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">ADDITIONAL DETAILS (OPTIONAL)</label>
+                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.additionalDetails}</label>
                     <textarea
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       rows={4}
                       className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium resize-none"
-                      placeholder="Any specific questions or urgent requirements..."
+                      placeholder={schemesConfig.form.placeholders.message}
                     />
                   </div>
 
                   <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6">
                     <p className="text-amber-800 text-sm font-medium leading-relaxed">
-                      <strong className="font-black">Note:</strong> Our team will contact you within 24 hours to verify your eligibility and guide you through the documentation process. All assistance is completely free.
+                      <strong className="font-black">{schemesConfig.form.note.split(':')[0]}:</strong> {schemesConfig.form.note.split(': ')[1]}
                     </p>
                   </div>
 
@@ -848,11 +613,11 @@ export default function SchemesPage() {
                     type="submit"
                     className="w-full bg-[#f4c430] hover:bg-[#eab308] text-black py-5 font-black uppercase tracking-widest shadow-xl"
                   >
-                    SUBMIT REQUEST
+                    {schemesConfig.form.submitButton}
                   </Button>
 
                   <p className="text-stone-400 text-[10px] text-center uppercase tracking-widest leading-relaxed">
-                    Your information is confidential and will only be used for scheme assistance.
+                    {schemesConfig.form.confidentialityNote}
                   </p>
                 </form>
               </div>

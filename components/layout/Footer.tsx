@@ -1,35 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, Facebook, Twitter, Instagram, Youtube, ArrowUpRight } from "lucide-react";
+import { Phone, Mail, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Elements";
+import { layoutConfig } from "@/config/layout.config";
+import { getIcon } from "@/config/icons.config";
 
-const footerLinks = {
-  Mission: [
-    { label: "Our Story", href: "/about" },
-    { label: "Cremation Services", href: "/services" },
-    { label: "The Reach", href: "/our-reach" },
-    { label: "Transparency", href: "/transparency" },
-  ],
-  Engagement: [
-    { label: "Report a Body", href: "/report" },
-    { label: "Volunteer Portal", href: "/volunteer" },
-    { label: "Stories of Change", href: "/stories" },
-    { label: "Remembrance Wall", href: "/remembrance" },
-  ],
-  Legacy: [
-    { label: "Donate Now", href: "/donate" },
-    { label: "Legacy Giving", href: "/legacy-giving" },
-    { label: "Sponsor a Tribute", href: "/tribute" },
-    { label: "Documentaries", href: "/documentaries" },
-  ],
-  Trust: [
-    { label: "Audit & Compliance", href: "/compliance" },
-    { label: "Govt. Schemes", href: "/schemes" },
-    { label: "Press Room", href: "/press" },
-    { label: "FAQ & Support", href: "/faq" },
-    { label: "Contact Us", href: "/contact" },
-  ],
-};
+const footerLinks = layoutConfig.footer.links;
 
 export default function Footer() {
   return (
@@ -40,10 +16,10 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.4)]" />
-              <p className="text-white font-black text-[9px] uppercase tracking-[0.3em] leading-none">EMERGENCY STATUS: 24/7 ACTIVE RESPONSE</p>
+              <p className="text-white font-black text-[9px] uppercase tracking-[0.3em] leading-none">{layoutConfig.footer.emergency.status}</p>
             </div>
-            <Link href="/report" className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2">
-              REPORT UNCLAIMED BODY <ArrowUpRight size={12} />
+            <Link href={layoutConfig.footer.emergency.reportLink.href} className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2">
+              {layoutConfig.footer.emergency.reportLink.text} <ArrowUpRight size={12} />
             </Link>
           </div>
         </Container>
@@ -58,30 +34,29 @@ export default function Footer() {
               <div className="flex items-center gap-3 mb-4">
                 <div className="relative w-16 h-16">
                   <Image
-                    src="/logo.png"
-                    alt="Moksha Seva Logo"
+                    src={layoutConfig.footer.brand.logo.src}
+                    alt={layoutConfig.footer.brand.logo.alt}
                     fill
                     className="object-contain"
                   />
                 </div>
                 <div>
-                  <span className="font-serif text-2xl font-bold text-white leading-none block tracking-tight italic">Moksha Seva</span>
-                  <span className="text-[9px] text-[#7ab800] font-black uppercase tracking-[0.4em] block leading-none mt-1">THE FINAL DIGNITY</span>
+                  <span className="font-serif text-2xl font-bold text-white leading-none block tracking-tight italic">{layoutConfig.footer.brand.title}</span>
+                  <span className="text-[9px] text-[#7ab800] font-black uppercase tracking-[0.4em] block leading-none mt-1">{layoutConfig.footer.brand.subtitle}</span>
                 </div>
               </div>
             </div>
             <p className="text-white text-sm leading-relaxed mb-8 font-medium max-w-xs">
-              A world-class humanitarian force dedicated to the restoration of dignity for the forgotten dead.
-              Powered by devotion and the vision of a society where no one departs alone.
+              {layoutConfig.footer.brand.description}
             </p>
             <div className="space-y-4">
-              <a href="tel:1800123456" className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/call">
+              <a href={layoutConfig.footer.contact.phone.number} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/call">
                 <Phone size={14} className="text-[#7ab800]" />
-                <span className="text-xs font-black tracking-[0.2em] font-mono">1800-123-456</span>
+                <span className="text-xs font-black tracking-[0.2em] font-mono">{layoutConfig.footer.contact.phone.display}</span>
               </a>
-              <a href="mailto:info@mokshaseva.org" className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/mail">
+              <a href={layoutConfig.footer.contact.email.address} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/mail">
                 <Mail size={14} className="text-[#7ab800]" />
-                <span className="text-xs font-black tracking-[0.2em] lowercase font-mono">info@mokshaseva.org</span>
+                <span className="text-xs font-black tracking-[0.2em] lowercase font-mono">{layoutConfig.footer.contact.email.display}</span>
               </a>
             </div>
           </div>
@@ -114,22 +89,26 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-white/5 rounded-full border border-white/10">
               <div className="w-1.5 h-1.5 rounded-full bg-[#7ab800] animate-pulse" />
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#7ab800]">MISSION SCALE: 12+ CITIES ACTIVE</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#7ab800]">{layoutConfig.footer.bottom.missionStatus}</p>
             </div>
             <p className="text-white text-[9px] font-black uppercase tracking-[0.2em]">
-              © {new Date().getFullYear()} MOKSHA SEVA
+              © {new Date().getFullYear()} {layoutConfig.footer.bottom.copyright}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-8">
-            <Link href="/compliance" className="text-white hover:text-[#7ab800] text-[9px] font-black uppercase tracking-[0.15em] transition-colors">TAX EXEMPT (80G)</Link>
-            <Link href="/privacy" className="text-white hover:text-[#7ab800] text-[9px] font-black uppercase tracking-[0.15em] transition-colors">Privacy Policy</Link>
+            {layoutConfig.footer.bottom.legalLinks.map((link) => (
+              <Link key={link.href} href={link.href} className="text-white hover:text-[#7ab800] text-[9px] font-black uppercase tracking-[0.15em] transition-colors">{link.label}</Link>
+            ))}
             <div className="flex items-center gap-6 ml-2">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
-                <a key={i} href="#" className="text-white hover:text-[#7ab800] transition-all transform hover:-translate-y-1">
-                  <Icon size={16} />
-                </a>
-              ))}
+              {layoutConfig.footer.bottom.socialPlatforms.map((platform, i) => {
+                const Icon = getIcon(platform);
+                return (
+                  <a key={i} href="#" className="text-white hover:text-[#7ab800] transition-all transform hover:-translate-y-1">
+                    <Icon size={16} />
+                  </a>
+                );
+              })}
             </div>
           </div>
         </div>

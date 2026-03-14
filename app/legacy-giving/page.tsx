@@ -2,16 +2,18 @@
 import React from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Elements";
-import { Heart, ShieldCheck, Mail, Phone, ChevronRight, Flower, Scale, Banknote } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { legacyGivingConfig } from "@/config/legacy-giving.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function LegacyGivingPage() {
-    const options = [
-        { title: "Legacy in Wills", desc: "A bequest in your will ensures that your kindness lives on even after you're gone. Help a soul depart with the same dignity you would want for yourself.", icon: Scale },
-        { title: "Endowment Giving", desc: "A significant one-time contribution to our Permanent Fund that generates income for years to come, ensuring our 24/7 mission never stops.", icon: Banknote },
-        { title: "The Family Legacy", desc: "Start a collective family fund where your children can honor their ancestors by serving the most forgotten people in our society.", icon: ShieldCheck },
-        { title: "Property Bequest", desc: "Donate property to build response centers or volunteer housing in cities where help is needed most.", icon: Flower },
-    ];
+    const options = legacyGivingConfig.options.map(option => ({
+        ...option,
+        icon: getIcon(option.icon)
+    }));
+
+    const MessageIcon = getIcon(legacyGivingConfig.message.icon);
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -21,12 +23,11 @@ export default function LegacyGivingPage() {
                 <Container>
                     <div className="max-w-3xl">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">THE 100-YEAR MISSION</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{legacyGivingConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">LEGACY <span className="text-[#7ab800]">GIVING</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{legacyGivingConfig.hero.title} <span className="text-[#7ab800]">{legacyGivingConfig.hero.subtitle}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            Your kindness can be immortal. By including Moksha Seva in your long-term planning,
-                            you ensure no individual dies alone or without dignity for the next century.
+                            {legacyGivingConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -48,9 +49,9 @@ export default function LegacyGivingPage() {
                                     {option.desc}
                                 </p>
 
-                                <Link href="/legacy-giving/request-info">
+                                <Link href={legacyGivingConfig.buttons.requestInfoLink}>
                                     <button className="flex items-center gap-4 px-10 py-4 rounded-full bg-stone-50 text-[11px] font-black uppercase tracking-widest text-[#7ab800] hover:bg-[#7ab800] hover:text-white transition-all group-hover:bg-[#7ab800]/5 group-hover:text-[#7ab800]">
-                                        REQUEST INFO PACK <ChevronRight size={14} />
+                                        {legacyGivingConfig.buttons.requestInfoPack} <ChevronRight size={14} />
                                     </button>
                                 </Link>
                             </div>
@@ -65,19 +66,18 @@ export default function LegacyGivingPage() {
                     <div className="max-w-4xl mx-auto p-12 md:p-20 bg-[#7ab800] rounded-[5rem] text-center shadow-2xl overflow-hidden relative">
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/10 blur-3xl rounded-full" />
                         <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto mb-10 shadow-lg relative z-10">
-                            <ShieldCheck className="text-[#7ab800]" size={40} />
+                            <MessageIcon className="text-[#7ab800]" size={40} />
                         </div>
-                        <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.85] mb-8">LEAVE A LEGACY <br />OF <span className="opacity-60 text-stone-900 italic">DIGNITY</span></h2>
+                        <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.85] mb-8">{legacyGivingConfig.message.title} <br />{legacyGivingConfig.message.subtitle} <span className="opacity-60 text-stone-900 italic">{legacyGivingConfig.message.subtitleHighlight}</span></h2>
                         <p className="text-white font-medium text-xl leading-relaxed mb-12">
-                            Every soul we honor in 2124 will be because of the visionaries of 2024.
-                            Be the light for the generations you will never see.
+                            {legacyGivingConfig.message.description}
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center">
-                            <Link href="/contact">
-                                <button className="bg-stone-900 text-white px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-stone-900/10 hover:bg-stone-800 transition-all">TALK TO OUR FOUNDER</button>
+                            <Link href={legacyGivingConfig.message.buttons.talkToFounderLink}>
+                                <button className="bg-stone-900 text-white px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-stone-900/10 hover:bg-stone-800 transition-all">{legacyGivingConfig.message.buttons.talkToFounder}</button>
                             </Link>
-                            <Link href="/legacy-giving/request-info">
-                                <button className="bg-white text-[#7ab800] px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl transition-all hover:bg-stone-50">DAWN OF THE SECOND CENTURY PDF</button>
+                            <Link href={legacyGivingConfig.message.buttons.downloadPDFLink}>
+                                <button className="bg-white text-[#7ab800] px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl transition-all hover:bg-stone-50">{legacyGivingConfig.message.buttons.downloadPDF}</button>
                             </Link>
                         </div>
                     </div>

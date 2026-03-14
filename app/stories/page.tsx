@@ -2,15 +2,11 @@
 import React from "react";
 import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
-import { Video, Mail, Phone, ChevronRight, Play, Clock, Heart } from "lucide-react";
-import Button from "@/components/ui/Button";
+import { storiesConfig } from "@/config/stories.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function StoriesPage() {
-    const stories = [
-        { title: "The Man with the Silver Key", duration: "4:15", type: "Short Film", desc: "A forgotten watchmaker in Varanasi and the Saathi who became his son for one final hour.", image: "https://images.unsplash.com/photo-1533158307587-828f0a76ef46?q=80&w=2000&auto=format&fit=crop" },
-        { title: "Night Shift Dignity", duration: "6:30", type: "Documentary", desc: "Follow our Lucknow response unit through a midnight call that changed their lives forever.", image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2000&auto=format&fit=crop" },
-        { title: "Naming the Nameless", duration: "3:45", type: "Cinematic Short", desc: "The deep investigation process we follow to find the identity of those forgotten by society.", image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2000&auto=format&fit=crop" },
-    ];
+    const stories = storiesConfig.storiesGrid.stories;
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -20,12 +16,11 @@ export default function StoriesPage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">STORIES OF RESILIENCE</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{storiesConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">NARRATIVES OF <br /><span className="text-[#7ab800]">DIGNITY</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{storiesConfig.hero.title} <br /><span className="text-[#7ab800]">{storiesConfig.hero.highlightText}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            Every person we serve has a story that was almost lost. We document these
-                            journeys to ensure their humanity is never forgotten.
+                            {storiesConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -38,24 +33,35 @@ export default function StoriesPage() {
                         {stories.map((story, i) => (
                             <div key={i} className="flex flex-col lg:flex-row items-center gap-12 group">
                                 <div className="lg:w-1/2 w-full aspect-video rounded-[3rem] overflow-hidden shadow-2xl relative">
-                                    <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
+                                    <Image src={story.image} alt={story.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
                                     <div className="absolute inset-0 bg-stone-900/30 group-hover:bg-stone-900/10 transition-colors" />
                                     <button className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white flex items-center justify-center text-[#7ab800] shadow-2xl hover:scale-110 transition-all">
-                                        <Play className="fill-[#7ab800] ml-1" size={28} />
+                                        {(() => {
+                                            const PlayIcon = getIcon('Play');
+                                            return <PlayIcon className="fill-[#7ab800] ml-1" size={28} />;
+                                        })()}
                                     </button>
                                     <div className="absolute bottom-6 left-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                                        <Clock size={12} /> {story.duration}
+                                        {(() => {
+                                            const ClockIcon = getIcon('Clock');
+                                            return <ClockIcon size={12} />;
+                                        })()} {story.duration}
                                     </div>
                                 </div>
                                 <div className="lg:w-1/2 text-left">
                                     <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.3em] mb-4">✦ {story.type}</p>
                                     <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-6">{story.title}</h3>
                                     <p className="text-stone-500 font-medium text-lg leading-relaxed mb-10">
-                                        {story.desc}
+                                        {story.description}
                                     </p>
                                     <div className="flex items-center gap-4">
-                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">WATCH NOW</button>
-                                        <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors"><Heart size={20} /></button>
+                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{storiesConfig.storiesGrid.buttons.watchNow}</button>
+                                        <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors" title={storiesConfig.storiesGrid.buttons.favorite}>
+                                            {(() => {
+                                                const HeartIcon = getIcon('Heart');
+                                                return <HeartIcon size={20} />;
+                                            })()}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -68,14 +74,13 @@ export default function StoriesPage() {
             <section className="py-24 bg-white border-t border-stone-100">
                 <Container>
                     <div className="max-w-4xl mx-auto p-12 md:p-20 bg-stone-50 rounded-[5rem] text-center border border-stone-200 overflow-hidden relative">
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">GET STORIES IN YOUR <span className="text-[#7ab800]">INBOX</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{storiesConfig.newsletter.title} <span className="text-[#7ab800]">{storiesConfig.newsletter.highlightText}</span></h2>
                         <p className="text-stone-500 font-medium text-lg leading-relaxed mb-12">
-                            Subscribe to &apos;The Dignity Dispatch&apos;—a monthly long-form narrative series about the souls we serve.
-                            No spam, just humanity.
+                            {storiesConfig.newsletter.description}
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
-                            <input type="email" placeholder="YOUR EMAIL ADDRESS" className="flex-1 h-16 rounded-full px-8 bg-white border border-stone-200 text-[11px] font-black uppercase tracking-widest outline-none focus:border-[#7ab800] transition-all shadow-inner" />
-                            <button className="h-16 bg-[#7ab800] text-white px-10 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-[#7ab800]/20 hover:scale-105 transition-all">SUBSCRIBE</button>
+                            <input type="email" placeholder={storiesConfig.newsletter.placeholder} className="flex-1 h-16 rounded-full px-8 bg-white border border-stone-200 text-[11px] font-black uppercase tracking-widest outline-none focus:border-[#7ab800] transition-all shadow-inner" />
+                            <button className="h-16 bg-[#7ab800] text-white px-10 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-[#7ab800]/20 hover:scale-105 transition-all">{storiesConfig.newsletter.buttonText}</button>
                         </div>
                     </div>
                 </Container>

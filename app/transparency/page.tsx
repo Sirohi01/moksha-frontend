@@ -1,32 +1,34 @@
 import type { Metadata } from "next";
 import { SectionHeader, Container, Badge } from "@/components/ui/Elements";
 import { mockCremationRecords, mockStats } from "@/lib/mockData";
-import { Shield, Download, ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { transparencyConfig } from "@/config/transparency.config";
+import { getIcon } from "@/config/icons.config";
 
-export const metadata: Metadata = { title: "Transparency Dashboard" };
+export const metadata: Metadata = { title: transparencyConfig.metadata.title };
 
 function statusBadge(record: { certificateNumber: string }) {
-  return <Badge variant="green">✓ Certificate Issued</Badge>;
+  return <Badge variant="green">{transparencyConfig.records.certificateIssuedBadge}</Badge>;
 }
 
 export default function TransparencyPage() {
+  const HeroIcon = getIcon(transparencyConfig.hero.icon);
   return (
     <>
       <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-12 md:py-16 lg:py-20">
         <Container>
           <div className="flex items-start gap-4">
             <div className="w-14 h-14 bg-green-900/50 rounded-xl flex items-center justify-center border border-green-700">
-              <Shield className="w-7 h-7 text-green-400" />
+              <HeroIcon className="w-7 h-7 text-green-400" />
             </div>
             <div>
-              <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">✦ Public Record ✦</span>
+              <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{transparencyConfig.hero.badge}</span>
               <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-3">
-                Transparency Dashboard
+                {transparencyConfig.hero.title}
               </h1>
               <p className="text-stone-300 text-lg max-w-2xl">
-                Every cremation performed by Moksha Seva is publicly documented. Search, verify,
-                and download certificates freely.
+                {transparencyConfig.hero.description}
               </p>
             </div>
           </div>
@@ -38,10 +40,10 @@ export default function TransparencyPage() {
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { label: "Total Cremations", value: mockStats.totalCremations.toLocaleString() },
-              { label: "Certificates Issued", value: (mockStats.totalCremations - 12).toLocaleString() },
-              { label: "Active Cases", value: mockStats.activeCases.toString() },
-              { label: "Cities Covered", value: mockStats.citiesCovered.toString() },
+              { label: transparencyConfig.stats.labels.totalCremations, value: mockStats.totalCremations.toLocaleString() },
+              { label: transparencyConfig.stats.labels.certificatesIssued, value: (mockStats.totalCremations - 12).toLocaleString() },
+              { label: transparencyConfig.stats.labels.activeCases, value: mockStats.activeCases.toString() },
+              { label: transparencyConfig.stats.labels.citiesCovered, value: mockStats.citiesCovered.toString() },
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <p className="font-serif text-3xl font-bold text-saffron-600">{s.value}</p>
@@ -56,17 +58,17 @@ export default function TransparencyPage() {
       <section className="py-16 bg-white">
         <Container>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-            <h2 className="font-serif text-2xl font-bold text-stone-800">Cremation Records</h2>
+            <h2 className="font-serif text-2xl font-bold text-stone-800">{transparencyConfig.records.title}</h2>
             <Button variant="outline" size="sm">
-              <Download className="w-4 h-4 mr-2" /> Download CSV
+              <Download className="w-4 h-4 mr-2" /> {transparencyConfig.records.downloadButton}
             </Button>
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-stone-200 shadow-sm">
-            <table className="w-full text-sm" aria-label="Complete cremation records">
+            <table className="w-full text-sm" aria-label={transparencyConfig.records.tableAriaLabel}>
               <thead>
                 <tr className="bg-stone-50 border-b border-stone-200">
-                  {["Body ID", "Location Found", "Date Found", "Cremation Date", "Cremation Ground", "Officer", "Certificate No.", "Status"].map((h) => (
+                  {transparencyConfig.records.tableHeaders.map((h) => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wide whitespace-nowrap">
                       {h}
                     </th>
@@ -89,9 +91,9 @@ export default function TransparencyPage() {
                     <td className="px-4 py-3 font-mono text-xs text-stone-600">{rec.certificateNumber}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
-                        <Badge variant="green">✓ Issued</Badge>
+                        <Badge variant="green">{transparencyConfig.records.statusBadge}</Badge>
                         <button
-                          aria-label={`View certificate for ${rec.bodyId}`}
+                          aria-label={`${transparencyConfig.records.viewCertificateLabel} ${rec.bodyId}`}
                           className="text-saffron-600 hover:text-saffron-800"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
@@ -105,7 +107,7 @@ export default function TransparencyPage() {
           </div>
 
           <p className="text-stone-500 text-xs mt-4 text-center">
-            Showing {mockCremationRecords.length} records · All data is verified and legally certified
+            {transparencyConfig.records.showingRecordsText} {mockCremationRecords.length} records · {transparencyConfig.records.footerText}
           </p>
         </Container>
       </section>
@@ -115,14 +117,13 @@ export default function TransparencyPage() {
         <Container size="md">
           <div className="text-center">
             <h3 className="font-serif text-xl font-bold text-stone-800 mb-2">
-              Monthly Transparency Reports
+              {transparencyConfig.reports.title}
             </h3>
             <p className="text-stone-600 text-sm mb-4">
-              We publish detailed monthly reports including fund utilization, case statistics, and
-              operational updates. All reports are free to download.
+              {transparencyConfig.reports.description}
             </p>
             <Button variant="outline">
-              <Download className="w-4 h-4 mr-2" /> Download Latest Report (March 2024)
+              <Download className="w-4 h-4 mr-2" /> {transparencyConfig.reports.downloadButton} ({transparencyConfig.reports.reportMonth})
             </Button>
           </div>
         </Container>

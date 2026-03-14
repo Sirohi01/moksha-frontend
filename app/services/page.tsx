@@ -1,94 +1,10 @@
 import type { Metadata } from "next";
-import { SectionHeader, Container } from "@/components/ui/Elements";
-import Button from "@/components/ui/Button";
+import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
-import {
-  Flame, FileText, Users, Phone, MapPin, Heart,
-  Clock, Shield, Camera, BookOpen, CheckCircle, UserCheck
-} from "lucide-react";
+import { servicesConfig } from "@/config/services.config";
+import { getIcon } from "@/config/icons.config";
 
-export const metadata: Metadata = { title: "Services" };
-
-const mainServices = [
-  {
-    icon: Flame,
-    title: "Dignified Cremation Services",
-    badge: "Core Service",
-    badgeVariant: "primary" as const,
-    desc: "We perform complete cremation rituals for unclaimed bodies, homeless individuals, and destitute families. Services include transportation, preparation, religious rites (per deceased's religion), and disposal of ashes in a sacred water body.",
-    includes: [
-      "Body transportation to cremation ground",
-      "Ritual preparation and last rites",
-      "Religious rites as per tradition",
-      "Ash immersion ceremony",
-    ],
-  },
-  {
-    icon: FileText,
-    title: "Documentation & Legal Support",
-    badge: "Admin",
-    badgeVariant: "secondary" as const,
-    desc: "Full legal documentation including official death certificates, police NOC, case registration, and post-cremation certificates — all handled by our trained documentation team.",
-    includes: [
-      "Death certificate (official)",
-      "Police NOC coordination",
-      "Case registration & body ID",
-      "Post-cremation certificate",
-    ],
-  },
-  {
-    icon: Users,
-    title: "Family Support & Counseling",
-    badge: "Support",
-    badgeVariant: "primary" as const,
-    desc: "For poor families who cannot afford funeral costs, we provide full support at no charge. We also assist in identifying government schemes and financial aid available.",
-    includes: [
-      "Free service for destitute families",
-      "Grief counseling sessions",
-      "Government scheme guidance",
-      "Legal heir certificate help",
-    ],
-  },
-  {
-    icon: Camera,
-    title: "Body Identification Services",
-    badge: "Investigation",
-    badgeVariant: "secondary" as const,
-    desc: "We maintain a photographic and descriptive database to assist in identifying unclaimed bodies. We coordinate with hospitals, police, and social media to reunite families.",
-    includes: [
-      "Photographic documentation",
-      "Database listing for 90 days",
-      "Social media outreach",
-      "DNA coordination (partner labs)",
-    ],
-  },
-  {
-    icon: BookOpen,
-    title: "Awareness & Training Programs",
-    badge: "Education",
-    badgeVariant: "secondary" as const,
-    desc: "We train police officers, hospital staff, and municipal workers on protocols for handling unclaimed bodies with dignity, proper documentation, and legal compliance.",
-    includes: [
-      "Police department training",
-      "Hospital staff workshops",
-      "Municipal worker orientation",
-      "NGO capacity building",
-    ],
-  },
-  {
-    icon: Shield,
-    title: "Government Liaison Services",
-    badge: "Compliance",
-    badgeVariant: "primary" as const,
-    desc: "We act as a bridge between families and government authorities — helping navigate bureaucracy, apply for aid, and ensure legal rights are protected.",
-    includes: [
-      "Government scheme applications",
-      "Compensation claim support",
-      "Legal heir documentation",
-      "Pension and welfare follow-up",
-    ],
-  },
-];
+export const metadata: Metadata = { title: servicesConfig.metadata.title };
 
 export default function ServicesPage() {
   return (
@@ -97,13 +13,12 @@ export default function ServicesPage() {
       <section className="py-12 md:py-16 lg:py-20 bg-stone-50">
         <Container>
           <div className="text-center">
-            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] mb-4">✦ Our Services ✦</p>
+            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] mb-4">{servicesConfig.hero.badge}</p>
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-6 text-gray-900">
-              Our <span className="text-amber-700">Services</span>
+              {servicesConfig.hero.title} <span className="text-amber-700">{servicesConfig.hero.titleHighlight}</span>
             </h1>
             <p className="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed text-gray-700">
-              End-to-end humanitarian services — from cremation to documentation to family support —
-              all at no cost to destitute individuals and families.
+              {servicesConfig.hero.description}
             </p>
           </div>
         </Container>
@@ -113,8 +28,8 @@ export default function ServicesPage() {
       <section className="py-20 bg-stone-100">
         <Container>
           <div className="space-y-12">
-            {mainServices.map((service, idx) => {
-              const Icon = service.icon;
+            {servicesConfig.mainServices.map((service, idx) => {
+              const Icon = getIcon(service.icon);
               const isEven = idx % 2 === 0;
               return (
                 <div key={service.title} className="bg-white rounded-2xl border border-stone-200 p-8 shadow-lg hover:shadow-xl transition-all duration-500">
@@ -153,51 +68,20 @@ export default function ServicesPage() {
       <section className="py-12 bg-gradient-to-br from-amber-50 to-stone-100">
         <Container>
           <div className="text-center mb-8">
-            <span className="text-amber-700 text-sm font-medium tracking-widest uppercase">✦ Eligibility ✦</span>
+            <span className="text-amber-700 text-sm font-medium tracking-widest uppercase">{servicesConfig.eligibility.badge}</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-2 mb-4 text-gray-900">
-              Who Can Access Our Services?
+              {servicesConfig.eligibility.title}
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Our services are completely free and available to anyone in need. We believe dignity in death is a fundamental right, not a privilege.
+              {servicesConfig.eligibility.description}
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             {/* Left side - Eligibility criteria */}
             <div className="space-y-4">
-              {[
-                {
-                  icon: UserCheck,
-                  title: "Unclaimed Bodies",
-                  desc: "Bodies reported by police, hospitals, or public with no family to claim them",
-                  image: "/gallery/image1.png"
-                },
-                {
-                  icon: Heart,
-                  title: "Homeless Individuals",
-                  desc: "People without family or support system who need dignified final rites",
-                  image: "/gallery/image2.png"
-                },
-                {
-                  icon: Users,
-                  title: "Destitute Families",
-                  desc: "Families who cannot afford cremation costs - we provide complete support",
-                  image: "/gallery/image3.png"
-                },
-                {
-                  icon: Shield,
-                  title: "Hospital Referrals",
-                  desc: "Bodies referred by government and private hospitals across our service areas",
-                  image: "/gallery/image4.png"
-                },
-                {
-                  icon: MapPin,
-                  title: "Municipal Cases",
-                  desc: "Cases reported by municipal authorities and local government bodies",
-                  image: "/gallery/image5.png"
-                }
-              ].map((item, idx) => {
-                const Icon = item.icon;
+              {servicesConfig.eligibility.items.map((item, idx) => {
+                const Icon = getIcon(item.icon);
                 return (
                   <div key={idx} className="bg-white rounded-xl p-4 shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 group">
                     <div className="flex items-start gap-3">
@@ -231,8 +115,8 @@ export default function ServicesPage() {
               <div className="relative">
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                   <Image
-                    src="/gallery/image6.png"
-                    alt="Moksha Seva services"
+                    src={servicesConfig.eligibility.mainImage}
+                    alt={servicesConfig.eligibility.mainImageAlt}
                     width={400}
                     height={300}
                     className="w-full h-full object-cover"

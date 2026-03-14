@@ -1,108 +1,26 @@
 "use client";
 import { useState } from "react";
-import { Container, SectionHeader } from "@/components/ui/Elements";
+import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
-import { Heart, CheckCircle, Users, Clock, MapPin, Briefcase, GraduationCap, Calendar, FileText, Phone as PhoneIcon, Mail, Home, User, Shield } from "lucide-react";
 import Link from "next/link";
+import { volunteerConfig } from "@/config/volunteer.config";
+import { getIcon } from "@/config/icons.config";
 
-const volunteerTypes = [
-  { 
-    value: "field_volunteer", 
-    label: "Field Volunteer", 
-    desc: "On-ground support for cremation services",
-    icon: Users,
-    commitment: "10-15 hours/month"
-  },
-  { 
-    value: "transport_logistics", 
-    label: "Transportation & Logistics", 
-    desc: "Vehicle support and body transportation",
-    icon: MapPin,
-    commitment: "Flexible, on-call"
-  },
-  { 
-    value: "documentation", 
-    label: "Documentation Support", 
-    desc: "Help with paperwork and legal formalities",
-    icon: FileText,
-    commitment: "5-10 hours/month"
-  },
-  { 
-    value: "counseling", 
-    label: "Grief Counseling", 
-    desc: "Emotional support for families",
-    icon: Heart,
-    commitment: "8-12 hours/month"
-  },
-  { 
-    value: "medical_support", 
-    label: "Medical Support", 
-    desc: "Healthcare professionals for medical assistance",
-    icon: Shield,
-    commitment: "On-call basis"
-  },
-  { 
-    value: "fundraising", 
-    label: "Fundraising & Donor Relations", 
-    desc: "Help raise funds and manage donors",
-    icon: Briefcase,
-    commitment: "Flexible"
-  },
-  { 
-    value: "awareness", 
-    label: "Social Media & Awareness", 
-    desc: "Content creation and online campaigns",
-    icon: Users,
-    commitment: "5-8 hours/month"
-  },
-  { 
-    value: "tech_support", 
-    label: "Tech & IT Support", 
-    desc: "Website, app, and technical assistance",
-    icon: GraduationCap,
-    commitment: "Flexible, remote"
-  },
-  { 
-    value: "event_coordinator", 
-    label: "Event Coordinator", 
-    desc: "Organize awareness events and campaigns",
-    icon: Calendar,
-    commitment: "Project-based"
-  },
-  { 
-    value: "training", 
-    label: "Training & Mentorship", 
-    desc: "Train new volunteers and provide guidance",
-    icon: GraduationCap,
-    commitment: "8-10 hours/month"
-  },
-];
+// Get icons
+const Heart = getIcon('Heart');
+const CheckCircle = getIcon('CheckCircle');
+const Users = getIcon('Users');
+const User = getIcon('User');
 
-const availabilityOptions = [
-  { value: "weekdays_morning", label: "Weekdays Morning (9 AM - 1 PM)" },
-  { value: "weekdays_evening", label: "Weekdays Evening (5 PM - 9 PM)" },
-  { value: "weekends", label: "Weekends (Sat-Sun)" },
-  { value: "full_time", label: "Full Time (Mon-Fri)" },
-  { value: "on_call", label: "On Call (Emergency basis)" },
-  { value: "flexible", label: "Flexible (As per availability)" },
-];
+const volunteerTypes = volunteerConfig.volunteerTypes.map(type => ({
+  ...type,
+  icon: getIcon(type.icon)
+}));
 
-const experienceLevels = [
-  { value: "no_experience", label: "No Prior Experience" },
-  { value: "some_experience", label: "Some Experience (1-2 years)" },
-  { value: "experienced", label: "Experienced (3-5 years)" },
-  { value: "expert", label: "Expert (5+ years)" },
-];
-
-const indianStates = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
-  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
-  "Uttarakhand", "West Bengal", "Delhi", "Jammu and Kashmir", "Ladakh", "Puducherry",
-  "Chandigarh", "Andaman and Nicobar Islands", "Dadra and Nagar Haveli and Daman and Diu", "Lakshadweep"
-];
+const availabilityOptions = volunteerConfig.selectOptions.availabilityOptions;
+const experienceLevels = volunteerConfig.selectOptions.experienceLevels;
+const indianStates = volunteerConfig.selectOptions.states;
 
 export default function VolunteerPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -177,7 +95,7 @@ export default function VolunteerPage() {
     const handleSubmit = async () => {
         // Validation
         if (!form.name || !form.email || !form.phone || !selectedTypes.length) {
-            alert('Please fill in all required fields and select at least one volunteer type');
+            alert(volunteerConfig.validationMessages.fillRequiredFields);
             return;
         }
 
@@ -241,7 +159,7 @@ export default function VolunteerPage() {
             }
         } catch (error) {
             console.error('Volunteer form error:', error);
-            alert(`Failed to submit application: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            alert(`${volunteerConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setLoading(false);
         }
@@ -255,14 +173,13 @@ export default function VolunteerPage() {
             <CheckCircle className="w-10 h-10 text-saffron-600" />
           </div>
           <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">
-            Welcome to the Moksha Seva Family!
+            {volunteerConfig.success.title}
           </h2>
           <p className="text-stone-600 mb-6">
-            Thank you for registering as a volunteer. Our coordination team will reach out to you
-            within 2–3 business days.
+            {volunteerConfig.success.description}
           </p>
           <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
-            Register another volunteer
+            {volunteerConfig.success.registerAnotherText}
           </button>
         </div>
       </section>
@@ -273,13 +190,12 @@ export default function VolunteerPage() {
     <>
       <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-12 md:py-16 lg:py-20">
         <Container>
-          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">✦ Join Us ✦</span>
+          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{volunteerConfig.hero.badge}</span>
           <h1 className="font-serif text-4xl md:text-5xl font-bold mt-3 mb-4">
-            Become a Volunteer
+            {volunteerConfig.hero.title}
           </h1>
           <p className="text-stone-300 text-lg max-w-2xl">
-            Join 412 volunteers across 38 cities. No special qualifications needed — only
-            compassion and a few hours a month.
+            {volunteerConfig.hero.description}
           </p>
         </Container>
       </section>
@@ -288,12 +204,8 @@ export default function VolunteerPage() {
       <section className="py-12 bg-saffron-50 border-b border-saffron-100">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            {[
-              { icon: Heart, title: "Make a Difference", desc: "Directly help ensure dignified last rites for those who have none." },
-              { icon: Users, title: "Join a Community", desc: "Be part of a compassionate, purpose-driven volunteer network." },
-              { icon: Clock, title: "Flexible Commitment", desc: "Even a few hours a month creates real impact." },
-            ].map((item) => {
-              const Icon = item.icon;
+            {volunteerConfig.whyVolunteer.map((item) => {
+              const Icon = getIcon(item.icon);
               return (
                 <div key={item.title}>
                   <Icon className="w-8 h-8 text-saffron-600 mx-auto mb-3" />
@@ -313,10 +225,10 @@ export default function VolunteerPage() {
             {/* Volunteer Types Selection */}
             <div className="bg-white rounded-xl border border-cream-200 shadow-md p-6 mb-6">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-2 text-center">
-                Select Volunteer Type(s)
+                {volunteerConfig.labels.selectVolunteerTypes}
               </h2>
               <p className="text-stone-600 text-sm text-center mb-6">
-                Choose one or more areas where you&apos;d like to contribute
+                {volunteerConfig.labels.selectVolunteerTypesDesc}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -357,8 +269,8 @@ export default function VolunteerPage() {
             {/* Registration Form */}
             <div className="bg-white rounded-xl border border-cream-200 shadow-md overflow-hidden">
               <div className="bg-gradient-to-r from-saffron-600 to-orange-600 text-white p-6 text-center">
-                <h3 className="font-serif text-2xl font-bold mb-1">Volunteer Registration Form</h3>
-                <p className="text-saffron-100 text-sm">Complete all sections • Fields marked with * are required</p>
+                <h3 className="font-serif text-2xl font-bold mb-1">{volunteerConfig.formHeader.title}</h3>
+                <p className="text-saffron-100 text-sm">{volunteerConfig.formHeader.subtitle}</p>
               </div>
 
               <div className="p-8">
@@ -367,7 +279,7 @@ export default function VolunteerPage() {
                   {/* Registration Type */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200">
-                      Registration Type
+                      {volunteerConfig.labels.registrationType}
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
                       <button
@@ -380,8 +292,8 @@ export default function VolunteerPage() {
                         }`}
                       >
                         <User className={`w-8 h-8 mx-auto mb-2 ${form.registrationType === "individual" ? "text-saffron-600" : "text-stone-400"}`} />
-                        <p className="font-semibold text-stone-800 text-sm">Individual Volunteer</p>
-                        <p className="text-stone-500 text-xs mt-1">Register as a single volunteer</p>
+                        <p className="font-semibold text-stone-800 text-sm">{volunteerConfig.registrationTypes.individual.title}</p>
+                        <p className="text-stone-500 text-xs mt-1">{volunteerConfig.registrationTypes.individual.description}</p>
                       </button>
                       <button
                         type="button"
@@ -393,8 +305,8 @@ export default function VolunteerPage() {
                         }`}
                       >
                         <Users className={`w-8 h-8 mx-auto mb-2 ${form.registrationType === "group" ? "text-saffron-600" : "text-stone-400"}`} />
-                        <p className="font-semibold text-stone-800 text-sm">Group Volunteer</p>
-                        <p className="text-stone-500 text-xs mt-1">Register as a group/organization</p>
+                        <p className="font-semibold text-stone-800 text-sm">{volunteerConfig.registrationTypes.group.title}</p>
+                        <p className="text-stone-500 text-xs mt-1">{volunteerConfig.registrationTypes.group.description}</p>
                       </button>
                     </div>
                   </div>
@@ -404,21 +316,21 @@ export default function VolunteerPage() {
                     <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-200">
                       <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-blue-300 flex items-center gap-2">
                         <Users className="w-6 h-6 text-blue-600" />
-                        Group Information
+                        {volunteerConfig.labels.groupName.replace("/Organization Name", " Information")}
                       </h4>
                       <div className="space-y-4">
                         <div className="grid md:grid-cols-2 gap-4">
                           <InputField
-                            label="Group/Organization Name"
-                            placeholder="e.g., ABC College, XYZ Company"
+                            label={volunteerConfig.labels.groupName}
+                            placeholder={volunteerConfig.placeholders.groupName}
                             required
                             value={form.groupName}
                             onChange={(e) => setForm({ ...form, groupName: e.target.value })}
                           />
                           <InputField
-                            label="Number of Members"
+                            label={volunteerConfig.labels.groupSize}
                             type="number"
-                            placeholder="e.g., 10"
+                            placeholder={volunteerConfig.placeholders.groupSize}
                             required
                             value={form.groupSize}
                             onChange={(e) => setForm({ ...form, groupSize: e.target.value })}
@@ -426,7 +338,7 @@ export default function VolunteerPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            Group Type <span className="text-red-500">*</span>
+                            {volunteerConfig.labels.groupType} <span className="text-red-500">*</span>
                           </label>
                           <select
                             required
@@ -434,38 +346,33 @@ export default function VolunteerPage() {
                             onChange={(e) => setForm({ ...form, groupType: e.target.value })}
                             className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                           >
-                            <option value="">Select Group Type</option>
-                            <option value="corporate">Corporate/Company</option>
-                            <option value="college">College/University</option>
-                            <option value="school">School</option>
-                            <option value="ngo">NGO/Non-Profit</option>
-                            <option value="community">Community Group</option>
-                            <option value="religious">Religious Organization</option>
-                            <option value="other">Other</option>
+                            {volunteerConfig.selectOptions.groupTypes.map((option) => (
+                              <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
                           </select>
                         </div>
                         <div className="pt-4 border-t border-blue-300">
-                          <p className="text-sm font-semibold text-stone-700 mb-3">Group Leader/Coordinator Details</p>
+                          <p className="text-sm font-semibold text-stone-700 mb-3">{volunteerConfig.labels.groupLeaderDetails}</p>
                           <div className="grid md:grid-cols-3 gap-4">
                             <InputField
-                              label="Leader Name"
-                              placeholder="Full name"
+                              label={volunteerConfig.labels.groupLeaderName}
+                              placeholder={volunteerConfig.placeholders.groupLeaderName}
                               required
                               value={form.groupLeaderName}
                               onChange={(e) => setForm({ ...form, groupLeaderName: e.target.value })}
                             />
                             <InputField
-                              label="Leader Phone"
+                              label={volunteerConfig.labels.groupLeaderPhone}
                               type="tel"
-                              placeholder="+91 98765 43210"
+                              placeholder={volunteerConfig.placeholders.groupLeaderPhone}
                               required
                               value={form.groupLeaderPhone}
                               onChange={(e) => setForm({ ...form, groupLeaderPhone: e.target.value })}
                             />
                             <InputField
-                              label="Leader Email"
+                              label={volunteerConfig.labels.groupLeaderEmail}
                               type="email"
-                              placeholder="leader@email.com"
+                              placeholder={volunteerConfig.placeholders.groupLeaderEmail}
                               required
                               value={form.groupLeaderEmail}
                               onChange={(e) => setForm({ ...form, groupLeaderEmail: e.target.value })}
@@ -479,42 +386,42 @@ export default function VolunteerPage() {
                   {/* Personal Details */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                      {form.registrationType === "group" ? "Your Personal Information (as representative)" : "Personal Information"}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[0].number}</span>
+                      {form.registrationType === "group" ? `${volunteerConfig.sections[0].title} ${volunteerConfig.labels.asRepresentative}` : volunteerConfig.sections[0].title}
                     </h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField
-                        label="Full Name"
-                        placeholder="As per government ID"
+                        label={volunteerConfig.labels.fullName}
+                        placeholder={volunteerConfig.placeholders.fullName}
                         required
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                       />
                       <InputField
-                        label="Email Address"
+                        label={volunteerConfig.labels.emailAddress}
                         type="email"
-                        placeholder="your@email.com"
+                        placeholder={volunteerConfig.placeholders.email}
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                       />
                       <InputField
-                        label="Phone Number"
+                        label={volunteerConfig.labels.phoneNumber}
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder={volunteerConfig.placeholders.phone}
                         required
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       />
                       <InputField
-                        label="Alternate Phone"
+                        label={volunteerConfig.labels.alternatePhone}
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder={volunteerConfig.placeholders.alternatePhone}
                         value={form.alternatePhone}
                         onChange={(e) => setForm({ ...form, alternatePhone: e.target.value })}
                       />
                       <InputField
-                        label="Date of Birth"
+                        label={volunteerConfig.labels.dateOfBirth}
                         type="date"
                         required
                         value={form.dateOfBirth}
@@ -522,7 +429,7 @@ export default function VolunteerPage() {
                       />
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Gender <span className="text-red-500">*</span>
+                          {volunteerConfig.labels.gender} <span className="text-red-500">*</span>
                         </label>
                         <select
                           required
@@ -530,11 +437,9 @@ export default function VolunteerPage() {
                           onChange={(e) => setForm({ ...form, gender: e.target.value })}
                           className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                         >
-                          <option value="">Select Gender</option>
-                          <option value="male">Male</option>
-                          <option value="female">Female</option>
-                          <option value="other">Other</option>
-                          <option value="prefer_not_to_say">Prefer not to say</option>
+                          {volunteerConfig.selectOptions.genders.map((option) => (
+                            <option key={option.value} value={option.value}>{option.label}</option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -543,16 +448,16 @@ export default function VolunteerPage() {
                   {/* Address Details */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
-                      Address Details
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[1].number}</span>
+                      {volunteerConfig.sections[1].title}
                     </h4>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Complete Address <span className="text-red-500">*</span>
+                          {volunteerConfig.labels.completeAddress} <span className="text-red-500">*</span>
                         </label>
                         <textarea
-                          placeholder="House/Flat No., Building, Street, Locality"
+                          placeholder={volunteerConfig.placeholders.completeAddress}
                           rows={2}
                           required
                           value={form.address}
@@ -562,15 +467,15 @@ export default function VolunteerPage() {
                       </div>
                       <div className="grid md:grid-cols-3 gap-4">
                         <InputField
-                          label="City"
-                          placeholder="Mumbai"
+                          label={volunteerConfig.labels.city}
+                          placeholder={volunteerConfig.placeholders.city}
                           required
                           value={form.city}
                           onChange={(e) => setForm({ ...form, city: e.target.value })}
                         />
                         <div>
                           <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            State <span className="text-red-500">*</span>
+                            {volunteerConfig.labels.state} <span className="text-red-500">*</span>
                           </label>
                           <select
                             required
@@ -578,15 +483,15 @@ export default function VolunteerPage() {
                             onChange={(e) => setForm({ ...form, state: e.target.value })}
                             className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                           >
-                            <option value="">Select State</option>
+                            <option value="">{volunteerConfig.selectOptions.stateSelectLabel}</option>
                             {indianStates.map((state) => (
                               <option key={state} value={state}>{state}</option>
                             ))}
                           </select>
                         </div>
                         <InputField
-                          label="PIN Code"
-                          placeholder="400001"
+                          label={volunteerConfig.labels.pinCode}
+                          placeholder={volunteerConfig.placeholders.pinCode}
                           required
                           maxLength={6}
                           value={form.pincode}
@@ -599,41 +504,40 @@ export default function VolunteerPage() {
                   {/* Professional Details */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
-                      Professional Background
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[2].number}</span>
+                      {volunteerConfig.sections[2].title}
                     </h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField
-                        label="Current Occupation"
-                        placeholder="e.g., Teacher, Engineer, Student"
+                        label={volunteerConfig.labels.currentOccupation}
+                        placeholder={volunteerConfig.placeholders.occupation}
                         required
                         value={form.occupation}
                         onChange={(e) => setForm({ ...form, occupation: e.target.value })}
                       />
                       <InputField
-                        label="Organization/Institution"
-                        placeholder="Company or school name"
+                        label={volunteerConfig.labels.organizationInstitution}
+                        placeholder={volunteerConfig.placeholders.organization}
                         value={form.organization}
                         onChange={(e) => setForm({ ...form, organization: e.target.value })}
                       />
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Experience Level
+                          {volunteerConfig.labels.experienceLevel}
                         </label>
                         <select
                           value={form.experience}
                           onChange={(e) => setForm({ ...form, experience: e.target.value })}
                           className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                         >
-                          <option value="">Select Experience</option>
                           {experienceLevels.map((level) => (
                             <option key={level.value} value={level.value}>{level.label}</option>
                           ))}
                         </select>
                       </div>
                       <InputField
-                        label="Special Skills"
-                        placeholder="e.g., First Aid, Counseling, Driving"
+                        label={volunteerConfig.labels.specialSkills}
+                        placeholder={volunteerConfig.placeholders.skills}
                         value={form.skills}
                         onChange={(e) => setForm({ ...form, skills: e.target.value })}
                       />
@@ -643,32 +547,32 @@ export default function VolunteerPage() {
                   {/* Social Media Links */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</span>
-                      Social Media Profiles (Optional)
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[3].number}</span>
+                      {volunteerConfig.sections[3].title}
                     </h4>
-                    <p className="text-stone-600 text-sm mb-4">Help us connect with you and share volunteer opportunities</p>
+                    <p className="text-stone-600 text-sm mb-4">{volunteerConfig.labels.socialMediaNote}</p>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField
-                        label="Facebook Profile"
-                        placeholder="https://facebook.com/yourprofile"
+                        label={volunteerConfig.labels.facebookProfile}
+                        placeholder={volunteerConfig.placeholders.facebook}
                         value={form.facebookProfile}
                         onChange={(e) => setForm({ ...form, facebookProfile: e.target.value })}
                       />
                       <InputField
-                        label="Instagram Handle"
-                        placeholder="@yourusername"
+                        label={volunteerConfig.labels.instagramHandle}
+                        placeholder={volunteerConfig.placeholders.instagram}
                         value={form.instagramHandle}
                         onChange={(e) => setForm({ ...form, instagramHandle: e.target.value })}
                       />
                       <InputField
-                        label="Twitter/X Handle"
-                        placeholder="@yourusername"
+                        label={volunteerConfig.labels.twitterHandle}
+                        placeholder={volunteerConfig.placeholders.twitter}
                         value={form.twitterHandle}
                         onChange={(e) => setForm({ ...form, twitterHandle: e.target.value })}
                       />
                       <InputField
-                        label="LinkedIn Profile"
-                        placeholder="https://linkedin.com/in/yourprofile"
+                        label={volunteerConfig.labels.linkedinProfile}
+                        placeholder={volunteerConfig.placeholders.linkedin}
                         value={form.linkedinProfile}
                         onChange={(e) => setForm({ ...form, linkedinProfile: e.target.value })}
                       />
@@ -678,13 +582,13 @@ export default function VolunteerPage() {
                   {/* Volunteer Preferences */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">5</span>
-                      Volunteer Preferences
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[4].number}</span>
+                      {volunteerConfig.sections[4].title}
                     </h4>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Availability <span className="text-red-500">*</span>
+                          {volunteerConfig.labels.availability} <span className="text-red-500">*</span>
                         </label>
                         <select
                           required
@@ -692,7 +596,6 @@ export default function VolunteerPage() {
                           onChange={(e) => setForm({ ...form, availability: e.target.value })}
                           className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                         >
-                          <option value="">Select Availability</option>
                           {availabilityOptions.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                           ))}
@@ -700,14 +603,14 @@ export default function VolunteerPage() {
                       </div>
                       <div className="grid md:grid-cols-2 gap-4">
                         <InputField
-                          label="Preferred Location"
-                          placeholder="Area or locality"
+                          label={volunteerConfig.labels.preferredLocation}
+                          placeholder={volunteerConfig.placeholders.preferredLocation}
                           value={form.preferredLocation}
                           onChange={(e) => setForm({ ...form, preferredLocation: e.target.value })}
                         />
                         <InputField
-                          label="Languages Known"
-                          placeholder="e.g., Hindi, English, Marathi"
+                          label={volunteerConfig.labels.languagesKnown}
+                          placeholder={volunteerConfig.placeholders.languagesKnown}
                           value={form.languagesKnown}
                           onChange={(e) => setForm({ ...form, languagesKnown: e.target.value })}
                         />
@@ -720,12 +623,12 @@ export default function VolunteerPage() {
                             onChange={(e) => setForm({ ...form, hasVehicle: e.target.checked })}
                             className="w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
                           />
-                          <span className="text-sm text-stone-700 font-medium">I have my own vehicle</span>
+                          <span className="text-sm text-stone-700 font-medium">{volunteerConfig.labels.hasVehicle}</span>
                         </label>
                         {form.hasVehicle && (
                           <InputField
-                            label="Vehicle Type"
-                            placeholder="e.g., Car, Bike, Van"
+                            label={volunteerConfig.labels.vehicleType}
+                            placeholder={volunteerConfig.placeholders.vehicleType}
                             value={form.vehicleType}
                             onChange={(e) => setForm({ ...form, vehicleType: e.target.value })}
                           />
@@ -737,28 +640,28 @@ export default function VolunteerPage() {
                   {/* Emergency Contact */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">6</span>
-                      Emergency Contact
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[5].number}</span>
+                      {volunteerConfig.sections[5].title}
                     </h4>
                     <div className="grid md:grid-cols-3 gap-4">
                       <InputField
-                        label="Contact Name"
-                        placeholder="Full name"
+                        label={volunteerConfig.labels.emergencyContactName}
+                        placeholder={volunteerConfig.placeholders.emergencyName}
                         required
                         value={form.emergencyContactName}
                         onChange={(e) => setForm({ ...form, emergencyContactName: e.target.value })}
                       />
                       <InputField
-                        label="Contact Phone"
+                        label={volunteerConfig.labels.emergencyContactPhone}
                         type="tel"
-                        placeholder="+91 98765 43210"
+                        placeholder={volunteerConfig.placeholders.emergencyPhone}
                         required
                         value={form.emergencyContactPhone}
                         onChange={(e) => setForm({ ...form, emergencyContactPhone: e.target.value })}
                       />
                       <InputField
-                        label="Relationship"
-                        placeholder="e.g., Father, Spouse"
+                        label={volunteerConfig.labels.emergencyContactRelation}
+                        placeholder={volunteerConfig.placeholders.emergencyRelation}
                         required
                         value={form.emergencyContactRelation}
                         onChange={(e) => setForm({ ...form, emergencyContactRelation: e.target.value })}
@@ -769,16 +672,16 @@ export default function VolunteerPage() {
                   {/* Additional Information */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">7</span>
-                      Additional Information
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[6].number}</span>
+                      {volunteerConfig.sections[6].title}
                     </h4>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Why do you want to volunteer with us? <span className="text-red-500">*</span>
+                          {volunteerConfig.labels.whyVolunteer} <span className="text-red-500">*</span>
                         </label>
                         <textarea
-                          placeholder="Share your motivation..."
+                          placeholder={volunteerConfig.placeholders.whyVolunteerPlaceholder}
                           rows={3}
                           required
                           value={form.whyVolunteer}
@@ -788,10 +691,10 @@ export default function VolunteerPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Previous Volunteer Experience (if any)
+                          {volunteerConfig.labels.previousVolunteerWork}
                         </label>
                         <textarea
-                          placeholder="Describe your previous volunteer work..."
+                          placeholder={volunteerConfig.placeholders.previousWorkPlaceholder}
                           rows={2}
                           value={form.previousVolunteerWork}
                           onChange={(e) => setForm({ ...form, previousVolunteerWork: e.target.value })}
@@ -800,10 +703,10 @@ export default function VolunteerPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Any Medical Conditions we should know about?
+                          {volunteerConfig.labels.medicalConditions}
                         </label>
                         <textarea
-                          placeholder="Optional - helps us ensure your safety"
+                          placeholder={volunteerConfig.placeholders.medicalConditionsPlaceholder}
                           rows={2}
                           value={form.medicalConditions}
                           onChange={(e) => setForm({ ...form, medicalConditions: e.target.value })}
@@ -825,7 +728,7 @@ export default function VolunteerPage() {
                           required
                         />
                         <span className="text-sm text-stone-700 font-medium">
-                          I agree to the <Link href="/legal/terms" className="text-saffron-600 underline font-bold">Terms & Conditions</Link> and <Link href="/privacy" className="text-saffron-600 underline font-bold">Privacy Policy</Link> <span className="text-red-500">*</span>
+                          {volunteerConfig.labels.agreeToTerms} <Link href={volunteerConfig.labels.termsLink} className="text-saffron-600 underline font-bold">{volunteerConfig.labels.termsAndConditions}</Link> {volunteerConfig.labels.andText} <Link href={volunteerConfig.labels.privacyLink} className="text-saffron-600 underline font-bold">{volunteerConfig.labels.privacyPolicy}</Link> <span className="text-red-500">*</span>
                         </span>
                       </label>
 
@@ -838,7 +741,7 @@ export default function VolunteerPage() {
                           required
                         />
                         <span className="text-sm text-stone-700 font-medium">
-                          I consent to a background verification check for volunteer safety <span className="text-red-500">*</span>
+                          {volunteerConfig.labels.agreeToBackgroundCheck} <span className="text-red-500">*</span>
                         </span>
                       </label>
                     </div>
@@ -875,11 +778,11 @@ export default function VolunteerPage() {
                       }
                     >
                       <Heart className="w-5 h-5 mr-2 fill-white" />
-                      Register as Volunteer
+                      {volunteerConfig.labels.submitButton}
                     </Button>
                     
                     <p className="text-stone-500 text-xs text-center mt-4">
-                      Our team will review your application and contact you within 3-5 business days
+                      {volunteerConfig.labels.reviewNote}
                     </p>
                   </div>
 

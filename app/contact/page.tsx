@@ -3,38 +3,9 @@ import { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import { InputField, TextareaField, SelectField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
-import { Phone, Mail, MapPin, Clock, CheckCircle } from "lucide-react";
-
-const contactInfo = [
-  {
-    icon: Phone,
-    title: "Helpline (24/7)",
-    info: "1800-123-456",
-    sub: "Toll Free · All India",
-    href: "tel:+911800123456",
-  },
-  {
-    icon: Mail,
-    title: "Email",
-    info: "help@mokshaseva.org",
-    sub: "Response within 24 hours",
-    href: "mailto:help@mokshaseva.org",
-  },
-  {
-    icon: MapPin,
-    title: "Head Office",
-    info: "12, Seva Marg, New Delhi",
-    sub: "Delhi 110001",
-    href: "#",
-  },
-  {
-    icon: Clock,
-    title: "Office Hours",
-    info: "Mon–Sat: 9am–6pm",
-    sub: "Emergency line: 24/7",
-    href: "#",
-  },
-];
+import { CheckCircle } from "lucide-react";
+import { contactConfig } from "@/config/contact.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -43,7 +14,7 @@ export default function ContactPage() {
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) {
-      alert('Please fill in all required fields');
+      alert(contactConfig.form.validation.fillRequiredFields);
       return;
     }
 
@@ -68,11 +39,11 @@ export default function ContactPage() {
         setForm({ name: "", email: "", phone: "", subject: "", message: "" });
       } else {
         const error = await response.json();
-        alert(error.message || 'Failed to send message. Please try again.');
+        alert(error.message || contactConfig.form.validation.submitError);
       }
     } catch (error) {
       console.error('Contact form error:', error);
-      alert('Network error. Please check your connection and try again.');
+      alert(contactConfig.form.validation.networkError);
     } finally {
       setLoading(false);
     }
@@ -82,10 +53,10 @@ export default function ContactPage() {
     <>
       <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-20">
         <Container>
-          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">✦ Get in Touch ✦</span>
-          <h1 className="font-serif text-4xl font-bold mt-3 mb-4">Contact Us</h1>
+          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{contactConfig.hero.badge}</span>
+          <h1 className="font-serif text-4xl font-bold mt-3 mb-4">{contactConfig.hero.title}</h1>
           <p className="text-stone-300 text-lg max-w-2xl">
-            We are here to help — for emergencies, partnerships, media queries, or any other matter.
+            {contactConfig.hero.description}
           </p>
         </Container>
       </section>
@@ -96,11 +67,11 @@ export default function ContactPage() {
             {/* Contact info */}
             <div>
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">
-                Reach Us Directly
+                {contactConfig.sections.reachUsDirectly}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                {contactInfo.map((item) => {
-                  const Icon = item.icon;
+                {contactConfig.contactInfo.map((item) => {
+                  const Icon = getIcon(item.icon);
                   return (
                     <a
                       key={item.title}
@@ -120,14 +91,9 @@ export default function ContactPage() {
 
               {/* Regional offices */}
               <div className="bg-white rounded-xl p-6 border border-cream-200">
-                <h3 className="font-serif font-bold text-stone-800 mb-4">Regional Coordinators</h3>
+                <h3 className="font-serif font-bold text-stone-800 mb-4">{contactConfig.regionalCoordinators.title}</h3>
                 <div className="space-y-3">
-                  {[
-                    { city: "Mumbai", name: "Priya Iyer", phone: "+91 98765 00001" },
-                    { city: "Chennai", name: "Kavitha Rajan", phone: "+91 98765 00002" },
-                    // { city: "Bangalore", name: "Arjun Bhatia", phone: "+91 98765 00003" },
-                    // { city: "Lucknow", name: "Sunita Devi", phone: "+91 98765 00004" },
-                  ].map((reg) => (
+                  {contactConfig.regionalCoordinators.coordinators.map((reg) => (
                     <div key={reg.city} className="flex items-center justify-between py-2 border-b border-cream-100 last:border-0">
                       <div>
                         <p className="font-medium text-stone-700 text-sm">{reg.city}</p>
@@ -147,60 +113,53 @@ export default function ContactPage() {
               {submitted ? (
                 <div className="text-center py-8">
                   <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-                  <h3 className="font-serif text-xl font-bold text-stone-800 mb-2">Message Sent!</h3>
-                  <p className="text-stone-600 text-sm mb-4">We will respond within 24 hours.</p>
+                  <h3 className="font-serif text-xl font-bold text-stone-800 mb-2">{contactConfig.form.success.title}</h3>
+                  <p className="text-stone-600 text-sm mb-4">{contactConfig.form.success.description}</p>
                   <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
-                    Send another message
+                    {contactConfig.form.success.sendAnotherButton}
                   </button>
                 </div>
               ) : (
                 <>
                   <h3 className="font-serif text-xl font-bold text-stone-800 mb-5">
-                    Send a Message
+                    {contactConfig.form.title}
                   </h3>
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <InputField
-                        label="Your Name"
-                        placeholder="Full name"
+                        label={contactConfig.form.labels.yourName}
+                        placeholder={contactConfig.form.placeholders.fullName}
                         required
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                       />
                       <InputField
-                        label="Email"
+                        label={contactConfig.form.labels.email}
                         type="email"
-                        placeholder="you@email.com"
+                        placeholder={contactConfig.form.placeholders.email}
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                       />
                     </div>
                     <InputField
-                      label="Phone"
+                      label={contactConfig.form.labels.phone}
                       type="tel"
-                      placeholder="+91 ..."
+                      placeholder={contactConfig.form.placeholders.phone}
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     />
                     <SelectField
-                      label="Subject"
+                      label={contactConfig.form.labels.subject}
                       required
                       value={form.subject}
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                      options={[
-                        { value: "general", label: "General Inquiry" },
-                        { value: "partnership", label: "NGO / Government Partnership" },
-                        { value: "media", label: "Media & Press" },
-                        { value: "volunteer", label: "Volunteering" },
-                        { value: "donation", label: "Donation Query" },
-                        { value: "other", label: "Other" },
-                      ]}
-                      placeholder="Select subject..."
+                      options={contactConfig.form.subjectOptions}
+                      placeholder={contactConfig.form.placeholders.selectSubject}
                     />
                     <TextareaField
-                      label="Message"
-                      placeholder="How can we help you?"
+                      label={contactConfig.form.labels.message}
+                      placeholder={contactConfig.form.placeholders.message}
                       required
                       rows={4}
                       value={form.message}
@@ -214,7 +173,7 @@ export default function ContactPage() {
                       onClick={handleSubmit}
                       disabled={!form.name || !form.email || !form.message}
                     >
-                      Send Message
+                      {contactConfig.form.submitButton}
                     </Button>
                   </div>
                 </>

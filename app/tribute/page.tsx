@@ -3,16 +3,18 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
-import { Heart, Flower, ShieldCheck, Mail, Phone, ChevronRight, Calendar } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { tributeConfig } from "@/config/tribute.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function TributePage() {
-    const families = [
-        { title: "Honor a Special Day", desc: "Celebrate your own birthday or anniversary by sponsoring the last rites of a person who has no one left.", icon: Calendar },
-        { title: "In Loving Memory", desc: "Remember your own parents or loved ones by donor-sponsoring a dignified cremation on their death anniversary.", icon: Flower },
-        { title: "Tribute Fund", desc: "Start a collective drive with your community or office teammates to honor a coworker or elder who has passed.", icon: Heart },
-        { title: "Memorial Plaque", desc: "For significant tribute donations, we will place a physical or digital plaque in our next response center in your loved one&apos;s name.", icon: ShieldCheck },
-    ];
+    const families = tributeConfig.options.map(option => ({
+        ...option,
+        icon: getIcon(option.icon)
+    }));
+
+    const QuoteIcon = getIcon(tributeConfig.quote.icon);
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -22,12 +24,11 @@ export default function TributePage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">A SACRED GIFT</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{tributeConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">IN <span className="text-[#7ab800]">MEMORY</span> OF...</h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{tributeConfig.hero.title} <span className="text-[#7ab800]">{tributeConfig.hero.subtitle}</span> {tributeConfig.hero.titleSuffix}</h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            Donate in the name of your private loved ones to provide a final farewell
-                            to those who have been forgotten by the rest of the world.
+                            {tributeConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -49,9 +50,9 @@ export default function TributePage() {
                                     {family.desc}
                                 </p>
 
-                                <Link href="/donate">
+                                <Link href={tributeConfig.buttons.donateLink}>
                                     <button className="flex items-center justify-between w-full px-10 py-5 rounded-full bg-stone-900 border border-transparent text-white text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">
-                                        Sponsor This Tribute <ChevronRight size={14} />
+                                        {tributeConfig.buttons.sponsorTribute} <ChevronRight size={14} />
                                     </button>
                                 </Link>
                             </div>
@@ -66,20 +67,18 @@ export default function TributePage() {
                     <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-16">
                         <div className="md:w-1/2">
                             <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden grayscale group hover:grayscale-0 transition-all duration-700 shadow-2xl">
-                                <Image src="/gallery/gallery_peaceful_departure_1772861335733.png" alt="Dignified Offering" fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <Image src={tributeConfig.quote.imageUrl} alt={tributeConfig.quote.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent" />
                             </div>
                         </div>
                         <div className="md:w-1/2 text-left">
-                            <Flower className="text-[#7ab800] mb-8" size={32} />
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.9] mb-8">THE BEAUTY OF <br /><span className="text-[#7ab800]">REMEMBRANCE</span></h2>
+                            <QuoteIcon className="text-[#7ab800] mb-8" size={32} />
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.9] mb-8">{tributeConfig.quote.title} <br /><span className="text-[#7ab800]">{tributeConfig.quote.subtitle}</span></h2>
                             <p className="text-stone-500 font-medium text-lg leading-relaxed mb-12 italic">
-                                &quot;Giving a forgotten soul a name and a prayer is the highest form of service.
-                                When we do it in the name of our own ancestors, we create a circle of divinity
-                                that heals the entire world.&quot;
+                                &quot;{tributeConfig.quote.quote}&quot;
                             </p>
-                            <Link href="/donate">
-                                <Button className="w-full md:w-auto px-12 py-5 bg-[#7ab800] rounded-full text-[12px] font-black shadow-2xl shadow-[#7ab800]/20">START A TRIBUTE NOW</Button>
+                            <Link href={tributeConfig.quote.buttonLink}>
+                                <Button className="w-full md:w-auto px-12 py-5 bg-[#7ab800] rounded-full text-[12px] font-black shadow-2xl shadow-[#7ab800]/20">{tributeConfig.quote.buttonText}</Button>
                             </Link>
                         </div>
                     </div>

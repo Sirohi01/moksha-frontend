@@ -7,22 +7,8 @@ import { Heart, CheckCircle, ShieldCheck, Info, FileText } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { loadRazorpayScript, createRazorpayOrder, initiatePayment } from "@/lib/razorpay";
-
-const donationTiers = [
-  { amount: 500, label: "One Cremation", desc: "Covers basic cremation services for one person", impact: "1 person's dignified farewell" },
-  { amount: 2000, label: "Family Support Package", desc: "Cremation + documentation + family counseling", impact: "1 family fully supported" },
-  { amount: 5000, label: "Full Case Management", desc: "End-to-end case from reporting to certification", impact: "Complete case handled" },
-  { amount: 10000, label: "Monthly Sponsor", desc: "Fund one month of operations in a city", impact: "A city's operations for 1 month" },
-];
-
-const indianStates = [
-  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
-  "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh",
-  "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
-  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
-  "Uttarakhand", "West Bengal", "Delhi", "Jammu and Kashmir", "Ladakh", "Puducherry",
-  "Chandigarh", "Andaman and Nicobar Islands", "Dadra and Nagar Haveli and Daman and Diu", "Lakshadweep"
-];
+import { donateConfig } from "@/config/donate.config";
+import { getIcon } from "@/config/icons.config";
 
 export default function DonatePage() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(500);
@@ -41,7 +27,7 @@ export default function DonatePage() {
     city: "",
     state: "",
     pincode: "",
-    country: "India",
+    country: donateConfig.form.defaultCountry,
     
     // PAN & Tax Details
     panNumber: "",
@@ -86,38 +72,38 @@ export default function DonatePage() {
   const handleDonate = async () => {
     // Validation
     if (!finalAmount || finalAmount < 100) {
-      alert('Please select or enter a donation amount (minimum ₹100)');
+      alert(donateConfig.validation.minAmount);
       return;
     }
 
     if (!form.name || !form.email || !form.phone || !form.address || !form.city || !form.state) {
-      alert('Please fill in all required fields');
+      alert(donateConfig.validation.requiredFields);
       return;
     }
 
     if (!form.agreeToTerms || !form.agreeToRefundPolicy) {
-      alert('Please agree to the terms and conditions');
+      alert(donateConfig.validation.agreeTerms);
       return;
     }
 
     // Validate payment method specific fields
     if (form.paymentMethod === 'upi' && !form.upiId) {
-      alert('Please enter your UPI ID');
+      alert(donateConfig.validation.upiRequired);
       return;
     }
 
     if (form.paymentMethod === 'card' && (!form.cardNumber || !form.cardName || !form.cardExpiry || !form.cardCvv)) {
-      alert('Please fill in all card details');
+      alert(donateConfig.validation.cardRequired);
       return;
     }
 
     if (form.paymentMethod === 'netbanking' && !form.bankName) {
-      alert('Please select your bank');
+      alert(donateConfig.validation.bankRequired);
       return;
     }
 
     if (form.paymentMethod === 'wallet' && (!form.walletType || !form.walletNumber)) {
-      alert('Please select wallet type and enter mobile number');
+      alert(donateConfig.validation.walletRequired);
       return;
     }
 
@@ -259,16 +245,16 @@ export default function DonatePage() {
             <CheckCircle className="w-10 h-10 text-saffron-600" />
           </div>
           <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">
-            Thank You for Your Generosity
+            {donateConfig.success.title}
           </h2>
           <p className="text-stone-600 mb-2">
-            Your donation of <strong>{finalAmount ? formatCurrency(finalAmount) : "your amount"}</strong> has been received.
+            {donateConfig.success.message.replace('{amount}', finalAmount ? formatCurrency(finalAmount) : donateConfig.success.fallbackAmount)}
           </p>
           <p className="text-stone-500 text-sm mb-6">
-            An 80G tax exemption receipt will be sent to your email within 24 hours.
+            {donateConfig.success.receiptNote}
           </p>
           <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
-            Make another donation
+            {donateConfig.success.anotherDonationButton}
           </button>
         </div>
       </section>
@@ -296,41 +282,37 @@ export default function DonatePage() {
           <div className="max-w-4xl mx-auto text-center">
             {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-amber-100 backdrop-blur-sm border border-amber-200 rounded-full px-6 py-2 mb-6">
-              <Heart className="w-4 h-4 text-amber-700 fill-amber-700" />
+              {(() => {
+                const BadgeIcon = getIcon(donateConfig.hero.badge.icon);
+                return <BadgeIcon className="w-4 h-4 text-amber-700 fill-amber-700" />;
+              })()}
               <span className="text-amber-700 text-sm font-semibold tracking-wide uppercase">
-                Every Life Deserves Dignity
+                {donateConfig.hero.badge.text}
               </span>
             </div>
             
             {/* Main Heading */}
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-gray-900">
-              <span className="block">Your</span>
+              <span className="block">{donateConfig.hero.title.line1}</span>
               <span className="block text-amber-700">
-                Compassion
+                {donateConfig.hero.title.line2}
               </span>
-              <span className="block">Changes Lives</span>
+              <span className="block">{donateConfig.hero.title.line3}</span>
             </h1>
             
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Just <span className="font-bold text-amber-700">₹500</span> provides a complete dignified cremation service. 
-              Your donation ensures no soul is forgotten, regardless of their circumstances.
+              {donateConfig.hero.subtitle}
             </p>
             
             {/* Impact Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-3xl mx-auto">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-stone-200">
-                <div className="text-3xl font-bold text-amber-700 mb-2">15,000+</div>
-                <div className="text-gray-600 text-sm font-medium">Lives Honored</div>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-stone-200">
-                <div className="text-3xl font-bold text-amber-700 mb-2">50+</div>
-                <div className="text-gray-600 text-sm font-medium">Cities Served</div>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-stone-200">
-                <div className="text-3xl font-bold text-amber-700 mb-2">100%</div>
-                <div className="text-gray-600 text-sm font-medium">Transparency</div>
-              </div>
+              {donateConfig.hero.impactStats.map((stat, i) => (
+                <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-stone-200">
+                  <div className="text-3xl font-bold text-amber-700 mb-2">{stat.value}</div>
+                  <div className="text-gray-600 text-sm font-medium">{stat.label}</div>
+                </div>
+              ))}
             </div>
             
             {/* CTA Buttons */}
@@ -340,8 +322,8 @@ export default function DonatePage() {
                 className="group bg-amber-700 hover:bg-amber-800 text-white font-bold px-8 py-4 rounded-full text-lg shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 flex items-center gap-3"
               >
                 <Heart className="w-6 h-6 fill-current group-hover:animate-pulse" />
-                Donate Now
-                <span className="text-sm opacity-80">Starting ₹500</span>
+                {donateConfig.hero.ctaButtons.primary}
+                <span className="text-sm opacity-80">{donateConfig.hero.startingAmount}</span>
               </button>
               
               <Link 
@@ -349,30 +331,23 @@ export default function DonatePage() {
                 className="group text-gray-700 hover:text-amber-700 font-semibold px-6 py-4 rounded-full border-2 border-gray-300 hover:border-amber-300 backdrop-blur-sm transition-all duration-300 flex items-center gap-2"
               >
                 <Info className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                See Our Impact
+                {donateConfig.hero.ctaButtons.secondary}
               </Link>
             </div>
             
             {/* Trust Indicators */}
             <div className="mt-12 pt-8 border-t border-stone-200">
-              <p className="text-gray-500 text-sm mb-4 font-medium">Trusted by thousands • Verified by government</p>
+              <p className="text-gray-500 text-sm mb-4 font-medium">{donateConfig.hero.trustMessage}</p>
               <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-600">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-green-600" />
-                  <span>80G Tax Exemption</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-green-600" />
-                  <span>Government Registered</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4 text-red-600 fill-red-600" />
-                  <span>100% Fund Utilization</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-blue-600" />
-                  <span>Secure Payments</span>
-                </div>
+                {donateConfig.hero.trustIndicators.map((indicator, i) => {
+                  const IndicatorIcon = getIcon(indicator.icon);
+                  return (
+                    <div key={i} className="flex items-center gap-2">
+                      <IndicatorIcon className="w-4 h-4 text-green-600" />
+                      <span>{indicator.text}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -383,9 +358,9 @@ export default function DonatePage() {
       <section className="py-6 bg-green-50 border-b border-green-100">
         <Container>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-green-800">
-            {["80G Tax Exemption", "100% Transparent Fund Use", "Registered NGO", "No Platform Fee"].map((s) => (
-              <span key={s} className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4" /> {s}
+            {donateConfig.trustSignals.map((signal, i) => (
+              <span key={i} className="flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4" /> {signal}
               </span>
             ))}
           </div>
@@ -400,14 +375,14 @@ export default function DonatePage() {
             <div className="bg-white rounded-lg border border-cream-200 shadow-md p-5">
               <div className="text-center mb-4">
                 <h2 className="font-serif text-xl font-bold text-stone-800 mb-1">
-                  Select Donation Amount
+                  {donateConfig.amountSelection.title}
                 </h2>
-                <p className="text-stone-600 text-xs">Choose a preset amount or enter your own</p>
+                <p className="text-stone-600 text-xs">{donateConfig.amountSelection.subtitle}</p>
               </div>
 
               {/* Preset Amounts */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {donationTiers.map((tier) => (
+                {donateConfig.donationTiers.map((tier) => (
                   <button
                     key={tier.amount}
                     onClick={() => { setSelectedAmount(tier.amount); setCustomAmount(""); }}
@@ -440,13 +415,13 @@ export default function DonatePage() {
               {/* Custom Amount */}
               <div className="max-w-md mx-auto mb-4">
                 <label className="block text-xs font-semibold text-stone-700 mb-1.5 text-center">
-                  Or Enter Custom Amount
+                  {donateConfig.amountSelection.customAmountLabel}
                 </label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500 font-bold text-base">₹</span>
                   <input
                     type="number"
-                    placeholder="Enter amount (min ₹100)"
+                    placeholder={donateConfig.amountSelection.customAmountPlaceholder}
                     value={customAmount}
                     onChange={(e) => { setCustomAmount(e.target.value); setSelectedAmount(null); }}
                     className="w-full pl-8 pr-3 py-2.5 border-2 border-stone-300 rounded-lg text-center text-base font-bold focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500"
@@ -463,11 +438,11 @@ export default function DonatePage() {
                       <Heart className="w-4 h-4 text-white fill-white" />
                     </div>
                     <div>
-                      <p className="text-green-900 font-bold text-xs mb-0.5">Your Impact</p>
+                      <p className="text-green-900 font-bold text-xs mb-0.5">{donateConfig.amountSelection.impactTitle}</p>
                       <p className="text-green-800 text-xs leading-snug">
                         {formatCurrency(finalAmount)} will help:{" "}
                         <span className="font-semibold">
-                          {donationTiers.find((t) => t.amount === finalAmount)?.impact ||
+                          {donateConfig.donationTiers.find((t) => t.amount === finalAmount)?.impact ||
                             `${Math.floor(finalAmount / 500)} cremation service${Math.floor(finalAmount / 500) > 1 ? 's' : ''}`}
                         </span>
                       </p>
@@ -481,22 +456,15 @@ export default function DonatePage() {
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4">
               <h3 className="font-bold text-stone-800 text-sm mb-3 text-center flex items-center justify-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
-                Why Donate to Moksha Seva?
+                {donateConfig.trustBadges.title}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  { icon: "✓", text: "80G Tax Exemption" },
-                  { icon: "✓", text: "100% Transparent" },
-                  { icon: "✓", text: "Govt. Registered" },
-                  { icon: "✓", text: "No Fees" },
-                  { icon: "✓", text: "Instant Receipt" },
-                  { icon: "✓", text: "Secure Payment" }
-                ].map((item, idx) => (
+                {donateConfig.trustBadges.badges.map((badge, idx) => (
                   <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-md">
                     <span className="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
-                      {item.icon}
+                      {badge.icon}
                     </span>
-                    <span className="text-stone-700 text-xs font-medium">{item.text}</span>
+                    <span className="text-stone-700 text-xs font-medium">{badge.text}</span>
                   </div>
                 ))}
               </div>
@@ -505,8 +473,8 @@ export default function DonatePage() {
             {/* Donation Form */}
             <div className="bg-white rounded-lg border border-cream-200 shadow-md overflow-hidden">
               <div className="bg-gradient-to-r from-saffron-600 to-orange-600 text-white p-5 text-center">
-                <h3 className="font-serif text-xl font-bold mb-1">Complete Your Donation</h3>
-                <p className="text-saffron-100 text-xs">Fill in your details • Fields marked with * are required</p>
+                <h3 className="font-serif text-xl font-bold mb-1">{donateConfig.form.title}</h3>
+                <p className="text-saffron-100 text-xs">{donateConfig.form.subtitle}</p>
               </div>
               
               <div className="p-6">
@@ -516,29 +484,29 @@ export default function DonatePage() {
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
                         <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                          <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                          Personal Information
+                          <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.personalInfo.stepNumber}</span>
+                          {donateConfig.form.sections.personalInfo.title}
                         </h4>
                         <div className="space-y-4">
                           <InputField
-                            label="Full Name"
-                            placeholder="As per PAN card"
+                            label={donateConfig.form.sections.personalInfo.fields.fullName.label}
+                            placeholder={donateConfig.form.sections.personalInfo.fields.fullName.placeholder}
                             required
                             value={form.name}
                             onChange={(e) => setForm({ ...form, name: e.target.value })}
                           />
                           <InputField
-                            label="Email"
+                            label={donateConfig.form.sections.personalInfo.fields.email.label}
                             type="email"
-                            placeholder="your@email.com"
+                            placeholder={donateConfig.form.sections.personalInfo.fields.email.placeholder}
                             required
                             value={form.email}
                             onChange={(e) => setForm({ ...form, email: e.target.value })}
                           />
                           <InputField
-                            label="Phone"
+                            label={donateConfig.form.sections.personalInfo.fields.phone.label}
                             type="tel"
-                            placeholder="+91 98765 43210"
+                            placeholder={donateConfig.form.sections.personalInfo.fields.phone.placeholder}
                             required
                             value={form.phone}
                             onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -549,16 +517,16 @@ export default function DonatePage() {
                       {/* Address Details */}
                       <div>
                         <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                          <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
-                          Address
+                          <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.address.stepNumber}</span>
+                          {donateConfig.form.sections.address.title}
                         </h4>
                         <div className="space-y-4">
                           <div>
                             <label className="block text-sm font-semibold text-stone-700 mb-2">
-                              Complete Address <span className="text-red-500">*</span>
+                              {donateConfig.form.sections.address.fields.address.label} <span className="text-red-500">*</span>
                             </label>
                             <textarea
-                              placeholder="House/Flat No., Building, Street"
+                              placeholder={donateConfig.form.sections.address.fields.address.placeholder}
                               rows={2}
                               required
                               value={form.address}
@@ -568,15 +536,15 @@ export default function DonatePage() {
                           </div>
                           <div className="grid grid-cols-2 gap-3">
                             <InputField
-                              label="City"
-                              placeholder="Mumbai"
+                              label={donateConfig.form.sections.address.fields.city.label}
+                              placeholder={donateConfig.form.sections.address.fields.city.placeholder}
                               required
                               value={form.city}
                               onChange={(e) => setForm({ ...form, city: e.target.value })}
                             />
                             <InputField
-                              label="PIN Code"
-                              placeholder="400001"
+                              label={donateConfig.form.sections.address.fields.pincode.label}
+                              placeholder={donateConfig.form.sections.address.fields.pincode.placeholder}
                               required
                               maxLength={6}
                               value={form.pincode}
@@ -585,7 +553,7 @@ export default function DonatePage() {
                           </div>
                           <div>
                             <label className="block text-sm font-semibold text-stone-700 mb-2">
-                              State <span className="text-red-500">*</span>
+                              {donateConfig.form.sections.address.fields.state.label} <span className="text-red-500">*</span>
                             </label>
                             <select
                               required
@@ -593,8 +561,8 @@ export default function DonatePage() {
                               onChange={(e) => setForm({ ...form, state: e.target.value })}
                               className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                             >
-                              <option value="">Select State</option>
-                              {indianStates.map((state) => (
+                              <option value="">{donateConfig.form.sections.address.fields.state.placeholder}</option>
+                              {donateConfig.states.map((state) => (
                                 <option key={state} value={state}>{state}</option>
                               ))}
                             </select>
@@ -606,20 +574,20 @@ export default function DonatePage() {
                     {/* Tax Details */}
                     <div>
                       <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                        <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
-                        Tax Details (Optional)
+                        <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.taxDetails.stepNumber}</span>
+                        {donateConfig.form.sections.taxDetails.title}
                       </h4>
                       <div className="grid grid-cols-2 gap-4">
                         <InputField
-                          label="PAN Number"
-                          placeholder="ABCDE1234F"
+                          label={donateConfig.form.sections.taxDetails.fields.panNumber.label}
+                          placeholder={donateConfig.form.sections.taxDetails.fields.panNumber.placeholder}
                           maxLength={10}
                           value={form.panNumber}
                           onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
                         />
                         <InputField
-                          label="Aadhar Number"
-                          placeholder="1234 5678 9012"
+                          label={donateConfig.form.sections.taxDetails.fields.aadharNumber.label}
+                          placeholder={donateConfig.form.sections.taxDetails.fields.aadharNumber.placeholder}
                           maxLength={12}
                           value={form.aadharNumber}
                           onChange={(e) => setForm({ ...form, aadharNumber: e.target.value })}
@@ -630,20 +598,16 @@ export default function DonatePage() {
                     {/* Donation Preferences */}
                     <div>
                       <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                        <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">4</span>
-                        Donation Preferences
+                        <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.preferences.stepNumber}</span>
+                        {donateConfig.form.sections.preferences.title}
                       </h4>
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            Frequency <span className="text-red-500">*</span>
+                            {donateConfig.form.sections.preferences.frequency.label} <span className="text-red-500">*</span>
                           </label>
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {[
-                              { value: "one-time", label: "One Time", desc: "Single donation" },
-                              { value: "monthly", label: "Monthly", desc: "Recurring monthly" },
-                              { value: "yearly", label: "Yearly", desc: "Recurring yearly" }
-                            ].map((type) => (
+                            {donateConfig.form.sections.preferences.frequency.types.map((type) => (
                               <button
                                 key={type.value}
                                 type="button"
@@ -663,7 +627,7 @@ export default function DonatePage() {
 
                         <div>
                           <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            Purpose <span className="text-red-500">*</span>
+                            {donateConfig.form.sections.preferences.purpose.label} <span className="text-red-500">*</span>
                           </label>
                           <select
                             required
@@ -671,27 +635,24 @@ export default function DonatePage() {
                             onChange={(e) => setForm({ ...form, donationPurpose: e.target.value })}
                             className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white font-medium"
                           >
-                            <option value="general">General Fund</option>
-                            <option value="specific-campaign">Specific Campaign</option>
-                            <option value="memorial">In Memory Of</option>
-                            <option value="tribute">In Honor Of</option>
-                            <option value="ambulance">Ambulance Service</option>
-                            <option value="cremation">Cremation Services</option>
+                            {donateConfig.form.sections.preferences.purpose.options.map((option) => (
+                              <option key={option.value} value={option.value}>{option.label}</option>
+                            ))}
                           </select>
                         </div>
 
                         {(form.donationPurpose === "memorial" || form.donationPurpose === "tribute") && (
                           <div className="space-y-3 bg-amber-50 p-4 rounded-lg border-2 border-amber-200">
                             <InputField
-                              label={form.donationPurpose === "memorial" ? "In Memory Of" : "In Honor Of"}
-                              placeholder="Name"
+                              label={form.donationPurpose === "memorial" ? donateConfig.form.sections.preferences.tribute.memorialLabel : donateConfig.form.sections.preferences.tribute.honorLabel}
+                              placeholder={donateConfig.form.sections.preferences.tribute.nameLabel}
                               value={form.tributeName}
                               onChange={(e) => setForm({ ...form, tributeName: e.target.value })}
                             />
                             <div>
-                              <label className="block text-sm font-semibold text-stone-700 mb-2">Message</label>
+                              <label className="block text-sm font-semibold text-stone-700 mb-2">{donateConfig.form.tribute.messageLabel}</label>
                               <textarea
-                                placeholder="Your message..."
+                                placeholder={donateConfig.form.sections.preferences.tribute.messagePlaceholder}
                                 rows={2}
                                 value={form.tributeMessage}
                                 onChange={(e) => setForm({ ...form, tributeMessage: e.target.value })}
@@ -706,16 +667,11 @@ export default function DonatePage() {
                 {/* Payment Method */}
                 <div>
                   <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                    <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">5</span>
-                    Payment Method
+                    <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.payment.stepNumber}</span>
+                    {donateConfig.form.sections.payment.title}
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                    {[
-                      { value: "upi", label: "UPI", icon: "📱", desc: "PhonePe, GPay, Paytm" },
-                      { value: "card", label: "Card", icon: "💳", desc: "Debit/Credit Card" },
-                      { value: "netbanking", label: "Net Banking", icon: "🏦", desc: "Online Banking" },
-                      { value: "wallet", label: "Wallet", icon: "👛", desc: "Digital Wallets" }
-                    ].map((method) => (
+                    {donateConfig.form.sections.payment.methods.map((method) => (
                       <button
                         key={method.value}
                         type="button"
@@ -737,13 +693,13 @@ export default function DonatePage() {
                   {form.paymentMethod === "upi" && (
                     <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200 space-y-3">
                       <InputField
-                        label="UPI ID"
-                        placeholder="yourname@upi"
+                        label={donateConfig.form.sections.payment.upi.label}
+                        placeholder={donateConfig.form.sections.payment.upi.placeholder}
                         required
                         value={form.upiId}
                         onChange={(e) => setForm({ ...form, upiId: e.target.value })}
                       />
-                      <p className="text-xs text-blue-700 font-medium">Enter your UPI ID (e.g., 9876543210@paytm, name@oksbi)</p>
+                      <p className="text-xs text-blue-700 font-medium">{donateConfig.form.sections.payment.upi.helpText}</p>
                     </div>
                   )}
 
@@ -751,8 +707,8 @@ export default function DonatePage() {
                   {form.paymentMethod === "card" && (
                     <div className="bg-purple-50 rounded-lg p-4 border-2 border-purple-200 space-y-3">
                       <InputField
-                        label="Card Number"
-                        placeholder="1234 5678 9012 3456"
+                        label={donateConfig.form.sections.payment.card.cardNumber.label}
+                        placeholder={donateConfig.form.sections.payment.card.cardNumber.placeholder}
                         required
                         maxLength={19}
                         value={form.cardNumber}
@@ -763,16 +719,16 @@ export default function DonatePage() {
                         }}
                       />
                       <InputField
-                        label="Cardholder Name"
-                        placeholder="Name on card"
+                        label={donateConfig.form.sections.payment.card.cardName.label}
+                        placeholder={donateConfig.form.sections.payment.card.cardName.placeholder}
                         required
                         value={form.cardName}
                         onChange={(e) => setForm({ ...form, cardName: e.target.value })}
                       />
                       <div className="grid grid-cols-2 gap-3">
                         <InputField
-                          label="Expiry Date"
-                          placeholder="MM/YY"
+                          label={donateConfig.form.sections.payment.card.expiry.label}
+                          placeholder={donateConfig.form.sections.payment.card.expiry.placeholder}
                           required
                           maxLength={5}
                           value={form.cardExpiry}
@@ -785,8 +741,8 @@ export default function DonatePage() {
                           }}
                         />
                         <InputField
-                          label="CVV"
-                          placeholder="123"
+                          label={donateConfig.form.sections.payment.card.cvv.label}
+                          placeholder={donateConfig.form.sections.payment.card.cvv.placeholder}
                           required
                           maxLength={3}
                           type="password"
@@ -802,7 +758,7 @@ export default function DonatePage() {
                     <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200 space-y-3">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Select Bank <span className="text-red-500">*</span>
+                          {donateConfig.form.sections.payment.netbanking.label} <span className="text-red-500">*</span>
                         </label>
                         <select
                           required
@@ -810,21 +766,13 @@ export default function DonatePage() {
                           onChange={(e) => setForm({ ...form, bankName: e.target.value })}
                           className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white font-medium"
                         >
-                          <option value="">Choose your bank</option>
-                          <option value="sbi">State Bank of India</option>
-                          <option value="hdfc">HDFC Bank</option>
-                          <option value="icici">ICICI Bank</option>
-                          <option value="axis">Axis Bank</option>
-                          <option value="pnb">Punjab National Bank</option>
-                          <option value="kotak">Kotak Mahindra Bank</option>
-                          <option value="bob">Bank of Baroda</option>
-                          <option value="canara">Canara Bank</option>
-                          <option value="union">Union Bank</option>
-                          <option value="idbi">IDBI Bank</option>
-                          <option value="other">Other</option>
+                          <option value="">{donateConfig.form.sections.payment.netbanking.placeholder}</option>
+                          {donateConfig.form.sections.payment.netbanking.banks.map((bank) => (
+                            <option key={bank.value} value={bank.value}>{bank.label}</option>
+                          ))}
                         </select>
                       </div>
-                      <p className="text-xs text-green-700 font-medium">You will be redirected to your bank&apos;s secure login page</p>
+                      <p className="text-xs text-green-700 font-medium">{donateConfig.form.sections.payment.netbanking.helpText}</p>
                     </div>
                   )}
 
@@ -833,14 +781,10 @@ export default function DonatePage() {
                     <div className="bg-orange-50 rounded-lg p-4 border-2 border-orange-200 space-y-3">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          Select Wallet <span className="text-red-500">*</span>
+                          {donateConfig.form.sections.payment.wallet.label} <span className="text-red-500">*</span>
                         </label>
                         <div className="grid grid-cols-3 gap-2">
-                          {[
-                            { value: "paytm", label: "Paytm" },
-                            { value: "phonepe", label: "PhonePe" },
-                            { value: "googlepay", label: "Google Pay" }
-                          ].map((wallet) => (
+                          {donateConfig.form.sections.payment.wallet.wallets.map((wallet) => (
                             <button
                               key={wallet.value}
                               type="button"
@@ -857,8 +801,8 @@ export default function DonatePage() {
                         </div>
                       </div>
                       <InputField
-                        label="Mobile Number"
-                        placeholder="+91 98765 43210"
+                        label={donateConfig.form.sections.payment.wallet.mobileLabel}
+                        placeholder={donateConfig.form.sections.payment.wallet.mobilePlaceholder}
                         required
                         value={form.walletNumber}
                         onChange={(e) => setForm({ ...form, walletNumber: e.target.value })}
@@ -877,7 +821,7 @@ export default function DonatePage() {
                         onChange={(e) => setForm({ ...form, isAnonymous: e.target.checked })}
                         className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
                       />
-                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">Make my donation anonymous</span>
+                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{donateConfig.form.preferences.anonymous}</span>
                     </label>
 
                     <label className="flex items-start gap-3 cursor-pointer group">
@@ -887,7 +831,7 @@ export default function DonatePage() {
                         onChange={(e) => setForm({ ...form, receiveUpdates: e.target.checked })}
                         className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
                       />
-                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">Send me updates about our work</span>
+                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{donateConfig.form.preferences.updates}</span>
                     </label>
 
                     <label className="flex items-start gap-3 cursor-pointer group">
@@ -897,7 +841,7 @@ export default function DonatePage() {
                         onChange={(e) => setForm({ ...form, taxReceiptRequired: e.target.checked })}
                         className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
                       />
-                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">I need 80G tax receipt</span>
+                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{donateConfig.form.preferences.taxReceipt}</span>
                     </label>
                   </div>
 
@@ -911,7 +855,8 @@ export default function DonatePage() {
                         required
                       />
                       <span className="text-sm text-stone-700 font-medium">
-                        I agree to the <Link href="/legal/terms" className="text-saffron-600 underline font-bold hover:text-saffron-700">Terms & Conditions</Link> <span className="text-red-500">*</span>
+                        {donateConfig.form.terms.termsLabel.split('Terms & Conditions')[0]}
+                        <Link href="/legal/terms" className="text-saffron-600 underline font-bold hover:text-saffron-700">Terms & Conditions</Link> <span className="text-red-500">*</span>
                       </span>
                     </label>
 
@@ -924,7 +869,8 @@ export default function DonatePage() {
                         required
                       />
                       <span className="text-sm text-stone-700 font-medium">
-                        I have read the <Link href="/donate/refund-policy" className="text-saffron-600 underline font-bold hover:text-saffron-700">Refund Policy</Link> <span className="text-red-500">*</span>
+                        {donateConfig.form.terms.refundLabel.split('Refund Policy')[0]}
+                        <Link href="/donate/refund-policy" className="text-saffron-600 underline font-bold hover:text-saffron-700">Refund Policy</Link> <span className="text-red-500">*</span>
                       </span>
                     </label>
                   </div>
@@ -952,12 +898,12 @@ export default function DonatePage() {
                     }
                   >
                     <Heart className="w-5 h-5 mr-2 fill-white" />
-                    Donate {finalAmount ? formatCurrency(finalAmount) : "Now"}
+                    {donateConfig.form.submitButton} {finalAmount ? formatCurrency(finalAmount) : "Now"}
                   </Button>
                   
                   <div className="flex items-center justify-center gap-2 text-stone-500 text-xs mt-4">
                     <ShieldCheck className="w-4 h-4 text-green-600" />
-                    <span className="font-medium">Secure Payment • 80G Receipt • No Fees</span>
+                    <span className="font-medium">{donateConfig.form.securityNote}</span>
                   </div>
 
                   <Link 
@@ -965,7 +911,7 @@ export default function DonatePage() {
                     className="flex items-center justify-center gap-1 text-saffron-600 text-xs hover:underline mt-3 font-medium"
                   >
                     <FileText className="w-3 h-3" />
-                    View Refund & Cancellation Policy
+                    {donateConfig.form.policyLink}
                   </Link>
                 </div>
                 </div>

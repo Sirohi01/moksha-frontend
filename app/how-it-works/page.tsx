@@ -1,61 +1,12 @@
 import type { Metadata } from "next";
 import { Container, SectionHeader } from "@/components/ui/Elements";
-import { Phone, FileText, Search, Flame, Award, Clock, Users, Shield } from "lucide-react";
+import { Clock } from "lucide-react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
+import { howItWorksConfig } from "@/config/how-it-works.config";
+import { getIcon } from "@/config/icons.config";
 
-export const metadata: Metadata = { title: "How It Works" };
-
-const steps = [
-  {
-    icon: Phone,
-    step: "Step 1",
-    title: "Report an Unclaimed Body",
-    desc: "A body is reported through our 24/7 helpline, online form, by police, hospital staff, or a member of the public. Every report is logged with a unique Case ID.",
-    timeline: "0–2 hours",
-    actions: ["Report received via helpline/form/police", "Case ID generated instantly", "Notification sent to nearest volunteer team"],
-  },
-  {
-    icon: Shield,
-    step: "Step 2",
-    title: "Police Coordination & Verification",
-    desc: "Our team coordinates with the nearest police station within 2 hours of the report. Police file an FIR, and we register the case in our system.",
-    timeline: "2–6 hours",
-    actions: ["FIR filed with police", "Body transported to safe location", "Documentation begins"],
-  },
-  {
-    icon: Search,
-    step: "Step 3",
-    title: "Identification Attempt",
-    desc: "We make every effort to identify the deceased — using our database, social media outreach, Missing Persons helplines, and hospital records. Family is notified if found.",
-    timeline: "24–72 hours",
-    actions: ["Photo added to public database", "Social media outreach", "Hospital & missing persons cross-check", "DNA sample preserved"],
-  },
-  {
-    icon: FileText,
-    step: "Step 4",
-    title: "Documentation & Legal Process",
-    desc: "All necessary legal documentation is completed — death certificate application, NOC from police, case records, and next-of-kin search documentation.",
-    timeline: "During 72-hour window",
-    actions: ["Death certificate filed", "Police NOC obtained", "All documentation digitized", "Legal compliance verified"],
-  },
-  {
-    icon: Flame,
-    step: "Step 5",
-    title: "Dignified Cremation",
-    desc: "If the person remains unidentified after 72 hours (or if family requests), we conduct a full cremation with proper religious rites at an approved cremation ground.",
-    timeline: "Within 72–96 hours",
-    actions: ["Cremation with religious rites", "Ash immersion in sacred water body", "Volunteer team in attendance", "Video documentation for records"],
-  },
-  {
-    icon: Award,
-    step: "Step 6",
-    title: "Certificate & Public Record",
-    desc: "An official cremation certificate is issued. The case is published on our public Transparency Dashboard with all details — permanently accessible.",
-    timeline: "Within 48 hours post-cremation",
-    actions: ["Official certificate issued", "Record published on dashboard", "Case archived for 25 years", "Family can access records anytime"],
-  },
-];
+export const metadata: Metadata = { title: howItWorksConfig.metadata.title };
 
 export default function HowItWorksPage() {
   return (
@@ -64,13 +15,12 @@ export default function HowItWorksPage() {
       <section className="py-20 bg-amber-800">
         <Container>
           <div className="text-center text-stone-50">
-            <p className="text-amber-200 font-black text-[10px] uppercase tracking-[0.4em] mb-4">✦ Our Sacred Process ✦</p>
+            <p className="text-amber-200 font-black text-[10px] uppercase tracking-[0.4em] mb-4">{howItWorksConfig.hero.badge}</p>
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-6">
-              How <span className="text-amber-200">Moksha Seva</span> Works
+              {howItWorksConfig.hero.title} <span className="text-amber-200">{howItWorksConfig.hero.titleHighlight}</span> Works
             </h1>
             <p className="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed">
-              A transparent, humane, and legally compliant 6-step process — from the first report
-              to a permanent public record.
+              {howItWorksConfig.hero.description}
             </p>
           </div>
         </Container>
@@ -80,12 +30,12 @@ export default function HowItWorksPage() {
       <section className="py-20 bg-stone-100">
         <Container>
           <div className="space-y-12">
-            {steps.map((step, idx) => {
-              const Icon = step.icon;
+            {howItWorksConfig.steps.map((step, idx) => {
+              const Icon = getIcon(step.icon);
               return (
                 <div key={step.step} className="relative">
                   {/* Connector Line */}
-                  {idx < steps.length - 1 && (
+                  {idx < howItWorksConfig.steps.length - 1 && (
                     <div className="absolute left-8 top-20 bottom-0 w-0.5 bg-gradient-to-b from-amber-600 to-transparent hidden md:block z-0" />
                   )}
 
@@ -108,7 +58,7 @@ export default function HowItWorksPage() {
                         </div>
                       </div>
                       
-                      <p className="text-gray-700 text-lg leading-relaxed mb-6 font-medium">{step.desc}</p>
+                      <p className="text-gray-700 text-lg leading-relaxed mb-6 font-medium">{step.description}</p>
                       
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {step.actions.map((action, actionIdx) => (
@@ -132,20 +82,23 @@ export default function HowItWorksPage() {
         <Container>
           <div className="text-center text-stone-50">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-6">
-              Have a Case to Report?
+              {howItWorksConfig.callToAction.title}
             </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto font-medium leading-relaxed">
-              Our team is available 24/7. Every report is taken seriously and acted upon immediately.
+              {howItWorksConfig.callToAction.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/report">
+              <Link href={howItWorksConfig.callToAction.buttons.reportOnline.href}>
                 <Button className="bg-stone-50 hover:bg-white text-amber-800 px-10 py-4 rounded-lg font-black uppercase tracking-widest transition-all shadow-lg">
-                  Report Online
+                  {howItWorksConfig.callToAction.buttons.reportOnline.text}
                 </Button>
               </Link>
-              <a href="tel:+911800123456">
+              <a href={`tel:${howItWorksConfig.callToAction.buttons.callButton.phoneNumber}`}>
                 <Button className="border-2 border-stone-50 text-stone-50 hover:bg-stone-50 hover:text-amber-800 px-10 py-4 rounded-lg font-black uppercase tracking-widest transition-all flex items-center gap-2">
-                  <Phone className="w-5 h-5" /> Call 1800-123-456
+                  {(() => {
+                    const PhoneIcon = getIcon("Phone");
+                    return <PhoneIcon className="w-5 h-5" />;
+                  })()} {howItWorksConfig.callToAction.buttons.callButton.text}
                 </Button>
               </a>
             </div>
