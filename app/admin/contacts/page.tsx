@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { PageHeader, DataTable, LoadingSpinner, ActionButton } from '@/components/admin/AdminComponents';
 
 interface Contact {
   _id: string;
@@ -99,30 +100,115 @@ export default function ContactsManagement() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <LoadingSpinner size="lg" message="Loading contacts..." />;
   }
+
+  const columns = [
+    {
+      key: 'contact',
+      label: 'Contact Details',
+      render: (_value: any, contact: Contact) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{contact.name}</div>
+          <div className="text-sm text-gray-500">{contact.email}</div>
+          <div className="text-sm text-gray-500">{contact.phone}</div>
+        </div>
+      )
+    },
+    {
+      key: 'subject',
+      label: 'Subject & Type',
+      render: (_value: any, contact: Contact) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{contact.subject}</div>
+          <div className="flex items-center mt-1">
+            <span className="mr-2">{getInquiryTypeIcon(contact.inquiryType)}</span>
+            <span className="text-sm text-gray-500 capitalize">{contact.inquiryType}</span>
+          </div>
+        </div>
+      )
+    },
+    {
+      key: 'message',
+      label: 'Message',
+      render: (_value: any, contact: Contact) => (
+        <div className="text-sm text-gray-500 max-w-xs">
+          <div className="truncate" title={contact.message}>{contact.message}</div>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (_value: any, contact: Contact) => (
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(contact.status)}`}>
+          {contact.status.replace('_', ' ')}
+        </span>
+      )
+    },
+    {
+      key: 'createdAt',
+      label: 'Date',
+      render: (_value: any, contact: Contact) => (
+        <div className="text-sm text-gray-500">
+          {new Date(contact.createdAt).toLocaleDateString('en-IN')}
+        </div>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (_value: any, contact: Contact) => (
+        <div className="flex space-x-2">
+          <select
+            value={contact.status}
+            onChange={(e) => updateStatus(contact._id, e.target.value)}
+            className="text-xs px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          >
+            <option value="new">New</option>
+            <option value="in_progress">In Progress</option>
+            <option value="responded">Responded</option>
+            <option value="closed">Closed</option>
+          </select>
+          <button
+            onClick={() => window.open(`mailto:${contact.email}?subject=Re: ${contact.subject}`)}
+            className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-all duration-200"
+            title="Reply via Email"
+          >
+            📧
+          </button>
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Contact Management</h1>
-        <p className="text-gray-600">Manage contact inquiries and support requests</p>
-      </div>
+      {/* Page Header */}
+      <PageHeader 
+        title="Contact Management" 
+        description="Manage contact inquiries and support requests"
+        icon="📞"
+      >
+        <ActionButton 
+          onClick={fetchContacts}
+          variant="secondary"
+          icon="🔄"
+        >
+          Refresh
+        </ActionButton>
+      </PageHeader>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Status</option>
               <option value="new">New</option>
@@ -136,7 +222,7 @@ export default function ContactsManagement() {
             <select
               value={filters.inquiryType}
               onChange={(e) => setFilters({ ...filters, inquiryType: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Types</option>
               <option value="general">General</option>
@@ -154,145 +240,49 @@ export default function ContactsManagement() {
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               placeholder="Search by name or email..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             />
           </div>
         </div>
       </div>
 
-      {/* Contacts List */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact Details
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Subject & Type
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Message
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {contacts.map((contact) => (
-                <tr key={contact._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{contact.name}</div>
-                      <div className="text-sm text-gray-500">{contact.email}</div>
-                      <div className="text-sm text-gray-500">{contact.phone}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{contact.subject}</div>
-                      <div className="flex items-center mt-1">
-                        <span className="mr-2">{getInquiryTypeIcon(contact.inquiryType)}</span>
-                        <span className="text-sm text-gray-500 capitalize">{contact.inquiryType}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500 max-w-xs">
-                      <div className="truncate">{contact.message}</div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(contact.status)}`}>
-                      {contact.status.replace('_', ' ')}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(contact.createdAt).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <select
-                        value={contact.status}
-                        onChange={(e) => updateStatus(contact._id, e.target.value)}
-                        className="text-xs px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      >
-                        <option value="new">New</option>
-                        <option value="in_progress">In Progress</option>
-                        <option value="responded">Responded</option>
-                        <option value="closed">Closed</option>
-                      </select>
-                      <button
-                        onClick={() => window.open(`mailto:${contact.email}?subject=Re: ${contact.subject}`)}
-                        className="text-blue-600 hover:text-blue-900"
-                        title="Reply via Email"
-                      >
-                        📧
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Contacts Table */}
+      <DataTable 
+        columns={columns}
+        data={contacts}
+        loading={loading}
+        emptyMessage="No contacts found"
+      />
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200">
-            <div className="flex-1 flex justify-between sm:hidden">
-              <button
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div className="text-sm text-gray-700">
+              Page <span className="font-medium">{currentPage}</span> of{' '}
+              <span className="font-medium">{totalPages}</span>
+            </div>
+            <div className="flex space-x-2">
+              <ActionButton
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                variant="secondary"
+                size="sm"
               >
                 Previous
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                variant="secondary"
+                size="sm"
               >
                 Next
-              </button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Page <span className="font-medium">{currentPage}</span> of{' '}
-                  <span className="font-medium">{totalPages}</span>
-                </p>
-              </div>
-              <div>
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </nav>
-              </div>
+              </ActionButton>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

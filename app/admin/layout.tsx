@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI, removeToken } from '@/lib/api';
+import MobileMenu from '@/components/admin/MobileMenu';
 
 interface AdminUser {
   id: string;
@@ -19,10 +20,26 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const [user, setUser] = useState<AdminUser | null>(null);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // Mobile first - closed by default
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Handle responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setSidebarOpen(true); // Auto-open on desktop
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Check authentication
   useEffect(() => {
@@ -67,16 +84,16 @@ export default function AdminLayout({
   const getNavigationItems = () => {
     if (!user) return [];
     const baseItems = [
-      { name: 'Dashboard', href: '/admin/dashboard', icon: '📊' },
-      { name: 'Reports', href: '/admin/reports', icon: '📋' },
-      { name: 'Board Applications', href: '/admin/board', icon: '👔' },
-      { name: 'Feedback', href: '/admin/feedback', icon: '💬' },
-      { name: 'Government Schemes', href: '/admin/schemes', icon: '🏛️' },
-      { name: 'Contacts', href: '/admin/contacts', icon: '📞' },
-      { name: 'Legacy Giving', href: '/admin/legacy', icon: '🌟' },
-      { name: 'Expansion Requests', href: '/admin/expansion', icon: '🌍' },
-      { name: 'Volunteers', href: '/admin/volunteers', icon: '🤝' },
-      { name: 'Donations', href: '/admin/donations', icon: '💰' }
+      { name: 'Dashboard', href: '/admin/dashboard', icon: '🏠', gradient: 'from-blue-500 to-blue-600' },
+      { name: 'Reports', href: '/admin/reports', icon: '📊', gradient: 'from-emerald-500 to-emerald-600' },
+      { name: 'Board Applications', href: '/admin/board', icon: '👔', gradient: 'from-purple-500 to-purple-600' },
+      { name: 'Feedback', href: '/admin/feedback', icon: '💬', gradient: 'from-pink-500 to-pink-600' },
+      { name: 'Government Schemes', href: '/admin/schemes', icon: '🏛️', gradient: 'from-indigo-500 to-indigo-600' },
+      { name: 'Contacts', href: '/admin/contacts', icon: '📞', gradient: 'from-teal-500 to-teal-600' },
+      { name: 'Legacy Giving', href: '/admin/legacy', icon: '🌟', gradient: 'from-amber-500 to-amber-600' },
+      { name: 'Expansion Requests', href: '/admin/expansion', icon: '🌍', gradient: 'from-green-500 to-green-600' },
+      { name: 'Volunteers', href: '/admin/volunteers', icon: '🤝', gradient: 'from-orange-500 to-orange-600' },
+      { name: 'Donations', href: '/admin/donations', icon: '💰', gradient: 'from-yellow-500 to-yellow-600' }
     ];
 
     // SEO Team - Content Management (COMMENTED OUT - Uncomment as needed)
@@ -117,10 +134,16 @@ export default function AdminLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading admin panel...</p>
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-teal-200 border-t-teal-600 mx-auto mb-6"></div>
+            <div className="absolute inset-0 rounded-full h-16 w-16 border-4 border-transparent border-r-blue-400 animate-spin animate-reverse mx-auto"></div>
+          </div>
+          <div className="space-y-2">
+            <p className="text-gray-700 text-lg font-medium">Loading Moksha Seva Admin</p>
+            <p className="text-gray-500 text-sm">Preparing your peaceful workspace...</p>
+          </div>
         </div>
       </div>
     );
@@ -138,77 +161,165 @@ export default function AdminLayout({
   const navigationItems = getNavigationItems();
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out lg:translate-x-0`}>
-        {/* Logo */}
-        <div className="flex items-center justify-center h-16 bg-gradient-to-r from-yellow-400 to-teal-500">
-          <span className="text-white text-xl font-bold">🙏 Moksha Seva</span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
+      {/* Mobile Menu */}
+      <MobileMenu
+        navigationItems={navigationItems}
+        isOpen={isMobile && sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        user={user}
+        onLogout={handleLogout}
+      />
+
+      {/* Desktop Sidebar */}
+      <div className="fixed inset-y-0 left-0 z-50 w-72 bg-white/95 backdrop-blur-xl shadow-2xl border-r border-gray-200/50 hidden lg:block">
+        
+        {/* Logo Section */}
+        <div className="relative h-20 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 to-red-400/20 animate-pulse-slow"></div>
+          <div className="relative flex items-center space-x-3">
+            <div className="w-12 h-12 bg-white/95 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg p-2">
+              <img 
+                src="/logo.png" 
+                alt="Moksha Seva Logo" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div className="text-white">
+              <h1 className="text-xl font-bold tracking-wide">Moksha Seva</h1>
+              <p className="text-xs text-white/90 font-medium">Admin Dashboard</p>
+            </div>
+          </div>
+        </div>
+
+        {/* User Profile Section */}
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center space-x-4">
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-white text-lg font-bold">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
+              <p className="text-xs text-gray-500 capitalize truncate">
+                {user.role.replace('_', ' ')}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Navigation */}
-        <nav className="mt-8">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors ${
-                pathname === item.href ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : ''
-              }`}
-            >
-              <span className="mr-3">{item.icon}</span>
-              {item.name}
-            </Link>
-          ))}
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar h-[calc(100vh-280px)]">
+          {navigationItems.map((item, index) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-blue-50 to-teal-50 text-blue-700 shadow-sm border border-blue-100' 
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${
+                  isActive 
+                    ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg` 
+                    : 'bg-gray-100 group-hover:bg-gray-200'
+                }`}>
+                  <span className="text-sm">{item.icon}</span>
+                </div>
+                <span className="flex-1">{item.name}</span>
+                {isActive && (
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                )}
+              </Link>
+            );
+          })}
         </nav>
+
+        {/* Bottom Section */}
+        <div className="p-4 border-t border-gray-100">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
+          >
+            <div className="w-8 h-8 rounded-lg bg-red-100 group-hover:bg-red-200 flex items-center justify-center mr-3 transition-all duration-200">
+              <span className="text-sm">🚪</span>
+            </div>
+            <span>Sign Out</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Content */}
-      <div className={`${sidebarOpen ? 'lg:ml-64' : ''} transition-all duration-300`}>
-        {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center">
+      <div className="lg:ml-72">
+        {/* Top Header */}
+        <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+            <div className="flex items-center space-x-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="text-gray-500 hover:text-gray-700 lg:hidden"
+                className="p-2 rounded-xl text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 lg:hidden"
               >
-                <span className="text-xl">☰</span>
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
               </button>
-              <h1 className="ml-4 text-xl font-semibold text-gray-800">
-                Admin Panel
-              </h1>
+              
+              <div>
+                <h1 className="text-lg sm:text-xl font-semibold text-gray-900">
+                  {navigationItems.find(item => item.href === pathname)?.name || 'Dashboard'}
+                </h1>
+                <p className="text-xs sm:text-sm text-gray-500">Moksha Seva Admin Panel</p>
+              </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              {/* User Info */}
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-700">{user.name}</p>
-                  <p className="text-xs text-gray-500">{user.role.replace('_', ' ').toUpperCase()}</p>
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Quick Stats */}
+              <div className="hidden md:flex items-center space-x-4">
+                <div className="flex items-center space-x-2 px-3 py-2 bg-green-50 rounded-lg">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-green-700">System Online</span>
                 </div>
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-bold">
-                    {user.name.charAt(0).toUpperCase()}
-                  </span>
+                <div className="text-xs text-gray-500">
+                  {new Date().toLocaleDateString('en-IN', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })}
                 </div>
               </div>
 
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="text-gray-500 hover:text-red-600 transition-colors"
-                title="Logout"
-              >
-                <span className="text-lg">🚪</span>
-              </button>
+              {/* User Menu */}
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="hidden sm:block text-right">
+                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
+                  <p className="text-xs text-gray-500 capitalize">{user.role.replace('_', ' ')}</p>
+                </div>
+                <div className="relative">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                    <span className="text-white text-xs sm:text-sm font-bold">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+                </div>
+              </div>
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <main className="p-6">
-          {children}
+        <main className="p-4 sm:p-6 lg:p-8 min-h-screen">
+          <div className="w-full max-w-none">
+            {children}
+          </div>
         </main>
       </div>
     </div>

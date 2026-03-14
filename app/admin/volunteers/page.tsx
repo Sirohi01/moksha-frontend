@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { PageHeader, DataTable, LoadingSpinner, ActionButton, Modal } from '@/components/admin/AdminComponents';
 
 interface Volunteer {
   _id: string;
@@ -128,38 +129,169 @@ export default function VolunteersManagement() {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <LoadingSpinner size="lg" message="Loading volunteers..." />;
   }
+
+  const getStatusBadge = (status: string) => {
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800',
+      approved: 'bg-green-100 text-green-800',
+      active: 'bg-blue-100 text-blue-800',
+      inactive: 'bg-gray-100 text-gray-800',
+      rejected: 'bg-red-100 text-red-800'
+    };
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+  };
+
+  const columns = [
+    {
+      key: 'volunteer',
+      label: 'Volunteer Details',
+      render: (_value: any, volunteer: Volunteer) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{volunteer.name}</div>
+          <div className="text-sm text-gray-500">ID: {volunteer.volunteerId}</div>
+          <div className="text-sm text-gray-500 capitalize">{volunteer.registrationType}</div>
+        </div>
+      )
+    },
+    {
+      key: 'contact',
+      label: 'Contact',
+      render: (_value: any, volunteer: Volunteer) => (
+        <div>
+          <div className="text-sm text-gray-900">{volunteer.email}</div>
+          <div className="text-sm text-gray-500">{volunteer.phone}</div>
+        </div>
+      )
+    },
+    {
+      key: 'location',
+      label: 'Location',
+      render: (_value: any, volunteer: Volunteer) => (
+        <div>
+          <div className="text-sm text-gray-900">{volunteer.city}</div>
+          <div className="text-sm text-gray-500">{volunteer.state}</div>
+        </div>
+      )
+    },
+    {
+      key: 'type',
+      label: 'Type & Availability',
+      render: (_value: any, volunteer: Volunteer) => (
+        <div>
+          <div className="text-sm text-gray-900">
+            {volunteer.volunteerTypes?.join(', ') || 'Not specified'}
+          </div>
+          <div className="text-sm text-gray-500">{volunteer.availability}</div>
+        </div>
+      )
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      render: (_value: any, volunteer: Volunteer) => (
+        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(volunteer.status)}`}>
+          {volunteer.status}
+        </span>
+      )
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      render: (_value: any, volunteer: Volunteer) => (
+        <div className="flex space-x-2">
+          <ActionButton
+            onClick={() => viewVolunteer(volunteer._id)}
+            variant="secondary"
+            size="sm"
+          >
+            View
+          </ActionButton>
+          <button
+            onClick={() => window.open(`mailto:${volunteer.email}?subject=Volunteer Application - ${volunteer.volunteerId}`)}
+            className="p-2 text-purple-600 hover:text-purple-900 hover:bg-purple-50 rounded-lg transition-all duration-200"
+            title="Send Email"
+          >
+            📧
+          </button>
+          {volunteer.status === 'pending' && (
+            <>
+              <ActionButton
+                onClick={() => updateVolunteerStatus(volunteer._id, 'approved')}
+                variant="success"
+                size="sm"
+              >
+                Approve
+              </ActionButton>
+              <ActionButton
+                onClick={() => updateVolunteerStatus(volunteer._id, 'rejected')}
+                variant="danger"
+                size="sm"
+              >
+                Reject
+              </ActionButton>
+            </>
+          )}
+          {volunteer.status === 'approved' && (
+            <ActionButton
+              onClick={() => updateVolunteerStatus(volunteer._id, 'active')}
+              variant="primary"
+              size="sm"
+            >
+              Activate
+            </ActionButton>
+          )}
+          {volunteer.status === 'active' && (
+            <ActionButton
+              onClick={() => updateVolunteerStatus(volunteer._id, 'inactive')}
+              variant="secondary"
+              size="sm"
+            >
+              Deactivate
+            </ActionButton>
+          )}
+          {volunteer.status === 'inactive' && (
+            <ActionButton
+              onClick={() => updateVolunteerStatus(volunteer._id, 'active')}
+              variant="success"
+              size="sm"
+            >
+              Reactivate
+            </ActionButton>
+          )}
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">🤝 Volunteers Management</h1>
-            <p className="text-gray-600">Manage volunteer applications and assignments</p>
-          </div>
-          <div className="text-sm text-gray-500">
-            Total Volunteers: {volunteers.length}
-          </div>
-        </div>
-      </div>
+      <PageHeader 
+        title="Volunteers Management" 
+        description="Manage volunteer applications and assignments"
+        icon="🤝"
+      >
+        <ActionButton 
+          onClick={fetchVolunteers}
+          variant="secondary"
+          icon="🔄"
+        >
+          Refresh
+        </ActionButton>
+      </PageHeader>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Filters</h3>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -174,7 +306,7 @@ export default function VolunteersManagement() {
             <select
               value={filters.registrationType}
               onChange={(e) => setFilters({ ...filters, registrationType: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             >
               <option value="">All Types</option>
               <option value="individual">Individual</option>
@@ -188,7 +320,7 @@ export default function VolunteersManagement() {
               value={filters.city}
               onChange={(e) => setFilters({ ...filters, city: e.target.value })}
               placeholder="Filter by city"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             />
           </div>
           <div>
@@ -198,317 +330,192 @@ export default function VolunteersManagement() {
               value={filters.state}
               onChange={(e) => setFilters({ ...filters, state: e.target.value })}
               placeholder="Filter by state"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
             />
           </div>
         </div>
       </div>
 
       {/* Volunteers Table */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Volunteer Details
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type & Availability
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {volunteers.map((volunteer) => (
-                <tr key={volunteer._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {volunteer.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        ID: {volunteer.volunteerId}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {volunteer.registrationType}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {volunteer.email}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {volunteer.phone}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {volunteer.city}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {volunteer.state}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {volunteer.volunteerTypes?.join(', ') || 'Not specified'}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {volunteer.availability}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(volunteer.status)}`}>
-                      {volunteer.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button 
-                      onClick={() => viewVolunteer(volunteer._id)}
-                      className="text-blue-600 hover:text-blue-900 mr-4"
-                      title="View Details"
-                    >
-                      View
-                    </button>
-                    <button 
-                      onClick={() => window.open(`mailto:${volunteer.email}?subject=Volunteer Application - ${volunteer.volunteerId}`)}
-                      className="text-purple-600 hover:text-purple-900 mr-4"
-                      title="Send Email"
-                    >
-                      📧
-                    </button>
-                    {volunteer.status === 'pending' && (
-                      <>
-                        <button 
-                          onClick={() => updateVolunteerStatus(volunteer._id, 'approved')}
-                          className="text-green-600 hover:text-green-900 mr-4"
-                          title="Approve Volunteer"
-                        >
-                          Approve
-                        </button>
-                        <button 
-                          onClick={() => updateVolunteerStatus(volunteer._id, 'rejected')}
-                          className="text-red-600 hover:text-red-900"
-                          title="Reject Volunteer"
-                        >
-                          Reject
-                        </button>
-                      </>
-                    )}
-                    {volunteer.status === 'approved' && (
-                      <button 
-                        onClick={() => updateVolunteerStatus(volunteer._id, 'active')}
-                        className="text-blue-600 hover:text-blue-900 mr-4"
-                        title="Activate Volunteer"
-                      >
-                        Activate
-                      </button>
-                    )}
-                    {volunteer.status === 'active' && (
-                      <button 
-                        onClick={() => updateVolunteerStatus(volunteer._id, 'inactive')}
-                        className="text-gray-600 hover:text-gray-900"
-                        title="Deactivate Volunteer"
-                      >
-                        Deactivate
-                      </button>
-                    )}
-                    {volunteer.status === 'inactive' && (
-                      <button 
-                        onClick={() => updateVolunteerStatus(volunteer._id, 'active')}
-                        className="text-green-600 hover:text-green-900"
-                        title="Reactivate Volunteer"
-                      >
-                        Reactivate
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      <DataTable 
+        columns={columns}
+        data={volunteers}
+        loading={loading}
+        emptyMessage="No volunteers found"
+      />
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
-              <button
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+            <div className="text-sm text-gray-700">
+              Page <span className="font-medium">{currentPage}</span> of{' '}
+              <span className="font-medium">{totalPages}</span>
+            </div>
+            <div className="flex space-x-2">
+              <ActionButton
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                variant="secondary"
+                size="sm"
               >
                 Previous
-              </button>
-              <button
+              </ActionButton>
+              <ActionButton
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                variant="secondary"
+                size="sm"
               >
                 Next
-              </button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Page <span className="font-medium">{currentPage}</span> of{' '}
-                  <span className="font-medium">{totalPages}</span>
-                </p>
-              </div>
-              <div>
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                        page === currentPage
-                          ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                          : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </nav>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* View Volunteer Dialog */}
-      {showViewDialog && selectedVolunteer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">Volunteer Details</h2>
-                <button
-                  onClick={() => setShowViewDialog(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  ✕
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-6">
-              {/* Basic Info */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Personal Information</h3>
-                  <div className="space-y-2">
-                    <p><strong>Name:</strong> {selectedVolunteer.name}</p>
-                    <p><strong>Email:</strong> {selectedVolunteer.email}</p>
-                    <p><strong>Phone:</strong> {selectedVolunteer.phone}</p>
-                    <p><strong>Volunteer ID:</strong> {selectedVolunteer.volunteerId}</p>
-                    <p><strong>Registration Type:</strong> {selectedVolunteer.registrationType}</p>
-                    <p><strong>Status:</strong> 
-                      <span className={`ml-2 px-2 py-1 rounded-full text-xs ${getStatusColor(selectedVolunteer.status)}`}>
-                        {selectedVolunteer.status}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Location & Availability</h3>
-                  <div className="space-y-2">
-                    <p><strong>City:</strong> {selectedVolunteer.city}</p>
-                    <p><strong>State:</strong> {selectedVolunteer.state}</p>
-                    <p><strong>Availability:</strong> {selectedVolunteer.availability}</p>
-                    <p><strong>Volunteer Types:</strong> {selectedVolunteer.volunteerTypes?.join(', ') || 'Not specified'}</p>
-                    <p><strong>Registration Date:</strong> {new Date(selectedVolunteer.createdAt).toLocaleDateString()}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4 pt-4 border-t border-gray-200">
-                <button
-                  onClick={() => window.open(`mailto:${selectedVolunteer.email}?subject=Volunteer Application - ${selectedVolunteer.volunteerId}`)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Send Email
-                </button>
-                
-                {selectedVolunteer.status === 'pending' && (
-                  <>
-                    <button
-                      onClick={() => {
-                        updateVolunteerStatus(selectedVolunteer._id, 'approved');
-                        setShowViewDialog(false);
-                      }}
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => {
-                        updateVolunteerStatus(selectedVolunteer._id, 'rejected');
-                        setShowViewDialog(false);
-                      }}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                    >
-                      Reject
-                    </button>
-                  </>
-                )}
-                
-                {selectedVolunteer.status === 'approved' && (
-                  <button
-                    onClick={() => {
-                      updateVolunteerStatus(selectedVolunteer._id, 'active');
-                      setShowViewDialog(false);
-                    }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    Activate
-                  </button>
-                )}
-                
-                {selectedVolunteer.status === 'active' && (
-                  <button
-                    onClick={() => {
-                      updateVolunteerStatus(selectedVolunteer._id, 'inactive');
-                      setShowViewDialog(false);
-                    }}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
-                  >
-                    Deactivate
-                  </button>
-                )}
-                
-                {selectedVolunteer.status === 'inactive' && (
-                  <button
-                    onClick={() => {
-                      updateVolunteerStatus(selectedVolunteer._id, 'active');
-                      setShowViewDialog(false);
-                    }}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  >
-                    Reactivate
-                  </button>
-                )}
-              </div>
+              </ActionButton>
             </div>
           </div>
         </div>
       )}
+
+      {/* View Volunteer Modal */}
+      <Modal
+        isOpen={showViewDialog}
+        onClose={() => setShowViewDialog(false)}
+        title="Volunteer Details"
+        size="lg"
+      >
+        {selectedVolunteer && (
+          <div className="space-y-6">
+            {/* Basic Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Personal Information</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Name:</span>
+                    <span className="font-medium">{selectedVolunteer.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Email:</span>
+                    <span className="font-medium">{selectedVolunteer.email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Phone:</span>
+                    <span className="font-medium">{selectedVolunteer.phone}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Volunteer ID:</span>
+                    <span className="font-medium">{selectedVolunteer.volunteerId}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Registration Type:</span>
+                    <span className="font-medium capitalize">{selectedVolunteer.registrationType}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status:</span>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(selectedVolunteer.status)}`}>
+                      {selectedVolunteer.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Location & Availability</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">City:</span>
+                    <span className="font-medium">{selectedVolunteer.city}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">State:</span>
+                    <span className="font-medium">{selectedVolunteer.state}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Availability:</span>
+                    <span className="font-medium">{selectedVolunteer.availability}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Volunteer Types:</span>
+                    <span className="font-medium">{selectedVolunteer.volunteerTypes?.join(', ') || 'Not specified'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Registration Date:</span>
+                    <span className="font-medium">{new Date(selectedVolunteer.createdAt).toLocaleDateString('en-IN')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-200">
+              <ActionButton
+                onClick={() => window.open(`mailto:${selectedVolunteer.email}?subject=Volunteer Application - ${selectedVolunteer.volunteerId}`)}
+                variant="primary"
+                icon="📧"
+              >
+                Send Email
+              </ActionButton>
+              
+              {selectedVolunteer.status === 'pending' && (
+                <>
+                  <ActionButton
+                    onClick={() => {
+                      updateVolunteerStatus(selectedVolunteer._id, 'approved');
+                      setShowViewDialog(false);
+                    }}
+                    variant="success"
+                  >
+                    Approve
+                  </ActionButton>
+                  <ActionButton
+                    onClick={() => {
+                      updateVolunteerStatus(selectedVolunteer._id, 'rejected');
+                      setShowViewDialog(false);
+                    }}
+                    variant="danger"
+                  >
+                    Reject
+                  </ActionButton>
+                </>
+              )}
+              
+              {selectedVolunteer.status === 'approved' && (
+                <ActionButton
+                  onClick={() => {
+                    updateVolunteerStatus(selectedVolunteer._id, 'active');
+                    setShowViewDialog(false);
+                  }}
+                  variant="primary"
+                >
+                  Activate
+                </ActionButton>
+              )}
+              
+              {selectedVolunteer.status === 'active' && (
+                <ActionButton
+                  onClick={() => {
+                    updateVolunteerStatus(selectedVolunteer._id, 'inactive');
+                    setShowViewDialog(false);
+                  }}
+                  variant="secondary"
+                >
+                  Deactivate
+                </ActionButton>
+              )}
+              
+              {selectedVolunteer.status === 'inactive' && (
+                <ActionButton
+                  onClick={() => {
+                    updateVolunteerStatus(selectedVolunteer._id, 'active');
+                    setShowViewDialog(false);
+                  }}
+                  variant="success"
+                >
+                  Reactivate
+                </ActionButton>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
