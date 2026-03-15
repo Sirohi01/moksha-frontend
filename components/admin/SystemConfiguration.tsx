@@ -49,7 +49,7 @@ export default function SystemConfiguration() {
     general: {
       siteName: 'Moksha Seva',
       siteUrl: 'https://mokshaseva.org',
-      adminEmail: 'admin@mokshaseva.org',
+      adminEmail: 'officialmanishsirohi.01@gmail.com',
       timezone: 'Asia/Kolkata',
       language: 'en',
       maintenanceMode: false

@@ -9,7 +9,7 @@ import Image from "next/image";
 
 // Simple demo credentials (in real app, this would be backend authentication)
 const DEMO_CREDENTIALS = {
-  email: "admin@mokshaseva.org",
+  email: "officialmanishsirohi.01@gmail.com",
   password: "admin123"
 };
 

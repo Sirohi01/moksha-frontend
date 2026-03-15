@@ -105,7 +105,7 @@ export default function AdminLogin() {
                   id="email"
                   required
                   className="w-full pl-12 pr-4 py-3 h-12 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
-                  placeholder="admin@mokshaseva.org"
+                  placeholder="officialmanishsirohi.01@gmail.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
