@@ -9,10 +9,12 @@ import Image from "next/image";
 import SearchModal from "@/components/ui/SearchModal";
 import { layoutConfig } from "@/config/layout.config";
 import { getIcon } from "@/config/icons.config";
-
-const navLinks = layoutConfig.navbar.navigation;
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function Navbar() {
+  const { config, loading, error } = usePageConfig('layout', layoutConfig);
+  const activeConfig = config || layoutConfig;
+  const navLinks = activeConfig.navbar.navigation;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -45,18 +47,18 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-4 group shrink-0 relative z-50">
               <div className="relative w-24 h-24 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-lg transform translate-y-6">
                 <Image
-                  src={layoutConfig.navbar.logo.src}
-                  alt={layoutConfig.navbar.logo.alt}
+                  src={activeConfig.navbar.logo.src}
+                  alt={activeConfig.navbar.logo.alt}
                   fill
                   className="object-contain p-4 relative z-10 group-hover:scale-110 transition-transform duration-300"
                 />
               </div>
               <div className="hidden sm:block">
                 <span className="font-sans text-xl font-bold leading-tight tracking-tight bg-gradient-to-r from-[#f4c430] via-[#20b2aa] to-[#f4c430] bg-clip-text text-transparent group-hover:from-[#eab308] group-hover:via-[#1a9d94] group-hover:to-[#eab308] transition-all duration-300 group-hover:scale-[1.02] inline-block">
-                  {layoutConfig.navbar.logo.title}
+                  {activeConfig.navbar.logo.title}
                 </span>
                 <span className="text-[11px] text-stone-500 font-normal leading-none uppercase tracking-wider block group-hover:text-stone-600 transition-colors duration-300">
-                  {layoutConfig.navbar.logo.subtitle}
+                  {activeConfig.navbar.logo.subtitle}
                 </span>
               </div>
             </Link>
@@ -202,7 +204,7 @@ export default function Navbar() {
               >
                 <button className="px-2 py-3 text-xs font-medium text-stone-700 hover:text-[#f4c430] transition-all flex items-center gap-1.5 hover:bg-stone-50/80 rounded-lg">
                   <Menu className="w-3.5 h-3.5" />
-                  <span>{layoutConfig.navbar.mobile.moreLabel}</span>
+                  <span>{activeConfig.navbar.mobile.moreLabel}</span>
                   <ChevronDown className="w-2.5 h-2.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
                 </button>
                 
@@ -267,7 +269,7 @@ export default function Navbar() {
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="p-2 text-stone-600 hover:text-stone-900 transition-colors rounded-lg hover:bg-stone-100"
-                aria-label={layoutConfig.navbar.actions.search.label}
+                aria-label={activeConfig.navbar.actions.search.label}
               >
                 <Search className="w-5 h-5" />
               </button>
@@ -275,7 +277,7 @@ export default function Navbar() {
               {/* Donate Button */}
               <Link href="/donate">
                 <Button size="sm" className="px-4 lg:px-6 py-2 text-sm font-normal bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400 transition-all duration-200 rounded-md">
-                  {layoutConfig.navbar.actions.donate.label}
+                  {activeConfig.navbar.actions.donate.label}
                 </Button>
               </Link>
             </div>
@@ -284,7 +286,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="lg:hidden p-2 rounded-lg text-stone-600 hover:bg-stone-50 transition-colors"
-              aria-label={mobileOpen ? layoutConfig.navbar.mobile.closeLabel : layoutConfig.navbar.mobile.openLabel}
+              aria-label={mobileOpen ? activeConfig.navbar.mobile.closeLabel : activeConfig.navbar.mobile.openLabel}
             >
               {mobileOpen ? <X className="w-5 h-5 text-[#f4c430]" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -360,9 +362,9 @@ export default function Navbar() {
                 className="flex items-center gap-3 w-full px-3 py-3 text-stone-700 hover:text-[#f4c430] hover:bg-stone-50 rounded-lg text-sm font-medium transition-colors"
               >
                 <Search className="w-4 h-4" />
-                {layoutConfig.navbar.actions.search.label}
+                {activeConfig.navbar.actions.search.label}
                 <span className="ml-auto text-xs text-stone-500">
-                  {layoutConfig.navbar.actions.search.shortcut}
+                  {activeConfig.navbar.actions.search.shortcut}
                 </span>
               </button>
               
@@ -370,7 +372,7 @@ export default function Navbar() {
               <div className="pt-4 mt-4 border-t border-stone-200/50">
                 <Link href="/donate" onClick={() => setMobileOpen(false)}>
                   <Button className="w-full py-3 text-sm font-normal bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400 rounded-md">
-                    {layoutConfig.navbar.actions.donate.mobileLabel}
+                    {activeConfig.navbar.actions.donate.mobileLabel}
                   </Button>
                 </Link>
               </div>

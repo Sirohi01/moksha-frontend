@@ -1,11 +1,30 @@
+"use client";
 import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
 import { testimonialsConfig } from "@/config/testimonials.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function Testimonials() {
-  const testimonials = testimonialsConfig.testimonialsGrid.testimonials;
-  const stats = testimonialsConfig.stats;
+  const { config, loading, error } = usePageConfig('testimonials', testimonialsConfig);
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Failed to load Testimonials page config:', error);
+    // Fallback to static config
+  }
+
+  // Use fallback config if dynamic config is null
+  const activeConfig = config || testimonialsConfig;
+  const testimonials = activeConfig.testimonialsGrid.testimonials;
+  const stats = activeConfig.stats;
 
   return (
     <div className="min-h-screen bg-white">
@@ -14,11 +33,11 @@ export default function Testimonials() {
         <Container>
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 text-gray-900">
-              {testimonialsConfig.hero.title && <span>{testimonialsConfig.hero.title} </span>}
-              <span className="text-amber-700">{testimonialsConfig.hero.highlightText}</span>
+              {activeConfig.hero.title && <span>{activeConfig.hero.title} </span>}
+              <span className="text-amber-700">{activeConfig.hero.highlightText}</span>
             </h1>
             <p className="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed text-gray-700">
-              {testimonialsConfig.hero.description}
+              {activeConfig.hero.description}
             </p>
           </div>
         </Container>
@@ -47,7 +66,7 @@ export default function Testimonials() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-              {testimonialsConfig.testimonialsGrid.title}
+              {activeConfig.testimonialsGrid.title}
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
           </div>
@@ -107,16 +126,16 @@ export default function Testimonials() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-              {testimonialsConfig.videoTestimonials.title}
+              {activeConfig.videoTestimonials.title}
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
             <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              {testimonialsConfig.videoTestimonials.description}
+              {activeConfig.videoTestimonials.description}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonialsConfig.videoTestimonials.videos.map((video, index) => (
+            {activeConfig.videoTestimonials.videos.map((video, index) => (
               <div key={index} className="relative aspect-video rounded-2xl overflow-hidden group cursor-pointer">
                 <Image 
                   src={video.thumbnail}
@@ -146,23 +165,23 @@ export default function Testimonials() {
         <Container>
           <div className="text-center text-white">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter mb-6">
-              {testimonialsConfig.callToAction.title}
+              {activeConfig.callToAction.title}
             </h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
-              {testimonialsConfig.callToAction.description}
+              {activeConfig.callToAction.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
-                href={testimonialsConfig.callToAction.actions.shareStory.href}
+                href={activeConfig.callToAction.actions.shareStory.href}
                 className="bg-amber-100 hover:bg-white text-amber-800 px-8 py-4 rounded-lg font-black uppercase tracking-widest transition-all"
               >
-                {testimonialsConfig.callToAction.actions.shareStory.text}
+                {activeConfig.callToAction.actions.shareStory.text}
               </a>
               <a 
-                href={testimonialsConfig.callToAction.actions.joinMission.href}
+                href={activeConfig.callToAction.actions.joinMission.href}
                 className="border-2 border-white text-white hover:bg-white hover:text-amber-800 px-8 py-4 rounded-lg font-black uppercase tracking-widest transition-all"
               >
-                {testimonialsConfig.callToAction.actions.joinMission.text}
+                {activeConfig.callToAction.actions.joinMission.text}
               </a>
             </div>
           </div>

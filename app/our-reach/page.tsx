@@ -4,12 +4,18 @@ import { Container } from "@/components/ui/Elements";
 import { MapPin, Globe, ShieldCheck, ChevronRight, X, UsersIcon } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { ourReachConfig } from "@/config/our-reach.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function OurReachPage() {
+    // Use dynamic config with fallback to static config
+    const { config: dynamicConfig, loading: configLoading } = usePageConfig('our-reach', ourReachConfig);
+    
+    // Use dynamic config if available, otherwise fallback to static
+    const config = dynamicConfig || ourReachConfig;
     const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
     const [showExpansionForm, setShowExpansionForm] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [formLoading, setFormLoading] = useState(false);
     const [form, setForm] = useState({
         name: "",
         email: "",
@@ -53,7 +59,7 @@ export default function OurReachPage() {
             return;
         }
 
-        setLoading(true);
+        setFormLoading(true);
         try {
             const expansionData = {
                 name: form.name.trim(),
@@ -98,7 +104,7 @@ export default function OurReachPage() {
             console.error('Expansion request error:', error);
             alert(`Network error: ${error instanceof Error ? error.message : 'Please check your connection and try again'}`);
         } finally {
-            setLoading(false);
+            setFormLoading(false);
         }
     };
 
@@ -118,7 +124,7 @@ export default function OurReachPage() {
         });
     };
 
-    const regions = ourReachConfig.regions;
+    const regions = config.regions;
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -128,11 +134,11 @@ export default function OurReachPage() {
                 <Container>
                     <div className="max-w-3xl">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{ourReachConfig.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{ourReachConfig.hero.title} <span className="text-[#7ab800]">{ourReachConfig.hero.titleHighlight}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{config.hero.title} <span className="text-[#7ab800]">{config.hero.titleHighlight}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {ourReachConfig.hero.description}
+                            {config.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -151,7 +157,7 @@ export default function OurReachPage() {
                                 </div>
                                 <h3 className="text-2xl font-black uppercase tracking-tighter mb-1 text-stone-800 leading-none">{region.name}</h3>
                                 <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-widest mb-6">{region.density}</p>
-                                <p className="text-stone-400 font-bold text-[9px] uppercase tracking-widest mb-10 leading-none">{ourReachConfig.labels.activeCities}</p>
+                                <p className="text-stone-400 font-bold text-[9px] uppercase tracking-widest mb-10 leading-none">{config.labels.activeCities}</p>
                                 <div className="flex flex-wrap gap-2 mb-10 pb-8 border-b border-stone-50">
                                     {region.cities.map((city, idx) => (
                                         <span key={idx} className="bg-stone-50 px-4 py-2 rounded-full text-stone-700 font-black text-[10px] uppercase tracking-widest hover:bg-[#7ab800] hover:text-white transition-all">
@@ -163,7 +169,7 @@ export default function OurReachPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex flex-col">
                                         <p className="font-black text-2xl tracking-tighter text-stone-800 leading-none mb-1">{region.stats}</p>
-                                        <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">{ourReachConfig.labels.permanentImpact}</p>
+                                        <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest">{config.labels.permanentImpact}</p>
                                     </div>
                                     <button 
                                         onClick={() => setSelectedRegion(region.name)}
@@ -181,15 +187,15 @@ export default function OurReachPage() {
                             <div className="w-20 h-20 rounded-full bg-[#7ab800] flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(122,184,0,0.3)] border border-white/20">
                                 <Globe size={32} className="text-white" />
                             </div>
-                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 leading-none text-white">{ourReachConfig.expansionCard.title}</h3>
+                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 leading-none text-white">{config.expansionCard.title}</h3>
                             <p className="text-stone-400 font-medium text-sm leading-relaxed mb-8">
-                                {ourReachConfig.expansionCard.description}
+                                {config.expansionCard.description}
                             </p>
                             <Button 
                                 onClick={() => setShowExpansionForm(true)}
                                 className="w-full bg-white text-stone-900 font-black py-4 hover:shadow-[0_20px_40px_rgba(255,255,255,0.2)]"
                             >
-                                {ourReachConfig.expansionCard.buttonText}
+                                {config.expansionCard.buttonText}
                             </Button>
                         </div>
                     </div>
@@ -200,11 +206,11 @@ export default function OurReachPage() {
             <section className="py-20 border-t border-stone-200 bg-white">
                 <Container>
                     <div className="max-w-4xl mx-auto text-center mb-16 px-4">
-                        <h4 className="text-[#7ab800] font-black text-[11px] uppercase tracking-[0.4em] mb-4">{ourReachConfig.networkStats.badge}</h4>
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-none">{ourReachConfig.networkStats.title} <span className="text-[#7ab800]">{ourReachConfig.networkStats.titleHighlight}</span> NETWORK IN INDIA</h2>
+                        <h4 className="text-[#7ab800] font-black text-[11px] uppercase tracking-[0.4em] mb-4">{config.networkStats.badge}</h4>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-none">{config.networkStats.title} <span className="text-[#7ab800]">{config.networkStats.titleHighlight}</span> NETWORK IN INDIA</h2>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        {ourReachConfig.networkStats.stats.map((stat, index) => (
+                        {config.networkStats.stats.map((stat, index) => (
                             <div key={index} className="text-center p-8 bg-stone-50 rounded-3xl border border-stone-100 shadow-inner">
                                 <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">{stat.number}</p>
                                 <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>
@@ -227,14 +233,14 @@ export default function OurReachPage() {
 
                         <div className="p-12">
                             <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-4">
-                                <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{ourReachConfig.modal.badge}</p>
+                                <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.modal.badge}</p>
                             </div>
                             <h2 className="text-3xl font-black uppercase tracking-tighter text-stone-900 mb-6 leading-none">{selectedRegion}</h2>
                             
                             <div className="space-y-6">
                                 <div className="p-6 bg-stone-50 rounded-2xl">
                                     <p className="text-stone-600 font-medium leading-relaxed">
-                                        {ourReachConfig.modal.regionModalDescription.replace('{regionName}', selectedRegion)}
+                                        {config.modal.regionModalDescription.replace('{regionName}', selectedRegion)}
                                     </p>
                                 </div>
 
@@ -244,14 +250,14 @@ export default function OurReachPage() {
                                         <p className="text-2xl font-black text-stone-900 mb-1">
                                             {regions.find(r => r.name === selectedRegion)?.cities.length}+
                                         </p>
-                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">{ourReachConfig.labels.activeCitiesCount}</p>
+                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">{config.labels.activeCitiesCount}</p>
                                     </div>
                                     <div className="p-6 bg-white border-2 border-stone-100 rounded-2xl">
                                         <UsersIcon className="text-[#7ab800] mb-3" size={24} />
                                         <p className="text-2xl font-black text-stone-900 mb-1">
                                             {regions.find(r => r.name === selectedRegion)?.stats}
                                         </p>
-                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">{ourReachConfig.labels.totalServices}</p>
+                                        <p className="text-stone-400 text-xs font-black uppercase tracking-widest">{config.labels.totalServices}</p>
                                     </div>
                                 </div>
 
@@ -262,7 +268,7 @@ export default function OurReachPage() {
                                     }}
                                     className="w-full bg-[#7ab800] text-white py-4 font-black uppercase tracking-widest"
                                 >
-                                    {ourReachConfig.modal.expansionButtonText}
+                                    {config.modal.expansionButtonText}
                                 </Button>
                             </div>
                         </div>
@@ -287,16 +293,16 @@ export default function OurReachPage() {
                                     <div className="w-24 h-24 rounded-full bg-[#7ab800] flex items-center justify-center mx-auto mb-8">
                                         <ShieldCheck className="text-white" size={48} />
                                     </div>
-                                    <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">{ourReachConfig.form.successTitle}</h2>
+                                    <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">{config.form.successTitle}</h2>
                                     <p className="text-stone-500 text-xs font-black uppercase tracking-widest mb-6 leading-none">
-                                        {ourReachConfig.form.successRequestId} <span className="font-mono font-bold text-[#7ab800]">EXP-2024-{Math.floor(Math.random() * 900) + 100}</span>
+                                        {config.form.successRequestId} <span className="font-mono font-bold text-[#7ab800]">EXP-2024-{Math.floor(Math.random() * 900) + 100}</span>
                                     </p>
                                     <p className="text-stone-600 font-medium text-lg leading-relaxed mb-8">
-                                        {ourReachConfig.form.successDescription}
+                                        {config.form.successDescription}
                                     </p>
                                     <div className="flex flex-wrap gap-4 justify-center">
                                         <Button onClick={closeForm} className="bg-stone-900 text-white px-10 py-5 font-black uppercase tracking-widest">
-                                            {ourReachConfig.form.closeButtonText}
+                                            {config.form.closeButtonText}
                                         </Button>
                                     </div>
                                 </div>
@@ -304,79 +310,79 @@ export default function OurReachPage() {
                                 <div className="p-8 md:p-12">
                                     <div className="mb-8">
                                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-4">
-                                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{ourReachConfig.labels.expansionRequestBadge}</p>
+                                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.labels.expansionRequestBadge}</p>
                                         </div>
                                         <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">
-                                            {ourReachConfig.form.title}<br />
-                                            <span className="text-[#7ab800]">{ourReachConfig.form.titleHighlight}</span>
+                                            {config.form.title}<br />
+                                            <span className="text-[#7ab800]">{config.form.titleHighlight}</span>
                                         </h2>
                                         <p className="text-stone-500 font-medium leading-relaxed">
-                                            {ourReachConfig.form.description}
+                                            {config.form.description}
                                         </p>
                                     </div>
 
                                     <form onSubmit={handleSubmit} className="space-y-6">
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.fullName}</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.fullName}</label>
                                             <input
                                                 type="text"
                                                 required
                                                 value={form.name}
                                                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                placeholder={ourReachConfig.form.placeholders.fullName}
+                                                placeholder={config.form.placeholders.fullName}
                                             />
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.email}</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.email}</label>
                                                 <input
                                                     type="email"
                                                     required
                                                     value={form.email}
                                                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                    placeholder={ourReachConfig.form.placeholders.email}
+                                                    placeholder={config.form.placeholders.email}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.phone}</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.phone}</label>
                                                 <input
                                                     type="tel"
                                                     required
                                                     value={form.phone}
                                                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                    placeholder={ourReachConfig.form.placeholders.phone}
+                                                    placeholder={config.form.placeholders.phone}
                                                 />
                                             </div>
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-6">
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.city}</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.city}</label>
                                                 <input
                                                     type="text"
                                                     required
                                                     value={form.requestedCity}
                                                     onChange={(e) => setForm({ ...form, requestedCity: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                    placeholder={ourReachConfig.form.placeholders.city}
+                                                    placeholder={config.form.placeholders.city}
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.state}</label>
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.state}</label>
                                                 <select
                                                     required
                                                     value={form.requestedState}
                                                     onChange={(e) => setForm({ ...form, requestedState: e.target.value })}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                                                 >
-                                                    <option value="">{ourReachConfig.form.placeholders.selectState}</option>
-                                                    {ourReachConfig.form.states.map((state) => (
+                                                    <option value="">{config.form.placeholders.selectState}</option>
+                                                    {config.form.states.map((state) => (
                                                         <option key={state} value={state}>{state}</option>
                                                     ))}
                                                 </select>
@@ -384,7 +390,7 @@ export default function OurReachPage() {
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.population}</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.population}</label>
                                             <input
                                                 type="text"
                                                 value={form.population}
@@ -394,58 +400,58 @@ export default function OurReachPage() {
                                                         ? 'border-red-500 focus:border-red-500' 
                                                         : 'border-stone-200 focus:border-[#7ab800]'
                                                 }`}
-                                                placeholder={ourReachConfig.form.placeholders.population}
+                                                placeholder={config.form.placeholders.population}
                                             />
                                             <div className="flex justify-between items-center mt-1">
-                                                <p className="text-stone-500 text-xs">{ourReachConfig.form.validationMessages.populationMinimum}</p>
+                                                <p className="text-stone-500 text-xs">{config.form.validationMessages.populationMinimum}</p>
                                                 {form.population && parseInt(form.population.replace(/[^\d]/g, '')) > 0 && parseInt(form.population.replace(/[^\d]/g, '')) < 1000 && (
                                                     <p className="text-red-500 text-xs">
-                                                        {ourReachConfig.form.validationMessages.populationTooSmall.replace('{population}', parseInt(form.population.replace(/[^\d]/g, '')).toString())}
+                                                        {config.form.validationMessages.populationTooSmall.replace('{population}', parseInt(form.population.replace(/[^\d]/g, '')).toString())}
                                                     </p>
                                                 )}
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.organization}</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.organization}</label>
                                             <input
                                                 type="text"
                                                 value={form.organization}
                                                 onChange={(e) => setForm({ ...form, organization: e.target.value })}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                                                placeholder={ourReachConfig.form.placeholders.organization}
+                                                placeholder={config.form.placeholders.organization}
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.localSupport}</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.localSupport}</label>
                                             <select
                                                 value={form.localSupport}
                                                 onChange={(e) => setForm({ ...form, localSupport: e.target.value })}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                                             >
-                                                {ourReachConfig.form.supportTypes.map((type) => (
+                                                {config.form.supportTypes.map((type) => (
                                                     <option key={type.value} value={type.value}>{type.label}</option>
                                                 ))}
                                             </select>
                                         </div>
 
                                         <div>
-                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{ourReachConfig.form.labels.whyNeeded}</label>
+                                            <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.whyNeeded}</label>
                                             <textarea
                                                 required
                                                 value={form.whyNeeded}
                                                 onChange={(e) => setForm({ ...form, whyNeeded: e.target.value })}
                                                 rows={4}
                                                 className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium resize-none"
-                                                placeholder={ourReachConfig.form.placeholders.whyNeeded}
+                                                placeholder={config.form.placeholders.whyNeeded}
                                             />
                                             <div className="flex justify-between items-center mt-1">
                                                 <p className="text-stone-500 text-xs">
-                                                    {ourReachConfig.form.validationMessages.whyNeededMinimum}
+                                                    {config.form.validationMessages.whyNeededMinimum}
                                                 </p>
                                                 <p className={`text-xs ${form.whyNeeded.trim().length < 50 ? 'text-red-500' : form.whyNeeded.trim().length > 2000 ? 'text-red-500' : 'text-green-600'}`}>
-                                                    {ourReachConfig.form.validationMessages.whyNeededCounter
+                                                    {config.form.validationMessages.whyNeededCounter
                                                         .replace('{current}', form.whyNeeded.trim().length.toString())
                                                         .replace('{remaining}', form.whyNeeded.trim().length < 50 ? `(need ${50 - form.whyNeeded.trim().length} more)` : '')}
                                                 </p>
@@ -454,14 +460,14 @@ export default function OurReachPage() {
 
                                         <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6">
                                             <p className="text-blue-800 text-sm font-medium leading-relaxed">
-                                                <strong className="font-black">{ourReachConfig.form.whatWeProvideText}</strong>
+                                                <strong className="font-black">{config.form.whatWeProvideText}</strong>
                                             </p>
                                         </div>
 
                                         <Button
                                             type="submit"
                                             disabled={Boolean(
-                                                loading || 
+                                                formLoading || 
                                                 !form.name || 
                                                 !form.email || 
                                                 !form.phone || 
@@ -474,11 +480,11 @@ export default function OurReachPage() {
                                             )}
                                             className="w-full bg-[#7ab800] hover:bg-[#5b8a00] text-white py-5 font-black uppercase tracking-widest shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#7ab800]"
                                         >
-                                            {loading ? ourReachConfig.form.loadingText : ourReachConfig.form.submitButtonText}
+                                            {formLoading ? config.form.loadingText : config.form.submitButtonText}
                                         </Button>
 
                                         <p className="text-stone-400 text-[10px] text-center uppercase tracking-widest leading-relaxed">
-                                            {ourReachConfig.form.footerText}
+                                            {config.form.footerText}
                                         </p>
                                     </form>
                                 </div>

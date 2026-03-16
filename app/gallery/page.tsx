@@ -5,22 +5,28 @@ import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
 import { galleryConfig } from "@/config/gallery.config";
 import { getIcon } from "@/config/icons.config";
-
-const galleryImages = galleryConfig.gallery.images;
-const categories = galleryConfig.gallery.categories;
-
-// Get icons
-const Camera = getIcon('Camera');
-const Heart = getIcon('Heart');
-const Share2 = getIcon('Share2');
-const Maximize2 = getIcon('Maximize2');
-const MapPin = getIcon('MapPin');
-const Calendar = getIcon('Calendar');
-const X = getIcon('X');
-const Download = getIcon('Download');
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function GalleryPage() {
-    const [selectedImg, setSelectedImg] = useState<null | typeof galleryImages[0]>(null);
+    const { config, loading, error } = usePageConfig('gallery', galleryConfig);
+    
+    // Use fallback config if dynamic config is null
+    const activeConfig = config || galleryConfig;
+    const galleryImages = activeConfig.gallery.images;
+    const categories = activeConfig.gallery.categories;
+
+    // Get icons
+    const Camera = getIcon('Camera');
+    const Heart = getIcon('Heart');
+    const Share2 = getIcon('Share2');
+    const Maximize2 = getIcon('Maximize2');
+    const MapPin = getIcon('MapPin');
+    const Calendar = getIcon('Calendar');
+    const X = getIcon('X');
+    const Download = getIcon('Download');
+
+    // Initialize state - always call these hooks
+    const [selectedImg, setSelectedImg] = useState<null | any>(null);
     const [activeCategory, setActiveCategory] = useState("All");
     const [filteredImages, setFilteredImages] = useState(galleryImages);
 
@@ -30,7 +36,21 @@ export default function GalleryPage() {
         } else {
             setFilteredImages(galleryImages.filter(img => img.category === activeCategory));
         }
-    }, [activeCategory]);
+    }, [activeCategory, galleryImages]);
+
+    // Handle loading and error states after all hooks
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        console.error('Failed to load Gallery page config:', error);
+        // Fallback to static config
+    }
 
     return (
         <div className="min-h-screen bg-stone-50">
@@ -39,7 +59,7 @@ export default function GalleryPage() {
                 {/* Animated Background Grid */}
                 <div className="absolute inset-0">
                     <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-12 h-full gap-1">
-                        {galleryConfig.hero.backgroundImages.map((src, idx) => (
+                        {activeConfig.hero.backgroundImages.map((src, idx) => (
                             <div 
                                 key={idx} 
                                 className="relative overflow-hidden opacity-20 hover:opacity-40 transition-all duration-1000 aspect-square"
@@ -68,31 +88,31 @@ export default function GalleryPage() {
                             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 mb-8">
                                 <Camera className="w-5 h-5 text-yellow-400" />
                                 <span className="text-white text-sm font-bold tracking-wider uppercase">
-                                    {galleryConfig.hero.badge}
+                                    {activeConfig.hero.badge}
                                 </span>
                             </div>
 
                             {/* Main Title */}
                             <div className="mb-8">
                                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-tight mb-4">
-                                    <span className="block">{galleryConfig.hero.title.line1}</span>
-                                    <span className="text-yellow-400">{galleryConfig.hero.title.line2}</span>
-                                    <span className="text-teal-400 ml-4">{galleryConfig.hero.title.line3}</span>
+                                    <span className="block">{activeConfig.hero.title.line1}</span>
+                                    <span className="text-yellow-400">{activeConfig.hero.title.line2}</span>
+                                    <span className="text-teal-400 ml-4">{activeConfig.hero.title.line3}</span>
                                 </h1>
                             </div>
 
                             {/* Subtitle */}
                             <p className="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed opacity-90 mb-12">
-                                {galleryConfig.hero.description}
+                                {activeConfig.hero.description}
                             </p>
 
                             {/* Stats */}
                             <div className="flex flex-wrap justify-center gap-8">
                                 {[
-                                    galleryConfig.hero.stats.momentsCaptured,
-                                    galleryConfig.hero.stats.categories,
-                                    galleryConfig.hero.stats.citiesDocumented,
-                                    galleryConfig.hero.stats.storiesTold
+                                    activeConfig.hero.stats.momentsCaptured,
+                                    activeConfig.hero.stats.categories,
+                                    activeConfig.hero.stats.citiesDocumented,
+                                    activeConfig.hero.stats.storiesTold
                                 ].map((stat, idx) => (
                                     <div key={idx} className="text-center">
                                         <div className="text-2xl md:text-3xl font-black text-yellow-400 mb-1">
@@ -204,7 +224,7 @@ export default function GalleryPage() {
                     {/* Load More Button */}
                     <div className="text-center mt-12">
                         <button className="bg-yellow-400 hover:bg-yellow-500 text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-sm transition-all shadow-lg hover:shadow-xl">
-                            {galleryConfig.gallery.loadMoreText}
+                            {activeConfig.gallery.loadMoreText}
                         </button>
                     </div>
                 </Container>

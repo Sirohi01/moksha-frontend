@@ -7,14 +7,34 @@ import { ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { tributeConfig } from "@/config/tribute.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function TributePage() {
-    const families = tributeConfig.options.map(option => ({
+    const { config, loading, error } = usePageConfig('tribute', tributeConfig);
+    
+    // Use fallback config if dynamic config is null
+    const activeConfig = config || tributeConfig;
+
+    // Handle loading and error states after all hooks
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        console.error('Failed to load Tribute page config:', error);
+        // Fallback to static config
+    }
+
+    const families = activeConfig.options.map(option => ({
         ...option,
         icon: getIcon(option.icon)
     }));
 
-    const QuoteIcon = getIcon(tributeConfig.quote.icon);
+    const QuoteIcon = getIcon(activeConfig.quote.icon);
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -24,11 +44,11 @@ export default function TributePage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{tributeConfig.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{activeConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{tributeConfig.hero.title} <span className="text-[#7ab800]">{tributeConfig.hero.subtitle}</span> {tributeConfig.hero.titleSuffix}</h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{activeConfig.hero.title} <span className="text-[#7ab800]">{activeConfig.hero.subtitle}</span> {activeConfig.hero.titleSuffix}</h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {tributeConfig.hero.description}
+                            {activeConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -50,9 +70,9 @@ export default function TributePage() {
                                     {family.desc}
                                 </p>
 
-                                <Link href={tributeConfig.buttons.donateLink}>
+                                <Link href={activeConfig.buttons.donateLink}>
                                     <button className="flex items-center justify-between w-full px-10 py-5 rounded-full bg-stone-900 border border-transparent text-white text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">
-                                        {tributeConfig.buttons.sponsorTribute} <ChevronRight size={14} />
+                                        {activeConfig.buttons.sponsorTribute} <ChevronRight size={14} />
                                     </button>
                                 </Link>
                             </div>
@@ -67,18 +87,18 @@ export default function TributePage() {
                     <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-16">
                         <div className="md:w-1/2">
                             <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden grayscale group hover:grayscale-0 transition-all duration-700 shadow-2xl">
-                                <Image src={tributeConfig.quote.imageUrl} alt={tributeConfig.quote.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <Image src={activeConfig.quote.imageUrl} alt={activeConfig.quote.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent" />
                             </div>
                         </div>
                         <div className="md:w-1/2 text-left">
                             <QuoteIcon className="text-[#7ab800] mb-8" size={32} />
-                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.9] mb-8">{tributeConfig.quote.title} <br /><span className="text-[#7ab800]">{tributeConfig.quote.subtitle}</span></h2>
+                            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.9] mb-8">{activeConfig.quote.title} <br /><span className="text-[#7ab800]">{activeConfig.quote.subtitle}</span></h2>
                             <p className="text-stone-500 font-medium text-lg leading-relaxed mb-12 italic">
-                                &quot;{tributeConfig.quote.quote}&quot;
+                                &quot;{activeConfig.quote.quote}&quot;
                             </p>
-                            <Link href={tributeConfig.quote.buttonLink}>
-                                <Button className="w-full md:w-auto px-12 py-5 bg-[#7ab800] rounded-full text-[12px] font-black shadow-2xl shadow-[#7ab800]/20">{tributeConfig.quote.buttonText}</Button>
+                            <Link href={activeConfig.quote.buttonLink}>
+                                <Button className="w-full md:w-auto px-12 py-5 bg-[#7ab800] rounded-full text-[12px] font-black shadow-2xl shadow-[#7ab800]/20">{activeConfig.quote.buttonText}</Button>
                             </Link>
                         </div>
                     </div>

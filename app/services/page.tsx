@@ -1,24 +1,28 @@
-import type { Metadata } from "next";
+"use client";
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
 import { servicesConfig } from "@/config/services.config";
 import { getIcon } from "@/config/icons.config";
-
-export const metadata: Metadata = { title: servicesConfig.metadata.title };
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function ServicesPage() {
+  // Use dynamic config with fallback to static config
+  const { config: dynamicConfig, loading: configLoading } = usePageConfig('services', servicesConfig);
+  
+  // Use dynamic config if available, otherwise fallback to static
+  const config = dynamicConfig || servicesConfig;
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="py-12 md:py-16 lg:py-20 bg-stone-50">
         <Container>
           <div className="text-center">
-            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] mb-4">{servicesConfig.hero.badge}</p>
+            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] mb-4">{config.hero.badge}</p>
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-6 text-gray-900">
-              {servicesConfig.hero.title} <span className="text-amber-700">{servicesConfig.hero.titleHighlight}</span>
+              {config.hero.title} <span className="text-amber-700">{config.hero.titleHighlight}</span>
             </h1>
             <p className="text-xl md:text-2xl font-medium max-w-3xl mx-auto leading-relaxed text-gray-700">
-              {servicesConfig.hero.description}
+              {config.hero.description}
             </p>
           </div>
         </Container>
@@ -28,7 +32,7 @@ export default function ServicesPage() {
       <section className="py-20 bg-stone-100">
         <Container>
           <div className="space-y-12">
-            {servicesConfig.mainServices.map((service, idx) => {
+            {config.mainServices.map((service, idx) => {
               const Icon = getIcon(service.icon);
               const isEven = idx % 2 === 0;
               return (
@@ -68,19 +72,19 @@ export default function ServicesPage() {
       <section className="py-12 bg-gradient-to-br from-amber-50 to-stone-100">
         <Container>
           <div className="text-center mb-8">
-            <span className="text-amber-700 text-sm font-medium tracking-widest uppercase">{servicesConfig.eligibility.badge}</span>
+            <span className="text-amber-700 text-sm font-medium tracking-widest uppercase">{config.eligibility.badge}</span>
             <h2 className="text-3xl md:text-4xl font-bold mt-2 mb-4 text-gray-900">
-              {servicesConfig.eligibility.title}
+              {config.eligibility.title}
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              {servicesConfig.eligibility.description}
+              {config.eligibility.description}
             </p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 items-start">
             {/* Left side - Eligibility criteria */}
             <div className="space-y-4">
-              {servicesConfig.eligibility.items.map((item, idx) => {
+              {config.eligibility.items.map((item, idx) => {
                 const Icon = getIcon(item.icon);
                 return (
                   <div key={idx} className="bg-white rounded-xl p-4 shadow-sm border border-stone-200 hover:shadow-md transition-all duration-300 group">
@@ -115,8 +119,8 @@ export default function ServicesPage() {
               <div className="relative">
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                   <Image
-                    src={servicesConfig.eligibility.mainImage}
-                    alt={servicesConfig.eligibility.mainImageAlt}
+                    src={config.eligibility.mainImage}
+                    alt={config.eligibility.mainImageAlt}
                     width={400}
                     height={300}
                     className="w-full h-full object-cover"

@@ -6,25 +6,31 @@ import Button from "@/components/ui/Button";
 import Link from "next/link";
 import { volunteerConfig } from "@/config/volunteer.config";
 import { getIcon } from "@/config/icons.config";
-
-// Get icons
-const Heart = getIcon('Heart');
-const CheckCircle = getIcon('CheckCircle');
-const Users = getIcon('Users');
-const User = getIcon('User');
-
-const volunteerTypes = volunteerConfig.volunteerTypes.map(type => ({
-  ...type,
-  icon: getIcon(type.icon)
-}));
-
-const availabilityOptions = volunteerConfig.selectOptions.availabilityOptions;
-const experienceLevels = volunteerConfig.selectOptions.experienceLevels;
-const indianStates = volunteerConfig.selectOptions.states;
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function VolunteerPage() {
+  const { config, loading, error } = usePageConfig('volunteer', volunteerConfig);
+  
+  // Use fallback config if dynamic config is null
+  const activeConfig = config || volunteerConfig;
+
+  // Get icons
+  const Heart = getIcon('Heart');
+  const CheckCircle = getIcon('CheckCircle');
+  const Users = getIcon('Users');
+  const User = getIcon('User');
+
+  const volunteerTypes = activeConfig.volunteerTypes.map(type => ({
+    ...type,
+    icon: getIcon(type.icon)
+  }));
+
+  const availabilityOptions = activeConfig.selectOptions.availabilityOptions;
+  const experienceLevels = activeConfig.selectOptions.experienceLevels;
+  const indianStates = activeConfig.selectOptions.states;
+
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [form, setForm] = useState({
     // Registration Type
@@ -86,6 +92,20 @@ export default function VolunteerPage() {
     agreeToBackgroundCheck: false,
   });
 
+  // Handle loading and error states after all hooks
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Failed to load Volunteer page config:', error);
+    // Fallback to static config
+  }
+
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
@@ -95,11 +115,11 @@ export default function VolunteerPage() {
     const handleSubmit = async () => {
         // Validation
         if (!form.name || !form.email || !form.phone || !selectedTypes.length) {
-            alert(volunteerConfig.validationMessages.fillRequiredFields);
+            alert(activeConfig.validationMessages.fillRequiredFields);
             return;
         }
 
-        setLoading(true);
+        setLoadingSubmit(true);
         try {
             let volunteerData: any = {
                 ...form,
@@ -159,9 +179,9 @@ export default function VolunteerPage() {
             }
         } catch (error) {
             console.error('Volunteer form error:', error);
-            alert(`${volunteerConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            alert(`${activeConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
-            setLoading(false);
+            setLoadingSubmit(false);
         }
     };
 
@@ -173,13 +193,13 @@ export default function VolunteerPage() {
             <CheckCircle className="w-10 h-10 text-saffron-600" />
           </div>
           <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">
-            {volunteerConfig.success.title}
+            {activeConfig.success.title}
           </h2>
           <p className="text-stone-600 mb-6">
-            {volunteerConfig.success.description}
+            {activeConfig.success.description}
           </p>
           <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
-            {volunteerConfig.success.registerAnotherText}
+            {activeConfig.success.registerAnotherText}
           </button>
         </div>
       </section>
@@ -190,12 +210,12 @@ export default function VolunteerPage() {
     <>
       <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-12 md:py-16 lg:py-20">
         <Container>
-          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{volunteerConfig.hero.badge}</span>
+          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{activeConfig.hero.badge}</span>
           <h1 className="font-serif text-4xl md:text-5xl font-bold mt-3 mb-4">
-            {volunteerConfig.hero.title}
+            {activeConfig.hero.title}
           </h1>
           <p className="text-stone-300 text-lg max-w-2xl">
-            {volunteerConfig.hero.description}
+            {activeConfig.hero.description}
           </p>
         </Container>
       </section>
@@ -204,7 +224,7 @@ export default function VolunteerPage() {
       <section className="py-12 bg-saffron-50 border-b border-saffron-100">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            {volunteerConfig.whyVolunteer.map((item) => {
+            {activeConfig.whyVolunteer.map((item) => {
               const Icon = getIcon(item.icon);
               return (
                 <div key={item.title}>
@@ -225,10 +245,10 @@ export default function VolunteerPage() {
             {/* Volunteer Types Selection */}
             <div className="bg-white rounded-xl border border-cream-200 shadow-md p-6 mb-6">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-2 text-center">
-                {volunteerConfig.labels.selectVolunteerTypes}
+                {activeConfig.labels.selectVolunteerTypes}
               </h2>
               <p className="text-stone-600 text-sm text-center mb-6">
-                {volunteerConfig.labels.selectVolunteerTypesDesc}
+                {activeConfig.labels.selectVolunteerTypesDesc}
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -269,8 +289,8 @@ export default function VolunteerPage() {
             {/* Registration Form */}
             <div className="bg-white rounded-xl border border-cream-200 shadow-md overflow-hidden">
               <div className="bg-gradient-to-r from-saffron-600 to-orange-600 text-white p-6 text-center">
-                <h3 className="font-serif text-2xl font-bold mb-1">{volunteerConfig.formHeader.title}</h3>
-                <p className="text-saffron-100 text-sm">{volunteerConfig.formHeader.subtitle}</p>
+                <h3 className="font-serif text-2xl font-bold mb-1">{activeConfig.formHeader.title}</h3>
+                <p className="text-saffron-100 text-sm">{activeConfig.formHeader.subtitle}</p>
               </div>
 
               <div className="p-8">
@@ -279,7 +299,7 @@ export default function VolunteerPage() {
                   {/* Registration Type */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200">
-                      {volunteerConfig.labels.registrationType}
+                      {activeConfig.labels.registrationType}
                     </h4>
                     <div className="grid grid-cols-2 gap-4">
                       <button
@@ -292,8 +312,8 @@ export default function VolunteerPage() {
                         }`}
                       >
                         <User className={`w-8 h-8 mx-auto mb-2 ${form.registrationType === "individual" ? "text-saffron-600" : "text-stone-400"}`} />
-                        <p className="font-semibold text-stone-800 text-sm">{volunteerConfig.registrationTypes.individual.title}</p>
-                        <p className="text-stone-500 text-xs mt-1">{volunteerConfig.registrationTypes.individual.description}</p>
+                        <p className="font-semibold text-stone-800 text-sm">{activeConfig.registrationTypes.individual.title}</p>
+                        <p className="text-stone-500 text-xs mt-1">{activeConfig.registrationTypes.individual.description}</p>
                       </button>
                       <button
                         type="button"
@@ -305,8 +325,8 @@ export default function VolunteerPage() {
                         }`}
                       >
                         <Users className={`w-8 h-8 mx-auto mb-2 ${form.registrationType === "group" ? "text-saffron-600" : "text-stone-400"}`} />
-                        <p className="font-semibold text-stone-800 text-sm">{volunteerConfig.registrationTypes.group.title}</p>
-                        <p className="text-stone-500 text-xs mt-1">{volunteerConfig.registrationTypes.group.description}</p>
+                        <p className="font-semibold text-stone-800 text-sm">{activeConfig.registrationTypes.group.title}</p>
+                        <p className="text-stone-500 text-xs mt-1">{activeConfig.registrationTypes.group.description}</p>
                       </button>
                     </div>
                   </div>
@@ -316,21 +336,21 @@ export default function VolunteerPage() {
                     <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-200">
                       <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-blue-300 flex items-center gap-2">
                         <Users className="w-6 h-6 text-blue-600" />
-                        {volunteerConfig.labels.groupName.replace("/Organization Name", " Information")}
+                        {activeConfig.labels.groupName.replace("/Organization Name", " Information")}
                       </h4>
                       <div className="space-y-4">
                         <div className="grid md:grid-cols-2 gap-4">
                           <InputField
-                            label={volunteerConfig.labels.groupName}
-                            placeholder={volunteerConfig.placeholders.groupName}
+                            label={activeConfig.labels.groupName}
+                            placeholder={activeConfig.placeholders.groupName}
                             required
                             value={form.groupName}
                             onChange={(e) => setForm({ ...form, groupName: e.target.value })}
                           />
                           <InputField
-                            label={volunteerConfig.labels.groupSize}
+                            label={activeConfig.labels.groupSize}
                             type="number"
-                            placeholder={volunteerConfig.placeholders.groupSize}
+                            placeholder={activeConfig.placeholders.groupSize}
                             required
                             value={form.groupSize}
                             onChange={(e) => setForm({ ...form, groupSize: e.target.value })}
@@ -338,7 +358,7 @@ export default function VolunteerPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            {volunteerConfig.labels.groupType} <span className="text-red-500">*</span>
+                            {activeConfig.labels.groupType} <span className="text-red-500">*</span>
                           </label>
                           <select
                             required
@@ -346,33 +366,33 @@ export default function VolunteerPage() {
                             onChange={(e) => setForm({ ...form, groupType: e.target.value })}
                             className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                           >
-                            {volunteerConfig.selectOptions.groupTypes.map((option) => (
+                            {activeConfig.selectOptions.groupTypes.map((option) => (
                               <option key={option.value} value={option.value}>{option.label}</option>
                             ))}
                           </select>
                         </div>
                         <div className="pt-4 border-t border-blue-300">
-                          <p className="text-sm font-semibold text-stone-700 mb-3">{volunteerConfig.labels.groupLeaderDetails}</p>
+                          <p className="text-sm font-semibold text-stone-700 mb-3">{activeConfig.labels.groupLeaderDetails}</p>
                           <div className="grid md:grid-cols-3 gap-4">
                             <InputField
-                              label={volunteerConfig.labels.groupLeaderName}
-                              placeholder={volunteerConfig.placeholders.groupLeaderName}
+                              label={activeConfig.labels.groupLeaderName}
+                              placeholder={activeConfig.placeholders.groupLeaderName}
                               required
                               value={form.groupLeaderName}
                               onChange={(e) => setForm({ ...form, groupLeaderName: e.target.value })}
                             />
                             <InputField
-                              label={volunteerConfig.labels.groupLeaderPhone}
+                              label={activeConfig.labels.groupLeaderPhone}
                               type="tel"
-                              placeholder={volunteerConfig.placeholders.groupLeaderPhone}
+                              placeholder={activeConfig.placeholders.groupLeaderPhone}
                               required
                               value={form.groupLeaderPhone}
                               onChange={(e) => setForm({ ...form, groupLeaderPhone: e.target.value })}
                             />
                             <InputField
-                              label={volunteerConfig.labels.groupLeaderEmail}
+                              label={activeConfig.labels.groupLeaderEmail}
                               type="email"
-                              placeholder={volunteerConfig.placeholders.groupLeaderEmail}
+                              placeholder={activeConfig.placeholders.groupLeaderEmail}
                               required
                               value={form.groupLeaderEmail}
                               onChange={(e) => setForm({ ...form, groupLeaderEmail: e.target.value })}
@@ -386,42 +406,42 @@ export default function VolunteerPage() {
                   {/* Personal Details */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[0].number}</span>
-                      {form.registrationType === "group" ? `${volunteerConfig.sections[0].title} ${volunteerConfig.labels.asRepresentative}` : volunteerConfig.sections[0].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[0].number}</span>
+                      {form.registrationType === "group" ? `${activeConfig.sections[0].title} ${activeConfig.labels.asRepresentative}` : activeConfig.sections[0].title}
                     </h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField
-                        label={volunteerConfig.labels.fullName}
-                        placeholder={volunteerConfig.placeholders.fullName}
+                        label={activeConfig.labels.fullName}
+                        placeholder={activeConfig.placeholders.fullName}
                         required
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.emailAddress}
+                        label={activeConfig.labels.emailAddress}
                         type="email"
-                        placeholder={volunteerConfig.placeholders.email}
+                        placeholder={activeConfig.placeholders.email}
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.phoneNumber}
+                        label={activeConfig.labels.phoneNumber}
                         type="tel"
-                        placeholder={volunteerConfig.placeholders.phone}
+                        placeholder={activeConfig.placeholders.phone}
                         required
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.alternatePhone}
+                        label={activeConfig.labels.alternatePhone}
                         type="tel"
-                        placeholder={volunteerConfig.placeholders.alternatePhone}
+                        placeholder={activeConfig.placeholders.alternatePhone}
                         value={form.alternatePhone}
                         onChange={(e) => setForm({ ...form, alternatePhone: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.dateOfBirth}
+                        label={activeConfig.labels.dateOfBirth}
                         type="date"
                         required
                         value={form.dateOfBirth}
@@ -429,7 +449,7 @@ export default function VolunteerPage() {
                       />
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.gender} <span className="text-red-500">*</span>
+                          {activeConfig.labels.gender} <span className="text-red-500">*</span>
                         </label>
                         <select
                           required
@@ -437,7 +457,7 @@ export default function VolunteerPage() {
                           onChange={(e) => setForm({ ...form, gender: e.target.value })}
                           className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                         >
-                          {volunteerConfig.selectOptions.genders.map((option) => (
+                          {activeConfig.selectOptions.genders.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                           ))}
                         </select>
@@ -448,16 +468,16 @@ export default function VolunteerPage() {
                   {/* Address Details */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[1].number}</span>
-                      {volunteerConfig.sections[1].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[1].number}</span>
+                      {activeConfig.sections[1].title}
                     </h4>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.completeAddress} <span className="text-red-500">*</span>
+                          {activeConfig.labels.completeAddress} <span className="text-red-500">*</span>
                         </label>
                         <textarea
-                          placeholder={volunteerConfig.placeholders.completeAddress}
+                          placeholder={activeConfig.placeholders.completeAddress}
                           rows={2}
                           required
                           value={form.address}
@@ -467,15 +487,15 @@ export default function VolunteerPage() {
                       </div>
                       <div className="grid md:grid-cols-3 gap-4">
                         <InputField
-                          label={volunteerConfig.labels.city}
-                          placeholder={volunteerConfig.placeholders.city}
+                          label={activeConfig.labels.city}
+                          placeholder={activeConfig.placeholders.city}
                           required
                           value={form.city}
                           onChange={(e) => setForm({ ...form, city: e.target.value })}
                         />
                         <div>
                           <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            {volunteerConfig.labels.state} <span className="text-red-500">*</span>
+                            {activeConfig.labels.state} <span className="text-red-500">*</span>
                           </label>
                           <select
                             required
@@ -483,15 +503,15 @@ export default function VolunteerPage() {
                             onChange={(e) => setForm({ ...form, state: e.target.value })}
                             className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
                           >
-                            <option value="">{volunteerConfig.selectOptions.stateSelectLabel}</option>
+                            <option value="">{activeConfig.selectOptions.stateSelectLabel}</option>
                             {indianStates.map((state) => (
                               <option key={state} value={state}>{state}</option>
                             ))}
                           </select>
                         </div>
                         <InputField
-                          label={volunteerConfig.labels.pinCode}
-                          placeholder={volunteerConfig.placeholders.pinCode}
+                          label={activeConfig.labels.pinCode}
+                          placeholder={activeConfig.placeholders.pinCode}
                           required
                           maxLength={6}
                           value={form.pincode}
@@ -504,26 +524,26 @@ export default function VolunteerPage() {
                   {/* Professional Details */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[2].number}</span>
-                      {volunteerConfig.sections[2].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[2].number}</span>
+                      {activeConfig.sections[2].title}
                     </h4>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField
-                        label={volunteerConfig.labels.currentOccupation}
-                        placeholder={volunteerConfig.placeholders.occupation}
+                        label={activeConfig.labels.currentOccupation}
+                        placeholder={activeConfig.placeholders.occupation}
                         required
                         value={form.occupation}
                         onChange={(e) => setForm({ ...form, occupation: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.organizationInstitution}
-                        placeholder={volunteerConfig.placeholders.organization}
+                        label={activeConfig.labels.organizationInstitution}
+                        placeholder={activeConfig.placeholders.organization}
                         value={form.organization}
                         onChange={(e) => setForm({ ...form, organization: e.target.value })}
                       />
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.experienceLevel}
+                          {activeConfig.labels.experienceLevel}
                         </label>
                         <select
                           value={form.experience}
@@ -536,8 +556,8 @@ export default function VolunteerPage() {
                         </select>
                       </div>
                       <InputField
-                        label={volunteerConfig.labels.specialSkills}
-                        placeholder={volunteerConfig.placeholders.skills}
+                        label={activeConfig.labels.specialSkills}
+                        placeholder={activeConfig.placeholders.skills}
                         value={form.skills}
                         onChange={(e) => setForm({ ...form, skills: e.target.value })}
                       />
@@ -547,32 +567,32 @@ export default function VolunteerPage() {
                   {/* Social Media Links */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[3].number}</span>
-                      {volunteerConfig.sections[3].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[3].number}</span>
+                      {activeConfig.sections[3].title}
                     </h4>
-                    <p className="text-stone-600 text-sm mb-4">{volunteerConfig.labels.socialMediaNote}</p>
+                    <p className="text-stone-600 text-sm mb-4">{activeConfig.labels.socialMediaNote}</p>
                     <div className="grid md:grid-cols-2 gap-4">
                       <InputField
-                        label={volunteerConfig.labels.facebookProfile}
-                        placeholder={volunteerConfig.placeholders.facebook}
+                        label={activeConfig.labels.facebookProfile}
+                        placeholder={activeConfig.placeholders.facebook}
                         value={form.facebookProfile}
                         onChange={(e) => setForm({ ...form, facebookProfile: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.instagramHandle}
-                        placeholder={volunteerConfig.placeholders.instagram}
+                        label={activeConfig.labels.instagramHandle}
+                        placeholder={activeConfig.placeholders.instagram}
                         value={form.instagramHandle}
                         onChange={(e) => setForm({ ...form, instagramHandle: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.twitterHandle}
-                        placeholder={volunteerConfig.placeholders.twitter}
+                        label={activeConfig.labels.twitterHandle}
+                        placeholder={activeConfig.placeholders.twitter}
                         value={form.twitterHandle}
                         onChange={(e) => setForm({ ...form, twitterHandle: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.linkedinProfile}
-                        placeholder={volunteerConfig.placeholders.linkedin}
+                        label={activeConfig.labels.linkedinProfile}
+                        placeholder={activeConfig.placeholders.linkedin}
                         value={form.linkedinProfile}
                         onChange={(e) => setForm({ ...form, linkedinProfile: e.target.value })}
                       />
@@ -582,13 +602,13 @@ export default function VolunteerPage() {
                   {/* Volunteer Preferences */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[4].number}</span>
-                      {volunteerConfig.sections[4].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[4].number}</span>
+                      {activeConfig.sections[4].title}
                     </h4>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.availability} <span className="text-red-500">*</span>
+                          {activeConfig.labels.availability} <span className="text-red-500">*</span>
                         </label>
                         <select
                           required
@@ -603,14 +623,14 @@ export default function VolunteerPage() {
                       </div>
                       <div className="grid md:grid-cols-2 gap-4">
                         <InputField
-                          label={volunteerConfig.labels.preferredLocation}
-                          placeholder={volunteerConfig.placeholders.preferredLocation}
+                          label={activeConfig.labels.preferredLocation}
+                          placeholder={activeConfig.placeholders.preferredLocation}
                           value={form.preferredLocation}
                           onChange={(e) => setForm({ ...form, preferredLocation: e.target.value })}
                         />
                         <InputField
-                          label={volunteerConfig.labels.languagesKnown}
-                          placeholder={volunteerConfig.placeholders.languagesKnown}
+                          label={activeConfig.labels.languagesKnown}
+                          placeholder={activeConfig.placeholders.languagesKnown}
                           value={form.languagesKnown}
                           onChange={(e) => setForm({ ...form, languagesKnown: e.target.value })}
                         />
@@ -623,12 +643,12 @@ export default function VolunteerPage() {
                             onChange={(e) => setForm({ ...form, hasVehicle: e.target.checked })}
                             className="w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
                           />
-                          <span className="text-sm text-stone-700 font-medium">{volunteerConfig.labels.hasVehicle}</span>
+                          <span className="text-sm text-stone-700 font-medium">{activeConfig.labels.hasVehicle}</span>
                         </label>
                         {form.hasVehicle && (
                           <InputField
-                            label={volunteerConfig.labels.vehicleType}
-                            placeholder={volunteerConfig.placeholders.vehicleType}
+                            label={activeConfig.labels.vehicleType}
+                            placeholder={activeConfig.placeholders.vehicleType}
                             value={form.vehicleType}
                             onChange={(e) => setForm({ ...form, vehicleType: e.target.value })}
                           />
@@ -640,28 +660,28 @@ export default function VolunteerPage() {
                   {/* Emergency Contact */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[5].number}</span>
-                      {volunteerConfig.sections[5].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[5].number}</span>
+                      {activeConfig.sections[5].title}
                     </h4>
                     <div className="grid md:grid-cols-3 gap-4">
                       <InputField
-                        label={volunteerConfig.labels.emergencyContactName}
-                        placeholder={volunteerConfig.placeholders.emergencyName}
+                        label={activeConfig.labels.emergencyContactName}
+                        placeholder={activeConfig.placeholders.emergencyName}
                         required
                         value={form.emergencyContactName}
                         onChange={(e) => setForm({ ...form, emergencyContactName: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.emergencyContactPhone}
+                        label={activeConfig.labels.emergencyContactPhone}
                         type="tel"
-                        placeholder={volunteerConfig.placeholders.emergencyPhone}
+                        placeholder={activeConfig.placeholders.emergencyPhone}
                         required
                         value={form.emergencyContactPhone}
                         onChange={(e) => setForm({ ...form, emergencyContactPhone: e.target.value })}
                       />
                       <InputField
-                        label={volunteerConfig.labels.emergencyContactRelation}
-                        placeholder={volunteerConfig.placeholders.emergencyRelation}
+                        label={activeConfig.labels.emergencyContactRelation}
+                        placeholder={activeConfig.placeholders.emergencyRelation}
                         required
                         value={form.emergencyContactRelation}
                         onChange={(e) => setForm({ ...form, emergencyContactRelation: e.target.value })}
@@ -672,16 +692,16 @@ export default function VolunteerPage() {
                   {/* Additional Information */}
                   <div>
                     <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{volunteerConfig.sections[6].number}</span>
-                      {volunteerConfig.sections[6].title}
+                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[6].number}</span>
+                      {activeConfig.sections[6].title}
                     </h4>
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.whyVolunteer} <span className="text-red-500">*</span>
+                          {activeConfig.labels.whyVolunteer} <span className="text-red-500">*</span>
                         </label>
                         <textarea
-                          placeholder={volunteerConfig.placeholders.whyVolunteerPlaceholder}
+                          placeholder={activeConfig.placeholders.whyVolunteerPlaceholder}
                           rows={3}
                           required
                           value={form.whyVolunteer}
@@ -691,10 +711,10 @@ export default function VolunteerPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.previousVolunteerWork}
+                          {activeConfig.labels.previousVolunteerWork}
                         </label>
                         <textarea
-                          placeholder={volunteerConfig.placeholders.previousWorkPlaceholder}
+                          placeholder={activeConfig.placeholders.previousWorkPlaceholder}
                           rows={2}
                           value={form.previousVolunteerWork}
                           onChange={(e) => setForm({ ...form, previousVolunteerWork: e.target.value })}
@@ -703,10 +723,10 @@ export default function VolunteerPage() {
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {volunteerConfig.labels.medicalConditions}
+                          {activeConfig.labels.medicalConditions}
                         </label>
                         <textarea
-                          placeholder={volunteerConfig.placeholders.medicalConditionsPlaceholder}
+                          placeholder={activeConfig.placeholders.medicalConditionsPlaceholder}
                           rows={2}
                           value={form.medicalConditions}
                           onChange={(e) => setForm({ ...form, medicalConditions: e.target.value })}
@@ -728,7 +748,7 @@ export default function VolunteerPage() {
                           required
                         />
                         <span className="text-sm text-stone-700 font-medium">
-                          {volunteerConfig.labels.agreeToTerms} <Link href={volunteerConfig.labels.termsLink} className="text-saffron-600 underline font-bold">{volunteerConfig.labels.termsAndConditions}</Link> {volunteerConfig.labels.andText} <Link href={volunteerConfig.labels.privacyLink} className="text-saffron-600 underline font-bold">{volunteerConfig.labels.privacyPolicy}</Link> <span className="text-red-500">*</span>
+                          {activeConfig.labels.agreeToTerms} <Link href={activeConfig.labels.termsLink} className="text-saffron-600 underline font-bold">{activeConfig.labels.termsAndConditions}</Link> {activeConfig.labels.andText} <Link href={activeConfig.labels.privacyLink} className="text-saffron-600 underline font-bold">{activeConfig.labels.privacyPolicy}</Link> <span className="text-red-500">*</span>
                         </span>
                       </label>
 
@@ -741,7 +761,7 @@ export default function VolunteerPage() {
                           required
                         />
                         <span className="text-sm text-stone-700 font-medium">
-                          {volunteerConfig.labels.agreeToBackgroundCheck} <span className="text-red-500">*</span>
+                          {activeConfig.labels.agreeToBackgroundCheck} <span className="text-red-500">*</span>
                         </span>
                       </label>
                     </div>
@@ -778,11 +798,11 @@ export default function VolunteerPage() {
                       }
                     >
                       <Heart className="w-5 h-5 mr-2 fill-white" />
-                      {volunteerConfig.labels.submitButton}
+                      {activeConfig.labels.submitButton}
                     </Button>
                     
                     <p className="text-stone-500 text-xs text-center mt-4">
-                      {volunteerConfig.labels.reviewNote}
+                      {activeConfig.labels.reviewNote}
                     </p>
                   </div>
 

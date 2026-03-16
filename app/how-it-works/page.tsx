@@ -1,3 +1,5 @@
+"use client";
+
 import type { Metadata } from "next";
 import { Container, SectionHeader } from "@/components/ui/Elements";
 import { Clock } from "lucide-react";
@@ -5,10 +7,29 @@ import Link from "next/link";
 import Button from "@/components/ui/Button";
 import { howItWorksConfig } from "@/config/how-it-works.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
-export const metadata: Metadata = { title: howItWorksConfig.metadata.title };
+// Note: Metadata needs to be handled differently in client components
+// export const metadata: Metadata = { title: howItWorksConfig.metadata.title };
 
 export default function HowItWorksPage() {
+  // Use dynamic config with fallback to static config
+  const { config: dynamicConfig, loading, error } = usePageConfig('how-it-works', howItWorksConfig);
+  
+  // Use dynamic config if available, otherwise fallback to static
+  const config = dynamicConfig || howItWorksConfig;
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading how it works content...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-stone-50">
       {/* Hero Section */}

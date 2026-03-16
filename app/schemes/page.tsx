@@ -5,8 +5,12 @@ import { X, HelpCircle, ChevronRight, Phone, Mail, Building2, MapPin, ShieldChec
 import Button from "@/components/ui/Button";
 import { schemesConfig } from "@/config/schemes.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function SchemesPage() {
+  const { config, loading: configLoading, error: configError } = usePageConfig('schemes', schemesConfig);
+  const activeConfig = config || schemesConfig;
+  
   const [selectedScheme, setSelectedScheme] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [activeTab, setActiveTab] = useState<'central' | 'state'>('central');
@@ -51,7 +55,7 @@ export default function SchemesPage() {
     
     // Validation
     if (!form.name || !form.email || !form.phone || !form.address || !form.city || !form.state || !form.pincode) {
-      alert(schemesConfig.form.validation.fillRequiredFields);
+      alert(activeConfig.form.validation.fillRequiredFields);
       return;
     }
 
@@ -123,12 +127,12 @@ export default function SchemesPage() {
     document.body.style.overflow = 'unset';
   };
 
-  const centralSchemes = schemesConfig.centralSchemes.map(scheme => ({
+  const centralSchemes = activeConfig.centralSchemes.map(scheme => ({
     ...scheme,
     icon: getIcon(scheme.icon)
   }));
 
-  const stateSchemes = schemesConfig.stateSchemes.map(stateData => ({
+  const stateSchemes = activeConfig.stateSchemes.map(stateData => ({
     ...stateData,
     schemes: stateData.schemes.map(scheme => ({
       ...scheme,
@@ -136,27 +140,44 @@ export default function SchemesPage() {
     }))
   }));
 
-  const otherSchemes = schemesConfig.otherSchemes.map(scheme => ({
+  const otherSchemes = activeConfig.otherSchemes.map(scheme => ({
     ...scheme,
     icon: getIcon(scheme.icon)
   }));
 
-  const assistanceTypes = schemesConfig.assistanceTypes;
-  const helpSources = schemesConfig.helpSources;
+  const assistanceTypes = activeConfig.assistanceTypes;
+  const helpSources = activeConfig.helpSources;
 
   return (
     <main className="min-h-screen bg-white">
+      {/* Loading State */}
+      {configLoading && (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {configError && (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">Failed to load page configuration</p>
+            <p className="text-gray-600">Using default configuration</p>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="bg-stone-50 text-gray-900 py-12 md:py-20 lg:py-24 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <Container>
           <div className="max-w-4xl text-center mx-auto">
             <div className="inline-block px-4 py-1.5 rounded-full bg-amber-100 border border-amber-200 mb-6">
-              <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{schemesConfig.hero.badge}</p>
+              <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{activeConfig.hero.badge}</p>
             </div>
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{schemesConfig.hero.title} <br /><span className="text-amber-700">{schemesConfig.hero.subtitle}</span></h1>
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{activeConfig.hero.title} <br /><span className="text-amber-700">{activeConfig.hero.subtitle}</span></h1>
             <p className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-3xl mx-auto">
-              {schemesConfig.hero.description}
+              {activeConfig.hero.description}
             </p>
           </div>
         </Container>
@@ -174,7 +195,7 @@ export default function SchemesPage() {
                   : 'bg-white text-gray-600 hover:bg-stone-50'
               }`}
             >
-              {schemesConfig.tabs.central}
+              {activeConfig.tabs.central}
             </button>
             <button
               onClick={() => setActiveTab('state')}
@@ -184,7 +205,7 @@ export default function SchemesPage() {
                   : 'bg-white text-gray-600 hover:bg-stone-50'
               }`}
             >
-              {schemesConfig.tabs.state}
+              {activeConfig.tabs.state}
             </button>
           </div>
         </Container>
@@ -196,7 +217,7 @@ export default function SchemesPage() {
           <Container>
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-                {schemesConfig.sections.centralTitle}
+                {activeConfig.sections.centralTitle}
               </h2>
               <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
             </div>
@@ -237,7 +258,7 @@ export default function SchemesPage() {
                           onClick={() => openForm(scheme.title)}
                           className="flex items-center gap-2 text-[#20b2aa] hover:text-[#1a9b94] font-medium transition-colors"
                         >
-                          {schemesConfig.buttons.applyForScheme} <ChevronRight size={16} />
+                          {activeConfig.buttons.applyForScheme} <ChevronRight size={16} />
                         </button>
                       </div>
                     </div>
@@ -249,7 +270,7 @@ export default function SchemesPage() {
             {/* Other Government Assistance */}
             <div className="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-8 mb-16">
               <h3 className="text-2xl font-black uppercase tracking-tighter text-stone-900 mb-6">
-                {schemesConfig.sections.otherAssistanceTitle}
+                {activeConfig.sections.otherAssistanceTitle}
               </h3>
               <div className="grid md:grid-cols-3 gap-6">
                 {otherSchemes.map((scheme, i) => (
@@ -264,7 +285,7 @@ export default function SchemesPage() {
                       onClick={() => openForm(scheme.title)}
                       className="flex items-center gap-2 text-[#20b2aa] hover:text-[#1a9b94] font-medium transition-colors text-sm"
                     >
-                      {schemesConfig.buttons.applyForAssistance} <ChevronRight size={16} />
+                      {activeConfig.buttons.applyForAssistance} <ChevronRight size={16} />
                     </button>
                   </div>
                 ))}
@@ -274,14 +295,14 @@ export default function SchemesPage() {
             {/* Typical Assistance Amounts */}
             <div className="bg-white rounded-2xl border border-blue-100 p-8">
               <h3 className="text-2xl font-black uppercase tracking-tighter text-stone-900 mb-6">
-                {schemesConfig.sections.assistanceAmountsTitle}
+                {activeConfig.sections.assistanceAmountsTitle}
               </h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-stone-200">
-                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">{schemesConfig.tableHeaders.schemeType}</th>
-                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">{schemesConfig.tableHeaders.amount}</th>
+                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">{activeConfig.tableHeaders.schemeType}</th>
+                      <th className="text-left py-3 font-black text-stone-900 uppercase tracking-wide">{activeConfig.tableHeaders.amount}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -305,7 +326,7 @@ export default function SchemesPage() {
           <Container>
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-4">
-                {schemesConfig.sections.stateTitle}
+                {activeConfig.sections.stateTitle}
               </h2>
               <div className="w-20 h-1 bg-[#20b2aa] mx-auto"></div>
             </div>
@@ -344,7 +365,7 @@ export default function SchemesPage() {
                                 onClick={() => openForm(scheme.title)}
                                 className="flex items-center gap-2 text-[#20b2aa] hover:text-[#1a9b94] font-medium transition-colors text-sm"
                               >
-                                {schemesConfig.buttons.applyForScheme} <ChevronRight size={16} />
+                                {activeConfig.buttons.applyForScheme} <ChevronRight size={16} />
                               </button>
                               <div className="text-xs text-stone-400 font-medium">
                                 {stateData.state}
@@ -367,10 +388,10 @@ export default function SchemesPage() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-black uppercase tracking-tighter text-stone-900 mb-4">
-              {schemesConfig.sections.helpSourcesTitle}
+              {activeConfig.sections.helpSourcesTitle}
             </h2>
             <p className="text-stone-600 max-w-2xl mx-auto">
-              {schemesConfig.sections.helpSourcesDescription}
+              {activeConfig.sections.helpSourcesDescription}
             </p>
           </div>
           
@@ -401,35 +422,35 @@ export default function SchemesPage() {
                   <HelpCircle size={28} className="text-black" />
                 </div>
                 <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-                  {schemesConfig.help.title} <br />
-                  <span className="text-[#f4c430]">{schemesConfig.help.subtitle}</span>
+                  {activeConfig.help.title} <br />
+                  <span className="text-[#f4c430]">{activeConfig.help.subtitle}</span>
                 </h2>
                 <p className="text-blue-100 font-medium text-lg leading-relaxed max-w-xl">
-                  {schemesConfig.help.description}
+                  {activeConfig.help.description}
                 </p>
               </div>
 
               <div className="lg:w-2/5 w-full">
                 <div className="space-y-10">
                   {/* Call Action */}
-                  <a href={`tel:+91${schemesConfig.help.phone.replace(/\D/g, '')}`} className="flex items-center gap-6 group/link">
+                  <a href={`tel:+91${activeConfig.help.phone.replace(/\D/g, '')}`} className="flex items-center gap-6 group/link">
                     <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover/link:border-[#f4c430] group-hover/link:bg-[#f4c430]/10 transition-all">
                       <Phone className="text-white group-hover/link:text-[#f4c430] transition-colors" size={24} />
                     </div>
                     <div className="text-left">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">{schemesConfig.help.callLabel}</p>
-                      <p className="text-2xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">{schemesConfig.help.phone}</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">{activeConfig.help.callLabel}</p>
+                      <p className="text-2xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">{activeConfig.help.phone}</p>
                     </div>
                   </a>
 
                   {/* Email Action */}
-                  <a href={`mailto:${schemesConfig.help.email}`} className="flex items-center gap-6 group/link">
+                  <a href={`mailto:${activeConfig.help.email}`} className="flex items-center gap-6 group/link">
                     <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover/link:border-[#f4c430] group-hover/link:bg-[#f4c430]/10 transition-all">
                       <Mail className="text-white group-hover/link:text-[#f4c430] transition-colors" size={24} />
                     </div>
                     <div className="text-left">
-                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">{schemesConfig.help.emailLabel}</p>
-                      <p className="text-xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">{schemesConfig.help.email}</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-blue-200 mb-1">{activeConfig.help.emailLabel}</p>
+                      <p className="text-xl font-black tracking-tighter text-white group-hover/link:text-[#f4c430] transition-colors leading-none">{activeConfig.help.email}</p>
                     </div>
                   </a>
                 </div>
@@ -466,19 +487,19 @@ export default function SchemesPage() {
                 <div className="w-24 h-24 rounded-full bg-[#f4c430] flex items-center justify-center mx-auto mb-8">
                   <ShieldCheck className="text-black" size={48} />
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-6 leading-none">{schemesConfig.form.success.title}</h2>
+                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-stone-900 mb-6 leading-none">{activeConfig.form.success.title}</h2>
                 <p className="text-stone-600 font-medium text-lg leading-relaxed mb-8">
-                  {schemesConfig.form.success.description}
+                  {activeConfig.form.success.description}
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center">
                   <Button onClick={closeForm} className="bg-stone-900 text-white px-10 py-5 font-black uppercase tracking-widest">
-                    {schemesConfig.form.success.closeButton}
+                    {activeConfig.form.success.closeButton}
                   </Button>
                   <button 
                     onClick={() => setSubmitted(false)} 
                     className="bg-white border-2 border-stone-200 text-stone-900 px-10 py-5 rounded-full font-black uppercase tracking-widest text-[12px] hover:border-[#7ab800] transition-all"
                   >
-                    {schemesConfig.form.success.submitAnotherButton}
+                    {activeConfig.form.success.submitAnotherButton}
                   </button>
                 </div>
               </div>
@@ -487,105 +508,105 @@ export default function SchemesPage() {
               <div className="p-8 md:p-12">
                 <div className="mb-8">
                   <div className="inline-block px-4 py-1.5 rounded-full bg-[#f4c430]/10 border border-[#f4c430]/20 mb-4">
-                    <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{schemesConfig.form.formHeader.badge}</p>
+                    <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{activeConfig.form.formHeader.badge}</p>
                   </div>
                   <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 mb-4 leading-none">
-                    {schemesConfig.form.formHeader.title}<br />
+                    {activeConfig.form.formHeader.title}<br />
                     <span className="text-[#f4c430]">{selectedScheme}</span>
                   </h2>
                   <p className="text-stone-500 font-medium leading-relaxed">
-                    {schemesConfig.form.formHeader.description}
+                    {activeConfig.form.formHeader.description}
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.fullName} *</label>
+                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.fullName} *</label>
                     <input
                       type="text"
                       required
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                      placeholder={schemesConfig.form.placeholders.fullName}
+                      placeholder={activeConfig.form.placeholders.fullName}
                     />
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.emailAddress} *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.emailAddress} *</label>
                       <input
                         type="email"
                         required
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder={schemesConfig.form.placeholders.email}
+                        placeholder={activeConfig.form.placeholders.email}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.phoneNumber} *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.phoneNumber} *</label>
                       <input
                         type="tel"
                         required
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder={schemesConfig.form.placeholders.phone}
+                        placeholder={activeConfig.form.placeholders.phone}
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.fullAddress} *</label>
+                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.fullAddress} *</label>
                     <textarea
                       required
                       value={form.address}
                       onChange={(e) => setForm({ ...form, address: e.target.value })}
                       rows={3}
                       className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium resize-none"
-                      placeholder={schemesConfig.form.placeholders.address}
+                      placeholder={activeConfig.form.placeholders.address}
                     />
                   </div>
 
                   <div className="grid md:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.city} *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.city} *</label>
                       <input
                         type="text"
                         required
                         value={form.city}
                         onChange={(e) => setForm({ ...form, city: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder={schemesConfig.form.placeholders.city}
+                        placeholder={activeConfig.form.placeholders.city}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.state} *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.state} *</label>
                       <select
                         required
                         value={form.state}
                         onChange={(e) => setForm({ ...form, state: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                       >
-                        <option value="">{schemesConfig.form.labels.selectState}</option>
-                        {schemesConfig.states.map((state) => (
+                        <option value="">{activeConfig.form.labels.selectState}</option>
+                        {activeConfig.states.map((state) => (
                           <option key={state} value={state}>{state}</option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.pincode} *</label>
+                      <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.pincode} *</label>
                       <input
                         type="text"
                         required
                         value={form.pincode}
                         onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                         className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
-                        placeholder={schemesConfig.form.placeholders.pincode}
+                        placeholder={activeConfig.form.placeholders.pincode}
                         pattern="[0-9]{6}"
                         maxLength={6}
                       />
@@ -593,19 +614,19 @@ export default function SchemesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{schemesConfig.form.labels.additionalDetails}</label>
+                    <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{activeConfig.form.labels.additionalDetails}</label>
                     <textarea
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       rows={4}
                       className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium resize-none"
-                      placeholder={schemesConfig.form.placeholders.message}
+                      placeholder={activeConfig.form.placeholders.message}
                     />
                   </div>
 
                   <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6">
                     <p className="text-amber-800 text-sm font-medium leading-relaxed">
-                      <strong className="font-black">{schemesConfig.form.note.split(':')[0]}:</strong> {schemesConfig.form.note.split(': ')[1]}
+                      <strong className="font-black">{activeConfig.form.note.split(':')[0]}:</strong> {activeConfig.form.note.split(': ')[1]}
                     </p>
                   </div>
 
@@ -613,11 +634,11 @@ export default function SchemesPage() {
                     type="submit"
                     className="w-full bg-[#f4c430] hover:bg-[#eab308] text-black py-5 font-black uppercase tracking-widest shadow-xl"
                   >
-                    {schemesConfig.form.submitButton}
+                    {activeConfig.form.submitButton}
                   </Button>
 
                   <p className="text-stone-400 text-[10px] text-center uppercase tracking-widest leading-relaxed">
-                    {schemesConfig.form.confidentialityNote}
+                    {activeConfig.form.confidentialityNote}
                   </p>
                 </form>
               </div>

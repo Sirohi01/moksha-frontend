@@ -5,9 +5,25 @@ import { Container } from "@/components/ui/Elements";
 import Button from "@/components/ui/Button";
 import { remembranceConfig } from "@/config/remembrance.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function RemembrancePage() {
-    const memorials = remembranceConfig.memorialGrid.memorials;
+    const { config, loading, error } = usePageConfig('remembrance', remembranceConfig);
+    
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7ab800]"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        console.error('Failed to load Remembrance page config:', error);
+        // Fallback to static config
+    }
+
+    const memorials = config.memorialGrid.memorials;
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -17,11 +33,11 @@ export default function RemembrancePage() {
                 <Container>
                     <div className="max-w-3xl">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{remembranceConfig.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{remembranceConfig.hero.title} <span className="text-[#7ab800]">{remembranceConfig.hero.highlightText}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{config.hero.title} <span className="text-[#7ab800]">{config.hero.highlightText}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {remembranceConfig.hero.description}
+                            {config.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -32,12 +48,12 @@ export default function RemembrancePage() {
                 <Container>
                     <div className="max-w-3xl mx-auto mb-16 px-4">
                         <div className="relative group overflow-hidden bg-white rounded-2xl border border-stone-200 focus-within:ring-4 focus-within:ring-[#7ab800]/10 transition-all shadow-sm">
-                            <input type="text" placeholder={remembranceConfig.memorialGrid.search.placeholder} className="w-full h-16 bg-transparent px-16 text-[11px] font-black uppercase tracking-widest text-stone-800 placeholder-stone-300 outline-none" />
+                            <input type="text" placeholder={config.memorialGrid.search.placeholder} className="w-full h-16 bg-transparent px-16 text-[11px] font-black uppercase tracking-widest text-stone-800 placeholder-stone-300 outline-none" />
                             {(() => {
                                 const SearchIcon = getIcon('Search');
                                 return <SearchIcon className="absolute left-6 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-[#7ab800] transition-colors" size={20} />;
                             })()}
-                            <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#7ab800] text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-[#7ab800]/10">{remembranceConfig.memorialGrid.search.buttonText}</button>
+                            <button className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#7ab800] text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-[#7ab800]/10">{config.memorialGrid.search.buttonText}</button>
                         </div>
                     </div>
 
@@ -68,11 +84,11 @@ export default function RemembrancePage() {
                                             const FlowerIcon = getIcon('Flower');
                                             return <FlowerIcon size={16} />;
                                         })()}
-                                        <p className="text-[10px] font-black uppercase tracking-widest leading-none">{remembranceConfig.memorialGrid.actions.offerFlower}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-widest leading-none">{config.memorialGrid.actions.offerFlower}</p>
                                     </div>
                                     <Link href="/database">
                                         <button className="flex items-center gap-4 px-6 py-2.5 rounded-full bg-stone-50 text-[10px] font-black uppercase tracking-widest text-[#7ab800] hover:bg-[#7ab800] hover:text-white transition-all group-hover:bg-[#7ab800]/5 group-hover:text-[#7ab800]">
-                                            {remembranceConfig.memorialGrid.actions.viewCase} {(() => {
+                                            {config.memorialGrid.actions.viewCase} {(() => {
                                                 const ChevronRightIcon = getIcon('ChevronRight');
                                                 return <ChevronRightIcon size={14} />;
                                             })()}
@@ -85,11 +101,11 @@ export default function RemembrancePage() {
                         {/* Remembrance Wall Stats */}
                         <div className="bg-[#7ab800] p-8 rounded-[3.5rem] shadow-xl text-white flex flex-col justify-center items-center text-center overflow-hidden relative">
                             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl opacity-50" />
-                            <h3 className="text-4xl font-black uppercase tracking-tighter mb-4 leading-none text-white">{remembranceConfig.memorialGrid.stats.number}</h3>
-                            <p className="text-white/80 font-black text-[10px] uppercase tracking-widest mb-8">{remembranceConfig.memorialGrid.stats.description}</p>
-                            <Link href={remembranceConfig.memorialGrid.stats.sponsorLink}>
+                            <h3 className="text-4xl font-black uppercase tracking-tighter mb-4 leading-none text-white">{config.memorialGrid.stats.number}</h3>
+                            <p className="text-white/80 font-black text-[10px] uppercase tracking-widest mb-8">{config.memorialGrid.stats.description}</p>
+                            <Link href={config.memorialGrid.stats.sponsorLink}>
                                 <Button className="w-full bg-stone-900 border border-transparent text-white font-black py-4 hover:bg-stone-800 hover:shadow-[0_20px_40px_rgba(0,0,0,0.2)]">
-                                    {remembranceConfig.memorialGrid.stats.sponsorButton}
+                                    {config.memorialGrid.stats.sponsorButton}
                                 </Button>
                             </Link>
                         </div>
@@ -108,16 +124,16 @@ export default function RemembrancePage() {
                                 return <HeartIcon className="text-[#7ab800]" size={36} fill="#7ab800" />;
                             })()}
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{remembranceConfig.memorialMessage.title} <span className="text-[#7ab800]">{remembranceConfig.memorialMessage.highlightText}</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{config.memorialMessage.title} <span className="text-[#7ab800]">{config.memorialMessage.highlightText}</span></h2>
                         <p className="text-stone-500 font-medium text-lg leading-relaxed mb-10">
-                            {remembranceConfig.memorialMessage.description}
+                            {config.memorialMessage.description}
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center">
-                            <Link href={remembranceConfig.memorialMessage.actions.leaveTribute.href}>
-                                <button className="bg-stone-900 text-white px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-stone-900/10 hover:bg-stone-800 transition-all">{remembranceConfig.memorialMessage.actions.leaveTribute.text}</button>
+                            <Link href={config.memorialMessage.actions.leaveTribute.href}>
+                                <button className="bg-stone-900 text-white px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-stone-900/10 hover:bg-stone-800 transition-all">{config.memorialMessage.actions.leaveTribute.text}</button>
                             </Link>
-                            <Link href={remembranceConfig.memorialMessage.actions.missionStory.href}>
-                                <button className="bg-white border border-stone-200 text-[#7ab800] px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest hover:border-[#7ab800] transition-all">{remembranceConfig.memorialMessage.actions.missionStory.text}</button>
+                            <Link href={config.memorialMessage.actions.missionStory.href}>
+                                <button className="bg-white border border-stone-200 text-[#7ab800] px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest hover:border-[#7ab800] transition-all">{config.memorialMessage.actions.missionStory.text}</button>
                             </Link>
                         </div>
                     </div>

@@ -6,14 +6,34 @@ import { ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { legacyGivingConfig } from "@/config/legacy-giving.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function LegacyGivingPage() {
-    const options = legacyGivingConfig.options.map(option => ({
+    const { config, loading, error } = usePageConfig('legacy-giving', legacyGivingConfig);
+    
+    // Use fallback config if dynamic config is null
+    const activeConfig = config || legacyGivingConfig;
+
+    // Handle loading and error states after all hooks
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        console.error('Failed to load Legacy Giving page config:', error);
+        // Fallback to static config
+    }
+
+    const options = activeConfig.options.map(option => ({
         ...option,
         icon: getIcon(option.icon)
     }));
 
-    const MessageIcon = getIcon(legacyGivingConfig.message.icon);
+    const MessageIcon = getIcon(activeConfig.message.icon);
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -23,11 +43,11 @@ export default function LegacyGivingPage() {
                 <Container>
                     <div className="max-w-3xl">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{legacyGivingConfig.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{activeConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{legacyGivingConfig.hero.title} <span className="text-[#7ab800]">{legacyGivingConfig.hero.subtitle}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{activeConfig.hero.title} <span className="text-[#7ab800]">{activeConfig.hero.subtitle}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {legacyGivingConfig.hero.description}
+                            {activeConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -49,9 +69,9 @@ export default function LegacyGivingPage() {
                                     {option.desc}
                                 </p>
 
-                                <Link href={legacyGivingConfig.buttons.requestInfoLink}>
+                                <Link href={activeConfig.buttons.requestInfoLink}>
                                     <button className="flex items-center gap-4 px-10 py-4 rounded-full bg-stone-50 text-[11px] font-black uppercase tracking-widest text-[#7ab800] hover:bg-[#7ab800] hover:text-white transition-all group-hover:bg-[#7ab800]/5 group-hover:text-[#7ab800]">
-                                        {legacyGivingConfig.buttons.requestInfoPack} <ChevronRight size={14} />
+                                        {activeConfig.buttons.requestInfoPack} <ChevronRight size={14} />
                                     </button>
                                 </Link>
                             </div>
@@ -68,16 +88,16 @@ export default function LegacyGivingPage() {
                         <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto mb-10 shadow-lg relative z-10">
                             <MessageIcon className="text-[#7ab800]" size={40} />
                         </div>
-                        <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.85] mb-8">{legacyGivingConfig.message.title} <br />{legacyGivingConfig.message.subtitle} <span className="opacity-60 text-stone-900 italic">{legacyGivingConfig.message.subtitleHighlight}</span></h2>
+                        <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.85] mb-8">{activeConfig.message.title} <br />{activeConfig.message.subtitle} <span className="opacity-60 text-stone-900 italic">{activeConfig.message.subtitleHighlight}</span></h2>
                         <p className="text-white font-medium text-xl leading-relaxed mb-12">
-                            {legacyGivingConfig.message.description}
+                            {activeConfig.message.description}
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center">
-                            <Link href={legacyGivingConfig.message.buttons.talkToFounderLink}>
-                                <button className="bg-stone-900 text-white px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-stone-900/10 hover:bg-stone-800 transition-all">{legacyGivingConfig.message.buttons.talkToFounder}</button>
+                            <Link href={activeConfig.message.buttons.talkToFounderLink}>
+                                <button className="bg-stone-900 text-white px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-stone-900/10 hover:bg-stone-800 transition-all">{activeConfig.message.buttons.talkToFounder}</button>
                             </Link>
-                            <Link href={legacyGivingConfig.message.buttons.downloadPDFLink}>
-                                <button className="bg-white text-[#7ab800] px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl transition-all hover:bg-stone-50">{legacyGivingConfig.message.buttons.downloadPDF}</button>
+                            <Link href={activeConfig.message.buttons.downloadPDFLink}>
+                                <button className="bg-white text-[#7ab800] px-10 py-5 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl transition-all hover:bg-stone-50">{activeConfig.message.buttons.downloadPDF}</button>
                             </Link>
                         </div>
                     </div>

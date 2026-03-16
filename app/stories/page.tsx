@@ -4,9 +4,25 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
 import { storiesConfig } from "@/config/stories.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function StoriesPage() {
-    const stories = storiesConfig.storiesGrid.stories;
+    const { config, loading, error } = usePageConfig('stories', storiesConfig);
+    
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7ab800]"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        console.error('Failed to load Stories page config:', error);
+        // Fallback to static config
+    }
+
+    const stories = config.storiesGrid.stories;
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -16,11 +32,11 @@ export default function StoriesPage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{storiesConfig.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{storiesConfig.hero.title} <br /><span className="text-[#7ab800]">{storiesConfig.hero.highlightText}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{config.hero.title} <br /><span className="text-[#7ab800]">{config.hero.highlightText}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {storiesConfig.hero.description}
+                            {config.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -55,8 +71,8 @@ export default function StoriesPage() {
                                         {story.description}
                                     </p>
                                     <div className="flex items-center gap-4">
-                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{storiesConfig.storiesGrid.buttons.watchNow}</button>
-                                        <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors" title={storiesConfig.storiesGrid.buttons.favorite}>
+                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{config.storiesGrid.buttons.watchNow}</button>
+                                        <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors" title={config.storiesGrid.buttons.favorite}>
                                             {(() => {
                                                 const HeartIcon = getIcon('Heart');
                                                 return <HeartIcon size={20} />;
@@ -74,13 +90,13 @@ export default function StoriesPage() {
             <section className="py-24 bg-white border-t border-stone-100">
                 <Container>
                     <div className="max-w-4xl mx-auto p-12 md:p-20 bg-stone-50 rounded-[5rem] text-center border border-stone-200 overflow-hidden relative">
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{storiesConfig.newsletter.title} <span className="text-[#7ab800]">{storiesConfig.newsletter.highlightText}</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{config.newsletter.title} <span className="text-[#7ab800]">{config.newsletter.highlightText}</span></h2>
                         <p className="text-stone-500 font-medium text-lg leading-relaxed mb-12">
-                            {storiesConfig.newsletter.description}
+                            {config.newsletter.description}
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
-                            <input type="email" placeholder={storiesConfig.newsletter.placeholder} className="flex-1 h-16 rounded-full px-8 bg-white border border-stone-200 text-[11px] font-black uppercase tracking-widest outline-none focus:border-[#7ab800] transition-all shadow-inner" />
-                            <button className="h-16 bg-[#7ab800] text-white px-10 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-[#7ab800]/20 hover:scale-105 transition-all">{storiesConfig.newsletter.buttonText}</button>
+                            <input type="email" placeholder={config.newsletter.placeholder} className="flex-1 h-16 rounded-full px-8 bg-white border border-stone-200 text-[11px] font-black uppercase tracking-widest outline-none focus:border-[#7ab800] transition-all shadow-inner" />
+                            <button className="h-16 bg-[#7ab800] text-white px-10 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-[#7ab800]/20 hover:scale-105 transition-all">{config.newsletter.buttonText}</button>
                         </div>
                     </div>
                 </Container>

@@ -6,17 +6,23 @@ import Button from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Elements";
 import { feedbackConfig } from "@/config/feedback.config";
 import { getIcon } from "@/config/icons.config";
-
-// Get icons
-const MessageSquare = getIcon('MessageSquare');
-const CheckCircle = getIcon('CheckCircle');
-const Star = getIcon('Star');
-const User = getIcon('User');
-const Shield = getIcon('Shield');
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function FeedbackPage() {
+  const { config, loading, error } = usePageConfig('feedback', feedbackConfig);
+  
+  // Use fallback config if dynamic config is null
+  const activeConfig = config || feedbackConfig;
+
+  // Get icons
+  const MessageSquare = getIcon('MessageSquare');
+  const CheckCircle = getIcon('CheckCircle');
+  const Star = getIcon('Star');
+  const User = getIcon('User');
+  const Shield = getIcon('Shield');
+
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -31,19 +37,33 @@ export default function FeedbackPage() {
     consentToPublish: false,
   });
 
+  // Handle loading and error states after all hooks
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Failed to load Feedback page config:', error);
+    // Fallback to static config
+  }
+
   const handleSubmit = async () => {
     // Validation
     if (!form.name || !form.email || !form.feedbackType || !form.subject || !form.message || !form.wouldRecommend) {
-      alert(feedbackConfig.validationMessages.fillRequiredFields);
+      alert(activeConfig.validationMessages.fillRequiredFields);
       return;
     }
 
     if (form.experienceRating < 1 || form.experienceRating > 5) {
-      alert(feedbackConfig.validationMessages.selectRating);
+      alert(activeConfig.validationMessages.selectRating);
       return;
     }
 
-    setLoading(true);
+    setLoadingSubmit(true);
     
     try {
       // Prepare form data for API
@@ -85,9 +105,9 @@ export default function FeedbackPage() {
       setSubmitted(true);
     } catch (error) {
       console.error('Failed to submit feedback:', error);
-      alert(`${feedbackConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      alert(`${activeConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
-      setLoading(false);
+      setLoadingSubmit(false);
     }
   };
 
@@ -98,18 +118,18 @@ export default function FeedbackPage() {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">{feedbackConfig.success.title}</h2>
+          <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">{activeConfig.success.title}</h2>
           <p className="text-stone-600 mb-2">
-            {feedbackConfig.success.description}
+            {activeConfig.success.description}
           </p>
           <p className="text-stone-500 text-sm mb-6">
-            Reference: <span className="font-mono font-bold text-saffron-600">{feedbackConfig.success.referencePrefix}{Math.floor(Math.random() * 900) + 100}</span>
+            Reference: <span className="font-mono font-bold text-saffron-600">{activeConfig.success.referencePrefix}{Math.floor(Math.random() * 900) + 100}</span>
           </p>
           <button
             onClick={() => setSubmitted(false)}
             className="text-saffron-600 text-sm underline"
           >
-            {feedbackConfig.success.submitAnotherText}
+            {activeConfig.success.submitAnotherText}
           </button>
         </div>
       </section>
@@ -126,12 +146,12 @@ export default function FeedbackPage() {
               <MessageSquare className="w-6 h-6 text-amber-700" />
             </div>
             <div>
-              <span className="text-amber-700 text-xs font-semibold tracking-wider uppercase">{feedbackConfig.hero.badge}</span>
+              <span className="text-amber-700 text-xs font-semibold tracking-wider uppercase">{activeConfig.hero.badge}</span>
               <h1 className="font-serif text-3xl font-bold mt-1 mb-2">
-                {feedbackConfig.hero.title}
+                {activeConfig.hero.title}
               </h1>
               <p className="text-gray-600 text-base">
-                {feedbackConfig.hero.description}
+                {activeConfig.hero.description}
               </p>
             </div>
           </div>
@@ -141,48 +161,48 @@ export default function FeedbackPage() {
       {/* Feedback Form */}
       <section className="py-12 bg-stone-100">
         <div className="max-w-[1400px] mx-auto px-6">
-          <Alert variant="info" title={feedbackConfig.alert.title} className="mb-6">
-            {feedbackConfig.alert.message}
+          <Alert variant="info" title={activeConfig.alert.title} className="mb-6">
+            {activeConfig.alert.message}
           </Alert>
 
           <div className="bg-white rounded-xl border border-stone-200 shadow-lg p-6 md:p-8">
             <div className="pb-4 border-b border-stone-200 mb-5">
-              <h2 className="font-serif text-lg font-bold text-gray-800">{feedbackConfig.formHeader.title}</h2>
-              <p className="text-gray-500 text-xs mt-1">{feedbackConfig.formHeader.subtitle}</p>
+              <h2 className="font-serif text-lg font-bold text-gray-800">{activeConfig.formHeader.title}</h2>
+              <p className="text-gray-500 text-xs mt-1">{activeConfig.formHeader.subtitle}</p>
             </div>
 
             <div className="space-y-4">
               {/* Section 1: Personal Details */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs font-bold">{feedbackConfig.sections[0].number}</span>
+                  <span className="w-5 h-5 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs font-bold">{activeConfig.sections[0].number}</span>
                   <h3 className="font-semibold text-gray-800 text-sm flex items-center gap-2">
                     <User className="w-3.5 h-3.5" />
-                    {feedbackConfig.sections[0].title}
+                    {activeConfig.sections[0].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={feedbackConfig.labels.yourName}
-                      placeholder={feedbackConfig.placeholders.fullName}
+                      label={activeConfig.labels.yourName}
+                      placeholder={activeConfig.placeholders.fullName}
                       required
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                     />
                     <InputField
-                      label={feedbackConfig.labels.emailAddress}
+                      label={activeConfig.labels.emailAddress}
                       type="email"
-                      placeholder={feedbackConfig.placeholders.email}
+                      placeholder={activeConfig.placeholders.email}
                       required
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
                     />
                   </div>
                   <InputField
-                    label={feedbackConfig.labels.phoneNumber}
+                    label={activeConfig.labels.phoneNumber}
                     type="tel"
-                    placeholder={feedbackConfig.placeholders.phone}
+                    placeholder={activeConfig.placeholders.phone}
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   />
@@ -192,17 +212,17 @@ export default function FeedbackPage() {
               {/* Section 2: Feedback Type */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs font-bold">{feedbackConfig.sections[1].number}</span>
+                  <span className="w-5 h-5 bg-amber-700 text-white rounded-full flex items-center justify-center text-xs font-bold">{activeConfig.sections[1].number}</span>
                   <h3 className="font-semibold text-gray-800 text-sm flex items-center gap-2">
                     <MessageSquare className="w-3.5 h-3.5" />
-                    {feedbackConfig.sections[1].title}
+                    {activeConfig.sections[1].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
-                        {feedbackConfig.labels.typeOfFeedback}
+                        {activeConfig.labels.typeOfFeedback}
                       </label>
                       <select
                         value={form.feedbackType}
@@ -210,21 +230,21 @@ export default function FeedbackPage() {
                         className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                         required
                       >
-                        {feedbackConfig.selectOptions.feedbackType.map((option) => (
+                        {activeConfig.selectOptions.feedbackType.map((option) => (
                           <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                       </select>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
-                        {feedbackConfig.labels.serviceUsed}
+                        {activeConfig.labels.serviceUsed}
                       </label>
                       <select
                         value={form.serviceUsed}
                         onChange={(e) => setForm({ ...form, serviceUsed: e.target.value })}
                         className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                       >
-                        {feedbackConfig.selectOptions.serviceUsed.map((option) => (
+                        {activeConfig.selectOptions.serviceUsed.map((option) => (
                           <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                       </select>
@@ -236,16 +256,16 @@ export default function FeedbackPage() {
               {/* Section 3: Experience Rating */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{feedbackConfig.sections[2].number}</span>
+                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{activeConfig.sections[2].number}</span>
                   <h3 className="font-semibold text-stone-800 text-sm flex items-center gap-2">
                     <Star className="w-3.5 h-3.5" />
-                    {feedbackConfig.sections[2].title}
+                    {activeConfig.sections[2].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-2 text-center">
-                      {feedbackConfig.labels.overallExperienceRating}
+                      {activeConfig.labels.overallExperienceRating}
                     </label>
                     <div className="flex items-center justify-center gap-2">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -268,11 +288,11 @@ export default function FeedbackPage() {
                         {form.experienceRating > 0 && (
                           <>
                             {form.experienceRating}/5 - 
-                            {form.experienceRating === 5 && ` ${feedbackConfig.ratingLabels.excellent}`}
-                            {form.experienceRating === 4 && ` ${feedbackConfig.ratingLabels.veryGood}`}
-                            {form.experienceRating === 3 && ` ${feedbackConfig.ratingLabels.good}`}
-                            {form.experienceRating === 2 && ` ${feedbackConfig.ratingLabels.fair}`}
-                            {form.experienceRating === 1 && ` ${feedbackConfig.ratingLabels.poor}`}
+                            {form.experienceRating === 5 && ` ${activeConfig.ratingLabels.excellent}`}
+                            {form.experienceRating === 4 && ` ${activeConfig.ratingLabels.veryGood}`}
+                            {form.experienceRating === 3 && ` ${activeConfig.ratingLabels.good}`}
+                            {form.experienceRating === 2 && ` ${activeConfig.ratingLabels.fair}`}
+                            {form.experienceRating === 1 && ` ${activeConfig.ratingLabels.poor}`}
                           </>
                         )}
                       </span>
@@ -284,30 +304,30 @@ export default function FeedbackPage() {
               {/* Section 4: Detailed Feedback */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{feedbackConfig.sections[3].number}</span>
+                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{activeConfig.sections[3].number}</span>
                   <h3 className="font-semibold text-stone-800 text-sm flex items-center gap-2">
                     <MessageSquare className="w-3.5 h-3.5" />
-                    {feedbackConfig.sections[3].title}
+                    {activeConfig.sections[3].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <InputField
-                    label={feedbackConfig.labels.subject}
-                    placeholder={feedbackConfig.placeholders.subject}
+                    label={activeConfig.labels.subject}
+                    placeholder={activeConfig.placeholders.subject}
                     required
                     value={form.subject}
                     onChange={(e) => setForm({ ...form, subject: e.target.value })}
                   />
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {feedbackConfig.labels.detailedMessage}
+                      {activeConfig.labels.detailedMessage}
                     </label>
                     <textarea
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       rows={5}
                       className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
-                      placeholder={feedbackConfig.placeholders.detailedMessage}
+                      placeholder={activeConfig.placeholders.detailedMessage}
                       required
                     />
                   </div>
@@ -316,31 +336,31 @@ export default function FeedbackPage() {
               {/* Section 5: Suggestions & Recommendations */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{feedbackConfig.sections[4].number}</span>
+                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{activeConfig.sections[4].number}</span>
                   <h3 className="font-semibold text-stone-800 text-sm flex items-center gap-2">
                     <Star className="w-3.5 h-3.5" />
-                    {feedbackConfig.sections[4].title}
+                    {activeConfig.sections[4].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {feedbackConfig.labels.suggestionsForImprovement}
+                      {activeConfig.labels.suggestionsForImprovement}
                     </label>
                     <textarea
                       value={form.suggestions}
                       onChange={(e) => setForm({ ...form, suggestions: e.target.value })}
                       rows={3}
                       className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
-                      placeholder={feedbackConfig.placeholders.suggestions}
+                      placeholder={activeConfig.placeholders.suggestions}
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {feedbackConfig.labels.wouldRecommend}
+                      {activeConfig.labels.wouldRecommend}
                     </label>
                     <div className="flex gap-4">
-                      {feedbackConfig.selectOptions.recommendation.map((option) => (
+                      {activeConfig.selectOptions.recommendation.map((option) => (
                         <label key={option.value} className="flex items-center gap-2">
                           <input
                             type="radio"
@@ -360,10 +380,10 @@ export default function FeedbackPage() {
               {/* Section 6: Consent */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center justify-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{feedbackConfig.sections[5].number}</span>
+                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">{activeConfig.sections[5].number}</span>
                   <h3 className="font-semibold text-stone-800 text-sm flex items-center gap-2">
                     <Shield className="w-3.5 h-3.5" />
-                    {feedbackConfig.sections[5].title}
+                    {activeConfig.sections[5].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
@@ -376,7 +396,7 @@ export default function FeedbackPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500 mt-0.5"
                     />
                     <label htmlFor="consentToPublish" className="text-sm text-stone-700">
-                      {feedbackConfig.labels.consentToPublish}
+                      {activeConfig.labels.consentToPublish}
                     </label>
                   </div>
                 </div>
@@ -388,7 +408,7 @@ export default function FeedbackPage() {
                   variant="primary"
                   size="lg"
                   className="w-full"
-                  loading={loading}
+                  loading={loadingSubmit}
                   onClick={handleSubmit}
                   disabled={
                     !form.name ||
@@ -400,10 +420,10 @@ export default function FeedbackPage() {
                     form.experienceRating === 0
                   }
                 >
-                  {feedbackConfig.labels.submitButton}
+                  {activeConfig.labels.submitButton}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
-                  {feedbackConfig.labels.confidentialityText}
+                  {activeConfig.labels.confidentialityText}
                 </p>
               </div>
             </div>
@@ -411,14 +431,14 @@ export default function FeedbackPage() {
 
           {/* Contact Info */}
           <div className="mt-6 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl p-5 text-center shadow-lg">
-            <p className="font-medium text-sm mb-1">{feedbackConfig.contact.title}</p>
+            <p className="font-medium text-sm mb-1">{activeConfig.contact.title}</p>
             <div className="flex justify-center items-center gap-4 text-sm">
-              <a href={`tel:${feedbackConfig.contact.phone.number}`} className="hover:text-emerald-200 transition-colors">
-                {feedbackConfig.contact.phone.display}
+              <a href={`tel:${activeConfig.contact.phone.number}`} className="hover:text-emerald-200 transition-colors">
+                {activeConfig.contact.phone.display}
               </a>
               <span>•</span>
-              <a href={`mailto:${feedbackConfig.contact.email.address}`} className="hover:text-emerald-200 transition-colors">
-                {feedbackConfig.contact.email.display}
+              <a href={`mailto:${activeConfig.contact.email.address}`} className="hover:text-emerald-200 transition-colors">
+                {activeConfig.contact.email.display}
               </a>
             </div>
           </div>

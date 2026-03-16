@@ -1,4 +1,5 @@
 "use client";
+import type { Metadata } from "next";
 import { SectionHeader, Container } from "@/components/ui/Elements";
 import { Card } from "@/components/ui/Card";
 import { CheckCircle } from "lucide-react";
@@ -7,6 +8,9 @@ import { aboutConfig } from "@/config/about.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { cn } from "@/lib/utils";
+
+// Note: Metadata will be handled differently in client components
+// export const metadata: Metadata = { title: aboutConfig.metadata.title };
 
 export default function AboutPage() {
   // Use dynamic config with fallback to static config
@@ -26,9 +30,32 @@ export default function AboutPage() {
       </div>
     );
   }
-
   return (
     <>
+      {/* Configuration Status Indicator (only in development) */}
+      {process.env.NODE_ENV === 'development' && (
+        <section className="py-4 bg-blue-50 border-b">
+          <Container>
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 text-sm">
+                <div className={cn(
+                  "w-2 h-2 rounded-full",
+                  dynamicConfig ? "bg-green-500" : "bg-yellow-500"
+                )}></div>
+                <span className="font-medium">
+                  About Page: {dynamicConfig ? "✅ Dynamic Config" : "⚠️ Static Fallback"}
+                </span>
+                {error && (
+                  <span className="text-red-600 ml-2">
+                    (Error: {error})
+                  </span>
+                )}
+              </div>
+            </div>
+          </Container>
+        </section>
+      )}
+
       {/* Hero */}
       <section className="relative py-16 bg-stone-100 overflow-hidden">
         <div className="absolute inset-0">
@@ -66,16 +93,16 @@ export default function AboutPage() {
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
                   <Image 
-                    src={config.hero?.image || "/gallery/image007.png"} 
-                    alt={config.hero?.cardTitle || "About Moksha Seva"} 
+                    src={aboutConfig.hero.image} 
+                    alt={aboutConfig.hero.cardTitle} 
                     className="w-full h-full object-cover"
                     width={400}
                     height={300}
                   />
                 </div>
                 <div className="text-center">
-                  <h3 className="font-semibold text-gray-900 mb-2">{config.hero?.cardTitle}</h3>
-                  <p className="text-gray-600 text-sm">{config.hero?.cardDescription}</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">{aboutConfig.hero.cardTitle}</h3>
+                  <p className="text-gray-600 text-sm">{aboutConfig.hero.cardDescription}</p>
                 </div>
               </div>
             </div>
@@ -91,28 +118,28 @@ export default function AboutPage() {
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
                   {(() => {
-                    const MissionIcon = getIcon(config.missionVision?.mission?.icon || "Target");
+                    const MissionIcon = getIcon(aboutConfig.missionVision.mission.icon);
                     return <MissionIcon className="w-5 h-5 text-amber-700" />;
                   })()}
                 </div>
-                <h2 className="font-serif text-xl font-bold text-gray-900">{config.missionVision?.mission?.title}</h2>
+                <h2 className="font-serif text-xl font-bold text-gray-900">{aboutConfig.missionVision.mission.title}</h2>
               </div>
               <p className="text-gray-700 leading-relaxed">
-                {config.missionVision?.mission?.description}
+                {aboutConfig.missionVision.mission.description}
               </p>
             </Card>
             <Card variant="spiritual" padding="lg">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
                   {(() => {
-                    const VisionIcon = getIcon(config.missionVision?.vision?.icon || "Eye");
+                    const VisionIcon = getIcon(aboutConfig.missionVision.vision.icon);
                     return <VisionIcon className="w-5 h-5 text-amber-700" />;
                   })()}
                 </div>
-                <h2 className="font-serif text-xl font-bold text-gray-900">{config.missionVision?.vision?.title}</h2>
+                <h2 className="font-serif text-xl font-bold text-gray-900">{aboutConfig.missionVision.vision.title}</h2>
               </div>
               <p className="text-gray-700 leading-relaxed">
-                {config.missionVision?.vision?.description}
+                {aboutConfig.missionVision.vision.description}
               </p>
             </Card>
           </div>
@@ -122,11 +149,10 @@ export default function AboutPage() {
       {/* Our Story */}
       <section className="py-12 bg-stone-50">
         <Container size="lg">
-          <SectionHeader tag={config.story?.tag} title={config.story?.title} centered={false} />
-          
+          <SectionHeader tag={aboutConfig.story.tag} title={aboutConfig.story.title} centered={false} />
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className="space-y-4 text-gray-700 leading-relaxed">
-              {config.story?.paragraphs?.map((paragraph, index) => (
+              {aboutConfig.story.paragraphs.map((paragraph, index) => (
                 <p key={index} className={index === 0 ? "text-lg" : ""}>
                   {paragraph}
                 </p>
@@ -134,7 +160,7 @@ export default function AboutPage() {
               
               {/* Key Statistics */}
               <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-stone-200">
-                {config.story?.stats?.map((stat, index) => (
+                {aboutConfig.story.stats.map((stat, index) => (
                   <div key={index} className="text-center">
                     <div className="text-3xl font-bold text-amber-700">{stat.number}</div>
                     <div className="text-sm text-gray-600">{stat.label}</div>
@@ -143,15 +169,17 @@ export default function AboutPage() {
               </div>
             </div>
             
-            <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
-                <Image 
-                  src={config.story?.image || "/gallery/image009.png"} 
-                  alt={config.story?.imageAlt || "Our Journey"} 
-                  className="w-full h-full object-cover"
-                  width={400}
-                  height={300}
-                />
+            <div className="space-y-4">
+              <div className="relative">
+                <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
+                  <Image 
+                    src={aboutConfig.story.image} 
+                    alt={aboutConfig.story.imageAlt} 
+                    className="w-full h-full object-cover"
+                    width={400}
+                    height={300}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -161,18 +189,17 @@ export default function AboutPage() {
       {/* Values */}
       <section className="py-12 bg-stone-100">
         <Container>
-          <SectionHeader tag={config.values?.tag} title={config.values?.title} />
-          
+          <SectionHeader tag={aboutConfig.values.tag} title={aboutConfig.values.title} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {config.values?.values?.map((value) => {
+            {aboutConfig.values.values.map((value) => {
               const Icon = getIcon(value.icon);
               return (
-                <Card key={value.title} variant="spiritual" padding="md" className="text-center hover:shadow-lg transition-all duration-300">
-                  <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Card key={value.title} variant="elevated" padding="md" className="text-center hover:shadow-xl transition-all duration-300 group">
+                  <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-200 transition-colors">
                     <Icon className="w-6 h-6 text-amber-700" />
                   </div>
-                  <h3 className="font-serif font-bold text-gray-900 mb-2">{value.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+                  <h3 className="font-serif font-semibold text-gray-900 mb-2">{value.title}</h3>
+                  <p className="text-gray-700 text-sm leading-relaxed">{value.description}</p>
                 </Card>
               );
             })}
@@ -183,22 +210,19 @@ export default function AboutPage() {
       {/* Team */}
       <section className="py-12 bg-stone-50">
         <Container>
-          <SectionHeader tag={config.team?.tag} title={config.team?.title} />
-          
+          <SectionHeader tag={aboutConfig.team.tag} title={aboutConfig.team.title} />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {config.team?.members?.map((member) => (
+            {aboutConfig.team.members.map((member) => (
               <Card key={member.name} variant="bordered" padding="md" className="flex items-start gap-4 hover:shadow-lg transition-all duration-300">
                 <div className="w-12 h-12 bg-amber-700 rounded-full flex items-center justify-center text-stone-50 font-serif font-bold text-lg flex-shrink-0">
                   {member.name.charAt(0)}
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-serif font-bold text-gray-900 mb-1">{member.name}</h3>
-                  <p className="text-amber-700 font-medium text-sm mb-1">{member.role}</p>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
-                    <span>{member.city}</span>
-                    <span>•</span>
-                    <span>{member.years}</span>
-                  </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900">{member.name}</h3>
+                  <p className="text-amber-700 text-sm">{member.role}</p>
+                  <p className="text-gray-600 text-xs mt-1">
+                    {member.city} · {member.years} with Moksha Seva
+                  </p>
                 </div>
               </Card>
             ))}
@@ -206,17 +230,17 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* Certifications */}
-      <section className="py-12 bg-stone-100">
+      {/* Registrations */}
+      <section className="py-16 bg-stone-100 border-t border-amber-200">
         <Container>
           <h2 className="font-serif text-2xl font-bold text-gray-900 text-center mb-8">
-            {config.certifications?.title}
+            {aboutConfig.certifications.title}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {config.certifications?.certifications?.map((cert, index) => (
+            {aboutConfig.certifications.certifications.map((cert, index) => (
               <div key={index} className="flex items-start gap-2 bg-stone-50 rounded-lg p-4 border border-amber-200 hover:border-amber-300 transition-colors">
                 <CheckCircle className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700 text-sm font-medium">{cert.text}</span>
+                <p className="text-gray-700 text-sm">{cert.text}</p>
               </div>
             ))}
           </div>

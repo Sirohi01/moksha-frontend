@@ -8,8 +8,15 @@ import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { homepageConfig } from "@/config/homepage.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function HomePage() {
+  // Use dynamic config with fallback to static config
+  const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
+  
+  // Use dynamic config if available, otherwise fallback to static
+  const config = dynamicConfig || homepageConfig;
+  
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentLocationSlide, setCurrentLocationSlide] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -21,46 +28,73 @@ export default function HomePage() {
   const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % homepageConfig.hero.slides.length);
-    }, homepageConfig.hero.autoSlideInterval);
+      setCurrentSlide((prev) => (prev + 1) % config.hero.slides.length);
+    }, config.hero.autoSlideInterval);
   };
 
   useEffect(() => {
+    if (!config.hero?.slides) return;
+    
     startTimer();
     
     // Location carousel timer
-    if (locationTimerRef.current) clearInterval(locationTimerRef.current);
-    locationTimerRef.current = setInterval(() => {
-      setCurrentLocationSlide((prev) => {
-        const next = (prev + 1) % homepageConfig.whereWeServe.carousel.slides.length;
-        console.log('Location slide changing from', prev, 'to', next);
-        return next;
-      });
-    }, homepageConfig.whereWeServe.carousel.autoSlideInterval);
+    if (config.whereWeServe?.carousel?.slides) {
+      if (locationTimerRef.current) clearInterval(locationTimerRef.current);
+      locationTimerRef.current = setInterval(() => {
+        setCurrentLocationSlide((prev) => {
+          const next = (prev + 1) % config.whereWeServe.carousel.slides.length;
+          console.log('Location slide changing from', prev, 'to', next);
+          return next;
+        });
+      }, config.whereWeServe.carousel.autoSlideInterval);
+    }
     
     // Campaign carousel timer
-    if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
-    campaignTimerRef.current = setInterval(() => {
-      setCurrentCampaignSlide((prev) => (prev + 1) % homepageConfig.urgentCampaigns.campaigns.length);
-    }, homepageConfig.urgentCampaigns.autoSlideInterval);
+    if (config.urgentCampaigns?.campaigns) {
+      if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
+      campaignTimerRef.current = setInterval(() => {
+        setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
+      }, config.urgentCampaigns.autoSlideInterval);
+    }
     
-    const tTimer = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % homepageConfig.testimonials.slides.length);
-    }, homepageConfig.testimonials.autoSlideInterval);
+    // Testimonials timer
+    if (config.testimonials?.slides) {
+      const tTimer = setInterval(() => {
+        setCurrentTestimonial((prev) => (prev + 1) % config.testimonials.slides.length);
+      }, config.testimonials.autoSlideInterval);
+      
+      return () => {
+        if (timerRef.current) clearInterval(timerRef.current);
+        if (locationTimerRef.current) clearInterval(locationTimerRef.current);
+        if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
+        clearInterval(tTimer);
+      };
+    }
     
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (locationTimerRef.current) clearInterval(locationTimerRef.current);
       if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
-      clearInterval(tTimer);
     };
-  }, []);
+  }, [config]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="bg-stone-50 min-h-screen font-sans flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading page content...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-stone-50 min-h-screen font-sans">
       {/* ── HERO (HINDU RITUALS & SACRED DEPARTURE) ── */}
       <section className="relative h-[60vh] md:h-[75vh] lg:h-[85vh] w-full overflow-hidden bg-black border-b-[8px] border-[#f4c430]">
-        {homepageConfig.hero.slides.map((src, idx) => (
+        {config.hero?.slides?.map((src, idx) => (
           <div
             key={src}
             className={cn(
@@ -70,7 +104,7 @@ export default function HomePage() {
           >
             <Image
               src={src}
-              alt={homepageConfig.labels.heroAltText}
+              alt={config.labels?.heroAltText || "Moksha Seva - Dignified Final Journey"}
               fill
               className="object-cover"
               style={{ imageRendering: 'auto', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}
@@ -81,7 +115,7 @@ export default function HomePage() {
 
         {/* Dynamic Progress Indicator (Smile Style) */}
         <div className="absolute bottom-0 left-0 right-0 z-20 h-2 flex bg-black/10">
-          {homepageConfig.hero.slides.map((_, idx) => (
+          {config.hero?.slides?.map((_, idx) => (
             <div key={idx} className="flex-1 h-full overflow-hidden bg-white/10">
               <div
                 className={cn(
@@ -95,7 +129,7 @@ export default function HomePage() {
 
         {/* Floating Indicator Dots */}
         <div className="absolute bottom-6 right-6 z-30 flex gap-2">
-          {homepageConfig.hero.slides.map((_, idx) => (
+          {config.hero?.slides?.map((_, idx) => (
             <button
               key={idx}
               onClick={() => {
@@ -115,10 +149,10 @@ export default function HomePage() {
       <div className="bg-black py-4">
         <Container className="flex flex-col md:flex-row items-center justify-between gap-6">
           <h2 className="text-white text-xl md:text-2xl font-semibold">
-            {homepageConfig.actionBanner.title}
+            {config.actionBanner?.title}
           </h2>
           <div className="flex gap-4">
-            {homepageConfig.actionBanner.buttons.map((button, index) => (
+            {config.actionBanner?.buttons?.map((button, index) => (
               <Link key={index} href={button.href}>
                 <Button className={cn(
                   "px-6 py-2 font-medium",
@@ -149,26 +183,26 @@ export default function HomePage() {
             <div className="order-2 lg:order-1">
               <div className="inline-flex items-center gap-3 mb-6">
                 <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
-                <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{homepageConfig.about.badge}</span>
+                <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{config.about.badge}</span>
                 <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
               </div>
               
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                {homepageConfig.about.title} 
-                <span className="text-gray-700 block">{homepageConfig.about.titleHighlight}</span>
+                {config.about.title} 
+                <span className="text-gray-700 block">{config.about.titleHighlight}</span>
               </h2>
               
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                {homepageConfig.about.description}
+                {config.about.description}
               </p>
               
               <p className="text-gray-600 mb-8 leading-relaxed">
-                {homepageConfig.about.secondaryDescription}
+                {config.about.secondaryDescription}
               </p>
               
               {/* Key Stats */}
               <div className="grid grid-cols-3 gap-6 mb-8">
-                {homepageConfig.about.stats.map((stat, index) => (
+                {config.about.stats.map((stat, index) => (
                   <div key={index} className="text-center p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-sm">
                     <div className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</div>
                     <div className="text-xs text-gray-600 uppercase tracking-wider">{stat.label}</div>
@@ -177,7 +211,7 @@ export default function HomePage() {
               </div>
               
               <div className="flex flex-wrap gap-4">
-                {homepageConfig.about.buttons.map((button, index) => (
+                {config.about.buttons.map((button, index) => (
                   <Link key={index} href={button.href}>
                     <Button className={cn(
                       "px-8 py-3 transition-colors shadow-lg",
@@ -203,7 +237,7 @@ export default function HomePage() {
                   {/* Main image */}
                   <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 backdrop-blur-sm">
                     <Image
-                      src={homepageConfig.about.image}
+                      src={config.about.image}
                       alt="Moksha Seva - Dignified Final Journey"
                       fill
                       className="object-cover"
@@ -215,7 +249,7 @@ export default function HomePage() {
                     <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-gray-200/50">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-sm font-medium text-gray-900">{homepageConfig.about.floatingBadge.text}</span>
+                        <span className="text-sm font-medium text-gray-900">{config.about?.floatingBadge?.text || "Serving with Dignity"}</span>
                       </div>
                     </div>
                   </div>
@@ -230,8 +264,8 @@ export default function HomePage() {
                         })()}
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-gray-900">{homepageConfig.about.floatingBadge.text}</div>
-                        <div className="text-xs text-gray-600">{homepageConfig.about.floatingBadge.subtext}</div>
+                        <div className="text-sm font-semibold text-gray-900">{config.about?.floatingBadge?.text || "Serving with Dignity"}</div>
+                        <div className="text-xs text-gray-600">{config.about?.floatingBadge?.subtext || "Since 2026"}</div>
                       </div>
                     </div>
                   </div>
@@ -255,17 +289,17 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-6">
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
-              <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{homepageConfig.ourSeva.badge}</span>
+              <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{config.ourSeva.badge}</span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">{homepageConfig.ourSeva.title}</h2>
+            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">{config.ourSeva.title}</h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-              {homepageConfig.ourSeva.description}
+              {config.ourSeva.description}
             </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {homepageConfig.ourSeva.programmes.map((p, index) => {
+            {config.ourSeva.programmes.map((p, index) => {
               const IconComponent = getIcon(p.icon);
               return (
                 <div key={p.title} className="group relative">
@@ -309,7 +343,7 @@ export default function HomePage() {
                         href={p.href} 
                         className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium text-sm transition-colors group/link"
                       >
-                        {homepageConfig.labels.learnMore}
+                        {config.labels?.learnMore || "Learn More"}
                         <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                       </Link>
                     </div>
@@ -322,17 +356,18 @@ export default function HomePage() {
       </section>
 
       {/* Where We Serve */}
-      <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
-        <Container>
+      {config.whereWeServe && (
+        <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
+          <Container>
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="w-8 h-px bg-gray-300"></div>
-              <span className="text-sm text-gray-500 uppercase tracking-wider">{homepageConfig.whereWeServe.badge}</span>
+              <span className="text-sm text-gray-500 uppercase tracking-wider">{config.whereWeServe.badge}</span>
               <div className="w-8 h-px bg-gray-300"></div>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">{homepageConfig.whereWeServe.title}</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">{config.whereWeServe.title}</h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              {homepageConfig.whereWeServe.description}
+              {config.whereWeServe.description}
             </p>
           </div>
           
@@ -344,7 +379,7 @@ export default function HomePage() {
                   <div className="absolute -top-4 -left-4 w-full h-full bg-gray-100 rounded-2xl"></div>
                   <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
                     {/* Carousel Images */}
-                    {homepageConfig.whereWeServe.carousel.slides.map((slide, idx) => (
+                    {config.whereWeServe.carousel.slides.map((slide, idx) => (
                       <div
                         key={idx}
                         className={cn(
@@ -372,7 +407,7 @@ export default function HomePage() {
                     
                     {/* Carousel Controls */}
                     <div className="absolute bottom-4 right-4 flex gap-2">
-                      {homepageConfig.whereWeServe.carousel.slides.map((_, idx) => (
+                      {config.whereWeServe.carousel.slides.map((_, idx) => (
                         <button
                           key={idx}
                           onClick={() => {
@@ -380,8 +415,8 @@ export default function HomePage() {
                             // Reset timer
                             if (locationTimerRef.current) clearInterval(locationTimerRef.current);
                             locationTimerRef.current = setInterval(() => {
-                              setCurrentLocationSlide((prev) => (prev + 1) % homepageConfig.whereWeServe.carousel.slides.length);
-                            }, homepageConfig.whereWeServe.carousel.autoSlideInterval);
+                              setCurrentLocationSlide((prev) => (prev + 1) % config.whereWeServe.carousel.slides.length);
+                            }, config.whereWeServe.carousel.autoSlideInterval);
                           }}
                           className={cn(
                             "h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80",
@@ -401,11 +436,11 @@ export default function HomePage() {
                     <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                       <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
                     </div>
-                    <h3 className="text-xl font-semibold text-gray-900">{homepageConfig.whereWeServe.activeNetwork.title}</h3>
+                    <h3 className="text-xl font-semibold text-gray-900">{config.whereWeServe.activeNetwork.title}</h3>
                   </div>
                   
                   <div className="space-y-3 mb-8">
-                    {homepageConfig.whereWeServe.activeNetwork.locations.map((location) => (
+                    {config.whereWeServe.activeNetwork.locations.map((location) => (
                       <div key={location.city} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
                         <div className="flex items-center gap-3">
                           <div className="w-2 h-2 bg-green-400 rounded-full group-hover:scale-125 transition-transform"></div>
@@ -421,7 +456,7 @@ export default function HomePage() {
                   {/* Stats */}
                   <div className="border-t pt-6">
                     <div className="grid grid-cols-2 gap-6">
-                      {homepageConfig.whereWeServe.activeNetwork.stats.map((stat, index) => (
+                      {config.whereWeServe.activeNetwork.stats.map((stat, index) => (
                         <div key={index} className="text-center">
                           <div className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</div>
                           <div className="text-sm text-gray-600">{stat.label}</div>
@@ -436,7 +471,7 @@ export default function HomePage() {
             {/* Extended Network */}
             <div className="mt-12 text-center">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-sm border border-gray-200 mb-6">
-                <span className="text-sm font-medium text-gray-700">{homepageConfig.whereWeServe.extendedNetwork.title}</span>
+                <span className="text-sm font-medium text-gray-700">{config.whereWeServe.extendedNetwork.title}</span>
                 <div className="flex gap-1">
                   <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
                   <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -444,7 +479,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-                {homepageConfig.whereWeServe.extendedNetwork.cities.map((city) => (
+                {config.whereWeServe.extendedNetwork.cities.map((city) => (
                   <div key={city} className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-gray-300 hover:shadow-sm transition-all">
                     {city}
                   </div>
@@ -454,6 +489,7 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+      )}
 
       {/* Mission Pillars */}
       <section className="py-12 bg-stone-100 relative overflow-hidden">
@@ -461,12 +497,12 @@ export default function HomePage() {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="w-8 h-px bg-amber-700"></div>
-              <span className="text-amber-800 text-sm uppercase tracking-wider">{homepageConfig.missionPillars.badge}</span>
+              <span className="text-amber-800 text-sm uppercase tracking-wider">{config.missionPillars.badge}</span>
               <div className="w-8 h-px bg-amber-700"></div>
             </div>
-            <h2 className="text-3xl font-bold text-amber-900 mb-3">{homepageConfig.missionPillars.title}</h2>
+            <h2 className="text-3xl font-bold text-amber-900 mb-3">{config.missionPillars.title}</h2>
             <p className="text-amber-800 max-w-2xl mx-auto">
-              {homepageConfig.missionPillars.description}
+              {config.missionPillars.description}
             </p>
           </div>
 
@@ -478,7 +514,7 @@ export default function HomePage() {
 
               {/* Flowers in a Row */}
               <div className="flex justify-center items-center gap-6 md:gap-12 lg:gap-16">
-                {homepageConfig.missionPillars.pillars.map((pillar, index) => {
+                {config.missionPillars.pillars.map((pillar, index) => {
                   const IconComponent = getIcon(pillar.icon);
                   return (
                     <div 
@@ -518,7 +554,7 @@ export default function HomePage() {
             {/* Bottom Statement */}
             <div className="text-center mt-8">
               <div className="inline-flex items-center gap-3 px-6 py-2 bg-stone-50 rounded-full shadow-sm border border-amber-200">
-                <span className="text-amber-800 text-sm">{homepageConfig.missionPillars.bottomStatement}</span>
+                <span className="text-amber-800 text-sm">{config.missionPillars.bottomStatement}</span>
               </div>
             </div>
           </div>
@@ -526,15 +562,16 @@ export default function HomePage() {
       </section>
 
       {/* ── STORIES IN MOTION (CAROUSEL) ── */}
-      <section className="py-12 bg-white overflow-hidden">
+      {config.storiesInMotion && (
+        <section className="py-12 bg-white overflow-hidden">
         <Container>
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 leading-none border-b-4 border-[#f4c430] inline-block pb-1">{homepageConfig.storiesInMotion.title}</h2>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 leading-none border-b-4 border-[#f4c430] inline-block pb-1">{config.storiesInMotion.title}</h2>
           </div>
 
           <div className="relative group/carousel">
             <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4">
-              {homepageConfig.storiesInMotion.stories.map((story, i) => (
+              {config.storiesInMotion.stories.map((story, i) => (
                 <div key={i} className="relative min-w-[280px] md:min-w-[400px] aspect-[16/10] rounded-[2rem] overflow-hidden group shadow-lg">
                   <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute bottom-5 left-6">
@@ -550,13 +587,14 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+      )}
 
       {/* Join The Mission */}
       <section className="relative py-24 md:py-32 overflow-hidden bg-stone-950">
         <div className="absolute inset-0 z-0">
           <Image
-            src={homepageConfig.joinMission.backgroundImage}
-            alt={homepageConfig.labels.joinMissionAltText}
+            src={config.joinMission.backgroundImage}
+            alt={config.labels?.joinMissionAltText || "Join Our Mission"}
             fill
             className="object-cover"
           />
@@ -567,18 +605,18 @@ export default function HomePage() {
         <Container className="relative z-10">
           <div className="max-w-xl">
             <div className="inline-block px-4 py-1.5 rounded-full bg-[#20b2aa]/10 border border-[#20b2aa]/20 mb-6 backdrop-blur-md">
-              <p className="text-[#20b2aa] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{homepageConfig.joinMission.badge}</p>
+              <p className="text-[#20b2aa] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.joinMission.badge}</p>
             </div>
             <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.85] mb-8">
-              {homepageConfig.joinMission.title} <br />
-              <span className="text-[#f4c430]">{homepageConfig.joinMission.titleHighlight}</span>
+              {config.joinMission.title} <br />
+              <span className="text-[#f4c430]">{config.joinMission.titleHighlight}</span>
             </h2>
             <p className="text-white/90 font-medium text-lg mb-10 leading-snug drop-shadow-lg">
-              {homepageConfig.joinMission.description}
+              {config.joinMission.description}
             </p>
 
             <div className="flex flex-wrap gap-4">
-              {homepageConfig.joinMission.buttons.map((button, index) => (
+              {config.joinMission.buttons.map((button, index) => (
                 <Link key={index} href={button.href}>
                   <Button variant="ghost" className={cn(
                     "px-8 py-3 transition-colors",
@@ -593,7 +631,7 @@ export default function HomePage() {
             </div>
 
             <div className="mt-12 flex gap-10 border-t border-white/10 pt-10">
-              {homepageConfig.joinMission.stats.map((stat, index) => (
+              {config.joinMission.stats.map((stat, index) => (
                 <div key={index} className="flex flex-col">
                   <p className="text-white font-black text-2xl tracking-tighter leading-none mb-1">{stat.number}</p>
                   <p className="text-stone-400 font-black text-[9px] uppercase tracking-widest leading-none">{stat.label}</p>
@@ -616,21 +654,21 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-amber-600 to-transparent"></div>
-              <span className="text-amber-700 text-sm uppercase tracking-wider font-medium">{homepageConfig.urgentCampaigns.badge}</span>
+              <span className="text-amber-700 text-sm uppercase tracking-wider font-medium">{config.urgentCampaigns.badge}</span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-amber-600 to-transparent"></div>
             </div>
-            <h2 className="text-4xl font-bold text-black mb-3">{homepageConfig.urgentCampaigns.title}</h2>
-            <p className="text-black text-lg">{homepageConfig.urgentCampaigns.description}</p>
+            <h2 className="text-4xl font-bold text-black mb-3">{config.urgentCampaigns.title}</h2>
+            <p className="text-black text-lg">{config.urgentCampaigns.description}</p>
           </div>
           
           {/* Enhanced 3D Circular Carousel */}
           <div className="relative max-w-7xl mx-auto h-[500px] overflow-visible" style={{ perspective: '1200px' }}>
             <div className="relative w-full h-full flex items-center justify-center">
-              {homepageConfig.urgentCampaigns.campaigns.map((c, index) => {
+              {config.urgentCampaigns.campaigns.map((c, index) => {
                 // Calculate position relative to current slide
                 let position = index - currentCampaignSlide;
-                if (position < 0) position += homepageConfig.urgentCampaigns.campaigns.length;
-                if (position >= homepageConfig.urgentCampaigns.campaigns.length) position -= homepageConfig.urgentCampaigns.campaigns.length;
+                if (position < 0) position += config.urgentCampaigns.campaigns.length;
+                if (position >= config.urgentCampaigns.campaigns.length) position -= config.urgentCampaigns.campaigns.length;
                 
                 // Enhanced 3D positioning
                 let transform = '';
@@ -678,8 +716,8 @@ export default function HomePage() {
                         // Reset timer when manually clicked
                         if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
                         campaignTimerRef.current = setInterval(() => {
-                          setCurrentCampaignSlide((prev) => (prev + 1) % homepageConfig.urgentCampaigns.campaigns.length);
-                        }, homepageConfig.urgentCampaigns.autoSlideInterval);
+                          setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
+                        }, config.urgentCampaigns.autoSlideInterval);
                       }
                     }}
                   >
@@ -705,7 +743,7 @@ export default function HomePage() {
                         <div className="absolute bottom-6 left-6 right-6">
                           <div className="flex items-center gap-2 mb-3">
                             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span className="text-white/80 text-xs font-medium uppercase tracking-wider">{homepageConfig.urgentCampaigns.labels.activeCampaign}</span>
+                            <span className="text-white/80 text-xs font-medium uppercase tracking-wider">{config.urgentCampaigns.labels.activeCampaign}</span>
                           </div>
                           <h4 className="text-white font-bold text-xl mb-3 leading-tight">{c.title}</h4>
                           
@@ -725,7 +763,7 @@ export default function HomePage() {
                           
                           <div className="flex justify-between items-center text-white">
                             <div className="text-sm">
-                              <span className="text-white/70">{homepageConfig.urgentCampaigns.labels.raised}</span>
+                              <span className="text-white/70">{config.urgentCampaigns.labels.raised}</span>
                               <span className="font-semibold">{c.raised}</span>
                             </div>
                             <div className="text-sm font-bold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
@@ -748,7 +786,7 @@ export default function HomePage() {
                                 : "bg-gray-600 text-white hover:bg-gray-700"
                             )}
                           >
-                            {position === 0 ? homepageConfig.urgentCampaigns.labels.donateNow : homepageConfig.urgentCampaigns.labels.viewCampaign}
+                            {position === 0 ? config.urgentCampaigns.labels.donateNow : config.urgentCampaigns.labels.viewCampaign}
                           </Button>
                         </Link>
                       </div>
@@ -761,11 +799,11 @@ export default function HomePage() {
             {/* Enhanced Navigation Arrows */}
             <button
               onClick={() => {
-                setCurrentCampaignSlide((prev) => (prev - 1 + homepageConfig.urgentCampaigns.campaigns.length) % homepageConfig.urgentCampaigns.campaigns.length);
+                setCurrentCampaignSlide((prev) => (prev - 1 + config.urgentCampaigns.campaigns.length) % config.urgentCampaigns.campaigns.length);
                 if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
                 campaignTimerRef.current = setInterval(() => {
-                  setCurrentCampaignSlide((prev) => (prev + 1) % homepageConfig.urgentCampaigns.campaigns.length);
-                }, homepageConfig.urgentCampaigns.autoSlideInterval);
+                  setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
+                }, config.urgentCampaigns.autoSlideInterval);
               }}
               className="absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 z-50 backdrop-blur-sm border border-gray-200"
             >
@@ -776,11 +814,11 @@ export default function HomePage() {
             
             <button
               onClick={() => {
-                setCurrentCampaignSlide((prev) => (prev + 1) % homepageConfig.urgentCampaigns.campaigns.length);
+                setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
                 if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
                 campaignTimerRef.current = setInterval(() => {
-                  setCurrentCampaignSlide((prev) => (prev + 1) % homepageConfig.urgentCampaigns.campaigns.length);
-                }, homepageConfig.urgentCampaigns.autoSlideInterval);
+                  setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
+                }, config.urgentCampaigns.autoSlideInterval);
               }}
               className="absolute right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 z-50 backdrop-blur-sm border border-gray-200"
             >
@@ -789,15 +827,15 @@ export default function HomePage() {
               </svg>
             </button>
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-50">
-              {homepageConfig.urgentCampaigns.campaigns.map((_, index) => (
+              {config.urgentCampaigns.campaigns.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => {
                     setCurrentCampaignSlide(index);
                     if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
                     campaignTimerRef.current = setInterval(() => {
-                      setCurrentCampaignSlide((prev) => (prev + 1) % homepageConfig.urgentCampaigns.campaigns.length);
-                    }, homepageConfig.urgentCampaigns.autoSlideInterval);
+                      setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
+                    }, config.urgentCampaigns.autoSlideInterval);
                   }}
                   className={cn(
                     "h-3 rounded-full transition-all duration-500 border-2",
@@ -815,12 +853,12 @@ export default function HomePage() {
         <Container>
           <div className="flex flex-col md:flex-row items-center justify-between gap-10">
             <div className="shrink-0 text-center md:text-left">
-              <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] mb-2 leading-none">{homepageConfig.sacredJourney.badge}</p>
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white leading-none">{homepageConfig.sacredJourney.title}</h2>
+              <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] mb-2 leading-none">{config.sacredJourney.badge}</p>
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white leading-none">{config.sacredJourney.title}</h2>
             </div>
 
             <div className="flex flex-wrap md:flex-nowrap items-start gap-8 md:gap-12">
-              {homepageConfig.sacredJourney.timeline.map((item, i) => {
+              {config.sacredJourney.timeline.map((item, i) => {
                 const IconComponent = getIcon(item.icon);
                 return (
                   <div key={i} className="flex flex-col items-center md:items-start max-w-[160px] group">
@@ -845,14 +883,14 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-4xl font-black uppercase tracking-tighter text-stone-900 leading-[0.85] mb-6">
-                {homepageConfig.transparency.title} <br />
-                <span className="text-[#20b2aa]">{homepageConfig.transparency.titleHighlight}</span>
+                {config.transparency.title} <br />
+                <span className="text-[#20b2aa]">{config.transparency.titleHighlight}</span>
               </h2>
               <p className="text-stone-500 font-medium text-lg leading-snug mb-8 max-w-md">
-                {homepageConfig.transparency.description}
+                {config.transparency.description}
               </p>
               <div className="space-y-4">
-                {homepageConfig.transparency.stats.map((stat) => (
+                {config.transparency.stats.map((stat) => (
                   <div key={stat.label}>
                     <div className="flex justify-between font-black uppercase text-[10px] tracking-widest mb-1.5 transform translate-y-0.5">
                       <span>{stat.label}</span>
@@ -866,10 +904,10 @@ export default function HomePage() {
               </div>
             </div>
             <div className="bg-stone-50 p-10 rounded-[3rem] border border-stone-100 rotate-1 shadow-2xl">
-              <h3 className="text-xl font-black uppercase tracking-tighter mb-4 text-stone-900">{homepageConfig.transparency.trustSection.title}</h3>
-              <p className="text-stone-500 font-medium mb-6">{homepageConfig.transparency.trustSection.description}</p>
+              <h3 className="text-xl font-black uppercase tracking-tighter mb-4 text-stone-900">{config.transparency.trustSection.title}</h3>
+              <p className="text-stone-500 font-medium mb-6">{config.transparency.trustSection.description}</p>
               <div className="grid grid-cols-2 gap-4">
-                {homepageConfig.transparency.trustSection.badges.map((badge, index) => (
+                {config.transparency.trustSection.badges.map((badge, index) => (
                   <div key={index} className="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
                     <p className={`${badge.color || 'text-[#f4c430]'} font-black text-2xl tracking-tighter`}>{badge.text}</p>
                     <p className="text-[8px] font-black uppercase tracking-widest text-stone-400">{badge.subtext}</p>
@@ -884,9 +922,9 @@ export default function HomePage() {
       {/* ── MEDIA RECOGNITION (NEW) ── */}
       <section className="py-10 bg-white">
         <Container>
-          <p className="text-center text-stone-400 font-black text-[10px] uppercase tracking-[0.4em] mb-8">{homepageConfig.mediaRecognition.badge}</p>
+          <p className="text-center text-stone-400 font-black text-[10px] uppercase tracking-[0.4em] mb-8">{config.mediaRecognition.badge}</p>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
-            {homepageConfig.mediaRecognition.logos.map((logo) => (
+            {config.mediaRecognition.logos.map((logo) => (
               <div key={logo} className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-900 border-x border-stone-900/10 px-4">{logo}</div>
             ))}
           </div>
@@ -898,9 +936,9 @@ export default function HomePage() {
         <Container>
           <div className="max-w-3xl mx-auto text-center">
             <div className="mb-6">
-              <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-widest mb-2">{homepageConfig.testimonials.badge}</p>
+              <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-widest mb-2">{config.testimonials.badge}</p>
               <div className="relative">
-                {homepageConfig.testimonials.slides.map((t, i) => (
+                {config.testimonials.slides.map((t, i) => (
                   <div key={i} className={cn("transition-all duration-1000", i === currentTestimonial ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 absolute inset-0")}>
                     <p className="text-white text-xl md:text-3xl font-black italic tracking-tighter leading-tight mb-6">&quot;{t.quote}&quot;</p>
                     <p className="text-stone-400 font-bold uppercase text-xs tracking-widest">— {t.author}</p>
@@ -909,7 +947,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="flex justify-center gap-2 mt-10">
-              {homepageConfig.testimonials.slides.map((_, i) => (
+              {config.testimonials.slides.map((_, i) => (
                 <div key={i} className={cn("h-1 rounded-full transition-all duration-500", i === currentTestimonial ? "w-8 bg-[#f4c430]" : "w-2 bg-white/20")} />
               ))}
             </div>
@@ -921,10 +959,10 @@ export default function HomePage() {
       <section className="py-12 bg-stone-50">
         <Container>
           <div className="text-center mb-10">
-            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-400 leading-none underline decoration-stone-200 decoration-1 underline-offset-[10px]">{homepageConfig.governmentPartners.title}</h2>
+            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-400 leading-none underline decoration-stone-200 decoration-1 underline-offset-[10px]">{config.governmentPartners.title}</h2>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
-            {homepageConfig.governmentPartners.partners.map((gp) => (
+            {config.governmentPartners.partners.map((gp) => (
               <div key={gp.name} className="flex flex-col items-center">
                 <div className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 border-b-2 border-stone-900 pb-1">{gp.name}</div>
                 <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-500">{gp.label}</p>
@@ -939,10 +977,10 @@ export default function HomePage() {
         <Container>
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-black uppercase tracking-tighter text-stone-900 border-b-4 border-[#f4c430] inline-block pb-1">{homepageConfig.faq.title}</h2>
+              <h2 className="text-2xl font-black uppercase tracking-tighter text-stone-900 border-b-4 border-[#f4c430] inline-block pb-1">{config.faq.title}</h2>
             </div>
             <div className="space-y-4">
-              {homepageConfig.faq.questions.map((faq, i) => (
+              {config.faq.questions.map((faq, i) => (
                 <div key={i} className="p-6 rounded-2xl bg-stone-50 border border-stone-100 hover:border-[#20b2aa]/20 hover:bg-white transition-all group cursor-default">
                   <p className="font-black text-sm uppercase tracking-tighter text-stone-900 mb-2 group-hover:text-[#20b2aa] transition-colors">{faq.question}</p>
                   <p className="text-stone-500 text-sm font-medium leading-relaxed">{faq.answer}</p>

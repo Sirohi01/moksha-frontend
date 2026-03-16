@@ -6,8 +6,14 @@ import { Mail, ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { boardConfig } from "@/config/board.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function BoardPage() {
+    // Use dynamic config with fallback to static config
+    const { config: dynamicConfig, loading: configLoading } = usePageConfig('board', boardConfig);
+    
+    // Use dynamic config if available, otherwise fallback to static
+    const config = dynamicConfig || boardConfig;
     return (
         <main className="min-h-screen bg-stone-50">
             {/* Hero Section */}
@@ -16,11 +22,11 @@ export default function BoardPage() {
                 <Container>
                     <div className="max-w-3xl">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{boardConfig.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{boardConfig.hero.title} <span className="text-[#7ab800]">{boardConfig.hero.titleHighlight}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{config.hero.title} <span className="text-[#7ab800]">{config.hero.titleHighlight}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {boardConfig.hero.description}
+                            {config.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -30,7 +36,7 @@ export default function BoardPage() {
             <section className="py-20">
                 <Container>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {boardConfig.leadership.map((member, i) => {
+                        {config.leadership.map((member, i) => {
                             const MemberIcon = getIcon(member.icon);
                             return (
                                 <div key={i} className="bg-white p-8 rounded-[2rem] border border-stone-100 shadow-sm hover:translate-y-[-4px] transition-all group">
@@ -49,7 +55,7 @@ export default function BoardPage() {
                                         </a>
                                         <Link href={`/board/profile/${member.id}`} className="flex-1">
                                             <button className="w-full px-6 py-2.5 rounded-full bg-stone-50 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-stone-800 transition-colors flex items-center justify-between group-hover:bg-[#7ab800]/5 group-hover:text-[#7ab800]">
-                                                {boardConfig.labels.viewProfile} <ChevronRight size={14} />
+                                                {config.labels.viewProfile} <ChevronRight size={14} />
                                             </button>
                                         </Link>
                                     </div>
@@ -65,13 +71,13 @@ export default function BoardPage() {
                                     return <UsersIcon size={32} className="text-white" />;
                                 })()}
                             </div>
-                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 leading-none">{boardConfig.joinCard.title}</h3>
+                            <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 leading-none">{config.joinCard.title}</h3>
                             <p className="text-white/80 font-medium text-sm leading-relaxed mb-8">
-                                {boardConfig.joinCard.description}
+                                {config.joinCard.description}
                             </p>
-                            <Link href={boardConfig.joinCard.buttonHref}>
+                            <Link href={config.joinCard.buttonHref}>
                                 <Button className="w-full bg-white text-[#7ab800] font-black py-4 hover:shadow-[0_20px_40px_rgba(255,255,255,0.2)]">
-                                    {boardConfig.joinCard.buttonText}
+                                    {config.joinCard.buttonText}
                                 </Button>
                             </Link>
                         </div>
@@ -83,7 +89,7 @@ export default function BoardPage() {
             <section className="py-20 border-t border-stone-200">
                 <Container>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        {boardConfig.stats.map((stat, index) => (
+                        {config.stats.map((stat, index) => (
                             <div key={index} className="text-center">
                                 <p className="text-[#7ab800] text-3xl md:text-5xl font-black uppercase tracking-tighter mb-2">{stat.number}</p>
                                 <p className="text-stone-400 text-[10px] font-black uppercase tracking-widest">{stat.label}</p>

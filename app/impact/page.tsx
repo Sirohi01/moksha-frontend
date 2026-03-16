@@ -1,10 +1,17 @@
+"use client";
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
 import { impactConfig } from "@/config/impact.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function Impact() {
-  const impactStats = impactConfig.impactStats.stats.map(stat => ({
+  // Use dynamic config with fallback to static config
+  const { config: dynamicConfig, loading: configLoading } = usePageConfig('impact', impactConfig);
+  
+  // Use dynamic config if available, otherwise fallback to static
+  const config = dynamicConfig || impactConfig;
+  const impactStats = config.impactStats.stats.map(stat => ({
     icon: getIcon(stat.icon),
     number: stat.number,
     label: stat.label,
@@ -12,9 +19,9 @@ export default function Impact() {
     description: stat.description
   }));
 
-  const yearlyData = impactConfig.growthTimeline.yearlyData;
+  const yearlyData = config.growthTimeline.yearlyData;
 
-  const testimonials = impactConfig.testimonials.testimonials;
+  const testimonials = config.testimonials.testimonials;
 
   return (
     <div className="min-h-screen bg-white">
@@ -25,43 +32,43 @@ export default function Impact() {
             <div className="space-y-8">
               <div>
                 <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter mb-6 text-gray-900">
-                  {impactConfig.hero.title} <span className="text-amber-700">{impactConfig.hero.highlightText}</span>
+                  {config.hero.title} <span className="text-amber-700">{config.hero.highlightText}</span>
                 </h1>
                 <p className="text-xl font-medium max-w-2xl leading-relaxed text-gray-700 mb-8">
-                  {impactConfig.hero.description}
+                  {config.hero.description}
                 </p>
               </div>
 
               {/* Key Stats */}
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                  <div className="text-2xl font-black text-amber-700">{impactConfig.hero.keyStats.livesHonored.number}</div>
-                  <div className="text-sm text-gray-600">{impactConfig.hero.keyStats.livesHonored.label}</div>
+                  <div className="text-2xl font-black text-amber-700">{config.hero.keyStats.livesHonored.number}</div>
+                  <div className="text-sm text-gray-600">{config.hero.keyStats.livesHonored.label}</div>
                 </div>
                 <div className="text-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                  <div className="text-2xl font-black text-amber-700">{impactConfig.hero.keyStats.cities.number}</div>
-                  <div className="text-sm text-gray-600">{impactConfig.hero.keyStats.cities.label}</div>
+                  <div className="text-2xl font-black text-amber-700">{config.hero.keyStats.cities.number}</div>
+                  <div className="text-sm text-gray-600">{config.hero.keyStats.cities.label}</div>
                 </div>
                 <div className="text-center bg-white p-4 rounded-xl shadow-sm border border-stone-200">
-                  <div className="text-2xl font-black text-amber-700">{impactConfig.hero.keyStats.years.number}</div>
-                  <div className="text-sm text-gray-600">{impactConfig.hero.keyStats.years.label}</div>
+                  <div className="text-2xl font-black text-amber-700">{config.hero.keyStats.years.number}</div>
+                  <div className="text-sm text-gray-600">{config.hero.keyStats.years.label}</div>
                 </div>
               </div>
 
               {/* Mission Statement */}
               <div className="bg-amber-50 p-6 rounded-2xl border border-amber-100">
-                <h3 className="text-lg font-black text-gray-900 mb-3">{impactConfig.hero.missionImpact.title}</h3>
+                <h3 className="text-lg font-black text-gray-900 mb-3">{config.hero.missionImpact.title}</h3>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  {impactConfig.hero.missionImpact.description}
+                  {config.hero.missionImpact.description}
                 </p>
                 <div className="flex items-center gap-4 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <span className="text-gray-600">{impactConfig.hero.missionImpact.features.freeService}</span>
+                    <span className="text-gray-600">{config.hero.missionImpact.features.freeService}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                    <span className="text-gray-600">{impactConfig.hero.missionImpact.features.available247}</span>
+                    <span className="text-gray-600">{config.hero.missionImpact.features.available247}</span>
                   </div>
                 </div>
               </div>
@@ -69,16 +76,16 @@ export default function Impact() {
               {/* Quick Actions */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
-                  href={impactConfig.hero.actions.joinMission.href}
+                  href={config.hero.actions.joinMission.href}
                   className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-3 rounded-lg font-semibold transition-all text-center"
                 >
-                  {impactConfig.hero.actions.joinMission.text}
+                  {config.hero.actions.joinMission.text}
                 </a>
                 <a 
-                  href={impactConfig.hero.actions.supportWork.href}
+                  href={config.hero.actions.supportWork.href}
                   className="border-2 border-amber-700 text-amber-700 hover:bg-amber-700 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all text-center"
                 >
-                  {impactConfig.hero.actions.supportWork.text}
+                  {config.hero.actions.supportWork.text}
                 </a>
               </div>
             </div>
@@ -86,8 +93,8 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src={impactConfig.hero.image}
-                  alt={impactConfig.hero.imageAlt}
+                  src={config.hero.image}
+                  alt={config.hero.imageAlt}
                   className="w-full h-full object-cover"
                   width={400}
                   height={400}
@@ -98,13 +105,13 @@ export default function Impact() {
               
               {/* Floating stats */}
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
-                <div className="text-lg font-black text-amber-700">{impactConfig.hero.floatingStats.volunteers.number}</div>
-                <div className="text-xs text-gray-600">{impactConfig.hero.floatingStats.volunteers.label}</div>
+                <div className="text-lg font-black text-amber-700">{config.hero.floatingStats.volunteers.number}</div>
+                <div className="text-xs text-gray-600">{config.hero.floatingStats.volunteers.label}</div>
               </div>
               
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
-                <div className="text-lg font-black text-green-600">{impactConfig.hero.floatingStats.compliance.number}</div>
-                <div className="text-xs text-gray-600">{impactConfig.hero.floatingStats.compliance.label}</div>
+                <div className="text-lg font-black text-green-600">{config.hero.floatingStats.compliance.number}</div>
+                <div className="text-xs text-gray-600">{config.hero.floatingStats.compliance.label}</div>
               </div>
             </div>
           </div>
@@ -116,11 +123,11 @@ export default function Impact() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-              {impactConfig.impactStats.title}
+              {config.impactStats.title}
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto mb-6"></div>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              {impactConfig.impactStats.description}
+              {config.impactStats.description}
             </p>
           </div>
 
@@ -158,34 +165,34 @@ export default function Impact() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div className="group">
                 <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-amber-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.freeService.symbol}</span>
+                  <span className="text-amber-700 font-black text-lg">{config.impactStats.additionalMetrics.freeService.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.freeService.title}</div>
-                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.freeService.description}</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.freeService.title}</div>
+                <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.freeService.description}</div>
               </div>
               
               <div className="group">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-green-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.certified.symbol}</span>
+                  <span className="text-green-700 font-black text-lg">{config.impactStats.additionalMetrics.certified.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.certified.title}</div>
-                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.certified.description}</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.certified.title}</div>
+                <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.certified.description}</div>
               </div>
               
               <div className="group">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-blue-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.available247.symbol}</span>
+                  <span className="text-blue-700 font-black text-lg">{config.impactStats.additionalMetrics.available247.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.available247.title}</div>
-                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.available247.description}</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.available247.title}</div>
+                <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.available247.description}</div>
               </div>
               
               <div className="group">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                  <span className="text-purple-700 font-black text-lg">{impactConfig.impactStats.additionalMetrics.withDignity.symbol}</span>
+                  <span className="text-purple-700 font-black text-lg">{config.impactStats.additionalMetrics.withDignity.symbol}</span>
                 </div>
-                <div className="text-lg font-black text-gray-900 mb-1">{impactConfig.impactStats.additionalMetrics.withDignity.title}</div>
-                <div className="text-xs text-gray-500">{impactConfig.impactStats.additionalMetrics.withDignity.description}</div>
+                <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.withDignity.title}</div>
+                <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.withDignity.description}</div>
               </div>
             </div>
           </div>
@@ -198,15 +205,15 @@ export default function Impact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-                {impactConfig.growthTimeline.title}
+                {config.growthTimeline.title}
               </h2>
               <div className="w-20 h-1 bg-amber-700 mb-6"></div>
               <p className="text-gray-600 mb-8">
-                {impactConfig.growthTimeline.description}
+                {config.growthTimeline.description}
               </p>
               
               <div className="grid grid-cols-2 gap-6">
-                {impactConfig.growthTimeline.highlightedYears.map((data, index) => (
+                {config.growthTimeline.highlightedYears.map((data, index) => (
                   <div key={index} className="bg-white p-4 rounded-xl border border-stone-200 hover:shadow-lg transition-all">
                     <div className="text-lg font-black text-amber-700 mb-2">{data.year}</div>
                     <div className="space-y-1 text-sm">
@@ -221,8 +228,8 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src={impactConfig.growthTimeline.image}
-                  alt={impactConfig.growthTimeline.imageAlt}
+                  src={config.growthTimeline.image}
+                  alt={config.growthTimeline.imageAlt}
                   className="w-full h-full object-cover"
                   width={500}
                   height={375}
@@ -239,7 +246,7 @@ export default function Impact() {
         <Container>
           <div className="text-center mb-8">
             <h2 className="text-3xl font-black uppercase tracking-tighter text-gray-900 mb-4">
-              {impactConfig.testimonials.title}
+              {config.testimonials.title}
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
           </div>
@@ -283,31 +290,31 @@ export default function Impact() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="text-3xl font-black uppercase tracking-tighter mb-4 text-white">
-                {impactConfig.callToAction.title}
+                {config.callToAction.title}
               </h2>
               <p className="text-lg mb-6 text-white/90">
-                {impactConfig.callToAction.description}
+                {config.callToAction.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
-                  href={impactConfig.callToAction.actions.joinMission.href}
+                  href={config.callToAction.actions.joinMission.href}
                   className="bg-amber-100 hover:bg-white text-amber-800 px-6 py-3 rounded-lg font-black uppercase tracking-widest transition-all text-center"
                 >
-                  {impactConfig.callToAction.actions.joinMission.text}
+                  {config.callToAction.actions.joinMission.text}
                 </a>
                 <a 
-                  href={impactConfig.callToAction.actions.supportWork.href}
+                  href={config.callToAction.actions.supportWork.href}
                   className="border-2 border-white text-white hover:bg-white hover:text-amber-800 px-6 py-3 rounded-lg font-black uppercase tracking-widest transition-all text-center"
                 >
-                  {impactConfig.callToAction.actions.supportWork.text}
+                  {config.callToAction.actions.supportWork.text}
                 </a>
               </div>
             </div>
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src={impactConfig.callToAction.image}
-                  alt={impactConfig.callToAction.imageAlt}
+                  src={config.callToAction.image}
+                  alt={config.callToAction.imageAlt}
                   className="w-full h-full object-cover"
                   width={500}
                   height={375}

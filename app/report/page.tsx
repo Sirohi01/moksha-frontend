@@ -7,8 +7,14 @@ import { Alert } from "@/components/ui/Elements";
 import { AlertTriangle, CheckCircle } from "lucide-react";
 import { reportConfig } from "@/config/report.config";
 import { getIcon } from "@/config/icons.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function ReportPage() {
+  // Use dynamic config with fallback to static config
+  const { config: dynamicConfig, loading: configLoading } = usePageConfig('report', reportConfig);
+  
+  // Use dynamic config if available, otherwise fallback to static
+  const config = dynamicConfig || reportConfig;
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -206,28 +212,28 @@ export default function ReportPage() {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">{reportConfig.success.title}</h2>
+          <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">{config.success.title}</h2>
           <p className="text-stone-600 mb-2">
-            {reportConfig.success.description}
+            {config.success.description}
           </p>
           <p className="text-stone-500 text-sm mb-6">
-            Case Reference: <span className="font-mono font-bold text-saffron-600">{reportConfig.success.referencePrefix}{Math.floor(Math.random() * 900) + 100}</span>
+            Case Reference: <span className="font-mono font-bold text-saffron-600">{config.success.referencePrefix}{Math.floor(Math.random() * 900) + 100}</span>
           </p>
           <div className="space-y-3">
-            <p className="text-stone-600 text-sm">{reportConfig.success.urgentAssistanceText}</p>
-            <a href={`tel:${reportConfig.success.phoneNumber}`} className="block">
+            <p className="text-stone-600 text-sm">{config.success.urgentAssistanceText}</p>
+            <a href={`tel:${config.success.phoneNumber}`} className="block">
               <Button variant="primary" size="lg" className="w-full">
                 {(() => {
                   const PhoneIcon = getIcon('Phone');
                   return <PhoneIcon className="w-4 h-4 mr-2" />;
-                })()} {reportConfig.success.phoneLabel}
+                })()} {config.success.phoneLabel}
               </Button>
             </a>
             <button
               onClick={() => setSubmitted(false)}
               className="text-saffron-600 text-sm underline"
             >
-              {reportConfig.success.submitAnotherText}
+              {config.success.submitAnotherText}
             </button>
           </div>
         </div>
@@ -244,12 +250,12 @@ export default function ReportPage() {
               <AlertTriangle className="w-6 h-6 text-teal-300" />
             </div>
             <div>
-              <span className="text-teal-300 text-xs font-semibold tracking-wider uppercase">{reportConfig.hero.badge}</span>
+              <span className="text-teal-300 text-xs font-semibold tracking-wider uppercase">{config.hero.badge}</span>
               <h1 className="font-serif text-3xl font-bold mt-1 mb-2">
-                {reportConfig.hero.title}
+                {config.hero.title}
               </h1>
               <p className="text-teal-50 text-base">
-                {reportConfig.hero.description}
+                {config.hero.description}
               </p>
             </div>
           </div>
@@ -258,14 +264,14 @@ export default function ReportPage() {
 
       <section className="py-12 bg-cream-50">
         <div className="max-w-[1400px] mx-auto px-6">
-          <Alert variant="warning" title={reportConfig.importantNotice.title} className="mb-6">
-            {reportConfig.importantNotice.message}
+          <Alert variant="warning" title={config.importantNotice.title} className="mb-6">
+            {config.importantNotice.message}
           </Alert>
 
           <div className="bg-white rounded-xl border border-stone-200 shadow-lg p-6 md:p-8">
             <div className="pb-4 border-b border-stone-200 mb-5">
-              <h2 className="font-serif text-lg font-bold text-stone-800">{reportConfig.formHeader.title}</h2>
-              <p className="text-stone-500 text-xs mt-1">{reportConfig.formHeader.subtitle}</p>
+              <h2 className="font-serif text-lg font-bold text-stone-800">{config.formHeader.title}</h2>
+              <p className="text-stone-500 text-xs mt-1">{config.formHeader.subtitle}</p>
             </div>
 
             <div className="space-y-4">
@@ -278,21 +284,21 @@ export default function ReportPage() {
                       const UserIcon = getIcon('User');
                       return <UserIcon className="w-3.5 h-3.5" />;
                     })()}
-                    {reportConfig.sections[0].title}
+                    {config.sections[0].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.reporterName}
-                      placeholder={reportConfig.placeholders.reporterName}
+                      label={config.labels.reporterName}
+                      placeholder={config.placeholders.reporterName}
                       value={form.reporterName}
                       onChange={(e) => setForm({ ...form, reporterName: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.reporterPhone}
+                      label={config.labels.reporterPhone}
                       type="tel"
-                      placeholder={reportConfig.placeholders.reporterPhone}
+                      placeholder={config.placeholders.reporterPhone}
                       required
                       value={form.reporterPhone}
                       onChange={(e) => setForm({ ...form, reporterPhone: e.target.value })}
@@ -301,11 +307,11 @@ export default function ReportPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {reportConfig.labels.reporterEmail}
+                      {config.labels.reporterEmail}
                     </label>
                     <input
                       type="email"
-                      placeholder={reportConfig.placeholders.reporterEmail}
+                      placeholder={config.placeholders.reporterEmail}
                       value={form.reporterEmail}
                       onChange={(e) => setForm({ ...form, reporterEmail: e.target.value })}
                       className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
@@ -313,22 +319,22 @@ export default function ReportPage() {
                   </div>
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
-                        {reportConfig.labels.reporterRelation}
+                        {config.labels.reporterRelation}
                       </label>
                       <select
                         value={form.reporterRelation}
                         onChange={(e) => setForm({ ...form, reporterRelation: e.target.value })}
                         className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                       >
-                        {reportConfig.selectOptions.reporterRelation.map((option) => (
+                        {config.selectOptions.reporterRelation.map((option) => (
                           <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                       </select>
                     </div>
                   </div>
                   <InputField
-                    label={reportConfig.labels.reporterAddress}
-                    placeholder={reportConfig.placeholders.reporterAddress}
+                    label={config.labels.reporterAddress}
+                    placeholder={config.placeholders.reporterAddress}
                     value={form.reporterAddress}
                     onChange={(e) => setForm({ ...form, reporterAddress: e.target.value })}
                   />
@@ -344,27 +350,27 @@ export default function ReportPage() {
                       const MapPinIcon = getIcon('MapPin');
                       return <MapPinIcon className="w-3.5 h-3.5" />;
                     })()}
-                    {reportConfig.sections[1].title}
+                    {config.sections[1].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <InputField
-                    label={reportConfig.labels.exactLocation}
-                    placeholder={reportConfig.placeholders.exactLocation}
+                    label={config.labels.exactLocation}
+                    placeholder={config.placeholders.exactLocation}
                     required
                     value={form.exactLocation}
                     onChange={(e) => setForm({ ...form, exactLocation: e.target.value })}
                   />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.landmark}
-                      placeholder={reportConfig.placeholders.landmark}
+                      label={config.labels.landmark}
+                      placeholder={config.placeholders.landmark}
                       value={form.landmark}
                       onChange={(e) => setForm({ ...form, landmark: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.area}
-                      placeholder={reportConfig.placeholders.area}
+                      label={config.labels.area}
+                      placeholder={config.placeholders.area}
                       required
                       value={form.area}
                       onChange={(e) => setForm({ ...form, area: e.target.value })}
@@ -372,15 +378,15 @@ export default function ReportPage() {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <InputField
-                      label={reportConfig.labels.city}
-                      placeholder={reportConfig.placeholders.city}
+                      label={config.labels.city}
+                      placeholder={config.placeholders.city}
                       required
                       value={form.city}
                       onChange={(e) => setForm({ ...form, city: e.target.value })}
                     />
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
-                        {reportConfig.labels.state}
+                        {config.labels.state}
                       </label>
                       <select
                         value={form.state}
@@ -388,15 +394,15 @@ export default function ReportPage() {
                         className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                         required
                       >
-                        <option value="">{reportConfig.selectPlaceholders.state}</option>
-                        {reportConfig.selectOptions.states.map((state) => (
+                        <option value="">{config.selectPlaceholders.state}</option>
+                        {config.selectOptions.states.map((state) => (
                           <option key={state} value={state}>{state}</option>
                         ))}
                       </select>
                     </div>
                     <InputField
-                      label={reportConfig.labels.pincode}
-                      placeholder={reportConfig.placeholders.pincode}
+                      label={config.labels.pincode}
+                      placeholder={config.placeholders.pincode}
                       value={form.pincode}
                       onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                     />
@@ -404,7 +410,7 @@ export default function ReportPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
-                        {reportConfig.labels.locationType}
+                        {config.labels.locationType}
                       </label>
                       <select
                         value={form.locationType}
@@ -412,14 +418,14 @@ export default function ReportPage() {
                         className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                         required
                       >
-                        {reportConfig.selectOptions.locationType.map((option) => (
+                        {config.selectOptions.locationType.map((option) => (
                           <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                       </select>
                     </div>
                     <InputField
-                      label={reportConfig.labels.gpsCoordinates}
-                      placeholder={reportConfig.placeholders.gpsCoordinates}
+                      label={config.labels.gpsCoordinates}
+                      placeholder={config.placeholders.gpsCoordinates}
                       value={form.gpsCoordinates}
                       onChange={(e) => setForm({ ...form, gpsCoordinates: e.target.value })}
                     />
@@ -436,20 +442,20 @@ export default function ReportPage() {
                       const ClockIcon = getIcon('Clock');
                       return <ClockIcon className="w-3.5 h-3.5" />;
                     })()}
-                    {reportConfig.sections[2].title}
+                    {config.sections[2].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.dateFound}
+                      label={config.labels.dateFound}
                       type="date"
                       required
                       value={form.dateFound}
                       onChange={(e) => setForm({ ...form, dateFound: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.timeFound}
+                      label={config.labels.timeFound}
                       type="time"
                       required
                       value={form.timeFound}
@@ -457,8 +463,8 @@ export default function ReportPage() {
                     />
                   </div>
                   <InputField
-                    label={reportConfig.labels.approximateDeathTime}
-                    placeholder={reportConfig.placeholders.approximateDeathTime}
+                    label={config.labels.approximateDeathTime}
+                    placeholder={config.placeholders.approximateDeathTime}
                     value={form.approximateDeathTime}
                     onChange={(e) => setForm({ ...form, approximateDeathTime: e.target.value })}
                   />
@@ -474,14 +480,14 @@ export default function ReportPage() {
                       const FileTextIcon = getIcon('FileText');
                       return <FileTextIcon className="w-3.5 h-3.5" />;
                     })()}
-                    {reportConfig.sections[3].title}
+                    {config.sections[3].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
-                        {reportConfig.labels.gender}
+                        {config.labels.gender}
                       </label>
                       <select
                         value={form.gender}
@@ -489,48 +495,48 @@ export default function ReportPage() {
                         className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                         required
                       >
-                        {reportConfig.selectOptions.gender.map((option) => (
+                        {config.selectOptions.gender.map((option) => (
                           <option key={option.value} value={option.value}>{option.label}</option>
                         ))}
                       </select>
                     </div>
                     <InputField
-                      label={reportConfig.labels.approximateAge}
-                      placeholder={reportConfig.placeholders.approximateAge}
+                      label={config.labels.approximateAge}
+                      placeholder={config.placeholders.approximateAge}
                       value={form.approximateAge}
                       onChange={(e) => setForm({ ...form, approximateAge: e.target.value })}
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.height}
-                      placeholder={reportConfig.placeholders.height}
+                      label={config.labels.height}
+                      placeholder={config.placeholders.height}
                       value={form.height}
                       onChange={(e) => setForm({ ...form, height: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.weight}
-                      placeholder={reportConfig.placeholders.weight}
+                      label={config.labels.weight}
+                      placeholder={config.placeholders.weight}
                       value={form.weight}
                       onChange={(e) => setForm({ ...form, weight: e.target.value })}
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <InputField
-                      label={reportConfig.labels.complexion}
-                      placeholder={reportConfig.placeholders.complexion}
+                      label={config.labels.complexion}
+                      placeholder={config.placeholders.complexion}
                       value={form.complexion}
                       onChange={(e) => setForm({ ...form, complexion: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.hairColor}
-                      placeholder={reportConfig.placeholders.hairColor}
+                      label={config.labels.hairColor}
+                      placeholder={config.placeholders.hairColor}
                       value={form.hairColor}
                       onChange={(e) => setForm({ ...form, hairColor: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.eyeColor}
-                      placeholder={reportConfig.placeholders.eyeColor}
+                      label={config.labels.eyeColor}
+                      placeholder={config.placeholders.eyeColor}
                       value={form.eyeColor}
                       onChange={(e) => setForm({ ...form, eyeColor: e.target.value })}
                     />
@@ -547,47 +553,47 @@ export default function ReportPage() {
                       const CameraIcon = getIcon('Camera');
                       return <CameraIcon className="w-3.5 h-3.5" />;
                     })()}
-                    {reportConfig.sections[4].title}
+                    {config.sections[4].title}
                   </h3>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.tattoos}
-                      placeholder={reportConfig.placeholders.tattoos}
+                      label={config.labels.tattoos}
+                      placeholder={config.placeholders.tattoos}
                       value={form.tattoos}
                       onChange={(e) => setForm({ ...form, tattoos: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.scars}
-                      placeholder={reportConfig.placeholders.scars}
+                      label={config.labels.scars}
+                      placeholder={config.placeholders.scars}
                       value={form.scars}
                       onChange={(e) => setForm({ ...form, scars: e.target.value })}
                     />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.birthmarks}
-                      placeholder={reportConfig.placeholders.birthmarks}
+                      label={config.labels.birthmarks}
+                      placeholder={config.placeholders.birthmarks}
                       value={form.birthmarks}
                       onChange={(e) => setForm({ ...form, birthmarks: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.jewelry}
-                      placeholder={reportConfig.placeholders.jewelry}
+                      label={config.labels.jewelry}
+                      placeholder={config.placeholders.jewelry}
                       value={form.jewelry}
                       onChange={(e) => setForm({ ...form, jewelry: e.target.value })}
                     />
                   </div>
                   <InputField
-                    label={reportConfig.labels.clothing}
-                    placeholder={reportConfig.placeholders.clothing}
+                    label={config.labels.clothing}
+                    placeholder={config.placeholders.clothing}
                     value={form.clothing}
                     onChange={(e) => setForm({ ...form, clothing: e.target.value })}
                   />
                   <InputField
-                    label={reportConfig.labels.personalBelongings}
-                    placeholder={reportConfig.placeholders.personalBelongings}
+                    label={config.labels.personalBelongings}
+                    placeholder={config.placeholders.personalBelongings}
                     value={form.personalBelongings}
                     onChange={(e) => setForm({ ...form, personalBelongings: e.target.value })}
                   />
@@ -598,12 +604,12 @@ export default function ReportPage() {
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">6</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{reportConfig.sectionTitles.physicalCondition}</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.physicalCondition}</h3>
                 </div>
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {reportConfig.labels.bodyCondition}
+                      {config.labels.bodyCondition}
                     </label>
                     <select
                       value={form.bodyCondition}
@@ -611,20 +617,20 @@ export default function ReportPage() {
                       className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
                       required
                     >
-                      {reportConfig.selectOptions.bodyCondition.map((option) => (
+                      {config.selectOptions.bodyCondition.map((option) => (
                         <option key={option.value} value={option.value}>{option.label}</option>
                       ))}
                     </select>
                   </div>
                   <InputField
-                    label={reportConfig.labels.visibleInjuries}
-                    placeholder={reportConfig.placeholders.visibleInjuries}
+                    label={config.labels.visibleInjuries}
+                    placeholder={config.placeholders.visibleInjuries}
                     value={form.visibleInjuries}
                     onChange={(e) => setForm({ ...form, visibleInjuries: e.target.value })}
                   />
                   <InputField
-                    label={reportConfig.labels.causeOfDeathSuspected}
-                    placeholder={reportConfig.placeholders.causeOfDeathSuspected}
+                    label={config.labels.causeOfDeathSuspected}
+                    placeholder={config.placeholders.causeOfDeathSuspected}
                     value={form.causeOfDeathSuspected}
                     onChange={(e) => setForm({ ...form, causeOfDeathSuspected: e.target.value })}
                   />
@@ -635,7 +641,7 @@ export default function ReportPage() {
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">7</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{reportConfig.sectionTitles.authorityDetails}</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.authorityDetails}</h3>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
@@ -647,28 +653,28 @@ export default function ReportPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500"
                     />
                     <label htmlFor="policeInformed" className="text-sm text-stone-700">
-                      {reportConfig.labels.policeInformed}
+                      {config.labels.policeInformed}
                     </label>
                   </div>
                   {form.policeInformed && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-6">
                       <InputField
-                        label={reportConfig.labels.policeStationName}
-                        placeholder={reportConfig.placeholders.policeStationName}
+                        label={config.labels.policeStationName}
+                        placeholder={config.placeholders.policeStationName}
                         value={form.policeStationName}
                         onChange={(e) => setForm({ ...form, policeStationName: e.target.value })}
                       />
                       <InputField
-                        label={reportConfig.labels.firNumber}
-                        placeholder={reportConfig.placeholders.firNumber}
+                        label={config.labels.firNumber}
+                        placeholder={config.placeholders.firNumber}
                         value={form.firNumber}
                         onChange={(e) => setForm({ ...form, firNumber: e.target.value })}
                       />
                     </div>
                   )}
                   <InputField
-                    label={reportConfig.labels.hospitalName}
-                    placeholder={reportConfig.placeholders.hospitalName}
+                    label={config.labels.hospitalName}
+                    placeholder={config.placeholders.hospitalName}
                     value={form.hospitalName}
                     onChange={(e) => setForm({ ...form, hospitalName: e.target.value })}
                   />
@@ -681,7 +687,7 @@ export default function ReportPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500"
                     />
                     <label htmlFor="postMortemDone" className="text-sm text-stone-700">
-                      {reportConfig.labels.postMortemDone}
+                      {config.labels.postMortemDone}
                     </label>
                   </div>
                 </div>
@@ -691,7 +697,7 @@ export default function ReportPage() {
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">8</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{reportConfig.sectionTitles.additionalInformation}</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.additionalInformation}</h3>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
@@ -703,22 +709,22 @@ export default function ReportPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500"
                     />
                     <label htmlFor="identityDocumentsFound" className="text-sm text-stone-700">
-                      {reportConfig.labels.identityDocumentsFound}
+                      {config.labels.identityDocumentsFound}
                     </label>
                   </div>
                   {form.identityDocumentsFound && (
                     <div className="pl-6">
                       <InputField
-                        label={reportConfig.labels.documentDetails}
-                        placeholder={reportConfig.placeholders.documentDetails}
+                        label={config.labels.documentDetails}
+                        placeholder={config.placeholders.documentDetails}
                         value={form.documentDetails}
                         onChange={(e) => setForm({ ...form, documentDetails: e.target.value })}
                       />
                     </div>
                   )}
                   <InputField
-                    label={reportConfig.labels.suspectedIdentity}
-                    placeholder={reportConfig.placeholders.suspectedIdentity}
+                    label={config.labels.suspectedIdentity}
+                    placeholder={config.placeholders.suspectedIdentity}
                     value={form.suspectedIdentity}
                     onChange={(e) => setForm({ ...form, suspectedIdentity: e.target.value })}
                   />
@@ -731,19 +737,19 @@ export default function ReportPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500"
                     />
                     <label htmlFor="familyContacted" className="text-sm text-stone-700">
-                      {reportConfig.labels.familyContacted}
+                      {config.labels.familyContacted}
                     </label>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {reportConfig.labels.additionalNotes}
+                      {config.labels.additionalNotes}
                     </label>
                     <textarea
                       value={form.additionalNotes}
                       onChange={(e) => setForm({ ...form, additionalNotes: e.target.value })}
                       rows={4}
                       className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
-                      placeholder={reportConfig.placeholders.additionalNotes}
+                      placeholder={config.placeholders.additionalNotes}
                     />
                   </div>
                 </div>
@@ -753,26 +759,26 @@ export default function ReportPage() {
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">9</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{reportConfig.sectionTitles.witnessInformation}</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.witnessInformation}</h3>
                 </div>
                 <div className="space-y-3">
                   <InputField
-                    label={reportConfig.labels.witnessName}
-                    placeholder={reportConfig.placeholders.witnessName}
+                    label={config.labels.witnessName}
+                    placeholder={config.placeholders.witnessName}
                     value={form.witnessName}
                     onChange={(e) => setForm({ ...form, witnessName: e.target.value })}
                   />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
-                      label={reportConfig.labels.witnessPhone}
+                      label={config.labels.witnessPhone}
                       type="tel"
-                      placeholder={reportConfig.placeholders.witnessPhone}
+                      placeholder={config.placeholders.witnessPhone}
                       value={form.witnessPhone}
                       onChange={(e) => setForm({ ...form, witnessPhone: e.target.value })}
                     />
                     <InputField
-                      label={reportConfig.labels.witnessAddress}
-                      placeholder={reportConfig.placeholders.witnessAddress}
+                      label={config.labels.witnessAddress}
+                      placeholder={config.placeholders.witnessAddress}
                       value={form.witnessAddress}
                       onChange={(e) => setForm({ ...form, witnessAddress: e.target.value })}
                     />
@@ -789,25 +795,25 @@ export default function ReportPage() {
                       const FileTextIcon = getIcon('FileText');
                       return <FileTextIcon className="w-3.5 h-3.5" />;
                     })()}
-                    {reportConfig.sections[9].title}
+                    {config.sections[9].title}
                   </h3>
                 </div>
-                <p className="text-stone-500 text-xs mb-3">{reportConfig.documentSections.description}</p>
+                <p className="text-stone-500 text-xs mb-3">{config.documentSections.description}</p>
                 
                 <div className="space-y-4">
                   {/* BPL Card */}
                   <div className="bg-white rounded-lg p-3 border border-stone-200">
-                    <h4 className="text-sm font-medium text-stone-700 mb-2">{reportConfig.documentSections.bplCard}</h4>
+                    <h4 className="text-sm font-medium text-stone-700 mb-2">{config.documentSections.bplCard}</h4>
                     <div className="space-y-2">
                       <InputField
-                        label={reportConfig.labels.bplCardNumber}
-                        placeholder={reportConfig.placeholders.bplCardNumber}
+                        label={config.labels.bplCardNumber}
+                        placeholder={config.placeholders.bplCardNumber}
                         value={form.bplCardNumber}
                         onChange={(e) => setForm({ ...form, bplCardNumber: e.target.value })}
                       />
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {reportConfig.labels.bplCardPhoto}
+                          {config.labels.bplCardPhoto}
                         </label>
                         <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
                           <input
@@ -823,9 +829,9 @@ export default function ReportPage() {
                               return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
                             })()}
                             <p className="text-stone-500 text-xs">
-                              {form.bplCardPhoto ? form.bplCardPhoto.name : reportConfig.uploadTexts.clickToUpload}
+                              {form.bplCardPhoto ? form.bplCardPhoto.name : config.uploadTexts.clickToUpload}
                             </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{reportConfig.uploadTexts.fileTypes}</p>
+                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
                           </label>
                         </div>
                       </div>
@@ -834,17 +840,17 @@ export default function ReportPage() {
 
                   {/* Aadhaar Card */}
                   <div className="bg-white rounded-lg p-3 border border-stone-200">
-                    <h4 className="text-sm font-medium text-stone-700 mb-2">{reportConfig.documentSections.aadhaarCard}</h4>
+                    <h4 className="text-sm font-medium text-stone-700 mb-2">{config.documentSections.aadhaarCard}</h4>
                     <div className="space-y-2">
                       <InputField
-                        label={reportConfig.labels.aadhaarNumber}
-                        placeholder={reportConfig.placeholders.aadhaarNumber}
+                        label={config.labels.aadhaarNumber}
+                        placeholder={config.placeholders.aadhaarNumber}
                         value={form.aadhaarNumber}
                         onChange={(e) => setForm({ ...form, aadhaarNumber: e.target.value })}
                       />
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {reportConfig.labels.aadhaarPhoto}
+                          {config.labels.aadhaarPhoto}
                         </label>
                         <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
                           <input
@@ -860,9 +866,9 @@ export default function ReportPage() {
                               return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
                             })()}
                             <p className="text-stone-500 text-xs">
-                              {form.aadhaarPhoto ? form.aadhaarPhoto.name : reportConfig.uploadTexts.clickToUpload}
+                              {form.aadhaarPhoto ? form.aadhaarPhoto.name : config.uploadTexts.clickToUpload}
                             </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{reportConfig.uploadTexts.fileTypes}</p>
+                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
                           </label>
                         </div>
                       </div>
@@ -871,17 +877,17 @@ export default function ReportPage() {
 
                   {/* NOC from Family/Government/Pradhan Certificate */}
                   <div className="bg-white rounded-lg p-3 border border-stone-200">
-                    <h4 className="text-sm font-medium text-stone-700 mb-2">{reportConfig.documentSections.nocCertificate}</h4>
+                    <h4 className="text-sm font-medium text-stone-700 mb-2">{config.documentSections.nocCertificate}</h4>
                     <div className="space-y-2">
                       <InputField
-                        label={reportConfig.labels.nocDetails}
-                        placeholder={reportConfig.placeholders.nocDetails}
+                        label={config.labels.nocDetails}
+                        placeholder={config.placeholders.nocDetails}
                         value={form.nocDetails}
                         onChange={(e) => setForm({ ...form, nocDetails: e.target.value })}
                       />
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {reportConfig.labels.nocPhoto}
+                          {config.labels.nocPhoto}
                         </label>
                         <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
                           <input
@@ -897,9 +903,9 @@ export default function ReportPage() {
                               return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
                             })()}
                             <p className="text-stone-500 text-xs">
-                              {form.nocPhoto ? form.nocPhoto.name : reportConfig.uploadTexts.clickToUpload}
+                              {form.nocPhoto ? form.nocPhoto.name : config.uploadTexts.clickToUpload}
                             </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{reportConfig.uploadTexts.fileTypes}</p>
+                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
                           </label>
                         </div>
                       </div>
@@ -908,17 +914,17 @@ export default function ReportPage() {
 
                   {/* PAN Card */}
                   <div className="bg-white rounded-lg p-3 border border-stone-200">
-                    <h4 className="text-sm font-medium text-stone-700 mb-2">{reportConfig.documentSections.panCard}</h4>
+                    <h4 className="text-sm font-medium text-stone-700 mb-2">{config.documentSections.panCard}</h4>
                     <div className="space-y-2">
                       <InputField
-                        label={reportConfig.labels.panNumber}
-                        placeholder={reportConfig.placeholders.panNumber}
+                        label={config.labels.panNumber}
+                        placeholder={config.placeholders.panNumber}
                         value={form.panNumber}
                         onChange={(e) => setForm({ ...form, panNumber: e.target.value })}
                       />
                       <div>
                         <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {reportConfig.labels.panPhoto}
+                          {config.labels.panPhoto}
                         </label>
                         <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
                           <input
@@ -934,9 +940,9 @@ export default function ReportPage() {
                               return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
                             })()}
                             <p className="text-stone-500 text-xs">
-                              {form.panPhoto ? form.panPhoto.name : reportConfig.uploadTexts.clickToUpload}
+                              {form.panPhoto ? form.panPhoto.name : config.uploadTexts.clickToUpload}
                             </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{reportConfig.uploadTexts.fileTypes}</p>
+                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
                           </label>
                         </div>
                       </div>
@@ -949,15 +955,15 @@ export default function ReportPage() {
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">11</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{reportConfig.sectionTitles.uploadPhotos}</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.uploadPhotos}</h3>
                 </div>
                 <div className="border-2 border-dashed border-stone-300 rounded-lg p-5 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-white">
                   {(() => {
                     const UploadIcon = getIcon('Upload');
                     return <UploadIcon className="w-7 h-7 text-stone-400 mx-auto mb-1.5" />;
                   })()}
-                  <p className="text-stone-500 text-xs">{reportConfig.uploadTexts.clickToUpload}</p>
-                  <p className="text-stone-400 text-xs mt-0.5">{reportConfig.uploadTexts.multipleFiles}</p>
+                  <p className="text-stone-500 text-xs">{config.uploadTexts.clickToUpload}</p>
+                  <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.multipleFiles}</p>
                 </div>
               </div>
 
@@ -965,7 +971,7 @@ export default function ReportPage() {
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">12</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{reportConfig.sectionTitles.consentAgreement}</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.consentAgreement}</h3>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
@@ -977,7 +983,7 @@ export default function ReportPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500 mt-0.5"
                     />
                     <label htmlFor="agreeToTerms" className="text-sm text-stone-700">
-                      {reportConfig.labels.agreeToTerms}
+                      {config.labels.agreeToTerms}
                     </label>
                   </div>
                   <div className="flex items-start gap-2">
@@ -989,7 +995,7 @@ export default function ReportPage() {
                       className="w-4 h-4 text-saffron-600 border-stone-300 rounded focus:ring-saffron-500 mt-0.5"
                     />
                     <label htmlFor="consentToShare" className="text-sm text-stone-700">
-                      {reportConfig.labels.consentToShare}
+                      {config.labels.consentToShare}
                     </label>
                   </div>
                 </div>
@@ -1018,10 +1024,10 @@ export default function ReportPage() {
                     !form.consentToShare
                   }
                 >
-                  {reportConfig.labels.submitButton}
+                  {config.labels.submitButton}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
-                  {reportConfig.labels.confidentialityText}
+                  {config.labels.confidentialityText}
                 </p>
               </div>
             </div>
@@ -1029,11 +1035,11 @@ export default function ReportPage() {
 
           {/* Emergency number */}
           <div className="mt-6 bg-gradient-to-r from-saffron-600 to-saffron-700 text-white rounded-xl p-5 text-center shadow-lg">
-            <p className="font-medium text-sm mb-1">{reportConfig.emergency.title}</p>
-            <a href={`tel:${reportConfig.emergency.phoneNumber}`} className="font-serif text-2xl font-bold hover:text-saffron-100 transition-colors inline-block">
-              {reportConfig.emergency.phoneNumber}
+            <p className="font-medium text-sm mb-1">{config.emergency.title}</p>
+            <a href={`tel:${config.emergency.phoneNumber}`} className="font-serif text-2xl font-bold hover:text-saffron-100 transition-colors inline-block">
+              {config.emergency.phoneNumber}
             </a>
-            <p className="text-saffron-100 text-xs mt-1">{reportConfig.emergency.phoneLabel}</p>
+            <p className="text-saffron-100 text-xs mt-1">{config.emergency.phoneLabel}</p>
           </div>
         </div>
       </section>

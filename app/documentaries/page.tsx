@@ -5,21 +5,42 @@ import { Container } from "@/components/ui/Elements";
 import { Video, Mail, Phone, ChevronRight, Play, Clock, Heart, Award } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { documentariesConfig } from "@/config/documentaries.config";
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function DocumentariesPage() {
+    const { config, loading: configLoading, error: configError } = usePageConfig('documentaries', documentariesConfig);
+    const activeConfig = config || documentariesConfig;
+
     return (
         <main className="min-h-screen bg-stone-50">
+            {/* Loading State */}
+            {configLoading && (
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
+                </div>
+            )}
+
+            {/* Error State */}
+            {configError && (
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="text-center">
+                        <p className="text-red-600 mb-4">Failed to load page configuration</p>
+                        <p className="text-gray-600">Using default configuration</p>
+                    </div>
+                </div>
+            )}
+
             {/* Hero Section */}
             <section className="bg-stone-50 text-gray-900 py-24 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-amber-100 border border-amber-200 mb-6">
-                            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{documentariesConfig.hero.badge}</p>
+                            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{activeConfig.hero.badge}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{documentariesConfig.hero.title} <br /><span className="text-amber-700">{documentariesConfig.hero.subtitle}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{activeConfig.hero.title} <br /><span className="text-amber-700">{activeConfig.hero.subtitle}</span></h1>
                         <p className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed">
-                            {documentariesConfig.hero.description}
+                            {activeConfig.hero.description}
                         </p>
                     </div>
                 </Container>
@@ -29,7 +50,7 @@ export default function DocumentariesPage() {
             <section className="py-16 bg-stone-100">
                 <Container>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {documentariesConfig.films.items.map((film, i) => (
+                        {activeConfig.films.items.map((film, i) => (
                             <div key={i} className="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-lg hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden relative text-left flex flex-col">
                                 <div className="aspect-[4/5] relative">
                                     <Image src={film.image} alt={film.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -41,7 +62,7 @@ export default function DocumentariesPage() {
                                         <Play className="fill-white ml-0.5" size={18} />
                                     </button>
                                     <div className="absolute top-4 left-4">
-                                        <div className="bg-amber-800 text-white px-2 py-1 rounded text-[7px] font-black uppercase tracking-widest shadow-sm">{documentariesConfig.films.newBadge}</div>
+                                        <div className="bg-amber-800 text-white px-2 py-1 rounded text-[7px] font-black uppercase tracking-widest shadow-sm">{activeConfig.films.newBadge}</div>
                                     </div>
                                 </div>
 
@@ -54,7 +75,7 @@ export default function DocumentariesPage() {
                                     <p className="text-gray-500 font-medium text-sm leading-relaxed mb-6">
                                         {film.desc}
                                     </p>
-                                    <button className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all">{documentariesConfig.films.watchButton}</button>
+                                    <button className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all">{activeConfig.films.watchButton}</button>
                                 </div>
                             </div>
                         ))}
@@ -68,15 +89,15 @@ export default function DocumentariesPage() {
                     <div className="text-center mb-12">
                         <Award className="text-amber-100 mx-auto mb-6" size={48} />
                         <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-[0.85] mb-4 text-white">
-                            {documentariesConfig.festivalSelections.title} <span className="text-amber-100">{documentariesConfig.festivalSelections.subtitle}</span>
+                            {activeConfig.festivalSelections.title} <span className="text-amber-100">{activeConfig.festivalSelections.subtitle}</span>
                         </h2>
                         <p className="text-white/80 text-base max-w-2xl mx-auto font-medium">
-                            {documentariesConfig.festivalSelections.description}
+                            {activeConfig.festivalSelections.description}
                         </p>
                     </div>
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {documentariesConfig.festivalSelections.festivals.map((festival, idx) => (
+                        {activeConfig.festivalSelections.festivals.map((festival, idx) => (
                             <div key={idx} className="group text-center">
                                 <div className="w-20 h-20 mx-auto rounded-full border-2 border-white/30 flex items-center justify-center mb-3 group-hover:border-amber-100 group-hover:bg-amber-100/10 transition-all duration-300 backdrop-blur-sm">
                                     <Award className="w-6 h-6 text-white/60 group-hover:text-amber-100 transition-colors" />
@@ -92,16 +113,16 @@ export default function DocumentariesPage() {
 
                     <div className="mt-12 text-center">
                         <p className="text-white/60 text-sm font-medium mb-4">
-                            {documentariesConfig.festivalSelections.recognitionText}
+                            {activeConfig.festivalSelections.recognitionText}
                         </p>
                         <div className="flex justify-center gap-3">
                             <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                                <span className="text-amber-100 font-black text-base">{documentariesConfig.festivalSelections.stats.awards}</span>
-                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{documentariesConfig.festivalSelections.statsLabels.awards}</span>
+                                <span className="text-amber-100 font-black text-base">{activeConfig.festivalSelections.stats.awards}</span>
+                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{activeConfig.festivalSelections.statsLabels.awards}</span>
                             </div>
                             <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                                <span className="text-amber-100 font-black text-base">{documentariesConfig.festivalSelections.stats.selections}</span>
-                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{documentariesConfig.festivalSelections.statsLabels.selections}</span>
+                                <span className="text-amber-100 font-black text-base">{activeConfig.festivalSelections.stats.selections}</span>
+                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{activeConfig.festivalSelections.statsLabels.selections}</span>
                             </div>
                         </div>
                     </div>

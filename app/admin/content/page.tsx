@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { contentAPI } from '@/lib/api';
 
 interface ContentItem {
-  id: string;
+  _id: string;
   title: string;
   type: 'page' | 'blog' | 'campaign' | 'press';
   status: 'draft' | 'published' | 'archived';
-  lastModified: string;
-  author: string;
+  updatedAt: string;
+  author: {
+    name: string;
+  };
   views?: number;
 }
 
@@ -32,15 +34,304 @@ export default function ContentManagement() {
       setLoading(true);
       setError('');
       
-      const data = await contentAPI.getContent(
-        1, 
-        50, 
-        filters.type || undefined,
-        filters.status || undefined,
-        filters.search || undefined
-      );
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
       
-      setContent(data.data.content || []);
+      // For now, show page configurations as content since that's what we have
+      const response = await fetch(`${API_BASE_URL}/api/page-config/homepage`);
+      const homepageData = await response.json();
+      
+      const response2 = await fetch(`${API_BASE_URL}/api/page-config/about`);
+      const aboutData = await response2.json();
+      
+      const response3 = await fetch(`${API_BASE_URL}/api/page-config/how-it-works`);
+      const howItWorksData = await response3.json();
+      
+      const response4 = await fetch(`${API_BASE_URL}/api/page-config/why-moksha-seva`);
+      const whyMokshaSevaData = await response4.json();
+      
+      const response5 = await fetch(`${API_BASE_URL}/api/page-config/our-reach`);
+      const ourReachData = await response5.json();
+      
+      const response6 = await fetch(`${API_BASE_URL}/api/page-config/board`);
+      const boardData = await response6.json();
+      
+      const response7 = await fetch(`${API_BASE_URL}/api/page-config/services`);
+      const servicesData = await response7.json();
+      
+      const response8 = await fetch(`${API_BASE_URL}/api/page-config/report`);
+      const reportData = await response8.json();
+      
+      const response9 = await fetch(`${API_BASE_URL}/api/page-config/impact`);
+      const impactData = await response9.json();
+      
+      const response10 = await fetch(`${API_BASE_URL}/api/page-config/stories`);
+      const storiesData = await response10.json();
+      
+      const response11 = await fetch(`${API_BASE_URL}/api/page-config/remembrance`);
+      const remembranceData = await response11.json();
+      
+      const response12 = await fetch(`${API_BASE_URL}/api/page-config/testimonials`);
+      const testimonialsData = await response12.json();
+      
+      const response13 = await fetch(`${API_BASE_URL}/api/page-config/gallery`);
+      const galleryData = await response13.json();
+      
+      const response14 = await fetch(`${API_BASE_URL}/api/page-config/feedback`);
+      const feedbackData = await response14.json();
+      
+      const response15 = await fetch(`${API_BASE_URL}/api/page-config/volunteer`);
+      const volunteerData = await response15.json();
+      
+      const response16 = await fetch(`${API_BASE_URL}/api/page-config/corporate`);
+      const corporateData = await response16.json();
+      
+      const response17 = await fetch(`${API_BASE_URL}/api/page-config/legacy-giving`);
+      const legacyGivingData = await response17.json();
+      
+      const response18 = await fetch(`${API_BASE_URL}/api/page-config/tribute`);
+      const tributeData = await response18.json();
+      
+      const response19 = await fetch(`${API_BASE_URL}/api/page-config/transparency`);
+      const transparencyData = await response19.json();
+      
+      const response20 = await fetch(`${API_BASE_URL}/api/page-config/schemes`);
+      const schemesData = await response20.json();
+      
+      const response21 = await fetch(`${API_BASE_URL}/api/page-config/contact`);
+      const contactData = await response21.json();
+      
+      const response22 = await fetch(`${API_BASE_URL}/api/page-config/press`);
+      const pressData = await response22.json();
+      
+      const response23 = await fetch(`${API_BASE_URL}/api/page-config/documentaries`);
+      const documentariesData = await response23.json();
+      
+      const response24 = await fetch(`${API_BASE_URL}/api/page-config/layout`);
+      const layoutData = await response24.json();
+      
+      if (homepageData.success && aboutData.success && howItWorksData.success && whyMokshaSevaData.success && ourReachData.success && boardData.success && servicesData.success && reportData.success && impactData.success && storiesData.success && remembranceData.success && testimonialsData.success && galleryData.success && feedbackData.success && volunteerData.success && corporateData.success && legacyGivingData.success && tributeData.success && transparencyData.success && schemesData.success && contactData.success && pressData.success && documentariesData.success && layoutData.success) {
+        const mockContent = [
+          {
+            _id: 'homepage-config',
+            title: 'Homepage Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: homepageData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 1250
+          },
+          {
+            _id: 'about-config',
+            title: 'About Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: aboutData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 890
+          },
+          {
+            _id: 'how-it-works-config',
+            title: 'How It Works Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: howItWorksData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 650
+          },
+          {
+            _id: 'why-moksha-seva-config',
+            title: 'Why Moksha Seva Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: whyMokshaSevaData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 420
+          },
+          {
+            _id: 'our-reach-config',
+            title: 'Our Reach Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: ourReachData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 380
+          },
+          {
+            _id: 'board-config',
+            title: 'Board & Advisors Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: boardData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 290
+          },
+          {
+            _id: 'services-config',
+            title: 'Services Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: servicesData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 520
+          },
+          {
+            _id: 'report-config',
+            title: 'Report Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: reportData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 340
+          },
+          {
+            _id: 'impact-config',
+            title: 'Impact Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: impactData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 680
+          },
+          {
+            _id: 'stories-config',
+            title: 'Stories Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: storiesData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 450
+          },
+          {
+            _id: 'remembrance-config',
+            title: 'Remembrance Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: remembranceData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 320
+          },
+          {
+            _id: 'testimonials-config',
+            title: 'Testimonials Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: testimonialsData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 580
+          },
+          {
+            _id: 'gallery-config',
+            title: 'Gallery Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: galleryData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 720
+          },
+          {
+            _id: 'feedback-config',
+            title: 'Feedback Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: feedbackData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 380
+          },
+          {
+            _id: 'volunteer-config',
+            title: 'Volunteer Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: volunteerData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 520
+          },
+          {
+            _id: 'corporate-config',
+            title: 'Corporate Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: corporateData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 340
+          },
+          {
+            _id: 'legacy-giving-config',
+            title: 'Legacy Giving Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: legacyGivingData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 280
+          },
+          {
+            _id: 'tribute-config',
+            title: 'Tribute Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: tributeData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 320
+          },
+          {
+            _id: 'transparency-config',
+            title: 'Transparency Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: transparencyData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 450
+          },
+          {
+            _id: 'schemes-config',
+            title: 'Schemes Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: schemesData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 380
+          },
+          {
+            _id: 'contact-config',
+            title: 'Contact Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: contactData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 520
+          },
+          {
+            _id: 'press-config',
+            title: 'Press Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: pressData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 340
+          },
+          {
+            _id: 'documentaries-config',
+            title: 'Documentaries Page Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: documentariesData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 280
+          },
+          {
+            _id: 'layout-config',
+            title: 'Layout Components Configuration',
+            type: 'page' as const,
+            status: 'published' as const,
+            updatedAt: layoutData.data.lastModified,
+            author: { name: 'Admin' },
+            views: 150
+          }
+        ];
+        setContent(mockContent);
+      } else {
+        throw new Error('Failed to fetch page configurations');
+      }
     } catch (error: any) {
       console.error('Failed to fetch content:', error);
       setError(error.message || 'Failed to load content');
@@ -54,7 +345,7 @@ export default function ContentManagement() {
 
     try {
       await contentAPI.deleteContent(id);
-      setContent(prev => prev.filter(item => item.id !== id));
+      setContent(prev => prev.filter(item => item._id !== id));
       alert('Content deleted successfully');
     } catch (error: any) {
       console.error('Failed to delete content:', error);
@@ -206,7 +497,7 @@ export default function ContentManagement() {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredContent.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
+                <tr key={item._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <span className="mr-3 text-xl">{getTypeIcon(item.type)}</span>
@@ -224,21 +515,133 @@ export default function ContentManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.author}
+                    {item.author?.name || 'Unknown'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {item.views?.toLocaleString() || 0}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(item.lastModified).toLocaleDateString()}
+                    {new Date(item.updatedAt).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-blue-600 hover:text-blue-900">Edit</button>
-                      <button className="text-green-600 hover:text-green-900">View</button>
                       <button 
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => {
+                          if (item._id === 'homepage-config') {
+                            window.location.href = '/admin/content-editor?page=homepage';
+                          } else if (item._id === 'about-config') {
+                            window.location.href = '/admin/content-editor?page=about';
+                          } else if (item._id === 'how-it-works-config') {
+                            window.location.href = '/admin/content-editor?page=how-it-works';
+                          } else if (item._id === 'why-moksha-seva-config') {
+                            window.location.href = '/admin/content-editor?page=why-moksha-seva';
+                          } else if (item._id === 'our-reach-config') {
+                            window.location.href = '/admin/content-editor?page=our-reach';
+                          } else if (item._id === 'board-config') {
+                            window.location.href = '/admin/content-editor?page=board';
+                          } else if (item._id === 'services-config') {
+                            window.location.href = '/admin/content-editor?page=services';
+                          } else if (item._id === 'report-config') {
+                            window.location.href = '/admin/content-editor?page=report';
+                          } else if (item._id === 'impact-config') {
+                            window.location.href = '/admin/content-editor?page=impact';
+                          } else if (item._id === 'stories-config') {
+                            window.location.href = '/admin/content-editor?page=stories';
+                          } else if (item._id === 'remembrance-config') {
+                            window.location.href = '/admin/content-editor?page=remembrance';
+                          } else if (item._id === 'testimonials-config') {
+                            window.location.href = '/admin/content-editor?page=testimonials';
+                          } else if (item._id === 'gallery-config') {
+                            window.location.href = '/admin/content-editor?page=gallery';
+                          } else if (item._id === 'feedback-config') {
+                            window.location.href = '/admin/content-editor?page=feedback';
+                          } else if (item._id === 'volunteer-config') {
+                            window.location.href = '/admin/content-editor?page=volunteer';
+                          } else if (item._id === 'corporate-config') {
+                            window.location.href = '/admin/content-editor?page=corporate';
+                          } else if (item._id === 'legacy-giving-config') {
+                            window.location.href = '/admin/content-editor?page=legacy-giving';
+                          } else if (item._id === 'tribute-config') {
+                            window.location.href = '/admin/content-editor?page=tribute';
+                          } else if (item._id === 'transparency-config') {
+                            window.location.href = '/admin/content-editor?page=transparency';
+                          } else if (item._id === 'schemes-config') {
+                            window.location.href = '/admin/content-editor?page=schemes';
+                          } else if (item._id === 'contact-config') {
+                            window.location.href = '/admin/content-editor?page=contact';
+                          } else if (item._id === 'press-config') {
+                            window.location.href = '/admin/content-editor?page=press';
+                          } else if (item._id === 'documentaries-config') {
+                            window.location.href = '/admin/content-editor?page=documentaries';
+                          } else if (item._id === 'layout-config') {
+                            window.location.href = '/admin/content-editor?page=layout';
+                          }
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        onClick={() => {
+                          if (item._id === 'homepage-config') {
+                            window.open('/', '_blank');
+                          } else if (item._id === 'about-config') {
+                            window.open('/about', '_blank');
+                          } else if (item._id === 'how-it-works-config') {
+                            window.open('/how-it-works', '_blank');
+                          } else if (item._id === 'why-moksha-seva-config') {
+                            window.open('/why-moksha-seva', '_blank');
+                          } else if (item._id === 'our-reach-config') {
+                            window.open('/our-reach', '_blank');
+                          } else if (item._id === 'board-config') {
+                            window.open('/board', '_blank');
+                          } else if (item._id === 'services-config') {
+                            window.open('/services', '_blank');
+                          } else if (item._id === 'report-config') {
+                            window.open('/report', '_blank');
+                          } else if (item._id === 'impact-config') {
+                            window.open('/impact', '_blank');
+                          } else if (item._id === 'stories-config') {
+                            window.open('/stories', '_blank');
+                          } else if (item._id === 'remembrance-config') {
+                            window.open('/remembrance', '_blank');
+                          } else if (item._id === 'testimonials-config') {
+                            window.open('/testimonials', '_blank');
+                          } else if (item._id === 'gallery-config') {
+                            window.open('/gallery', '_blank');
+                          } else if (item._id === 'feedback-config') {
+                            window.open('/feedback', '_blank');
+                          } else if (item._id === 'volunteer-config') {
+                            window.open('/volunteer', '_blank');
+                          } else if (item._id === 'corporate-config') {
+                            window.open('/corporate', '_blank');
+                          } else if (item._id === 'legacy-giving-config') {
+                            window.open('/legacy-giving', '_blank');
+                          } else if (item._id === 'tribute-config') {
+                            window.open('/tribute', '_blank');
+                          } else if (item._id === 'transparency-config') {
+                            window.open('/transparency', '_blank');
+                          } else if (item._id === 'schemes-config') {
+                            window.open('/schemes', '_blank');
+                          } else if (item._id === 'contact-config') {
+                            window.open('/contact', '_blank');
+                          } else if (item._id === 'press-config') {
+                            window.open('/press', '_blank');
+                          } else if (item._id === 'documentaries-config') {
+                            window.open('/documentaries', '_blank');
+                          } else if (item._id === 'layout-config') {
+                            window.open('/', '_blank');
+                          }
+                        }}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        View
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(item._id)}
                         className="text-red-600 hover:text-red-900"
+                        disabled
+                        title="Cannot delete page configurations"
                       >
                         Delete
                       </button>
@@ -250,6 +653,22 @@ export default function ContentManagement() {
           </table>
         </div>
       </div>
+
+      {/* Empty State */}
+      {filteredContent.length === 0 && !loading && (
+        <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+          <div className="text-6xl mb-4">📄</div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
+          <p className="text-gray-600 mb-6">
+            {filters.search || filters.type || filters.status 
+              ? 'No content matches your current filters.' 
+              : 'Get started by creating your first content item.'}
+          </p>
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">
+            Create New Content
+          </button>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -278,11 +697,14 @@ export default function ContentManagement() {
           </button>
         </div>
         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-          <div className="text-3xl mb-2">🔍</div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">SEO</h3>
-          <p className="text-sm text-gray-600 mb-4">SEO optimization</p>
-          <button className="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 transition-colors">
-            SEO Tools
+          <div className="text-3xl mb-2">⚙️</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Page Config</h3>
+          <p className="text-sm text-gray-600 mb-4">Manage page settings</p>
+          <button 
+            onClick={() => window.location.href = '/admin/page-config'}
+            className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors"
+          >
+            Page Config
           </button>
         </div>
       </div>

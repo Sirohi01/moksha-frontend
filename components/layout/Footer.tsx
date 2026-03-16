@@ -4,10 +4,12 @@ import { Phone, Mail, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Elements";
 import { layoutConfig } from "@/config/layout.config";
 import { getIcon } from "@/config/icons.config";
-
-const footerLinks = layoutConfig.footer.links;
+import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function Footer() {
+  const { config, loading, error } = usePageConfig('layout', layoutConfig);
+  const activeConfig = config || layoutConfig;
+  const footerLinks = activeConfig.footer.links;
   return (
     <footer className="bg-gray-800 text-white border-t border-white/5">
       {/* 24/7 Response Bar - Tightened */}
@@ -16,10 +18,10 @@ export default function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.4)]" />
-              <p className="text-white font-black text-[9px] uppercase tracking-[0.3em] leading-none">{layoutConfig.footer.emergency.status}</p>
+              <p className="text-white font-black text-[9px] uppercase tracking-[0.3em] leading-none">{activeConfig.footer.emergency.status}</p>
             </div>
-            <Link href={layoutConfig.footer.emergency.reportLink.href} className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2">
-              {layoutConfig.footer.emergency.reportLink.text} <ArrowUpRight size={12} />
+            <Link href={activeConfig.footer.emergency.reportLink.href} className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2">
+              {activeConfig.footer.emergency.reportLink.text} <ArrowUpRight size={12} />
             </Link>
           </div>
         </Container>
@@ -34,29 +36,29 @@ export default function Footer() {
               <div className="flex items-center gap-3 mb-4">
                 <div className="relative w-16 h-16">
                   <Image
-                    src={layoutConfig.footer.brand.logo.src}
-                    alt={layoutConfig.footer.brand.logo.alt}
+                    src={activeConfig.footer.brand.logo.src}
+                    alt={activeConfig.footer.brand.logo.alt}
                     fill
                     className="object-contain"
                   />
                 </div>
                 <div>
-                  <span className="font-serif text-2xl font-bold text-white leading-none block tracking-tight italic">{layoutConfig.footer.brand.title}</span>
-                  <span className="text-[9px] text-[#7ab800] font-black uppercase tracking-[0.4em] block leading-none mt-1">{layoutConfig.footer.brand.subtitle}</span>
+                  <span className="font-serif text-2xl font-bold text-white leading-none block tracking-tight italic">{activeConfig.footer.brand.title}</span>
+                  <span className="text-[9px] text-[#7ab800] font-black uppercase tracking-[0.4em] block leading-none mt-1">{activeConfig.footer.brand.subtitle}</span>
                 </div>
               </div>
             </div>
             <p className="text-white text-sm leading-relaxed mb-8 font-medium max-w-xs">
-              {layoutConfig.footer.brand.description}
+              {activeConfig.footer.brand.description}
             </p>
             <div className="space-y-4">
-              <a href={layoutConfig.footer.contact.phone.number} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/call">
+              <a href={activeConfig.footer.contact.phone.number} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/call">
                 <Phone size={14} className="text-[#7ab800]" />
-                <span className="text-xs font-black tracking-[0.2em] font-mono">{layoutConfig.footer.contact.phone.display}</span>
+                <span className="text-xs font-black tracking-[0.2em] font-mono">{activeConfig.footer.contact.phone.display}</span>
               </a>
-              <a href={layoutConfig.footer.contact.email.address} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/mail">
+              <a href={activeConfig.footer.contact.email.address} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/mail">
                 <Mail size={14} className="text-[#7ab800]" />
-                <span className="text-xs font-black tracking-[0.2em] lowercase font-mono">{layoutConfig.footer.contact.email.display}</span>
+                <span className="text-xs font-black tracking-[0.2em] lowercase font-mono">{activeConfig.footer.contact.email.display}</span>
               </a>
             </div>
           </div>
@@ -89,19 +91,19 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-white/5 rounded-full border border-white/10">
               <div className="w-1.5 h-1.5 rounded-full bg-[#7ab800] animate-pulse" />
-              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#7ab800]">{layoutConfig.footer.bottom.missionStatus}</p>
+              <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#7ab800]">{activeConfig.footer.bottom.missionStatus}</p>
             </div>
             <p className="text-white text-[9px] font-black uppercase tracking-[0.2em]">
-              © {new Date().getFullYear()} {layoutConfig.footer.bottom.copyright}
+              © {new Date().getFullYear()} {activeConfig.footer.bottom.copyright}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-8">
-            {layoutConfig.footer.bottom.legalLinks.map((link) => (
+            {activeConfig.footer.bottom.legalLinks.map((link) => (
               <Link key={link.href} href={link.href} className="text-white hover:text-[#7ab800] text-[9px] font-black uppercase tracking-[0.15em] transition-colors">{link.label}</Link>
             ))}
             <div className="flex items-center gap-6 ml-2">
-              {layoutConfig.footer.bottom.socialPlatforms.map((platform, i) => {
+              {activeConfig.footer.bottom.socialPlatforms.map((platform, i) => {
                 const Icon = getIcon(platform);
                 return (
                   <a key={i} href="#" className="text-white hover:text-[#7ab800] transition-all transform hover:-translate-y-1">

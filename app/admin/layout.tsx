@@ -97,13 +97,13 @@ export default function AdminLayout({
       { name: 'Donations', href: '/admin/donations', icon: '💰', gradient: 'from-yellow-500 to-yellow-600' }
     ];
 
-    // SEO Team - Content Management (COMMENTED OUT - Uncomment as needed)
-    // if (user.role === 'seo_team' || user.role === 'manager' || user.role === 'super_admin') {
-    //   baseItems.push(
-    //     { name: 'Content Management', href: '/admin/content', icon: '📝' },
-    //     { name: 'SEO Tools', href: '/admin/seo', icon: '🔍' }
-    //   );
-    // }
+    // SEO Team - Content Management
+    if (user.role === 'seo_team' || user.role === 'manager' || user.role === 'super_admin') {
+      baseItems.push(
+        { name: 'Content Management', href: '/admin/content', icon: '📝', gradient: 'from-blue-500 to-blue-600' },
+        { name: 'Page Configuration', href: '/admin/page-config', icon: '⚙️', gradient: 'from-purple-500 to-purple-600' }
+      );
+    }
 
     // Media Team - Media Management (COMMENTED OUT - Uncomment as needed)
     // if (user.role === 'media_team' || user.role === 'manager' || user.role === 'super_admin') {
