@@ -17,12 +17,20 @@ export default function StoriesPage() {
         );
     }
 
-    if (error) {
+    if (error || !config) {
         console.error('Failed to load Stories page config:', error);
         // Fallback to static config
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-4">Page Temporarily Unavailable</h1>
+                    <p className="text-gray-600">Please try again later.</p>
+                </div>
+            </div>
+        );
     }
 
-    const stories = config.storiesGrid.stories;
+    const stories = config?.storiesGrid?.stories || [];
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -32,11 +40,11 @@ export default function StoriesPage() {
                 <Container>
                     <div className="max-w-3xl text-left">
                         <div className="inline-block px-4 py-1.5 rounded-full bg-[#7ab800]/10 border border-[#7ab800]/20 mb-6">
-                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.hero.badge}</p>
+                            <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config?.hero?.badge || 'STORIES'}</p>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{config.hero.title} <br /><span className="text-[#7ab800]">{config.hero.highlightText}</span></h1>
+                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">{config?.hero?.title || 'IMPACT'} <br /><span className="text-[#7ab800]">{config?.hero?.highlightText || 'STORIES'}</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            {config.hero.description}
+                            {config?.hero?.description || 'Real stories of dignity, compassion, and service.'}
                         </p>
                     </div>
                 </Container>
@@ -71,8 +79,8 @@ export default function StoriesPage() {
                                         {story.description}
                                     </p>
                                     <div className="flex items-center gap-4">
-                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{config.storiesGrid.buttons.watchNow}</button>
-                                        <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors" title={config.storiesGrid.buttons.favorite}>
+                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{config?.storiesGrid?.buttons?.watchNow || 'WATCH NOW'}</button>
+                                        <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors" title={config?.storiesGrid?.buttons?.favorite || 'Add to favorites'}>
                                             {(() => {
                                                 const HeartIcon = getIcon('Heart');
                                                 return <HeartIcon size={20} />;
@@ -90,13 +98,13 @@ export default function StoriesPage() {
             <section className="py-24 bg-white border-t border-stone-100">
                 <Container>
                     <div className="max-w-4xl mx-auto p-12 md:p-20 bg-stone-50 rounded-[5rem] text-center border border-stone-200 overflow-hidden relative">
-                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{config.newsletter.title} <span className="text-[#7ab800]">{config.newsletter.highlightText}</span></h2>
+                        <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{config?.newsletter?.title || 'STAY'} <span className="text-[#7ab800]">{config?.newsletter?.highlightText || 'CONNECTED'}</span></h2>
                         <p className="text-stone-500 font-medium text-lg leading-relaxed mb-12">
-                            {config.newsletter.description}
+                            {config?.newsletter?.description || 'Get updates on our latest stories and impact.'}
                         </p>
                         <div className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
-                            <input type="email" placeholder={config.newsletter.placeholder} className="flex-1 h-16 rounded-full px-8 bg-white border border-stone-200 text-[11px] font-black uppercase tracking-widest outline-none focus:border-[#7ab800] transition-all shadow-inner" />
-                            <button className="h-16 bg-[#7ab800] text-white px-10 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-[#7ab800]/20 hover:scale-105 transition-all">{config.newsletter.buttonText}</button>
+                            <input type="email" placeholder={config?.newsletter?.placeholder || 'Enter your email'} className="flex-1 h-16 rounded-full px-8 bg-white border border-stone-200 text-[11px] font-black uppercase tracking-widest outline-none focus:border-[#7ab800] transition-all shadow-inner" />
+                            <button className="h-16 bg-[#7ab800] text-white px-10 rounded-full text-[12px] font-black uppercase tracking-widest shadow-2xl shadow-[#7ab800]/20 hover:scale-105 transition-all">{config?.newsletter?.buttonText || 'SUBSCRIBE'}</button>
                         </div>
                     </div>
                 </Container>
