@@ -168,24 +168,15 @@ export default function ContentEditor() {
         generateSchemaFromData(configData.data.config);
       }
 
-      // Fetch SEO data
-      try {
-        const seoResponse = await fetch(`${API_BASE_URL}/api/seo/page/${pageName}`);
-        if (seoResponse.ok) {
-          const seoData = await seoResponse.json();
-          if (seoData.success && seoData.data) {
-            setSeoData({
-              title: seoData.data.metaTitle || '',
-              description: seoData.data.metaDescription || '',
-              keywords: seoData.data.keywords || '',
-              ogImage: seoData.data.ogImage || '',
-              canonical: seoData.data.canonicalUrl || ''
-            });
-          }
-        }
-      } catch (seoError) {
-        console.log('SEO data not found, using defaults');
-      }
+      // SEO data is optional - skip for now
+      // Can be added later when SEO pages are properly set up
+      setSeoData({
+        title: '',
+        description: '',
+        keywords: '',
+        ogImage: '',
+        canonical: ''
+      });
 
     } catch (error: any) {
       console.error('Failed to fetch data:', error);
@@ -975,32 +966,8 @@ export default function ContentEditor() {
         throw new Error(errorData.message || 'Failed to save page configuration');
       }
 
-      if (seoData.title || seoData.description || seoData.keywords || seoData.ogImage || seoData.canonical) {
-        try {
-          const seoResponse = await fetch(`${API_BASE_URL}/api/seo/page/${pageName}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-            },
-            body: JSON.stringify({
-              pageName,
-              metaTitle: seoData.title,
-              metaDescription: seoData.description,
-              keywords: seoData.keywords,
-              ogImage: seoData.ogImage,
-              canonicalUrl: seoData.canonical,
-              status: 'active'
-            })
-          });
-
-          if (!seoResponse.ok) {
-            console.warn('Failed to save SEO data, but page config saved successfully');
-          }
-        } catch (seoError) {
-          console.warn('SEO save failed:', seoError);
-        }
-      }
+      // SEO data save removed - will be implemented later when needed
+      // Focus on page config for now
 
       setSuccessMessage('Changes saved successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
