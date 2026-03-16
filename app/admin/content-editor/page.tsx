@@ -492,7 +492,7 @@ export default function ContentEditor() {
                         <div className="aspect-video relative">
                           <img 
                             src={value} 
-                            alt="Preview" 
+                            alt={`Preview of ${fieldSchema.label}`}
                             className="w-full h-full object-cover transition-transform duration-200 group-hover/image:scale-105"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmM2Y0ZjYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU3ZWIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMTUwIiByPSI0MCIgZmlsbD0iI2Q1ZDdkYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBub3QgZm91bmQ8L3RleHQ+PC9zdmc+';
@@ -1343,7 +1343,7 @@ export default function ContentEditor() {
                       <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
                         <img 
                           src={image.url} 
-                          alt={image.title || `Image ${index + 1}`}
+                          alt={image.title || `Gallery image ${index + 1}`}
                           className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
                         />
                         
