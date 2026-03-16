@@ -168,15 +168,37 @@ export default function ContentEditor() {
         generateSchemaFromData(configData.data.config);
       }
 
-      // SEO data is optional - skip for now
-      // Can be added later when SEO pages are properly set up
-      setSeoData({
-        title: '',
-        description: '',
-        keywords: '',
-        ogImage: '',
-        canonical: ''
-      });
+      // Fetch SEO data (optional)
+      try {
+        const token = localStorage.getItem('adminToken');
+        const seoResponse = await fetch(`${API_BASE_URL}/api/seo/page/${pageName}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        
+        if (seoResponse.ok) {
+          const seoResult = await seoResponse.json();
+          if (seoResult.success && seoResult.data) {
+            setSeoData({
+              title: seoResult.data.metaTitle || '',
+              description: seoResult.data.metaDescription || '',
+              keywords: seoResult.data.metaKeywords || '',
+              ogImage: seoResult.data.ogImage || '',
+              canonical: seoResult.data.canonicalUrl || ''
+            });
+          }
+        }
+      } catch (seoError) {
+        // SEO data is optional - continue without it
+        setSeoData({
+          title: '',
+          description: '',
+          keywords: '',
+          ogImage: '',
+          canonical: ''
+        });
+      }
 
     } catch (error: any) {
       console.error('Failed to fetch data:', error);
@@ -966,8 +988,32 @@ export default function ContentEditor() {
         throw new Error(errorData.message || 'Failed to save page configuration');
       }
 
-      // SEO data save removed - will be implemented later when needed
-      // Focus on page config for now
+      // Save SEO data if provided
+      if (seoData.title || seoData.description || seoData.keywords || seoData.ogImage || seoData.canonical) {
+        try {
+          const seoResponse = await fetch(`${API_BASE_URL}/api/seo/page/${pageName}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+            },
+            body: JSON.stringify({
+              metaTitle: seoData.title,
+              metaDescription: seoData.description,
+              metaKeywords: seoData.keywords,
+              ogImage: seoData.ogImage,
+              canonicalUrl: seoData.canonical,
+              status: 'published'
+            })
+          });
+
+          if (!seoResponse.ok) {
+            console.warn('SEO data save failed, but page config saved successfully');
+          }
+        } catch (seoError) {
+          console.warn('SEO save error:', seoError);
+        }
+      }
 
       setSuccessMessage('Changes saved successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
