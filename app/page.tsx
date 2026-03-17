@@ -851,24 +851,24 @@ export default function HomePage() {
       </section>
       <section className="py-12 bg-stone-950 border-y border-stone-800">
         <Container>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-            <div className="shrink-0 text-center md:text-left">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="shrink-0 text-center lg:text-left">
               <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] mb-2 leading-none">{config.sacredJourney.badge}</p>
               <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white leading-none">{config.sacredJourney.title}</h2>
             </div>
 
-            <div className="flex flex-wrap md:flex-nowrap items-start gap-8 md:gap-12">
+            <div className="flex flex-wrap justify-center lg:flex-nowrap items-start gap-6 lg:gap-8">
               {config.sacredJourney.timeline.map((item, i) => {
                 const IconComponent = getIcon(item.icon);
                 return (
-                  <div key={i} className="flex flex-col items-center md:items-start max-w-[160px] group">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 rounded-lg bg-[#f4c430]/20 flex items-center justify-center border border-[#f4c430]/50 group-hover:bg-[#f4c430] transition-all">
-                        <IconComponent size={14} className="text-[#f4c430] group-hover:text-white transition-colors" />
+                  <div key={i} className="flex flex-col items-center lg:items-start max-w-[140px] group">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-7 h-7 rounded-lg bg-[#f4c430]/20 flex items-center justify-center border border-[#f4c430]/50 group-hover:bg-[#f4c430] transition-all">
+                        <IconComponent size={12} className="text-[#f4c430] group-hover:text-white transition-colors" />
                       </div>
-                      <p className="text-white font-black text-xl tracking-tighter leading-none">{item.year}</p>
+                      <p className="text-white font-black text-lg tracking-tighter leading-none">{item.year}</p>
                     </div>
-                    <p className="text-stone-500 font-bold uppercase text-[10px] leading-tight tracking-wider">{item.event}</p>
+                    <p className="text-stone-500 font-bold uppercase text-[9px] leading-tight tracking-wider text-center lg:text-left">{item.event}</p>
                   </div>
                 );
               })}
