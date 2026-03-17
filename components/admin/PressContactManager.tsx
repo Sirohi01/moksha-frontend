@@ -391,7 +391,13 @@ function ContactModal({ isOpen, onClose, onSave, editingContact, categories }: a
             <h3 className="text-lg font-medium text-gray-900">
               {editingContact ? 'Edit Contact' : 'Add New Contact'}
             </h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-600"
+              aria-label="Close press contact dialog"
+            >
+              ✕
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

@@ -198,7 +198,11 @@ export default function VolunteerPage() {
           <p className="text-stone-600 mb-6">
             {activeConfig.success.description}
           </p>
-          <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
+          <button 
+            onClick={() => setSubmitted(false)} 
+            className="text-saffron-600 text-sm underline"
+            aria-label="Register another volunteer"
+          >
             {activeConfig.success.registerAnotherText}
           </button>
         </div>

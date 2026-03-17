@@ -156,7 +156,11 @@ export default function LegacyGivingRequestPage() {
           <p className="text-stone-600 text-sm mb-6">
             Our legacy giving specialist will contact you within 3-5 business days with personalized information.
           </p>
-          <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
+          <button 
+            onClick={() => setSubmitted(false)} 
+            className="text-saffron-600 text-sm underline"
+            aria-label="Submit another legacy giving request"
+          >
             Submit another request
           </button>
         </div>

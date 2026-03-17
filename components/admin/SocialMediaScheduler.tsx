@@ -511,7 +511,13 @@ function SocialMediaPostModal({ isOpen, onClose, onSave, editingPost, platforms,
             <h3 className="text-lg font-medium text-gray-900">
               {editingPost ? 'Edit Social Media Post' : 'Create Social Media Post'}
             </h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-600"
+              aria-label="Close social media post dialog"
+            >
+              ✕
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

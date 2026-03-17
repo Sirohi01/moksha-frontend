@@ -437,7 +437,13 @@ function ApprovalModal({ item, onClose, onApprove, onReject, onRequestRevision }
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-medium text-gray-900">Review Content</h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-600"
+              aria-label="Close content review dialog"
+            >
+              ✕
+            </button>
           </div>
 
           {/* Content Preview */}

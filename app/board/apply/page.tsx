@@ -148,7 +148,11 @@ export default function BoardApplicationPage() {
           <p className="text-stone-600 text-sm mb-6">
             Our team will review your application and contact you within 7-10 business days.
           </p>
-          <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
+          <button 
+            onClick={() => setSubmitted(false)} 
+            className="text-saffron-600 text-sm underline"
+            aria-label="Submit another board application"
+          >
             Submit another application
           </button>
         </div>

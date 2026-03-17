@@ -293,7 +293,13 @@ function MediaKitModal({ isOpen, onClose, onSave, editingKit }: any) {
             <h3 className="text-lg font-medium text-gray-900">
               {editingKit ? 'Edit Media Kit' : 'Create Media Kit'}
             </h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">✕</button>
+            <button 
+              onClick={onClose} 
+              className="text-gray-400 hover:text-gray-600"
+              aria-label="Close media kit dialog"
+            >
+              ✕
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">

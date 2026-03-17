@@ -253,7 +253,11 @@ export default function DonatePage() {
           <p className="text-stone-500 text-sm mb-6">
             {donateConfig.success.receiptNote}
           </p>
-          <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
+          <button 
+            onClick={() => setSubmitted(false)} 
+            className="text-saffron-600 text-sm underline"
+            aria-label="Make another donation"
+          >
             {donateConfig.success.anotherDonationButton}
           </button>
         </div>

@@ -136,6 +136,7 @@ export default function HomePage() {
                 setCurrentSlide(idx);
                 startTimer();
               }}
+              aria-label={`Go to slide ${idx + 1}`}
               className={cn(
                 "h-2 rounded-full transition-all duration-500",
                 idx === currentSlide ? "w-12 bg-[#f4c430]" : "w-2 bg-white/30 hover:bg-white"
@@ -362,7 +363,7 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="w-8 h-px bg-gray-300"></div>
-              <span className="text-sm text-gray-500 uppercase tracking-wider">{config.whereWeServe.badge}</span>
+              <span className="text-sm text-gray-600 uppercase tracking-wider">{config.whereWeServe.badge}</span>
               <div className="w-8 h-px bg-gray-300"></div>
             </div>
             <h2 className="text-4xl font-bold text-gray-900 mb-6">{config.whereWeServe.title}</h2>
@@ -418,6 +419,7 @@ export default function HomePage() {
                               setCurrentLocationSlide((prev) => (prev + 1) % config.whereWeServe.carousel.slides.length);
                             }, config.whereWeServe.carousel.autoSlideInterval);
                           }}
+                          aria-label={`Go to location slide ${idx + 1}`}
                           className={cn(
                             "h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80",
                             idx === currentLocationSlide ? "w-8 bg-white" : "w-2 bg-white/50"
@@ -446,7 +448,7 @@ export default function HomePage() {
                           <div className="w-2 h-2 bg-green-400 rounded-full group-hover:scale-125 transition-transform"></div>
                           <span className="font-medium text-gray-800">{location.city}</span>
                         </div>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
                           {location.status}
                         </span>
                       </div>
@@ -805,6 +807,7 @@ export default function HomePage() {
                   setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
                 }, config.urgentCampaigns.autoSlideInterval);
               }}
+              aria-label="Previous campaign"
               className="absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 z-50 backdrop-blur-sm border border-gray-200"
             >
               <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -820,6 +823,7 @@ export default function HomePage() {
                   setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
                 }, config.urgentCampaigns.autoSlideInterval);
               }}
+              aria-label="Next campaign"
               className="absolute right-8 top-1/2 -translate-y-1/2 w-14 h-14 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-xl transition-all duration-300 hover:scale-110 z-50 backdrop-blur-sm border border-gray-200"
             >
               <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -837,6 +841,7 @@ export default function HomePage() {
                       setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
                     }, config.urgentCampaigns.autoSlideInterval);
                   }}
+                  aria-label={`Go to campaign ${index + 1}`}
                   className={cn(
                     "h-3 rounded-full transition-all duration-500 border-2",
                     index === currentCampaignSlide 
@@ -851,24 +856,24 @@ export default function HomePage() {
       </section>
       <section className="py-12 bg-stone-950 border-y border-stone-800">
         <Container>
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="shrink-0 text-center lg:text-left">
+          <div className="flex flex-col xl:flex-row items-center justify-between gap-6 xl:gap-8">
+            <div className="shrink-0 text-center xl:text-left">
               <p className="text-[#f4c430] font-black text-[10px] uppercase tracking-[0.4em] mb-2 leading-none">{config.sacredJourney.badge}</p>
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-white leading-none">{config.sacredJourney.title}</h2>
+              <h2 className="text-xl md:text-2xl xl:text-3xl font-black uppercase tracking-tighter text-white leading-none">{config.sacredJourney.title}</h2>
             </div>
 
-            <div className="flex flex-wrap justify-center lg:flex-nowrap items-start gap-6 lg:gap-8">
+            <div className="flex flex-wrap justify-center xl:flex-nowrap items-start gap-4 md:gap-5 xl:gap-8">
               {config.sacredJourney.timeline.map((item, i) => {
                 const IconComponent = getIcon(item.icon);
                 return (
-                  <div key={i} className="flex flex-col items-center lg:items-start max-w-[140px] group">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="w-7 h-7 rounded-lg bg-[#f4c430]/20 flex items-center justify-center border border-[#f4c430]/50 group-hover:bg-[#f4c430] transition-all">
-                        <IconComponent size={12} className="text-[#f4c430] group-hover:text-white transition-colors" />
+                  <div key={i} className="flex flex-col items-center xl:items-start max-w-[120px] md:max-w-[130px] xl:max-w-[140px] group">
+                    <div className="flex items-center gap-1.5 md:gap-2 mb-2 md:mb-3">
+                      <div className="w-6 h-6 md:w-7 md:h-7 rounded-lg bg-[#f4c430]/20 flex items-center justify-center border border-[#f4c430]/50 group-hover:bg-[#f4c430] transition-all">
+                        <IconComponent size={10} className="md:w-3 md:h-3 text-[#f4c430] group-hover:text-white transition-colors" />
                       </div>
-                      <p className="text-white font-black text-lg tracking-tighter leading-none">{item.year}</p>
+                      <p className="text-white font-black text-base md:text-lg tracking-tighter leading-none">{item.year}</p>
                     </div>
-                    <p className="text-stone-500 font-bold uppercase text-[9px] leading-tight tracking-wider text-center lg:text-left">{item.event}</p>
+                    <p className="text-stone-500 font-bold uppercase text-[8px] md:text-[9px] leading-tight tracking-wider text-center xl:text-left">{item.event}</p>
                   </div>
                 );
               })}
@@ -886,7 +891,7 @@ export default function HomePage() {
                 {config.transparency.title} <br />
                 <span className="text-[#20b2aa]">{config.transparency.titleHighlight}</span>
               </h2>
-              <p className="text-stone-500 font-medium text-lg leading-snug mb-8 max-w-md">
+              <p className="text-stone-600 font-medium text-lg leading-snug mb-8 max-w-md">
                 {config.transparency.description}
               </p>
               <div className="space-y-4">
@@ -905,7 +910,7 @@ export default function HomePage() {
             </div>
             <div className="bg-stone-50 p-10 rounded-[3rem] border border-stone-100 rotate-1 shadow-2xl">
               <h3 className="text-xl font-black uppercase tracking-tighter mb-4 text-stone-900">{config.transparency.trustSection.title}</h3>
-              <p className="text-stone-500 font-medium mb-6">{config.transparency.trustSection.description}</p>
+              <p className="text-stone-600 font-medium mb-6">{config.transparency.trustSection.description}</p>
               <div className="grid grid-cols-2 gap-4">
                 {config.transparency.trustSection.badges.map((badge, index) => (
                   <div key={index} className="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
@@ -922,7 +927,7 @@ export default function HomePage() {
       {/* ── MEDIA RECOGNITION (NEW) ── */}
       <section className="py-10 bg-white">
         <Container>
-          <p className="text-center text-stone-400 font-black text-[10px] uppercase tracking-[0.4em] mb-8">{config.mediaRecognition.badge}</p>
+          <p className="text-center text-stone-600 font-black text-[10px] uppercase tracking-[0.4em] mb-8">{config.mediaRecognition.badge}</p>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
             {config.mediaRecognition.logos.map((logo) => (
               <div key={logo} className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-900 border-x border-stone-900/10 px-4">{logo}</div>
@@ -959,13 +964,13 @@ export default function HomePage() {
       <section className="py-12 bg-stone-50">
         <Container>
           <div className="text-center mb-10">
-            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-400 leading-none underline decoration-stone-200 decoration-1 underline-offset-[10px]">{config.governmentPartners.title}</h2>
+            <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-600 leading-none underline decoration-stone-200 decoration-1 underline-offset-[10px]">{config.governmentPartners.title}</h2>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
             {config.governmentPartners.partners.map((gp) => (
               <div key={gp.name} className="flex flex-col items-center">
                 <div className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 border-b-2 border-stone-900 pb-1">{gp.name}</div>
-                <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-500">{gp.label}</p>
+                <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-600">{gp.label}</p>
               </div>
             ))}
           </div>
@@ -983,7 +988,7 @@ export default function HomePage() {
               {config.faq.questions.map((faq, i) => (
                 <div key={i} className="p-6 rounded-2xl bg-stone-50 border border-stone-100 hover:border-[#20b2aa]/20 hover:bg-white transition-all group cursor-default">
                   <p className="font-black text-sm uppercase tracking-tighter text-stone-900 mb-2 group-hover:text-[#20b2aa] transition-colors">{faq.question}</p>
-                  <p className="text-stone-500 text-sm font-medium leading-relaxed">{faq.answer}</p>
+                  <p className="text-stone-600 text-sm font-medium leading-relaxed">{faq.answer}</p>
                 </div>
               ))}
             </div>

@@ -7,7 +7,7 @@ import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function Footer() {
-  const { config, loading, error } = usePageConfig('layout', layoutConfig);
+  const { config } = usePageConfig('layout', layoutConfig);
   const activeConfig = config || layoutConfig;
   const footerLinks = activeConfig.footer.links;
   return (
@@ -105,8 +105,20 @@ export default function Footer() {
             <div className="flex items-center gap-6 ml-2">
               {activeConfig.footer.bottom.socialPlatforms.map((platform, i) => {
                 const Icon = getIcon(platform);
+                const socialLink = activeConfig.socialFloating?.socialLinks?.find(link => 
+                  link.name.toLowerCase().includes(platform.toLowerCase())
+                );
+                const href = socialLink?.url || `https://${platform.toLowerCase()}.com/mokshaseva`;
+                
                 return (
-                  <a key={i} href="#" className="text-white hover:text-[#7ab800] transition-all transform hover:-translate-y-1">
+                  <a 
+                    key={i} 
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Visit our ${platform} page`}
+                    className="text-white hover:text-[#7ab800] transition-all transform hover:-translate-y-1"
+                  >
                     <Icon size={16} />
                   </a>
                 );

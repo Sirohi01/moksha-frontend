@@ -136,7 +136,11 @@ export default function ContactPage() {
                   <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
                   <h3 className="font-serif text-xl font-bold text-stone-800 mb-2">{activeConfig.form.success.title}</h3>
                   <p className="text-stone-600 text-sm mb-4">{activeConfig.form.success.description}</p>
-                  <button onClick={() => setSubmitted(false)} className="text-saffron-600 text-sm underline">
+                  <button 
+                    onClick={() => setSubmitted(false)} 
+                    className="text-saffron-600 text-sm underline"
+                    aria-label="Send another contact message"
+                  >
                     {activeConfig.form.success.sendAnotherButton}
                   </button>
                 </div>
