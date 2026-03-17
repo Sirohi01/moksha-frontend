@@ -53,11 +53,11 @@ export default function BoardPage() {
                                         <a href={`mailto:${member.id}@mokshaseva.org`} className="w-10 h-10 rounded-full bg-stone-50 flex items-center justify-center hover:bg-[#7ab800] hover:text-white transition-all">
                                             <Mail size={16} />
                                         </a>
-                                        <Link href={`/board/profile/${member.id}`} className="flex-1">
+                                        {/* <Link href={`/board/profile/${member.id}`} className="flex-1">
                                             <button className="w-full px-6 py-2.5 rounded-full bg-stone-50 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-stone-800 transition-colors flex items-center justify-between group-hover:bg-[#7ab800]/5 group-hover:text-[#7ab800]">
                                                 {config.labels.viewProfile} <ChevronRight size={14} />
                                             </button>
-                                        </Link>
+                                        </Link> */}
                                     </div>
                                 </div>
                             );
