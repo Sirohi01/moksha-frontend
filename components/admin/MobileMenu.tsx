@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 interface NavigationItem {
@@ -59,10 +60,12 @@ export default function MobileMenu({ navigationItems, isOpen, onClose, user, onL
         <div className="relative h-16 sm:h-20 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 flex items-center justify-between px-4 sm:px-6">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/95 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg p-1.5 sm:p-2">
-              <img 
+              <Image 
                 src="/logo.png" 
                 alt="Moksha Seva Logo" 
-                className="w-full h-full object-contain"
+                width={48}
+                height={48}
+                className="object-contain"
               />
             </div>
             <div className="text-white">

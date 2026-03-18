@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import DonationReceipt from '@/components/DonationReceipt';
 import { LoadingSpinner } from '@/components/admin/AdminComponents';
 
@@ -107,10 +108,12 @@ export default function PublicReceiptPage() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
-                <img 
+                <Image 
                   src="/logo.png" 
                   alt="Moksha Seva Logo" 
-                  className="w-8 h-8 object-contain"
+                  width={32}
+                  height={32}
+                  className="object-contain"
                 />
               </div>
               <div>
@@ -157,10 +160,12 @@ export default function PublicReceiptPage() {
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-                <img 
+                <Image 
                   src="/logo.png" 
                   alt="Moksha Seva Logo" 
-                  className="w-6 h-6 object-contain"
+                  width={24}
+                  height={24}
+                  className="object-contain"
                 />
               </div>
               <span className="text-lg font-bold text-gray-900">Moksha Seva Foundation</span>

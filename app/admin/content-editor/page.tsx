@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { 
@@ -20,7 +21,7 @@ import {
   Globe,
   Palette,
   Layout,
-  Image,
+  Image as ImageIcon,
   Link,
   Hash,
   AlignLeft,
@@ -34,7 +35,6 @@ import {
   Upload,
   X,
   Camera,
-  ImageIcon,
   Monitor,
   Smartphone,
   Tablet,
@@ -311,7 +311,7 @@ export default function ContentEditor() {
   const getFieldIcon = (fieldType: string, fieldKey: string) => {
     if (fieldKey.includes('email')) return <Hash className="w-4 h-4" />;
     if (fieldKey.includes('url') || fieldKey.includes('href') || fieldKey.includes('src')) return <Link className="w-4 h-4" />;
-    if (fieldKey.includes('image') || fieldKey.includes('img')) return <Image className="w-4 h-4" />;
+    if (fieldKey.includes('image') || fieldKey.includes('img')) return <ImageIcon className="w-4 h-4" />;
     
     switch (fieldType) {
       case 'text': return <Type className="w-4 h-4" />;
@@ -332,7 +332,7 @@ export default function ContentEditor() {
     if (sectionId.includes('footer')) return <Layout className="w-5 h-5" />;
     if (sectionId.includes('social')) return <Globe className="w-5 h-5" />;
     if (sectionId.includes('stats') || sectionId.includes('analytics')) return <FileText className="w-5 h-5" />;
-    if (sectionId.includes('gallery') || sectionId.includes('media')) return <Image className="w-5 h-5" />;
+    if (sectionId.includes('gallery') || sectionId.includes('media')) return <ImageIcon className="w-5 h-5" />;
     return <FileText className="w-5 h-5" />;
   };
 
@@ -503,10 +503,11 @@ export default function ContentEditor() {
                     <div className="relative group/image">
                       <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 bg-white shadow-sm">
                         <div className="aspect-video relative">
-                          <img 
+                          <Image 
                             src={value} 
                             alt={`Preview of ${fieldSchema.label}`}
-                            className="w-full h-full object-cover transition-transform duration-200 group-hover/image:scale-105"
+                            fill
+                            className="object-cover transition-transform duration-200 group-hover/image:scale-105"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmM2Y0ZjYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU3ZWIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMTUwIiByPSI0MCIgZmlsbD0iI2Q1ZDdkYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBub3QgZm91bmQ8L3RleHQ+PC9zdmc+';
                             }}
@@ -758,10 +759,11 @@ export default function ContentEditor() {
                   {(value || []).map((imageUrl: string, index: number) => (
                     <div key={index} className="relative group">
                       <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 bg-white shadow-sm">
-                        <img 
+                        <Image 
                           src={imageUrl} 
                           alt={`${fieldSchema.label} ${index + 1}`}
-                          className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                          fill
+                          className="object-cover transition-transform duration-200 group-hover:scale-105"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmM2Y0ZjYiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNlNWU3ZWIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2EpIi8+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMTUwIiByPSI0MCIgZmlsbD0iI2Q1ZDdkYSIvPjx0ZXh0IHg9IjUwJSIgeT0iNjAlIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTYiIGZpbGw9IiM5Y2EzYWYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5JbWFnZSBub3QgZm91bmQ8L3RleHQ+PC9zdmc+';
                           }}
@@ -1354,10 +1356,11 @@ export default function ContentEditor() {
                       onClick={() => selectedImageField && selectImageFromGallery(image.url, selectedImageField.sectionId, selectedImageField.fieldPath)}
                     >
                       <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
-                        <img 
+                        <Image 
                           src={image.url} 
                           alt={image.title || `Gallery image ${index + 1}`}
-                          className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                          fill
+                          className="object-cover transition-transform duration-200 group-hover:scale-105"
                         />
                         
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">

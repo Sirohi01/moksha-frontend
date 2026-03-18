@@ -4,6 +4,7 @@ import "../../styles/admin.css";
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { authAPI, removeToken } from '@/lib/api';
 import MobileMenu from '@/components/admin/MobileMenu';
 
@@ -181,9 +182,11 @@ export default function AdminLayout({
           <div className="absolute inset-0 bg-gradient-to-r from-amber-400/20 to-red-400/20 animate-pulse-slow"></div>
           <div className="relative flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/95 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg p-2">
-              <img 
+              <Image 
                 src="/logo.png" 
                 alt="Moksha Seva Logo" 
+                width={48}
+                height={48}
                 className="w-full h-full object-contain"
               />
             </div>

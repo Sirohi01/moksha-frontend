@@ -175,8 +175,8 @@ export default function ChatBot() {
 
             {/* Floating Chat Button */}
             <div className="fixed bottom-6 left-6 z-[1100] flex flex-col gap-3">
-                {/* Chat Button */}
-                <button
+                {/* Chat Button - Hidden */}
+                {/* <button
                     onClick={() => {
                         setIsOpen(!isOpen);
                         setIsMinimized(false);
@@ -195,20 +195,18 @@ export default function ChatBot() {
                     ) : (
                         <>
                             <MessageCircle className="w-5 h-5 relative z-10" />
-                            {/* Notification Badge */}
                             <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse z-20">
                                 1
                             </span>
                         </>
                     )}
 
-                    {/* Tooltip */}
                     {!isOpen && (
                         <div className="absolute left-full ml-3 px-3 py-1.5 bg-stone-900/95 backdrop-blur-sm text-white text-xs font-bold rounded-xl opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none whitespace-nowrap border border-white/10 uppercase tracking-widest shadow-xl">
                             Chat with us
                         </div>
                     )}
-                </button>
+                </button> */}
 
                 {/* WhatsApp Button */}
                 <a

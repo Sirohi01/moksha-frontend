@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import { 
@@ -86,11 +87,14 @@ export const HeroEditor = ({ section, onUpdate }: EditorProps) => {
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
               {section.image ? (
                 <div className="space-y-2">
-                  <img 
-                    src={section.image} 
-                    alt="Hero preview" 
-                    className="w-full h-32 object-cover rounded"
-                  />
+                  <div className="relative w-full h-32">
+                    <Image 
+                      src={section.image} 
+                      alt="Hero preview" 
+                      fill
+                      className="object-cover rounded"
+                    />
+                  </div>
                   <input
                     type="text"
                     value={section.image}

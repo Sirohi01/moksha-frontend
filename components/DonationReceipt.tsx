@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef } from 'react';
+import Image from 'next/image';
 import { amountToWords } from '@/utils/numberToWords';
 
 interface DonationReceiptProps {
@@ -47,10 +48,12 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
         <div className="text-center mb-8 border-b-2 border-orange-200 pb-6">
           <div className="flex items-center justify-center mb-4">
             <div className="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg mr-4">
-              <img 
+              <Image 
                 src="/logo.png" 
                 alt="Moksha Seva Logo" 
-                className="w-12 h-12 object-contain"
+                width={48}
+                height={48}
+                className="object-contain"
               />
             </div>
             <div className="text-left">

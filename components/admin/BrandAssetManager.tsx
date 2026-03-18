@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from 'react';
+import NextImage from 'next/image';
 import { Upload, Download, Trash2, Eye, Edit, Folder, Image, FileText, Video } from 'lucide-react';
 
 interface BrandAsset {
@@ -243,9 +244,9 @@ export default function BrandAssetManager() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredAssets.map((asset) => (
             <div key={asset.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
-              <div className="aspect-video bg-gray-100 flex items-center justify-center">
+              <div className="aspect-video bg-gray-100 flex items-center justify-center relative">
                 {asset.thumbnailUrl ? (
-                  <img src={asset.thumbnailUrl} alt={asset.name} className="w-full h-full object-cover" />
+                  <NextImage src={asset.thumbnailUrl} alt={asset.name} fill className="object-cover" />
                 ) : (
                   <div className="text-gray-400">
                     {getAssetIcon(asset.type)}
@@ -326,9 +327,9 @@ export default function BrandAssetManager() {
                   <tr key={asset.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center">
+                        <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center relative">
                           {asset.thumbnailUrl ? (
-                            <img src={asset.thumbnailUrl} alt={asset.name} className="w-full h-full object-cover rounded" />
+                            <NextImage src={asset.thumbnailUrl} alt={asset.name} fill className="object-cover rounded" />
                           ) : (
                             getAssetIcon(asset.type)
                           )}
