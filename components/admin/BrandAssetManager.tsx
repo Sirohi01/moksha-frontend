@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import NextImage from 'next/image';
-import { Upload, Download, Trash2, Eye, Edit, Folder, Image, FileText, Video } from 'lucide-react';
+import { Upload, Download, Trash2, Eye, Edit, Folder, Image as ImageIcon, FileText, Video } from 'lucide-react';
 
 interface BrandAsset {
   id: string;
@@ -117,7 +117,7 @@ export default function BrandAssetManager() {
       case 'logo':
       case 'banner':
       case 'social':
-        return <Image className="w-5 h-5" />;
+        return <ImageIcon className="w-5 h-5" />;
       case 'document':
         return <FileText className="w-5 h-5" />;
       case 'video':

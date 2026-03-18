@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Save, Eye, FileText, Image, Link, Hash } from 'lucide-react';
+import { Save, Eye, FileText, Image as ImageIcon, Link, Hash } from 'lucide-react';
 
 interface ContentEditorProps {
   content?: string;
@@ -64,7 +64,7 @@ export default function ContentEditor({
     { icon: <strong>B</strong>, label: 'Bold', action: () => insertText('**', '**') },
     { icon: <em>I</em>, label: 'Italic', action: () => insertText('*', '*') },
     { icon: <Link className="w-4 h-4" />, label: 'Link', action: () => insertText('[', '](url)') },
-    { icon: <Image className="w-4 h-4" />, label: 'Image', action: () => insertText('![alt text](', ')') },
+    { icon: <ImageIcon className="w-4 h-4" />, label: 'Image', action: () => insertText('![alt text](', ')') },
     { icon: <Hash className="w-4 h-4" />, label: 'List', action: () => insertText('- ', '') },
   ];
 
