@@ -125,8 +125,8 @@ export const layoutConfig: LayoutConfig = {
         display: "1800-123-456"
       },
       email: {
-        address: "mailto:info@mokshaseva.org",
-        display: "info@mokshaseva.org"
+        address: "mailto:info@mokshasewa.org",
+        display: "info@mokshasewa.org"
       }
     },
     links: {
