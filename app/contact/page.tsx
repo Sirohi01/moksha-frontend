@@ -111,7 +111,7 @@ export default function ContactPage() {
               </div>
 
               {/* Regional offices */}
-              <div className="bg-white rounded-xl p-6 border border-cream-200">
+              {/* <div className="bg-white rounded-xl p-6 border border-cream-200">
                 <h3 className="font-serif font-bold text-stone-800 mb-4">{activeConfig.regionalCoordinators.title}</h3>
                 <div className="space-y-3">
                   {activeConfig.regionalCoordinators.coordinators.map((reg) => (
@@ -126,7 +126,7 @@ export default function ContactPage() {
                     </div>
                   ))}
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Contact form */}

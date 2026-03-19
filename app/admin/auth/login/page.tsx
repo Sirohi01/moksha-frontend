@@ -184,10 +184,10 @@ export default function AdminLogin() {
           </p>
           <div className="flex items-center justify-center gap-4 text-sm">
             <a 
-              href="mailto:it@moksha-seva.org" 
+              href="mailto:help@mokshasewa.org" 
               className="text-orange-600 hover:text-orange-700 font-medium hover:underline transition-colors"
             >
-              it@moksha-seva.org
+              help@mokshasewa.org
             </a>
             <span className="text-gray-300">|</span>
             <a 
