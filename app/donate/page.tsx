@@ -109,15 +109,16 @@ export default function DonatePage() {
 
     setLoading(true);
     try {
-      // First create donation record in backend
+      // Create donation record with completed status (bypassing Razorpay for now)
       const donationData = {
+        // Basic donation info
         amount: finalAmount,
         currency: 'INR',
-        donationType: form.donationType,
-        donationPurpose: form.donationPurpose,
+        donationType: form.donationType.replace('-', '_'), // Convert 'one-time' to 'one_time'
+        purpose: form.donationPurpose,
         
         // Personal Details
-        donorName: form.name,
+        name: form.name,
         email: form.email,
         phone: form.phone,
         alternatePhone: form.alternatePhone || undefined,
@@ -133,24 +134,36 @@ export default function DonatePage() {
         panNumber: form.panNumber || undefined,
         aadharNumber: form.aadharNumber || undefined,
         
-        // Tribute Details
-        tributeName: form.tributeName || undefined,
-        tributeRelation: form.tributeRelation || undefined,
-        tributeMessage: form.tributeMessage || undefined,
+        // Tribute Details (if applicable)
+        dedicatedTo: form.tributeName || undefined,
+        message: form.tributeMessage || form.message || undefined,
         
         // Payment Details
         paymentMethod: form.paymentMethod,
+        paymentStatus: 'completed', // Mark as completed since we're bypassing Razorpay
+        
+        // Additional payment info based on method
+        ...(form.paymentMethod === 'upi' && { upiId: form.upiId }),
+        ...(form.paymentMethod === 'card' && { 
+          cardLast4: form.cardNumber.slice(-4),
+          cardName: form.cardName 
+        }),
+        ...(form.paymentMethod === 'netbanking' && { bankName: form.bankName }),
+        ...(form.paymentMethod === 'wallet' && { 
+          walletType: form.walletType,
+          walletNumber: form.walletNumber 
+        }),
         
         // Preferences
         isAnonymous: form.isAnonymous,
-        receiveUpdates: form.receiveUpdates,
-        taxReceiptRequired: form.taxReceiptRequired,
-        message: form.message || undefined,
+        needReceipt: form.taxReceiptRequired,
         
-        status: 'pending'
+        // System info
+        source: 'website',
+        transactionId: `TXN_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` // Generate a dummy transaction ID
       };
 
-      // Create donation record first
+      // Submit donation directly to backend
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/donations`, {
         method: 'POST',
         headers: {
@@ -161,73 +174,14 @@ export default function DonatePage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create donation record');
+        throw new Error(error.message || 'Failed to process donation');
       }
 
       const donationResult = await response.json();
-      console.log('Donation record created:', donationResult);
-
-      // Now initiate Razorpay payment
-      try {
-        // Create Razorpay order
-        const orderData = await createRazorpayOrder(finalAmount * 100); // Convert to paise
-        
-        // Prepare Razorpay options
-        const razorpayOptions = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_1234567890', // Replace with actual key
-          amount: finalAmount * 100, // Amount in paise
-          currency: 'INR',
-          name: 'Moksha Seva',
-          description: `Donation - ${form.donationPurpose}`,
-          order_id: orderData.id,
-          handler: async (response: any) => {
-            // Payment successful
-            console.log('Payment successful:', response);
-            
-            // Update donation status to completed
-            try {
-              await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/donations/${donationResult.data.donationId}/payment`, {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  paymentId: response.razorpay_payment_id,
-                  orderId: response.razorpay_order_id,
-                  signature: response.razorpay_signature,
-                  status: 'completed'
-                }),
-              });
-              
-              setSubmitted(true);
-            } catch (updateError) {
-              console.error('Failed to update payment status:', updateError);
-              alert('Payment successful but failed to update status. Please contact support.');
-            }
-          },
-          prefill: {
-            name: form.name,
-            email: form.email,
-            contact: form.phone,
-          },
-          theme: {
-            color: '#d97706', // Saffron color
-          },
-          modal: {
-            ondismiss: () => {
-              console.log('Payment cancelled by user');
-              setLoading(false);
-            },
-          },
-        };
-
-        // Initiate Razorpay payment
-        await initiatePayment(razorpayOptions);
-        
-      } catch (paymentError) {
-        console.error('Razorpay payment error:', paymentError);
-        alert('Failed to initiate payment. Please try again or contact support.');
-      }
+      console.log('Donation processed successfully:', donationResult);
+      
+      // Show success message
+      setSubmitted(true);
 
     } catch (error) {
       console.error('Donation error:', error);
@@ -245,20 +199,30 @@ export default function DonatePage() {
             <CheckCircle className="w-10 h-10 text-saffron-600" />
           </div>
           <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">
-            {donateConfig.success.title}
+            Thank You! Your Donation Request Received
           </h2>
           <p className="text-stone-600 mb-2">
-            {donateConfig.success.message.replace('{amount}', finalAmount ? formatCurrency(finalAmount) : donateConfig.success.fallbackAmount)}
+            Your donation request of {finalAmount ? formatCurrency(finalAmount) : "₹500"} has been successfully submitted.
           </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+            <p className="text-blue-800 text-sm font-medium">
+              📞 Our team will contact you within 24 hours to complete the donation process.
+            </p>
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            <p className="text-amber-800 text-sm font-medium">
+              ⚠️ Note: This is a test submission. Razorpay payment integration is not yet active.
+            </p>
+          </div>
           <p className="text-stone-500 text-sm mb-6">
-            {donateConfig.success.receiptNote}
+            After payment confirmation, you will receive an 80G tax receipt via email.
           </p>
           <button 
             onClick={() => setSubmitted(false)} 
             className="text-saffron-600 text-sm underline"
             aria-label="Make another donation"
           >
-            {donateConfig.success.anotherDonationButton}
+            Donate Again
           </button>
         </div>
       </section>

@@ -100,91 +100,93 @@ export default function ReportPage() {
     setLoading(true);
     
     try {
-      // Prepare form data for API - flatten the structure to match backend validation
-      const reportData = {
-        // Reporter Info (flattened)
-        reporterName: form.reporterName,
-        reporterPhone: form.reporterPhone,
-        reporterEmail: form.reporterEmail || undefined,
-        reporterAddress: form.reporterAddress,
-        reporterRelation: form.reporterRelation,
-        
-        // Location Info (flattened)
-        exactLocation: form.exactLocation,
-        landmark: form.landmark,
-        area: form.area,
-        city: form.city,
-        state: form.state,
-        pincode: form.pincode,
-        locationType: form.locationType,
-        gpsCoordinates: form.gpsCoordinates,
-        
-        // Time Details (flattened)
-        dateFound: form.dateFound,
-        timeFound: form.timeFound,
-        approximateDeathTime: form.approximateDeathTime,
-        
-        // Body Details (flattened)
-        gender: form.gender,
-        approximateAge: form.approximateAge,
-        height: form.height,
-        weight: form.weight,
-        complexion: form.complexion,
-        hairColor: form.hairColor,
-        eyeColor: form.eyeColor,
-        tattoos: form.tattoos,
-        scars: form.scars,
-        birthmarks: form.birthmarks,
-        jewelry: form.jewelry,
-        clothing: form.clothing,
-        personalBelongings: form.personalBelongings,
-        bodyCondition: form.bodyCondition,
-        visibleInjuries: form.visibleInjuries,
-        causeOfDeathSuspected: form.causeOfDeathSuspected,
-        suspectedIdentity: form.suspectedIdentity,
-        
-        // Authority Details (flattened)
-        policeInformed: form.policeInformed,
-        policeStationName: form.policeStationName,
-        firNumber: form.firNumber,
-        hospitalName: form.hospitalName,
-        postMortemDone: form.postMortemDone,
-        
-        // Additional Info (flattened)
-        identityDocumentsFound: form.identityDocumentsFound,
-        documentDetails: form.documentDetails,
-        familyContacted: form.familyContacted,
-        additionalNotes: form.additionalNotes,
-        
-        // Witness Info (flattened)
-        witnessName: form.witnessName,
-        witnessPhone: form.witnessPhone,
-        witnessAddress: form.witnessAddress,
-        
-        // Document Info (flattened)
-        bplCardNumber: form.bplCardNumber,
-        aadhaarNumber: form.aadhaarNumber,
-        nocDetails: form.nocDetails,
-        panNumber: form.panNumber,
-        
-        // System fields
-        reportType: 'unclaimed_body',
-        priority: 'high', // Changed from urgencyLevel to priority to match model
-        // status: 'pending', // Remove this since model has default 'pending'
-        description: `${form.additionalNotes}\n\nFamily Contacted: ${form.familyContacted ? 'Yes' : 'No'}`,
-        
-        // Consent (flattened)
-        agreeToTerms: form.agreeToTerms,
-        consentToShare: form.consentToShare
-      };
+      // Create FormData for file uploads
+      const formData = new FormData();
+      
+      // Add all text fields
+      formData.append('reporterName', form.reporterName);
+      formData.append('reporterPhone', form.reporterPhone);
+      if (form.reporterEmail) formData.append('reporterEmail', form.reporterEmail);
+      if (form.reporterAddress) formData.append('reporterAddress', form.reporterAddress);
+      if (form.reporterRelation) formData.append('reporterRelation', form.reporterRelation);
+      
+      // Location Info
+      formData.append('exactLocation', form.exactLocation);
+      if (form.landmark) formData.append('landmark', form.landmark);
+      formData.append('area', form.area);
+      formData.append('city', form.city);
+      formData.append('state', form.state);
+      if (form.pincode) formData.append('pincode', form.pincode);
+      formData.append('locationType', form.locationType);
+      if (form.gpsCoordinates) formData.append('gpsCoordinates', form.gpsCoordinates);
+      
+      // Time Details
+      formData.append('dateFound', form.dateFound);
+      formData.append('timeFound', form.timeFound);
+      if (form.approximateDeathTime) formData.append('approximateDeathTime', form.approximateDeathTime);
+      
+      // Body Details
+      formData.append('gender', form.gender);
+      if (form.approximateAge) formData.append('approximateAge', form.approximateAge);
+      if (form.height) formData.append('height', form.height);
+      if (form.weight) formData.append('weight', form.weight);
+      if (form.complexion) formData.append('complexion', form.complexion);
+      if (form.hairColor) formData.append('hairColor', form.hairColor);
+      if (form.eyeColor) formData.append('eyeColor', form.eyeColor);
+      if (form.tattoos) formData.append('tattoos', form.tattoos);
+      if (form.scars) formData.append('scars', form.scars);
+      if (form.birthmarks) formData.append('birthmarks', form.birthmarks);
+      if (form.jewelry) formData.append('jewelry', form.jewelry);
+      if (form.clothing) formData.append('clothing', form.clothing);
+      if (form.personalBelongings) formData.append('personalBelongings', form.personalBelongings);
+      formData.append('bodyCondition', form.bodyCondition);
+      if (form.visibleInjuries) formData.append('visibleInjuries', form.visibleInjuries);
+      if (form.causeOfDeathSuspected) formData.append('causeOfDeathSuspected', form.causeOfDeathSuspected);
+      if (form.suspectedIdentity) formData.append('suspectedIdentity', form.suspectedIdentity);
+      
+      // Authority Details
+      formData.append('policeInformed', form.policeInformed.toString());
+      if (form.policeStationName) formData.append('policeStationName', form.policeStationName);
+      if (form.firNumber) formData.append('firNumber', form.firNumber);
+      if (form.hospitalName) formData.append('hospitalName', form.hospitalName);
+      formData.append('postMortemDone', form.postMortemDone.toString());
+      
+      // Additional Info
+      formData.append('identityDocumentsFound', form.identityDocumentsFound.toString());
+      if (form.documentDetails) formData.append('documentDetails', form.documentDetails);
+      formData.append('familyContacted', form.familyContacted.toString());
+      if (form.additionalNotes) formData.append('additionalNotes', form.additionalNotes);
+      
+      // Witness Info
+      if (form.witnessName) formData.append('witnessName', form.witnessName);
+      if (form.witnessPhone) formData.append('witnessPhone', form.witnessPhone);
+      if (form.witnessAddress) formData.append('witnessAddress', form.witnessAddress);
+      
+      // Document Info (text only, no files for now)
+      if (form.bplCardNumber) formData.append('bplCardNumber', form.bplCardNumber);
+      if (form.aadhaarNumber) formData.append('aadhaarNumber', form.aadhaarNumber);
+      if (form.nocDetails) formData.append('nocDetails', form.nocDetails);
+      if (form.panNumber) formData.append('panNumber', form.panNumber);
+      
+      // File uploads commented out for now
+      // if (form.bplCardPhoto) formData.append('bplCardPhoto', form.bplCardPhoto);
+      // if (form.aadhaarPhoto) formData.append('aadhaarPhoto', form.aadhaarPhoto);
+      // if (form.nocPhoto) formData.append('nocPhoto', form.nocPhoto);
+      // if (form.panPhoto) formData.append('panPhoto', form.panPhoto);
+      
+      // System fields
+      formData.append('reportType', 'unclaimed_body');
+      formData.append('priority', 'high');
+      formData.append('description', `${form.additionalNotes}\n\nFamily Contacted: ${form.familyContacted ? 'Yes' : 'No'}`);
+      
+      // Consent
+      formData.append('agreeToTerms', form.agreeToTerms.toString());
+      formData.append('consentToShare', form.consentToShare.toString());
 
-      // Submit to backend API
+      // Submit to backend API with FormData (no Content-Type header needed)
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/reports`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reportData),
+        body: formData, // Use FormData instead of JSON
       });
 
       if (!response.ok) {
@@ -786,7 +788,7 @@ export default function ReportPage() {
                 </div>
               </div>
 
-              {/* Section 10: Document Uploads (Optional) */}
+              {/* Section 10: Document Details (Optional) */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">10</span>
@@ -811,30 +813,7 @@ export default function ReportPage() {
                         value={form.bplCardNumber}
                         onChange={(e) => setForm({ ...form, bplCardNumber: e.target.value })}
                       />
-                      <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {config.labels.bplCardPhoto}
-                        </label>
-                        <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setForm({ ...form, bplCardPhoto: e.target.files?.[0] || null })}
-                            className="hidden"
-                            id="bplCardPhoto"
-                          />
-                          <label htmlFor="bplCardPhoto" className="cursor-pointer">
-                            {(() => {
-                              const UploadIcon = getIcon('Upload');
-                              return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
-                            })()}
-                            <p className="text-stone-500 text-xs">
-                              {form.bplCardPhoto ? form.bplCardPhoto.name : config.uploadTexts.clickToUpload}
-                            </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
-                          </label>
-                        </div>
-                      </div>
+                      {/* Photo upload removed */}
                     </div>
                   </div>
 
@@ -848,30 +827,7 @@ export default function ReportPage() {
                         value={form.aadhaarNumber}
                         onChange={(e) => setForm({ ...form, aadhaarNumber: e.target.value })}
                       />
-                      <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {config.labels.aadhaarPhoto}
-                        </label>
-                        <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setForm({ ...form, aadhaarPhoto: e.target.files?.[0] || null })}
-                            className="hidden"
-                            id="aadhaarPhoto"
-                          />
-                          <label htmlFor="aadhaarPhoto" className="cursor-pointer">
-                            {(() => {
-                              const UploadIcon = getIcon('Upload');
-                              return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
-                            })()}
-                            <p className="text-stone-500 text-xs">
-                              {form.aadhaarPhoto ? form.aadhaarPhoto.name : config.uploadTexts.clickToUpload}
-                            </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
-                          </label>
-                        </div>
-                      </div>
+                      {/* Photo upload removed */}
                     </div>
                   </div>
 
@@ -885,30 +841,7 @@ export default function ReportPage() {
                         value={form.nocDetails}
                         onChange={(e) => setForm({ ...form, nocDetails: e.target.value })}
                       />
-                      <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {config.labels.nocPhoto}
-                        </label>
-                        <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setForm({ ...form, nocPhoto: e.target.files?.[0] || null })}
-                            className="hidden"
-                            id="nocPhoto"
-                          />
-                          <label htmlFor="nocPhoto" className="cursor-pointer">
-                            {(() => {
-                              const UploadIcon = getIcon('Upload');
-                              return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
-                            })()}
-                            <p className="text-stone-500 text-xs">
-                              {form.nocPhoto ? form.nocPhoto.name : config.uploadTexts.clickToUpload}
-                            </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
-                          </label>
-                        </div>
-                      </div>
+                      {/* Photo upload removed */}
                     </div>
                   </div>
 
@@ -922,55 +855,16 @@ export default function ReportPage() {
                         value={form.panNumber}
                         onChange={(e) => setForm({ ...form, panNumber: e.target.value })}
                       />
-                      <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-1">
-                          {config.labels.panPhoto}
-                        </label>
-                        <div className="border-2 border-dashed border-stone-300 rounded-lg p-3 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-stone-50">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setForm({ ...form, panPhoto: e.target.files?.[0] || null })}
-                            className="hidden"
-                            id="panPhoto"
-                          />
-                          <label htmlFor="panPhoto" className="cursor-pointer">
-                            {(() => {
-                              const UploadIcon = getIcon('Upload');
-                              return <UploadIcon className="w-5 h-5 text-stone-400 mx-auto mb-1" />;
-                            })()}
-                            <p className="text-stone-500 text-xs">
-                              {form.panPhoto ? form.panPhoto.name : config.uploadTexts.clickToUpload}
-                            </p>
-                            <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.fileTypes}</p>
-                          </label>
-                        </div>
-                      </div>
+                      {/* Photo upload removed */}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Section 11: Photo Upload */}
+              {/* Section 11: Consent */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">11</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.uploadPhotos}</h3>
-                </div>
-                <div className="border-2 border-dashed border-stone-300 rounded-lg p-5 text-center hover:border-saffron-400 transition-colors cursor-pointer bg-white">
-                  {(() => {
-                    const UploadIcon = getIcon('Upload');
-                    return <UploadIcon className="w-7 h-7 text-stone-400 mx-auto mb-1.5" />;
-                  })()}
-                  <p className="text-stone-500 text-xs">{config.uploadTexts.clickToUpload}</p>
-                  <p className="text-stone-400 text-xs mt-0.5">{config.uploadTexts.multipleFiles}</p>
-                </div>
-              </div>
-
-              {/* Section 12: Consent */}
-              <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">12</span>
                   <h3 className="font-semibold text-stone-800 text-sm">{config.sectionTitles.consentAgreement}</h3>
                 </div>
                 <div className="space-y-3">

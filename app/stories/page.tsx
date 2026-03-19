@@ -59,18 +59,18 @@ export default function StoriesPage() {
                                 <div className="lg:w-1/2 w-full aspect-video rounded-[3rem] overflow-hidden shadow-2xl relative">
                                     <Image src={story.image} alt={story.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
                                     <div className="absolute inset-0 bg-stone-900/30 group-hover:bg-stone-900/10 transition-colors" />
-                                    <button className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white flex items-center justify-center text-[#7ab800] shadow-2xl hover:scale-110 transition-all">
+                                    {/* <button className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white flex items-center justify-center text-[#7ab800] shadow-2xl hover:scale-110 transition-all">
                                         {(() => {
                                             const PlayIcon = getIcon('Play');
                                             return <PlayIcon className="fill-[#7ab800] ml-1" size={28} />;
                                         })()}
-                                    </button>
-                                    <div className="absolute bottom-6 left-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                                    </button> */}
+                                    {/* <div className="absolute bottom-6 left-6 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 text-white text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
                                         {(() => {
                                             const ClockIcon = getIcon('Clock');
                                             return <ClockIcon size={12} />;
                                         })()} {story.duration}
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <div className="lg:w-1/2 text-left">
                                     <p className="text-[#7ab800] font-black text-[10px] uppercase tracking-[0.3em] mb-4">✦ {story.type}</p>
@@ -79,7 +79,7 @@ export default function StoriesPage() {
                                         {story.description}
                                     </p>
                                     <div className="flex items-center gap-4">
-                                        <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{config?.storiesGrid?.buttons?.watchNow || 'WATCH NOW'}</button>
+                                        {/* <button className="bg-stone-900 text-white px-10 py-4 rounded-full text-[12px] font-black uppercase tracking-widest hover:bg-stone-800 transition-all shadow-xl shadow-stone-900/10">{config?.storiesGrid?.buttons?.watchNow || 'WATCH NOW'}</button> */}
                                         <button className="w-14 h-14 rounded-full border border-stone-200 flex items-center justify-center text-[#7ab800] hover:border-[#7ab800] transition-colors" title={config?.storiesGrid?.buttons?.favorite || 'Add to favorites'}>
                                             {(() => {
                                                 const HeartIcon = getIcon('Heart');
@@ -95,7 +95,7 @@ export default function StoriesPage() {
             </section>
 
             {/* Newsletter Section */}
-            <section className="py-24 bg-white border-t border-stone-100">
+            {/* <section className="py-24 bg-white border-t border-stone-100">
                 <Container>
                     <div className="max-w-4xl mx-auto p-12 md:p-20 bg-stone-50 rounded-[5rem] text-center border border-stone-200 overflow-hidden relative">
                         <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-stone-800 leading-[0.85] mb-8">{config?.newsletter?.title || 'STAY'} <span className="text-[#7ab800]">{config?.newsletter?.highlightText || 'CONNECTED'}</span></h2>
@@ -108,7 +108,7 @@ export default function StoriesPage() {
                         </div>
                     </div>
                 </Container>
-            </section>
+            </section> */}
         </main>
     );
 }
