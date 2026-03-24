@@ -88,19 +88,22 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         title: "Family Testimonial 1",
         duration: "2 minutes",
         thumbnail: "/gallery/image1.png",
-        alt: "Video testimonial 1"
+        alt: "Video testimonial 1",
+        youtubeId: "vB3P0p_Y0ks"
       },
       {
         title: "Family Testimonial 2",
         duration: "2 minutes",
         thumbnail: "/gallery/image2.png",
-        alt: "Video testimonial 2"
+        alt: "Video testimonial 2",
+        youtubeId: "Jm_X9J-J9yY"
       },
       {
         title: "Family Testimonial 3",
         duration: "2 minutes",
         thumbnail: "/gallery/image3.png",
-        alt: "Video testimonial 3"
+        alt: "Video testimonial 3",
+        youtubeId: "4RzH8l3gE14"
       }
     ]
   },

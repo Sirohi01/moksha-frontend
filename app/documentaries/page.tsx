@@ -1,15 +1,18 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
 import { Video, Mail, Phone, ChevronRight, Play, Clock, Heart, Award } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { documentariesConfig } from "@/config/documentaries.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import VideoModal from "@/components/ui/VideoModal";
 
 export default function DocumentariesPage() {
     const { config, loading: configLoading, error: configError } = usePageConfig('documentaries', documentariesConfig);
     const activeConfig = config || documentariesConfig;
+
+    const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
 
     return (
         <main className="min-h-screen bg-stone-50">
@@ -58,7 +61,10 @@ export default function DocumentariesPage() {
                                     <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5">
                                         <Clock size={10} /> {film.duration}
                                     </div>
-                                    <button className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all opacity-0 group-hover:opacity-100">
+                                    <button 
+                                        onClick={() => film.youtubeId && setSelectedVideo({ id: film.youtubeId, title: film.title })}
+                                        className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+                                    >
                                         <Play className="fill-white ml-0.5" size={18} />
                                     </button>
                                     <div className="absolute top-4 left-4">
@@ -75,13 +81,28 @@ export default function DocumentariesPage() {
                                     <p className="text-gray-500 font-medium text-sm leading-relaxed mb-6">
                                         {film.desc}
                                     </p>
-                                    <button className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all">{activeConfig.films.watchButton}</button>
+                                    <button 
+                                        onClick={() => film.youtubeId && setSelectedVideo({ id: film.youtubeId, title: film.title })}
+                                        className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all"
+                                    >
+                                        {activeConfig.films.watchButton}
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </Container>
             </section>
+
+            {/* Video Player Modal */}
+            {selectedVideo && (
+                <VideoModal
+                    isOpen={!!selectedVideo}
+                    onClose={() => setSelectedVideo(null)}
+                    youtubeId={selectedVideo.id}
+                    title={selectedVideo.title}
+                />
+            )}
 
             {/* Festival Selections */}
             <section className="py-16 bg-amber-800">

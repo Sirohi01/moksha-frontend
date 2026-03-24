@@ -581,7 +581,7 @@ export default function ContentManagement() {
                       >
                         Edit
                       </button>
-                      <button 
+                      {/* <button 
                         onClick={() => {
                           if (item._id === 'homepage-config') {
                             window.open('/', '_blank');
@@ -636,15 +636,15 @@ export default function ContentManagement() {
                         className="text-green-600 hover:text-green-900"
                       >
                         View
-                      </button>
-                      <button 
+                      </button> */}
+                      {/* <button 
                         onClick={() => handleDelete(item._id)}
                         className="text-red-600 hover:text-red-900"
                         disabled
                         title="Cannot delete page configurations"
                       >
                         Delete
-                      </button>
+                      </button> */}
                     </div>
                   </td>
                 </tr>
@@ -671,7 +671,7 @@ export default function ContentManagement() {
       )}
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-lg shadow-sm p-6 text-center">
           <div className="text-3xl mb-2">📄</div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Pages</h3>
@@ -707,7 +707,7 @@ export default function ContentManagement() {
             Page Config
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

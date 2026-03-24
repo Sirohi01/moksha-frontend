@@ -87,6 +87,14 @@ const getIconComponent = (iconName: string) => {
   return <IconComponent className="w-4 h-4" />;
 };
 
+// YouTube ID Extraction Utilities
+const extractYoutubeId = (url: string) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : url;
+};
+
 interface FieldSchema {
   type: 'text' | 'textarea' | 'number' | 'url' | 'email' | 'array' | 'object' | 'boolean';
   label: string;
@@ -461,6 +469,12 @@ export default function ContentEditor() {
               {isIconField && (
                 <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full">Icon Field</span>
               )}
+              {fieldKey.toLowerCase().includes('youtubeid') && (
+                <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full flex items-center gap-1">
+                  <Monitor className="w-3 h-3" />
+                  YouTube ID
+                </span>
+              )}
             </label>
             
             <div className="space-y-3">
@@ -471,7 +485,7 @@ export default function ContentEditor() {
                   value={value || ''}
                   onChange={(e) => updateFieldValue(sectionId, fieldPath, e.target.value)}
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  placeholder={fieldSchema.placeholder}
+                  placeholder={fieldKey.toLowerCase().includes('youtubeid') ? "Enter YouTube Video ID (e.g. dQw4w9WgXcQ)" : fieldSchema.placeholder}
                   required={fieldSchema.required}
                 />
                 {fieldSchema.type === 'url' && value && (
@@ -497,7 +511,27 @@ export default function ContentEditor() {
                 </div>
               )}
               
-              {isImageField && !isIconField && (
+              {/* YouTube Preview */}
+              {fieldKey.toLowerCase().includes('youtubeid') && value && (
+                <div className="p-4 bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+                  <div className="flex items-center justify-between mb-3 text-white">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-red-500" />
+                      <span className="text-sm font-medium">Video Preview</span>
+                    </div>
+                    <span className="text-xs text-gray-400">ID: {value}</span>
+                  </div>
+                  <div className="aspect-video relative rounded-md overflow-hidden bg-black border border-white/10">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${extractYoutubeId(value)}?rel=0&modestbranding=1`}
+                      className="absolute inset-0 w-full h-full border-0"
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                </div>
+              )}
+              
+              {isImageField && !isIconField && !fieldKey.toLowerCase().includes('youtubeid') && (
                 <div className="space-y-4">
                   {value && (
                     <div className="relative group/image">
@@ -739,8 +773,34 @@ export default function ContentEditor() {
                 size="sm"
                 onClick={() => {
                   const newArray = [...(value || [])];
+                  
+                  // Handle empty objects by providing a template based on other items
                   if (fieldSchema.arrayItemSchema?.type === 'object') {
-                    newArray.push({});
+                    if (newArray.length > 0) {
+                      // Clone structure of first item but with empty values
+                      const template = { ...newArray[0] };
+                      Object.keys(template).forEach(k => {
+                        if (typeof template[k] === 'string') template[k] = '';
+                        else if (typeof template[k] === 'number') template[k] = 0;
+                        else if (typeof template[k] === 'boolean') template[k] = false;
+                        else if (Array.isArray(template[k])) template[k] = [];
+                        else if (typeof template[k] === 'object') template[k] = {};
+                      });
+                      newArray.push(template);
+                    } else {
+                      // Hardcoded templates for common page sections if array is empty
+                      const commonTemplates: Record<string, any> = {
+                        'items': { title: '', duration: '', type: '', year: '', desc: '', image: '', youtubeId: '' },
+                        'videos': { title: '', duration: '', thumbnail: '', alt: '', youtubeId: '' },
+                        'stories': { title: '', duration: '', type: '', description: '', image: '', imageAlt: '', youtubeId: '' },
+                        'festivals': { name: '', subtitle: '', year: '' },
+                        'slides': { title: '', image: '', description: '' },
+                        'buttons': { text: '', href: '', variant: 'primary' }
+                      };
+                      
+                      const templateKey = Object.keys(commonTemplates).find(tk => fieldPath.includes(tk)) || 'items';
+                      newArray.push(commonTemplates[templateKey] || {});
+                    }
                   } else {
                     newArray.push('');
                   }

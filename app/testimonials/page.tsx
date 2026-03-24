@@ -1,12 +1,15 @@
 "use client";
+import React, { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
 import { testimonialsConfig } from "@/config/testimonials.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import VideoModal from "@/components/ui/VideoModal";
 
 export default function Testimonials() {
   const { config, loading, error } = usePageConfig('testimonials', testimonialsConfig);
+  const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
   
   if (loading) {
     return (
@@ -18,13 +21,16 @@ export default function Testimonials() {
 
   if (error) {
     console.error('Failed to load Testimonials page config:', error);
-    // Fallback to static config
   }
 
   // Use fallback config if dynamic config is null
   const activeConfig = config || testimonialsConfig;
   const testimonials = activeConfig.testimonialsGrid.testimonials;
   const stats = activeConfig.stats;
+
+  const StarIcon = getIcon('Star');
+  const QuoteIcon = getIcon('Quote');
+  const HeartIcon = getIcon('Heart');
 
   return (
     <div className="min-h-screen bg-white">
@@ -74,42 +80,32 @@ export default function Testimonials() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="bg-white p-8 rounded-2xl border border-stone-100 hover:shadow-xl transition-all duration-500 group">
-                {/* Rating Stars */}
                 <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => {
-                    const StarIcon = getIcon('Star');
-                    return <StarIcon key={i} className="w-5 h-5 fill-amber-700 text-amber-700" />;
-                  })}
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <StarIcon key={i} className="w-5 h-5 fill-amber-700 text-amber-700" />
+                  ))}
                 </div>
 
-                {/* Quote */}
                 <div className="relative mb-6">
-                  {(() => {
-                    const QuoteIcon = getIcon('Quote');
-                    return <QuoteIcon className="w-8 h-8 text-amber-700 opacity-20 absolute -top-2 -left-2" />;
-                  })()}
+                  <QuoteIcon className="w-8 h-8 text-amber-700 opacity-20 absolute -top-2 -left-2" />
                   <p className="text-gray-700 italic leading-relaxed pl-6">
                     {testimonial.quote}
                   </p>
                 </div>
 
-                {/* Author Info */}
                 <div className="border-t border-stone-100 pt-6">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
-                      {(() => {
-                        const HeartIcon = getIcon('Heart');
-                        return <HeartIcon className="w-6 h-6 text-amber-700" />;
-                      })()}
+                       <HeartIcon className="w-6 h-6 text-amber-700" />
                     </div>
-                    <div>
-                      <div className="font-black text-gray-900 uppercase tracking-widest text-sm">
+                    <div className="text-left">
+                      <div className="font-black text-gray-900 uppercase tracking-widest text-sm text-left">
                         {testimonial.name}
                       </div>
-                      <div className="text-gray-500 text-xs uppercase tracking-widest">
+                      <div className="text-gray-500 text-xs uppercase tracking-widest text-left">
                         {testimonial.role}
                       </div>
-                      <div className="text-gray-400 text-xs">
+                      <div className="text-gray-400 text-xs text-left">
                         {testimonial.location}
                       </div>
                     </div>
@@ -136,7 +132,11 @@ export default function Testimonials() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {activeConfig.videoTestimonials.videos.map((video, index) => (
-              <div key={index} className="relative aspect-video rounded-2xl overflow-hidden group cursor-pointer">
+              <div 
+                key={index} 
+                className="relative aspect-video rounded-2xl overflow-hidden group cursor-pointer"
+                onClick={() => video.youtubeId && setSelectedVideo({ id: video.youtubeId, title: video.title })}
+              >
                 <Image 
                   src={video.thumbnail}
                   alt={video.alt}
@@ -149,7 +149,7 @@ export default function Testimonials() {
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-4 right-4">
-                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-3 text-left">
                     <div className="font-black text-sm text-gray-900">{video.title}</div>
                     <div className="text-xs text-gray-600">{video.duration}</div>
                   </div>
@@ -159,6 +159,16 @@ export default function Testimonials() {
           </div>
         </Container>
       </section>
+
+      {/* Video Player Modal */}
+      {selectedVideo && (
+        <VideoModal
+            isOpen={!!selectedVideo}
+            onClose={() => setSelectedVideo(null)}
+            youtubeId={selectedVideo.id}
+            title={selectedVideo.title}
+        />
+      )}
 
       {/* Call to Action */}
       <section className="py-16 bg-amber-800">

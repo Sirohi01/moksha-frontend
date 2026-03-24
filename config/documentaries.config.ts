@@ -26,7 +26,8 @@ export const documentariesConfig: DocumentariesPageConfig = {
         type: "Main Feature",
         year: "2024",
         desc: "A cinematic deep-dive into the founding philosophy of Moksha Seva and the people who make it possible.",
-        image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2000&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2000&auto=format&fit=crop",
+        youtubeId: "Jm_X9J-J9yY"
       },
       {
         title: "The City of Shadows",
@@ -34,7 +35,8 @@ export const documentariesConfig: DocumentariesPageConfig = {
         type: "City Series",
         year: "2023",
         desc: "Exploring the life and death of those in the busiest hubs of Mumbai, and how our teams respond in the urban chaos.",
-        image: "https://images.unsplash.com/photo-1533158307587-828f0a76ef46?q=80&w=2000&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1533158307587-828f0a76ef46?q=80&w=2000&auto=format&fit=crop",
+        youtubeId: "vB3P0p_Y0ks"
       },
       {
         title: "Ganga's Quiet Tears",
@@ -42,7 +44,8 @@ export const documentariesConfig: DocumentariesPageConfig = {
         type: "Regional Story",
         year: "2023",
         desc: "A spiritual exploration of final rites in Varanasi and the transition from identified to unidentified cases.",
-        image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2000&auto=format&fit=crop"
+        image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?q=80&w=2000&auto=format&fit=crop",
+        youtubeId: "4RzH8l3gE14"
       }
     ],
     watchButton: "WATCH FILM",

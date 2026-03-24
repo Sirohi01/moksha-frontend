@@ -30,6 +30,7 @@ export interface VideoTestimonialConfig {
   duration: string;
   thumbnail: string;
   alt: string;
+  youtubeId: string;
 }
 
 export interface VideoTestimonialsConfig {

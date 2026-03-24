@@ -8,6 +8,7 @@ export interface Film {
   year: string;
   desc: string;
   image: string;
+  youtubeId: string;
 }
 
 export interface Festival {
