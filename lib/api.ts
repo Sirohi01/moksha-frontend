@@ -449,6 +449,22 @@ export const settingsAPI = {
       body: JSON.stringify(data),
     });
   },
+  resetSettings: async () => {
+    return apiRequest(`${API_ENDPOINTS.SETTINGS}/reset`, {
+      method: 'POST',
+    });
+  },
+  backupSettings: async () => {
+    return apiRequest(`${API_ENDPOINTS.SETTINGS}/backup`, {
+      method: 'POST',
+    });
+  },
+  testEmailConfig: async (email: string) => {
+    return apiRequest(`${API_ENDPOINTS.SETTINGS}/test-email`, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
 };
 
 export const analyticsAPI = {
