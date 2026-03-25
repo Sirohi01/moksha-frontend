@@ -8,12 +8,12 @@ export const API_ENDPOINTS = {
   ME: `${API_BASE_URL}/api/auth/me`,
   REFRESH_TOKEN: `${API_BASE_URL}/api/auth/refresh-token`,
   CHANGE_PASSWORD: `${API_BASE_URL}/api/auth/change-password`,
-  
+
   // Admin endpoints
   ADMIN_USERS: `${API_BASE_URL}/api/admin/users`,
   ADMIN_ACTIVITIES: `${API_BASE_URL}/api/admin/activities`,
   ADMIN_STATS: `${API_BASE_URL}/api/admin/stats`,
-  
+
   // Form endpoints
   REPORTS: `${API_BASE_URL}/api/reports`,
   FEEDBACK: `${API_BASE_URL}/api/feedback`,
@@ -24,7 +24,7 @@ export const API_ENDPOINTS = {
   LEGACY: `${API_BASE_URL}/api/legacy`,
   SCHEMES: `${API_BASE_URL}/api/schemes`,
   EXPANSION: `${API_BASE_URL}/api/expansion`,
-  
+
   // Content & Media endpoints
   GALLERY: `${API_BASE_URL}/api/gallery`,
   CONTENT: `${API_BASE_URL}/api/content`,
@@ -60,9 +60,9 @@ export const removeToken = () => {
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
   console.log('🌐 API Request:', url);
   console.log('📋 Options:', options);
-  
+
   const token = getToken();
-  
+
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
@@ -97,8 +97,8 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
     }
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ 
-        message: `HTTP ${response.status}: ${response.statusText}` 
+      const error = await response.json().catch(() => ({
+        message: `HTTP ${response.status}: ${response.statusText}`
       }));
       throw new Error(error.message || 'API request failed');
     }
@@ -578,12 +578,15 @@ export const analyticsAPI = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
-      keepalive: true, // Important for tracking on page leave
+      keepalive: true,
     });
   },
 
-  getVisitorStats: async (timeRange = '24h') => {
-    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/visitors?timeRange=${timeRange}`);
+  getVisitorStats: async (timeRange = '24h', customStart?: string, customEnd?: string) => {
+    const params = new URLSearchParams({ timeRange });
+    if (customStart) params.append('customStart', customStart);
+    if (customEnd) params.append('customEnd', customEnd);
+    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/visitors?${params.toString()}`);
   },
 
   getVisitorDetailsByIP: async (ip: string) => {

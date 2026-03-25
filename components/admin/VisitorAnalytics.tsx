@@ -64,6 +64,8 @@ export default function VisitorAnalytics() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState('24h');
+  const [customStart, setCustomStart] = useState('');
+  const [customEnd, setCustomEnd] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -74,12 +76,19 @@ export default function VisitorAnalytics() {
 
   const fetchData = async () => {
     try {
-      const response = await analyticsAPI.getVisitorStats(timeRange);
+      const response = await analyticsAPI.getVisitorStats(timeRange, customStart, customEnd);
       setData(response.data);
     } catch (error) {
       console.error('Failed to fetch visitor analytics:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApplyCustomFilter = () => {
+    if (customStart && customEnd) {
+      setTimeRange('custom');
+      fetchData();
     }
   };
 
@@ -103,33 +112,77 @@ export default function VisitorAnalytics() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* Dashboard Control Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-white dark:bg-navy-900 rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-xl">
-        <div className="flex items-center gap-4">
-           <div className="w-12 h-12 bg-gold-500/10 rounded-2xl flex items-center justify-center text-gold-600 border border-gold-500/20">
-              <Zap className="w-6 h-6" />
+      <div className="flex flex-col xl:flex-row justify-between items-center gap-8 p-8 bg-white dark:bg-navy-950 rounded-[2.5rem] border border-gray-100 dark:border-white/5 shadow-2xl shadow-navy-900/10">
+        <div className="flex items-center gap-5">
+           <div className="w-14 h-14 bg-gold-500/10 rounded-2xl flex items-center justify-center text-gold-600 border border-gold-500/20 shadow-inner">
+              <Zap className="w-7 h-7" />
            </div>
            <div>
-              <h3 className="text-lg font-black text-navy-950 dark:text-white tracking-tight leading-none mb-1">Live Feed Pipeline</h3>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Global Interaction Metrics</p>
+              <h3 className="text-xl font-black text-navy-950 dark:text-white tracking-tight leading-none mb-1.5 uppercase italic">Live Intel Feed</h3>
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.3em] opacity-80">Stream Reconstruction · {timeRange === 'custom' ? 'Custom Filter Active' : `Last ${timeRange}`}</p>
            </div>
         </div>
 
-        <div className="flex items-center gap-3 p-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-200/50 dark:border-white/10 shadow-inner">
-           {['24h', '7d', '30d'].map((range) => (
-             <button
-               key={range}
-               onClick={() => setTimeRange(range)}
-               className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
-                 timeRange === range 
-                   ? 'bg-navy-950 dark:bg-gold-500 text-white dark:text-navy-950 shadow-xl scale-105' 
-                   : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
-               }`}
+        <div className="flex flex-col md:flex-row items-center gap-6 w-full xl:w-auto">
+          {/* Quick Presets */}
+          <div className="flex items-center gap-2 p-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-200/50 dark:border-white/10">
+            {['24h', '7d', '30d'].map((range) => (
+              <button
+                key={range}
+                onClick={() => {
+                  setTimeRange(range);
+                  setCustomStart('');
+                  setCustomEnd('');
+                }}
+                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                  timeRange === range 
+                    ? 'bg-navy-950 dark:bg-gold-500 text-white dark:text-navy-950 shadow-xl' 
+                    : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                }`}
+              >
+                {range}
+              </button>
+            ))}
+          </div>
+
+          <div className="h-10 w-px bg-gray-200 dark:bg-white/10 hidden md:block"></div>
+
+          {/* Custom Picker */}
+          <div className="flex flex-col md:flex-row items-center gap-3">
+             <div className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 p-1 rounded-2xl border border-gray-200/50 dark:border-white/10">
+                <div className="relative group">
+                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gold-600 transition-transform group-focus-within:scale-110" />
+                   <input 
+                    type="date"
+                    value={customStart}
+                    onChange={(e) => setCustomStart(e.target.value)}
+                    className="bg-transparent text-[10px] font-black uppercase tracking-tight text-navy-950 dark:text-navy-100 pl-10 pr-4 py-2.5 focus:outline-none w-36"
+                   />
+                </div>
+                <div className="w-2 h-0.5 bg-gray-300 dark:bg-white/20"></div>
+                <div className="relative group">
+                   <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gold-600 transition-transform group-focus-within:scale-110" />
+                   <input 
+                    type="date"
+                    value={customEnd}
+                    onChange={(e) => setCustomEnd(e.target.value)}
+                    className="bg-transparent text-[10px] font-black uppercase tracking-tight text-navy-950 dark:text-navy-100 pl-10 pr-4 py-2.5 focus:outline-none w-36"
+                   />
+                </div>
+             </div>
+             
+             <button 
+                onClick={handleApplyCustomFilter}
+                disabled={!customStart || !customEnd}
+                className="px-6 py-3.5 bg-gold-600 hover:bg-gold-500 disabled:bg-gray-200 dark:disabled:bg-white/5 disabled:text-gray-400 text-navy-950 font-black text-[10px] uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-gold-900/10 active:scale-95 flex items-center gap-3 group"
              >
-               Last {range}
+                <span>Filter Intel</span>
+                <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
              </button>
-           ))}
+          </div>
         </div>
       </div>
+
 
 
       {/* Main Stats Grid */}
