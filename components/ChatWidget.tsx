@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { 
-  MessageCircle, 
-  X, 
-  Send, 
-  User, 
-  Mail, 
-  Phone, 
+import {
+  MessageCircle,
+  X,
+  Send,
+  User,
+  Mail,
+  Phone,
   Video,
-  ShieldCheck, 
-  Loader2, 
+  ShieldCheck,
+  Loader2,
   ChevronRight,
   Headphones,
   Check,
@@ -32,18 +32,18 @@ export default function ChatWidget() {
   const [step, setStep] = useState<'intro' | 'info' | 'verify' | 'chat'>('intro');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [emailOtp, setEmailOtp] = useState('');
   const [phoneOtp, setPhoneOtp] = useState('');
-  
+
   const [chatId, setChatId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [callAlert, setCallAlert] = useState<{ type: string; sender: string } | null>(null);
-  
+
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -53,7 +53,7 @@ export default function ChatWidget() {
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = process.env.NEXT_PUBLIC_WS_URL || `${protocol}//${window.location.hostname}:5000`;
-    
+
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
@@ -68,24 +68,24 @@ export default function ChatWidget() {
         if (data.type === 'chat_message' && data.chatId === id) {
           setMessages(prev => [...prev, data.message]);
           if (isOpen) {
-              ws.send(JSON.stringify({ type: 'chat_read', chatId: id, sender: 'user' }));
+            ws.send(JSON.stringify({ type: 'chat_read', chatId: id, sender: 'user' }));
           }
         }
         if (data.type === 'chat_read_update' && data.chatId === id) {
-            setMessages(prev => prev.map(m => m.sender === 'user' ? { ...m, read: true } : m));
+          setMessages(prev => prev.map(m => m.sender === 'user' ? { ...m, read: true } : m));
         }
         if (data.type === 'chat_call_response' && data.chatId === id) {
-            if (data.message) {
-                setMessages(prev => [...prev, data.message]);
-            }
-            setCallAlert(null);
+          if (data.message) {
+            setMessages(prev => [...prev, data.message]);
+          }
+          setCallAlert(null);
         }
         if (data.type === 'chat_call_request' && data.chatId === id) {
-            if (data.sender === 'admin') {
-                setCallAlert({ type: data.callType, sender: 'Admin' });
-                // Automatically close alert after a while
-                setTimeout(() => setCallAlert(null), 15000);
-            }
+          if (data.sender === 'admin') {
+            setCallAlert({ type: data.callType, sender: 'Admin' });
+            // Automatically close alert after a while
+            setTimeout(() => setCallAlert(null), 15000);
+          }
         }
       } catch (err) {
         console.error('[ChatWidget] Parse Error:', err);
@@ -102,10 +102,10 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (step === 'chat' && chatId) {
-        connectSocket(chatId);
+      connectSocket(chatId);
     }
     return () => {
-        if (socketRef.current) socketRef.current.close();
+      if (socketRef.current) socketRef.current.close();
     };
   }, [step, chatId, connectSocket]);
 
@@ -116,14 +116,14 @@ export default function ChatWidget() {
   const requestCall = (type: 'audio' | 'video') => {
     if (!socketRef.current || !chatId) return;
     socketRef.current.send(JSON.stringify({
-        type: 'chat_call_request',
-        chatId,
-        callType: type,
-        sender: 'user'
+      type: 'chat_call_request',
+      chatId,
+      callType: type,
+      sender: 'user'
     }));
-    setMessages(prev => [...prev, { 
-        sender: 'system', 
-        content: `Requested an ${type} call.` 
+    setMessages(prev => [...prev, {
+      sender: 'system',
+      content: `Requested an ${type} call.`
     }]);
   };
 
@@ -147,16 +147,16 @@ export default function ChatWidget() {
           {/* Incoming Call Alert */}
           {callAlert && (
             <div className="absolute top-16 left-4 right-4 z-50 p-4 bg-navy-900 border border-gold-600 rounded-2xl shadow-2xl animate-bounce flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gold-600 rounded-xl flex items-center justify-center animate-pulse">
-                        <Phone className="w-5 h-5 text-navy-950" />
-                    </div>
-                    <div>
-                        <p className="text-[10px] text-gold-500 font-black uppercase">Incoming {callAlert.type} call</p>
-                        <p className="text-xs text-white font-bold uppercase tracking-tighter">Support Agent Calling...</p>
-                    </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gold-600 rounded-xl flex items-center justify-center animate-pulse">
+                  <Phone className="w-5 h-5 text-navy-950" />
                 </div>
-                <button onClick={() => setCallAlert(null)} className="text-white hover:text-red-500"><X className="w-5 h-5" /></button>
+                <div>
+                  <p className="text-[10px] text-gold-500 font-black uppercase">Incoming {callAlert.type} call</p>
+                  <p className="text-xs text-white font-bold uppercase tracking-tighter">Support Agent Call Request....</p>
+                </div>
+              </div>
+              <button onClick={() => setCallAlert(null)} className="text-white hover:text-red-500"><X className="w-5 h-5" /></button>
             </div>
           )}
 
@@ -172,13 +172,13 @@ export default function ChatWidget() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-                {step === 'chat' && isConnected && (
-                    <>
-                        <button onClick={() => requestCall('audio')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"><Phone className="w-4 h-4" /></button>
-                        <button onClick={() => requestCall('video')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"><Video className="w-4 h-4" /></button>
-                    </>
-                )}
-                <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white p-2"><X className="w-5 h-5" /></button>
+              {step === 'chat' && isConnected && (
+                <>
+                  <button onClick={() => requestCall('audio')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"><Phone className="w-4 h-4" /></button>
+                  <button onClick={() => requestCall('video')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"><Video className="w-4 h-4" /></button>
+                </>
+              )}
+              <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white p-2"><X className="w-5 h-5" /></button>
             </div>
           </div>
 
@@ -197,13 +197,13 @@ export default function ChatWidget() {
                 <input placeholder="EMAIL" value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-white border border-stone-100 rounded-xl py-4 px-4 text-[10px] font-black uppercase outline-none" />
                 <input placeholder="PHONE" value={phone} onChange={e => setPhone(e.target.value)} className="w-full bg-white border border-stone-100 rounded-xl py-4 px-4 text-[10px] font-black uppercase outline-none" />
                 <button onClick={async () => {
-                    setLoading(true);
-                    try {
-                        await authAPI.sendOTP(email);
-                        await authAPI.sendMobileOTP(phone);
-                        setStep('verify');
-                    } catch (e: any) { setError(e.message); }
-                    setLoading(false);
+                  setLoading(true);
+                  try {
+                    await authAPI.sendOTP(email);
+                    await authAPI.sendMobileOTP(phone);
+                    setStep('verify');
+                  } catch (e: any) { setError(e.message); }
+                  setLoading(false);
                 }} className="w-full py-4 bg-stone-900 text-[#f4c430] font-black text-[10px] uppercase rounded-xl">{loading ? 'Requesting...' : 'Get OTP'}</button>
               </div>
             )}
@@ -213,17 +213,17 @@ export default function ChatWidget() {
                 <input placeholder="EMAIL OTP" value={emailOtp} onChange={e => setEmailOtp(e.target.value)} className="w-full bg-white border border-stone-100 rounded-xl py-4 text-center font-black tracking-widest" />
                 <input placeholder="MOBILE OTP" value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} className="w-full bg-white border border-stone-100 rounded-xl py-4 text-center font-black tracking-widest" />
                 <button onClick={async () => {
-                    setLoading(true);
-                    try {
-                        await authAPI.verifyOTP(email, emailOtp);
-                        await authAPI.verifyMobileOTP(phone, phoneOtp);
-                        const res = await chatAPI.initiateChat({ name, email, phone });
-                        setChatId(res.data._id);
-                        const hist = await chatAPI.getHistory(res.data._id);
-                        setMessages(hist.data);
-                        setStep('chat');
-                    } catch (e: any) { setError(e.message); }
-                    setLoading(false);
+                  setLoading(true);
+                  try {
+                    await authAPI.verifyOTP(email, emailOtp);
+                    await authAPI.verifyMobileOTP(phone, phoneOtp);
+                    const res = await chatAPI.initiateChat({ name, email, phone });
+                    setChatId(res.data._id);
+                    const hist = await chatAPI.getHistory(res.data._id);
+                    setMessages(hist.data);
+                    setStep('chat');
+                  } catch (e: any) { setError(e.message); }
+                  setLoading(false);
                 }} className="w-full py-4 bg-[#f4c430] text-white font-black text-[10px] uppercase rounded-xl">Verify</button>
               </div>
             )}
@@ -233,20 +233,19 @@ export default function ChatWidget() {
                 {messages.map((msg, i) => (
                   <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className="max-w-[80%] flex flex-col">
-                        <div className={`p-4 rounded-2xl text-[11px] font-bold shadow-sm ${
-                          msg.sender === 'user' ? 'bg-stone-900 text-[#f4c430] rounded-tr-none' : msg.sender === 'system' ? 'bg-[#f4c430]/10 text-[#f4c430] text-[9px] uppercase font-black tracking-tighter text-center py-2 border border-[#f4c430]/20' : 'bg-white text-stone-800 rounded-tl-none'
+                      <div className={`p-4 rounded-2xl text-[11px] font-bold shadow-sm ${msg.sender === 'user' ? 'bg-stone-900 text-[#f4c430] rounded-tr-none' : msg.sender === 'system' ? 'bg-[#f4c430]/10 text-[#f4c430] text-[9px] uppercase font-black tracking-tighter text-center py-2 border border-[#f4c430]/20' : 'bg-white text-stone-800 rounded-tl-none'
                         }`}>
-                          {msg.content}
+                        {msg.content}
+                      </div>
+                      {msg.sender === 'user' && (
+                        <div className="flex justify-end mt-1 items-center gap-1">
+                          {msg.read ? (
+                            <CheckCheck className="w-3 h-3 text-emerald-500" />
+                          ) : (
+                            <Check className="w-3 h-3 text-stone-300" />
+                          )}
                         </div>
-                        {msg.sender === 'user' && (
-                            <div className="flex justify-end mt-1 items-center gap-1">
-                                {msg.read ? (
-                                    <CheckCheck className="w-3 h-3 text-emerald-500" />
-                                ) : (
-                                    <Check className="w-3 h-3 text-stone-300" />
-                                )}
-                            </div>
-                        )}
+                      )}
                     </div>
                   </div>
                 ))}
@@ -265,8 +264,8 @@ export default function ChatWidget() {
       )}
 
       <button onClick={() => setIsOpen(!isOpen)} className="w-14 h-14 bg-stone-900 text-[#f4c430] rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 group relative">
-         <div className="absolute inset-0 bg-[#f4c430] rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity"></div>
-         {isOpen ? <X className="w-6 h-6 relative z-10" /> : <MessageCircle className="w-6 h-6 relative z-10" />}
+        <div className="absolute inset-0 bg-[#f4c430] rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity"></div>
+        {isOpen ? <X className="w-6 h-6 relative z-10" /> : <MessageCircle className="w-6 h-6 relative z-10" />}
       </button>
 
       <style jsx global>{`
