@@ -4,19 +4,21 @@ import RecentActivity from '@/components/admin/RecentActivity';
 import QuickActions from '@/components/admin/QuickActions';
 import AnalyticsChart from '@/components/admin/AnalyticsChart';
 
+import { PageHeader } from '@/components/admin/AdminComponents';
+import { Layout } from 'lucide-react';
+
 export const metadata: Metadata = {
   title: 'Dashboard | Admin | Moksha Sewa',
 };
 
 export default function AdminDashboard() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Welcome to the Moksha Sewa admin dashboard
-        </p>
-      </div>
+    <div className="space-y-12 max-w-[1600px] mx-auto">
+      <PageHeader 
+        title="Command Core" 
+        description="Global system telemetry and operational command center."
+        icon={<Layout className="w-8 h-8" />}
+      />
 
       <DashboardStats />
 

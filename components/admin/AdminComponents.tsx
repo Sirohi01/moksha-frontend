@@ -10,25 +10,30 @@ interface PageHeaderProps {
   children?: ReactNode;
 }
 
+// Page Header Component
 export function PageHeader({ title, description, icon, children }: PageHeaderProps) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+    <div className="bg-transparent mb-12 animate-fadeIn px-4 sm:px-0">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+        <div className="flex items-center space-x-6">
           {icon && (
-            <div className="w-14 h-14 bg-gradient-to-br from-navy-900 to-navy-700 rounded-2xl flex items-center justify-center shadow-xl border border-white/10 text-white">
-              {typeof icon === 'string' ? <span className="text-2xl">{icon}</span> : icon}
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-navy-950 rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 text-gold-500 transform -rotate-3 hover:rotate-0 transition-all duration-500 flex-shrink-0">
+              {typeof icon === 'string' ? <span className="text-2xl sm:text-3xl">{icon}</span> : icon}
             </div>
           )}
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-2">
+                <span className="w-4 h-0.5 bg-gold-600 rounded-full"></span>
+                <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tighter leading-[0.9] truncate py-1">{title}</h1>
             {description && (
-              <p className="text-gray-600 mt-1">{description}</p>
+              <p className="text-navy-400 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mt-3 max-w-xl opacity-60 leading-relaxed italic">{description}</p>
             )}
           </div>
         </div>
         {children && (
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4 items-center">
             {children}
           </div>
         )}
@@ -42,35 +47,41 @@ interface StatsCardProps {
   title: string;
   value: string | number;
   icon: ReactNode;
-  gradient: string;
+  gradient?: string;
   change?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
 }
 
 export function StatsCard({ title, value, icon, gradient, change, changeType = 'positive' }: StatsCardProps) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
-      <div className="flex items-center justify-between mb-6">
-        <div className={`w-14 h-14 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-xl border border-white/20 text-white`}>
-          {typeof icon === 'string' ? <span className="text-2xl">{icon}</span> : icon}
+    <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50 hover:border-gold-500/40 hover:shadow-2xl hover:shadow-gold-500/5 transition-all duration-700 group relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-40 h-40 bg-navy-50/50 rounded-full -mr-20 -mt-20 group-hover:scale-125 transition-transform duration-700"></div>
+      
+      <div className="flex items-start justify-between mb-10 relative z-10">
+        <div className={`w-14 h-14 sm:w-16 sm:h-16 bg-navy-950 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-xl border border-white/10 text-gold-500 group-hover:bg-gold-600 group-hover:text-navy-950 transition-colors duration-500`}>
+          {typeof icon === 'string' ? <span className="text-xl sm:text-2xl">{icon}</span> : icon}
         </div>
         {change && (
-          <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-            changeType === 'positive' ? 'bg-green-50 text-green-700' :
-            changeType === 'negative' ? 'bg-red-50 text-red-700' :
-            'bg-gray-50 text-gray-700'
+          <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm ${
+            changeType === 'positive' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+            changeType === 'negative' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
+            'bg-navy-50 text-navy-600'
           }`}>
             {change}
           </div>
         )}
       </div>
-      <div>
-        <p className="text-gray-600 text-sm font-medium mb-1">{title}</p>
-        <p className="text-3xl font-bold text-gray-900">{typeof value === 'number' ? value.toLocaleString() : value}</p>
+      
+      <div className="relative z-10">
+        <p className="text-navy-400 text-[10px] font-black uppercase tracking-[0.3em] mb-3 opacity-60 italic">{title}</p>
+        <p className="text-4xl sm:text-5xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors py-1">
+            {typeof value === 'number' ? value.toLocaleString() : value}
+        </p>
       </div>
     </div>
   );
 }
+
 // Action Button Component
 interface ActionButtonProps {
   onClick?: () => void;
@@ -93,20 +104,20 @@ export function ActionButton({
   loading = false,
   icon 
 }: ActionButtonProps) {
-  const baseClasses = "inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+  const baseClasses = "inline-flex items-center justify-center font-black uppercase tracking-widest rounded-2xl transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative group";
   
   const variants = {
-    primary: "bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 focus:ring-blue-500 shadow-lg hover:shadow-xl",
-    secondary: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-500 shadow-sm hover:shadow-md",
-    success: "bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 focus:ring-green-500 shadow-lg hover:shadow-xl",
-    danger: "bg-gradient-to-r from-red-500 to-pink-500 text-white hover:from-red-600 hover:to-pink-600 focus:ring-red-500 shadow-lg hover:shadow-xl",
-    warning: "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 focus:ring-amber-500 shadow-lg hover:shadow-xl"
+    primary: "bg-navy-950 text-gold-500 hover:bg-gold-600 hover:text-navy-950 shadow-navy-200",
+    secondary: "bg-white text-navy-950 border-2 border-navy-50 hover:border-gold-600 hover:text-gold-600",
+    success: "bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-100",
+    danger: "bg-rose-600 text-white hover:bg-rose-700 shadow-rose-100",
+    warning: "bg-gold-600 text-navy-950 hover:bg-navy-950 hover:text-gold-500 shadow-gold-100"
   };
 
   const sizes = {
-    sm: "px-3 py-2 text-sm",
-    md: "px-4 py-2.5 text-sm",
-    lg: "px-6 py-3 text-base"
+    sm: "px-5 py-2.5 text-[9px]",
+    md: "px-8 py-4 text-[10px]",
+    lg: "px-10 py-5 text-[11px]"
   };
 
   const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
@@ -156,53 +167,54 @@ interface DataTableProps {
   emptyMessage?: string;
 }
 
+// Data Table Component
 export function DataTable({ columns, data, loading = false, emptyMessage = "No data available" }: DataTableProps) {
   if (loading) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded"></div>
-            ))}
+      <div className="bg-white rounded-[2rem] border border-navy-50 p-12 shadow-sm">
+        <div className="flex flex-col items-center justify-center gap-6 animate-pulse">
+          <div className="w-16 h-16 bg-navy-50 rounded-2xl flex items-center justify-center">
+             <div className="w-8 h-8 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin"></div>
           </div>
+          <p className="text-[10px] font-black text-navy-400 uppercase tracking-[0.3em]">Decrypting Data Streams...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
+    <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-navy-50 overflow-hidden">
+      <div className="overflow-x-auto custom-scrollbar">
+        <table className="min-w-full border-collapse">
+          <thead>
+            <tr className="bg-navy-950">
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                  className="px-8 py-6 text-left text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] border-b border-white/5"
                 >
                   {column.label}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="divide-y divide-navy-50">
             {data.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-6 py-12 text-center">
-                  <div className="text-gray-500">
-                    <div className="text-4xl mb-4">📭</div>
-                    <p className="text-lg font-medium">{emptyMessage}</p>
+                <td colSpan={columns.length} className="px-8 py-24 text-center">
+                  <div className="flex flex-col items-center gap-6 opacity-30">
+                    <div className="w-20 h-20 bg-navy-50 rounded-[2rem] flex items-center justify-center">
+                        <span className="text-4xl text-navy-950 font-black italic">!</span>
+                    </div>
+                    <p className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] italic">{emptyMessage}</p>
                   </div>
                 </td>
               </tr>
             ) : (
               data.map((row, index) => (
-                <tr key={index} className="hover:bg-gray-50 transition-colors duration-150">
+                <tr key={index} className="hover:bg-navy-50/50 transition-all duration-300 group">
                   {columns.map((column) => (
-                    <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td key={column.key} className="px-8 py-6 whitespace-nowrap text-[11px] font-bold text-navy-950 uppercase tracking-tight group-hover:text-navy-950 transition-colors">
                       {column.render ? column.render(row[column.key], row) : row[column.key]}
                     </td>
                   ))}
@@ -215,22 +227,19 @@ export function DataTable({ columns, data, loading = false, emptyMessage = "No d
     </div>
   );
 }
-// Loading Spinner Component
-export function LoadingSpinner({ size = 'md', message }: { size?: 'sm' | 'md' | 'lg', message?: string }) {
-  const sizes = {
-    sm: 'h-6 w-6',
-    md: 'h-12 w-12',
-    lg: 'h-16 w-16'
-  };
 
+// Loading Spinner Component
+export function LoadingSpinner({ message }: { size?: 'sm' | 'md' | 'lg', message?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center p-8">
+    <div className="flex flex-col items-center justify-center p-20 gap-8">
       <div className="relative">
-        <div className={`animate-spin rounded-full ${sizes[size]} border-4 border-teal-200 border-t-teal-600`}></div>
-        <div className={`absolute inset-0 animate-spin rounded-full ${sizes[size]} border-4 border-transparent border-r-blue-400 animate-reverse`}></div>
+        <div className="w-20 h-20 border-4 border-gold-600/10 border-t-gold-600 rounded-full animate-spin shadow-[0_0_20px_rgba(184,135,33,0.1)]"></div>
+        <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-2 h-2 bg-navy-950 rounded-full animate-ping"></div>
+        </div>
       </div>
       {message && (
-        <p className="mt-4 text-gray-600 text-center">{message}</p>
+        <p className="text-[10px] font-black text-navy-400 uppercase tracking-[0.4em] animate-pulse italic">{message}</p>
       )}
     </div>
   );
@@ -246,58 +255,27 @@ interface AlertProps {
 
 export function Alert({ type, title, message, onClose }: AlertProps) {
   const styles = {
-    success: {
-      bg: 'bg-green-50 border-green-200',
-      icon: '✅',
-      iconBg: 'bg-green-500',
-      text: 'text-green-800',
-      titleText: 'text-green-900'
-    },
-    error: {
-      bg: 'bg-red-50 border-red-200',
-      icon: '❌',
-      iconBg: 'bg-red-500',
-      text: 'text-red-800',
-      titleText: 'text-red-900'
-    },
-    warning: {
-      bg: 'bg-amber-50 border-amber-200',
-      icon: '⚠️',
-      iconBg: 'bg-amber-500',
-      text: 'text-amber-800',
-      titleText: 'text-amber-900'
-    },
-    info: {
-      bg: 'bg-blue-50 border-blue-200',
-      icon: 'ℹ️',
-      iconBg: 'bg-blue-500',
-      text: 'text-blue-800',
-      titleText: 'text-blue-900'
-    }
+    success: 'border-emerald-500/20 bg-emerald-50/50 text-emerald-700',
+    error: 'border-rose-500/20 bg-rose-50/50 text-rose-700',
+    warning: 'border-gold-500/20 bg-gold-50/50 text-gold-700',
+    info: 'border-navy-500/20 bg-navy-50/50 text-navy-700'
   };
 
-  const style = styles[type];
-
   return (
-    <div className={`rounded-xl border p-4 ${style.bg} mb-6`}>
-      <div className="flex items-start">
-        <div className={`w-10 h-10 ${style.iconBg} rounded-lg flex items-center justify-center mr-4 flex-shrink-0`}>
-          <span className="text-white text-lg">{style.icon}</span>
-        </div>
-        <div className="flex-1">
-          {title && (
-            <h3 className={`font-semibold ${style.titleText} mb-1`}>{title}</h3>
+    <div className={`rounded-2xl border-2 p-6 transition-all duration-500 animate-fadeIn ${styles[type]} shadow-sm mb-8 relative group overflow-hidden`}>
+      <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
+          {onClose && (
+            <button onClick={onClose} className="text-current hover:rotate-90 transition-transform">✕</button>
           )}
-          <p className={style.text}>{message}</p>
+      </div>
+      <div className="flex items-center gap-5">
+        <div className="w-10 h-10 bg-current/10 rounded-xl flex items-center justify-center font-black">
+          {type[0].toUpperCase()}
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className={`ml-4 ${style.text} hover:opacity-70 transition-opacity`}
-          >
-            ✕
-          </button>
-        )}
+        <div>
+          {title && <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</h3>}
+          <p className="text-xs font-bold tracking-tight">{message}</p>
+        </div>
       </div>
     </div>
   );

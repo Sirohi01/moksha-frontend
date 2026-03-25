@@ -19,162 +19,176 @@ import {
   Shield,
   Bell,
   HelpCircle,
+  X,
+  TrendingUp,
+  CreditCard,
 } from 'lucide-react';
 
-const sidebarItems = [
-  {
-    title: 'Dashboard',
-    href: '/admin',
-    icon: LayoutDashboard,
-  },
-  {
-    title: 'Analytics',
-    href: '/admin/analytics',
-    icon: BarChart3,
-  },
-  {
-    title: 'Live Support',
-    href: '/admin/support',
-    icon: MessageSquare,
-  },
-  {
-    title: 'Content Management',
-    items: [
-      {
-        title: 'Pages',
-        href: '/admin/pages',
-        icon: FileText,
-      },
-      {
-        title: 'Gallery',
-        href: '/admin/gallery',
-        icon: Image,
-      },
-      {
-        title: 'Campaigns',
-        href: '/admin/campaigns',
-        icon: Heart,
-      },
-      {
-        title: 'Stories',
-        href: '/admin/stories',
-        icon: MessageSquare,
-      },
-    ],
-  },
-  {
-    title: 'User Management',
-    items: [
-      {
-        title: 'Users',
-        href: '/admin/users',
-        icon: Users,
-      },
-      {
-        title: 'Volunteers',
-        href: '/admin/volunteers',
-        icon: UserCheck,
-      },
-      {
-        title: 'Board Members',
-        href: '/admin/board',
-        icon: Shield,
-      },
-    ],
-  },
-  {
-    title: 'Operations',
-    items: [
-      {
-        title: 'Donations',
-        href: '/admin/donations',
-        icon: Heart,
-      },
-      {
-        title: 'Events',
-        href: '/admin/events',
-        icon: Calendar,
-      },
-      {
-        title: 'Messages',
-        href: '/admin/messages',
-        icon: Mail,
-      },
-      {
-        title: 'Database',
-        href: '/admin/database',
-        icon: Database,
-      },
-    ],
-  },
-  {
-    title: 'System',
-    items: [
-      {
-        title: 'Notifications',
-        href: '/admin/notifications',
-        icon: Bell,
-      },
-      {
-        title: 'Settings',
-        href: '/admin/settings',
-        icon: Settings,
-      },
-      {
-        title: 'Help',
-        href: '/admin/help',
-        icon: HelpCircle,
-      },
-    ],
-  },
-];
+interface NavigationItem {
+  title: string;
+  href?: string;
+  icon?: any;
+  items?: {
+    title: string;
+    href: string;
+    icon: any;
+  }[];
+}
 
-export default function AdminSidebar() {
+const getNavigationItems = (role: string): NavigationItem[] => {
+  const baseItems: NavigationItem[] = [
+    { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { title: 'Live Support', href: '/admin/support', icon: MessageSquare },
+    { title: 'Tasks', href: '/admin/tasks', icon: Calendar },
+    { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
+    { title: 'Board Applications', href: '/admin/board', icon: Users },
+    { title: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
+    { title: 'Government Schemes', href: '/admin/schemes', icon: FileText },
+    { title: 'Contacts', href: '/admin/contacts', icon: Mail },
+    { title: 'Legacy Giving', href: '/admin/legacy', icon: Heart },
+    { title: 'Expansion Requests', href: '/admin/expansion', icon: TrendingUp },
+    { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
+    { title: 'Donations', href: '/admin/donations', icon: CreditCard },
+    { title: 'Newsletter', href: '/admin/newsletter', icon: Mail },
+    { title: 'Blog', href: '/admin/content-editor?page=blog', icon: FileText },
+    { title: 'Page Config', href: '/admin/page-config', icon: Image },
+    { title: 'Content Management', href: '/admin/content', icon: Database },
+    { title: 'Compliance', href: '/admin/compliance', icon: Shield },
+  ];
+
+  if (role === 'super_admin' || role === 'manager') {
+    baseItems.push({
+      title: 'Intelligence', items: [
+        { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
+      ]
+    });
+  }
+
+  return baseItems;
+};
+
+interface AdminUser {
+  id: string;
+  name: string;
+  role: string;
+}
+
+export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user: AdminUser, onLogout: () => void, isOpen: boolean, onClose: () => void }) {
   const pathname = usePathname();
+  const sidebarItems = getNavigationItems(user.role);
 
   return (
-    <aside className="fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
-      <nav className="p-4 space-y-2">
-        {sidebarItems.map((item, index) => (
-          <div key={index}>
-            {item.href ? (
-              <Link
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                  pathname === item.href
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                    : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.title}
-              </Link>
-            ) : (
-              <>
-                <div className="px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  {item.title}
-                </div>
-                {item.items?.map((subItem) => (
-                  <Link
-                    key={subItem.href}
-                    href={subItem.href}
-                    className={cn(
-                      'flex items-center gap-3 px-3 py-2 ml-4 rounded-lg text-sm font-medium transition-colors',
-                      pathname === subItem.href
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
-                        : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                    )}
-                  >
-                    <subItem.icon className="w-4 h-4" />
-                    {subItem.title}
-                  </Link>
-                ))}
-              </>
-            )}
+    <>
+      {/* Mobile Overlay */}
+      <div
+        className={cn(
+          "fixed inset-0 bg-navy-950/40 backdrop-blur-sm z-[45] lg:hidden transition-opacity duration-500",
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        )}
+        onClick={onClose}
+      />
+
+      <aside className={cn(
+        "fixed left-0 top-0 h-screen w-72 bg-white border-r border-navy-50 shadow-2xl overflow-hidden flex flex-col z-[50] transition-transform duration-500 ease-in-out lg:translate-x-0 hidden lg:flex",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        {/* Mobile Close Button */}
+        <button
+          onClick={onClose}
+          className="lg:hidden absolute top-6 right-6 p-2 text-navy-400 hover:text-navy-950 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Premium Header / Status */}
+        <div className="p-8 border-b border-navy-50 bg-[#fcfcfc]/50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-navy-950 flex items-center justify-center shadow-xl">
+              <Shield className="w-6 h-6 text-gold-500" />
+            </div>
+            <div>
+              <h2 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic">Command Deck</h2>
+              <div className="flex items-center gap-1.5 mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-600 animate-pulse"></span>
+                <span className="text-[9px] text-navy-400 font-black uppercase tracking-widest">Live System</span>
+              </div>
+            </div>
           </div>
-        ))}
-      </nav>
-    </aside>
+        </div>
+
+        {/* Navigation Scroll Area */}
+        <nav className="flex-1 overflow-y-auto p-6 scrollbar-none space-y-4">
+          {sidebarItems.map((item, index) => (
+            <div key={index} className="space-y-1">
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  onClick={() => window.innerWidth < 1024 && onClose()}
+                  className={cn(
+                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
+                    pathname === item.href
+                      ? 'bg-navy-950 text-gold-500 shadow-2xl shadow-navy-200'
+                      : 'text-navy-400 hover:text-navy-950 hover:bg-navy-50'
+                  )}
+                >
+                  <div className={cn(
+                    "p-2 rounded-xl transition-all",
+                    pathname === item.href ? "bg-white/10" : "bg-navy-50 group-hover:bg-gold-600/10 group-hover:text-gold-600"
+                  )}>
+                    <item.icon className="w-4 h-4" />
+                  </div>
+                  {item.title}
+                  {pathname === item.href && (
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-gold-600 rounded-l-full"></div>
+                  )}
+                </Link>
+              ) : (
+                <div className="pt-4 space-y-1">
+                  <div className="px-5 mb-2">
+                    <span className="text-[8px] font-black text-navy-300 uppercase tracking-[0.3em]">{item.title}</span>
+                  </div>
+                  <div className="space-y-1">
+                    {item.items?.map((subItem) => (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        onClick={() => window.innerWidth < 1024 && onClose()}
+                        className={cn(
+                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300',
+                          pathname === subItem.href
+                            ? 'bg-gold-600/10 text-gold-600'
+                            : 'text-navy-300 hover:text-navy-950 hover:bg-navy-50'
+                        )}
+                      >
+                        <div className={cn(
+                          "p-1.5 rounded-lg transition-all",
+                          pathname === subItem.href ? "bg-gold-600 text-white" : "bg-navy-50 group-hover/sub:bg-navy-950 group-hover/sub:text-gold-500"
+                        )}>
+                          <subItem.icon className="w-3.5 h-3.5" />
+                        </div>
+                        {subItem.title}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </nav>
+
+        {/* Footer / Logout Button Area */}
+        <div className="p-6 border-t border-navy-50 bg-[#fcfcfc]/50">
+          <button
+            onClick={onLogout}
+            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all group"
+          >
+            <div className="p-2 rounded-xl bg-rose-50 group-hover:bg-rose-600 group-hover:text-white transition-all">
+              <X className="w-4 h-4" />
+            </div>
+            Logout
+          </button>
+        </div>
+      </aside>
+    </>
   );
 }

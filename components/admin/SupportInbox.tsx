@@ -22,6 +22,7 @@ import {
   Square,
   Headphones
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ChatSession {
   _id: string;
@@ -257,171 +258,252 @@ export default function SupportInbox() {
   };
 
   return (
-    <div className="flex h-[750px] bg-white dark:bg-navy-950 rounded-3xl overflow-hidden shadow-2xl border border-navy-100 dark:border-navy-900 font-sans relative">
+    <div className="flex bg-white rounded-[2.5rem] overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-navy-50 font-sans relative h-[800px] max-h-[calc(100vh-12rem)]">
       
       {/* Call Alert Overlay */}
       {callAlert && (
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[2000] bg-navy-900 border-2 border-gold-600 rounded-3xl p-6 shadow-[0_0_50px_rgba(244,196,48,0.3)] animate-bounce flex items-center gap-10">
-            <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-gold-600 rounded-2xl flex items-center justify-center animate-pulse">
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 z-[2000] bg-navy-950 border border-gold-600/30 rounded-[2rem] p-6 sm:p-8 shadow-[0_30px_60px_rgba(0,0,0,0.4)] animate-fadeIn flex flex-col sm:flex-row items-center gap-6 sm:gap-12 backdrop-blur-xl mx-4">
+            <div className="flex items-center gap-5">
+                <div className="w-16 h-16 bg-gold-600 rounded-2xl flex items-center justify-center animate-pulse shadow-[0_0_30px_rgba(184,135,33,0.4)]">
                     <Phone className="w-8 h-8 text-navy-950" />
                 </div>
                 <div>
-                    <h4 className="text-gold-500 font-black uppercase text-[10px] tracking-widest">Incoming {callAlert.type} call</h4>
-                    <p className="text-white text-xl font-black uppercase italic tracking-tighter">{callAlert.userName}</p>
+                    <h4 className="text-gold-500 font-black uppercase text-[10px] tracking-[0.2em] mb-1">Incoming {callAlert.type}</h4>
+                    <p className="text-white text-xl sm:text-2xl font-black uppercase italic tracking-tighter">{callAlert.userName}</p>
                 </div>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-4">
                 <button 
                     onClick={() => {
                         socket?.send(JSON.stringify({ type: 'chat_call_response', chatId: callAlert.chatId, status: 'accepted', sender: 'admin' }));
                         setCallAlert(null);
                     }}
-                    className="px-6 py-3 bg-emerald-600 text-white font-black text-xs uppercase rounded-xl hover:bg-emerald-700 transition-colors"
-                >Accept</button>
+                    className="px-6 sm:px-8 py-4 bg-emerald-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-emerald-700 transition-all shadow-lg active:scale-95"
+                >Establish</button>
                 <button 
                     onClick={() => {
                         socket?.send(JSON.stringify({ type: 'chat_call_response', chatId: callAlert.chatId, status: 'rejected', sender: 'admin' }));
                         setCallAlert(null);
                     }}
-                    className="px-6 py-3 bg-red-600 text-white font-black text-xs uppercase rounded-xl hover:bg-red-700 transition-colors"
-                >Reject</button>
+                    className="px-6 sm:px-8 py-4 bg-white/10 text-rose-500 border border-rose-500/30 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-rose-500 hover:text-white transition-all active:scale-95"
+                >Terminate</button>
             </div>
         </div>
       )}
 
       {/* Session List */}
-      <div className="w-[380px] border-r border-navy-50 overflow-hidden flex flex-col bg-stone-50/50">
-        <div className="p-6 space-y-4">
+      <div className={cn(
+          "w-full lg:w-[400px] border-r border-navy-50 overflow-hidden flex flex-col bg-[#fcfcfc] transition-all",
+          selectedChat ? "hidden lg:flex" : "flex"
+      )}>
+        <div className="p-6 sm:p-8 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-black text-navy-950 uppercase italic tracking-tighter flex items-center gap-2">
-                <Shield className="w-5 h-5 text-gold-600" />
-                Live Nodes
-            </h2>
-            <span className="px-2 py-1 bg-navy-100 rounded text-[9px] font-black text-navy-600 uppercase">{sessions.length} Active</span>
+            <div className="space-y-1">
+                <p className="text-[9px] font-black text-gold-600 uppercase tracking-[0.3em]">Support Nodes</p>
+                <h2 className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter">Live Traffic</h2>
+            </div>
+            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)] animate-pulse"></div>
           </div>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input placeholder="FILTER DATA..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full bg-white border border-navy-100 rounded-xl py-3 pl-10 pr-4 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-2 ring-gold-600/20" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-400" />
+            <input 
+                placeholder="FILTER NODES..." 
+                value={searchTerm} 
+                onChange={e => setSearchTerm(e.target.value)} 
+                className="w-full bg-navy-50/30 border border-navy-50 rounded-2xl py-4 pl-12 pr-6 text-[10px] font-black uppercase tracking-[0.2em] outline-none focus:ring-4 ring-gold-600/10 transition-all" 
+            />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-2">
+        <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-8 space-y-3">
           {loading ? (
-             <div className="p-10 text-center flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-gold-600" /></div>
+             <div className="p-20 flex flex-col items-center gap-4">
+                 <Loader2 className="w-10 h-10 animate-spin text-gold-600" />
+                 <p className="text-[9px] font-black text-navy-400 uppercase tracking-widest animate-pulse">Syncing Streams...</p>
+             </div>
           ) : filteredSessions.map((session) => (
             <button
               key={session._id}
               onClick={() => setSelectedChat(session)}
-              className={`w-full flex items-center gap-4 p-4 rounded-3xl transition-all border-2 ${
-                selectedChat?._id === session._id ? 'bg-navy-900 border-gold-600 shadow-xl' : 'bg-white border-transparent'
-              }`}
+              className={cn(
+                  "w-full group flex items-center gap-5 p-4 sm:p-6 rounded-[2rem] transition-all relative overflow-hidden",
+                  selectedChat?._id === session._id 
+                    ? 'bg-navy-950 text-white shadow-2xl shadow-navy-200 border-2 border-gold-600' 
+                    : 'bg-white border-2 border-transparent hover:border-navy-50 hover:bg-navy-50/20'
+              )}
             >
-              <div className="relative">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black ${
-                    selectedChat?._id === session._id ? 'bg-gold-600 text-navy-900' : 'bg-navy-100 text-navy-600'
-                }`}>
-                  {session.userName?.[0]}
+              <div className="relative flex-shrink-0">
+                <div className={cn(
+                    "w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs transform group-hover:-rotate-6 transition-transform",
+                    selectedChat?._id === session._id ? 'bg-gold-600 text-navy-950 shadow-lg' : 'bg-navy-50 text-navy-400 group-hover:bg-navy-950 group-hover:text-gold-500'
+                )}>
+                  {session.userName?.[0]?.toUpperCase()}
                 </div>
-                {session.unreadCount.admin > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-[9px] font-black flex items-center justify-center rounded-full border-2 border-white animate-bounce">{session.unreadCount.admin}</span>}
+                {session.unreadCount.admin > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-gold-600 text-navy-950 text-[9px] font-black flex items-center justify-center rounded-xl border-2 border-white shadow-lg animate-bounce">
+                        {session.unreadCount.admin}
+                    </span>
+                )}
               </div>
               <div className="flex-1 text-left">
-                <h4 className={`text-sm font-black truncate uppercase tracking-tighter ${selectedChat?._id === session._id ? 'text-white' : 'text-navy-950'}`}>{session.userName}</h4>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedChat?._id === session._id ? 'text-gold-500/60' : 'text-gray-400'}`}>{session.email}</p>
+                <h4 className={cn(
+                    "text-xs sm:text-sm font-black truncate uppercase tracking-tighter",
+                    selectedChat?._id === session._id ? 'text-white' : 'text-navy-950'
+                )}>
+                    {session.userName}
+                </h4>
+                <div className="flex items-center gap-2 mt-1">
+                    <div className={cn(
+                        "w-1 h-1 rounded-full",
+                        selectedChat?._id === session._id ? 'bg-gold-500/40' : 'bg-emerald-500'
+                    )}></div>
+                    <p className={cn(
+                        "text-[8px] sm:text-[9px] font-black uppercase tracking-widest opacity-60",
+                        selectedChat?._id === session._id ? 'text-gold-500' : 'text-navy-400'
+                    )}>
+                        {session.email.split('@')[0]}
+                    </p>
+                </div>
               </div>
+              {selectedChat?._id === session._id && (
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-12 bg-gold-600 rounded-l-full shadow-[0_0_15px_rgba(184,135,33,0.5)]"></div>
+              )}
             </button>
           ))}
         </div>
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col bg-white">
+      <div className={cn(
+          "flex-1 flex flex-col bg-white",
+          !selectedChat ? "hidden lg:flex" : "flex"
+      )}>
         {selectedChat ? (
           <>
-            <div className="p-6 border-b border-navy-50 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-navy-100 rounded-2xl flex items-center justify-center text-navy-600"><User className="w-6 h-6" /></div>
-                <div>
-                  <h3 className="text-md font-black text-navy-950 uppercase italic tracking-tighter">{selectedChat.userName}</h3>
-                  <div className="flex gap-4 text-[9px] text-gray-400 font-black uppercase"><span>{selectedChat.email}</span><span>{selectedChat.phone}</span></div>
+            <div className="p-4 sm:p-8 border-b border-navy-50 flex items-center justify-between bg-white/50 backdrop-blur-md">
+              <div className="flex items-center gap-3 sm:gap-6">
+                <button 
+                    onClick={() => setSelectedChat(null)}
+                    className="lg:hidden p-2 text-navy-400 hover:text-navy-950 bg-navy-50 rounded-xl mr-2"
+                >
+                    <X className="w-5 h-5 rotate-90" />
+                </button>
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-navy-950 rounded-xl sm:rounded-2xl flex items-center justify-center text-gold-500 shadow-xl border border-white/10 flex-shrink-0">
+                    <User className="w-5 h-5 sm:w-7 sm:h-7" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-sm sm:text-xl font-black text-navy-950 uppercase italic tracking-tighter leading-none truncate">{selectedChat.userName}</h3>
+                  <div className="flex gap-2 sm:gap-4 text-[7px] sm:text-[9px] text-gray-400 font-black uppercase tracking-widest mt-1 sm:mt-2 px-1.5 sm:px-2 py-0.5 sm:py-1 bg-navy-50 rounded-lg w-fit border border-navy-100/50 truncate">
+                      <span className="truncate max-w-[80px] sm:max-w-none">{selectedChat.email}</span>
+                      <span className="w-1 h-1 rounded-full bg-gray-300 self-center hidden xs:block"></span>
+                      <span className="hidden xs:block">{selectedChat.phone}</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <button onClick={() => initiateCall('audio')} className="p-3 bg-stone-50 text-navy-950 rounded-2xl hover:bg-gold-600 hover:text-navy-950 transition-all shadow-sm border border-navy-50"><Phone className="w-4 h-4" /></button>
-                <button onClick={() => initiateCall('video')} className="p-3 bg-stone-50 text-navy-950 rounded-2xl hover:bg-gold-600 hover:text-navy-950 transition-all shadow-sm border border-navy-50"><Video className="w-4 h-4" /></button>
-                <button onClick={() => setSelectedChat(null)} className="p-3 text-gray-400 hover:text-red-500"><X className="w-4 h-4" /></button>
+              <div className="flex items-center gap-2 sm:gap-4">
+                <button onClick={() => initiateCall('audio')} className="p-3 sm:p-4 bg-[#fcfcfc] text-navy-950 rounded-xl sm:rounded-2xl hover:bg-navy-950 hover:text-gold-500 transition-all shadow-sm border border-navy-50 group">
+                    <Phone className="w-4 h-4 sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                </button>
+                <div className="w-px h-6 sm:h-8 bg-navy-50 mx-1"></div>
+                <button onClick={() => setSelectedChat(null)} className="hidden lg:block p-4 text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all"><X className="w-5 h-5" /></button>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar bg-stone-50/10">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-10 space-y-6 sm:space-y-8 custom-scrollbar bg-[#fcfcfc]/50">
               {messages.map((msg, i) => (
-                <div key={i} className={`flex flex-col ${msg.sender === 'admin' ? 'items-end' : msg.sender === 'system' ? 'items-center' : 'items-start'}`}>
-                  <div className={`max-w-[75%] p-4 rounded-2xl text-xs font-bold ${
-                    msg.sender === 'admin' ? 'bg-navy-900 text-white rounded-tr-none' : msg.sender === 'system' ? 'bg-gold-600/10 text-gold-600 text-[10px] font-black uppercase px-6 py-2 rounded-full border border-gold-600/20' : 'bg-white border border-navy-50 rounded-tl-none'
-                  }`}>
+                <div key={i} className={`flex flex-col ${msg.sender === 'admin' ? 'items-end' : msg.sender === 'system' ? 'items-center' : 'items-start'} group/msg animate-fadeIn`}>
+                  <div className={cn(
+                      "max-w-[85%] sm:max-w-[70%] p-4 sm:p-6 rounded-[1.2rem] sm:rounded-[1.5rem] text-[11px] sm:text-sm font-bold shadow-sm transition-all",
+                      msg.sender === 'admin' 
+                        ? 'bg-navy-950 text-white rounded-tr-none' 
+                        : msg.sender === 'system' 
+                        ? 'bg-gold-600/5 text-gold-600 text-[8px] sm:text-[10px] font-black uppercase px-6 sm:px-8 py-2 sm:py-3 rounded-full border border-gold-600/20' 
+                        : 'bg-white border border-navy-100 rounded-tl-none text-navy-950'
+                  )}>
                     {msg.type === 'audio' ? (
-                      <div className="flex flex-col gap-3 min-w-[200px] p-2 bg-navy-50/20 rounded-xl">
-                        <div className="flex items-center gap-2 text-gray-400">
+                      <div className="flex flex-col gap-3 sm:gap-4 min-w-[200px] sm:min-w-[240px]">
+                        <div className="flex items-center gap-3 opacity-60">
                           <Mic className="w-4 h-4" />
-                          <p className="text-[10px] font-black uppercase tracking-widest italic">Voice Transmission</p>
+                          <p className="text-[9px] font-black uppercase tracking-[0.2em] italic">Encrypted Transmission</p>
                         </div>
                         <a 
                           href={msg.content} 
                           target="_blank" 
-                          className={`flex items-center justify-center gap-3 py-4 rounded-2xl text-[10px] font-black uppercase transition-all shadow-lg active:scale-95 group ${
-                            msg.sender === 'admin' ? 'bg-gold-600 text-navy-900 hover:bg-white hover:text-gold-600' : 'bg-navy-900 text-gold-600 hover:bg-gold-600 hover:text-navy-900'
-                          }`}
+                          className={cn(
+                              "flex items-center justify-center gap-3 sm:gap-4 py-4 sm:py-5 rounded-[1rem] sm:rounded-2xl text-[9px] sm:text-[11px] font-black uppercase tracking-widest transition-all shadow-xl active:scale-95 group/play",
+                               msg.sender === 'admin' 
+                                ? 'bg-gold-600 text-navy-950 hover:bg-white hover:text-gold-600' 
+                                : 'bg-navy-950 text-gold-500 hover:bg-gold-600 hover:text-navy-950'
+                          )}
                         >
-                          <Headphones className="w-4 h-4 group-hover:animate-bounce" />
-                          Listen to Voice
+                          <Headphones className="w-4 h-4 sm:w-5 sm:h-5 group-hover/play:animate-bounce" />
+                          Initialize
                         </a>
                       </div>
                     ) : (
-                      msg.content
+                      <p className="leading-relaxed tracking-tight">{msg.content}</p>
                     )}
                   </div>
                   {msg.sender === 'admin' && (
-                    <div className="flex gap-1 mt-1">
-                        {msg.read ? <CheckCheck className="w-3 h-3 text-emerald-500" /> : <Check className="w-3 h-3 text-stone-200" />}
+                    <div className="flex items-center gap-1.5 mt-2 px-2">
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest italic">{msg.type === 'audio' ? 'TRANS' : 'ACK'}</p>
+                        {msg.read ? <CheckCheck className="w-3 h-3 text-emerald-500" /> : <Check className="w-3 h-3 text-gray-200" />}
                     </div>
                   )}
                 </div>
               ))}
               {isUserTyping && (
                 <div className="flex justify-start">
-                  <div className="bg-navy-100/50 px-4 py-2 rounded-full text-[10px] font-black text-navy-400 uppercase tracking-widest animate-pulse border border-navy-50 italic">
-                    User is typing...
+                  <div className="bg-navy-100/30 px-4 sm:px-6 py-2 sm:py-3 rounded-full text-[8px] font-black text-navy-400 uppercase tracking-[0.2em] animate-pulse border border-navy-50/50 italic flex items-center gap-2 sm:gap-3">
+                    <span className="w-1 h-1 bg-navy-400 rounded-full animate-bounce"></span>
+                    <span className="hidden sm:inline">Remote Intelligence</span> typing...
                   </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-8 border-t border-navy-50">
-              <div className="relative flex items-center gap-4">
+            <div className="p-4 sm:p-10 border-t border-navy-50 bg-white shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
+              <div className="relative flex items-center gap-3 sm:gap-6">
                 <button 
                   onClick={isRecording ? stopRecording : startRecording}
-                  className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
-                    isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-stone-50 text-navy-400 hover:text-navy-900 border border-navy-50'
-                  }`}
+                  className={cn(
+                      "w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-[1.5rem] flex items-center justify-center transition-all flex-shrink-0",
+                      isRecording 
+                        ? 'bg-rose-600 text-white animate-pulse shadow-lg rotate-45' 
+                        : 'bg-navy-50 text-navy-400 hover:bg-navy-950 hover:text-gold-500 border border-navy-50'
+                  )}
                 >
-                  {isRecording ? <Square className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                  {isRecording ? <Square className="w-5 h-5 sm:w-6 sm:h-6" /> : <Mic className="w-5 h-5 sm:w-6 sm:h-6" />}
                 </button>
-                <textarea 
-                  placeholder={isRecording ? "RECORDING..." : "TRANSMIT MESSAGE..."}
-                  rows={2}
-                  value={inputMessage}
-                  disabled={isRecording}
-                  onChange={handleTyping}
-                  onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
-                  className="flex-1 bg-stone-50 border-none rounded-3xl py-5 px-8 text-[10px] font-black uppercase outline-none focus:ring-4 ring-gold-600/10 transition-all resize-none"
-                />
-                <button onClick={sendMessage} disabled={isRecording} className="w-14 h-14 bg-navy-900 text-gold-600 rounded-2xl flex items-center justify-center shadow-2xl transition-all active:scale-95"><Send className="w-6 h-6" /></button>
+                <div className="flex-1 relative flex items-center">
+                    <textarea 
+                      placeholder={isRecording ? "RECORDING..." : "MESSAGE..."}
+                      rows={1}
+                      value={inputMessage}
+                      disabled={isRecording}
+                      onChange={handleTyping}
+                      onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
+                      className="w-full bg-[#fcfcfc] border border-navy-50 rounded-xl sm:rounded-[1.5rem] py-4 sm:py-6 px-6 sm:px-10 text-[10px] sm:text-[11px] font-black uppercase tracking-widest outline-none focus:ring-4 ring-gold-600/5 transition-all resize-none shadow-inner"
+                    />
+                    <div className="absolute right-4 sm:right-6 flex items-center gap-2 sm:gap-3">
+                        <div className="hidden sm:block w-px h-6 bg-navy-100 mx-1"></div>
+                        <button onClick={sendMessage} disabled={isRecording} className="w-10 h-10 sm:w-12 sm:h-12 bg-navy-950 text-gold-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl hover:bg-gold-600 hover:text-navy-950 transition-all active:scale-90 group/send">
+                            <Send className="w-4 h-4 sm:w-5 sm:h-5 group-hover/send:translate-x-1" />
+                        </button>
+                    </div>
+                </div>
               </div>
             </div>
           </>
         ) : (
-          <div className="h-full flex flex-col items-center justify-center opacity-30 grayscale"><MessageSquare className="w-20 h-20 text-gold-600" /><h3 className="text-xl font-black uppercase italic tracking-tighter">Support Station Active</h3></div>
+          <div className="h-full flex flex-col items-center justify-center text-center p-10 sm:p-20 opacity-40">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-navy-50 rounded-[2rem] sm:rounded-[2.5rem] flex items-center justify-center mb-6 sm:mb-8 border border-navy-100">
+                  <MessageSquare className="w-10 h-10 sm:w-12 sm:h-12 text-gold-600" />
+              </div>
+              <h3 className="text-xl sm:text-3xl font-black uppercase italic tracking-tighter text-navy-950 mb-2">Command Center standby</h3>
+              <p className="text-[8px] sm:text-[10px] font-black text-navy-400 uppercase tracking-[0.4em]">Awaiting secure node connection</p>
+          </div>
         )}
       </div>
     </div>

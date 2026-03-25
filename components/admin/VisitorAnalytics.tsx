@@ -273,97 +273,97 @@ export default function VisitorAnalytics() {
 
       {/* Live Stream Table Section */}
       <div className="bg-navy-950 rounded-[3.5rem] shadow-3xl shadow-navy-900/20 overflow-hidden border border-navy-900/20">
-        <div className="p-12 border-b border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-black">
+        <div className="p-6 sm:p-12 border-b border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-black">
            <div className="space-y-2">
               <div className="flex items-center gap-2 text-gold-400 font-black text-[10px] uppercase tracking-[0.3em]">
-                 <span className="w-3 h-3 rounded-full bg-red-500 animate-ping"></span>
+                 <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
                  System: Live Stream
               </div>
-              <h3 className="text-4xl font-black text-white tracking-tighter italic uppercase">CHRONOLOGICAL FEED</h3>
-              <p className="text-gray-400 font-medium text-sm">Sequential reconstruction of visitor events</p>
+              <h3 className="text-2xl sm:text-4xl font-black text-white tracking-tighter italic uppercase">CHRONOLOGICAL FEED</h3>
+              <p className="text-gray-400 font-medium text-[10px] sm:text-sm">Sequential reconstruction of visitor events</p>
            </div>
            
-           <div className="flex items-center gap-6">
-              <div className="flex flex-col items-end">
-                 <span className="text-[10px] text-navy-300 font-black uppercase tracking-widest">Feed Status</span>
-                 <span className="text-emerald-400 font-black text-sm flex items-center gap-2">
+           <div className="flex items-center gap-4 sm:gap-6">
+              <div className="flex flex-col items-start sm:items-end">
+                 <span className="text-[8px] sm:text-[10px] text-navy-300 font-black uppercase tracking-widest">Feed Status</span>
+                 <span className="text-emerald-400 font-black text-xs sm:text-sm flex items-center gap-2">
                     <Hash className="w-3 h-3" />
                     BUFFERING ACTIVE
                  </span>
               </div>
-              <div className="w-px h-12 bg-white/10 hidden md:block"></div>
-              <div className="hidden md:flex items-center gap-3 bg-white/5 px-6 py-4 rounded-3xl border border-white/20">
-                 <Calendar className="w-5 h-5 text-gold-400" />
-                 <span className="text-white font-bold text-xs">{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
+              <div className="w-px h-10 sm:h-12 bg-white/10 hidden md:block"></div>
+              <div className="hidden sm:flex items-center gap-3 bg-white/5 px-4 sm:px-6 py-2 sm:py-4 rounded-[1.5rem] sm:rounded-3xl border border-white/20">
+                 <Calendar className="w-4 h-4 sm:w-5 h-5 text-gold-400" />
+                 <span className="text-white font-bold text-[10px] sm:text-xs text-nowrap">{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
               </div>
            </div>
         </div>
         
-        <div className="overflow-x-auto bg-gray-50 dark:bg-navy-950">
-          <table className="w-full text-left border-collapse">
-            <thead className="text-gray-600 dark:text-navy-300 uppercase text-[10px] font-black tracking-[0.2em] h-20 border-b border-gray-200 dark:border-white/10 bg-white dark:bg-navy-950 text-navy-950 dark:text-white">
+        <div className="overflow-x-auto custom-scrollbar bg-white">
+          <table className="w-full text-left border-collapse min-w-[800px] sm:min-w-[1000px]">
+            <thead className="text-gold-500 uppercase text-[9px] sm:text-[10px] font-black tracking-[0.2em] h-16 sm:h-20 border-b border-navy-50 bg-navy-950">
               <tr>
-                <th className="px-12">Capture Time</th>
-                <th className="px-12">Explorer IP</th>
-                <th className="px-12">Entry Page</th>
-                <th className="px-12 text-center">Engagement</th>
-                <th className="px-12">Event Capture</th>
-                <th className="px-12 text-right">Action</th>
+                <th className="px-6 sm:px-12">Capture Time</th>
+                <th className="px-6 sm:px-12">Explorer IP</th>
+                <th className="px-6 sm:px-12">Entry Page</th>
+                <th className="px-6 sm:px-12 text-center">Engagement</th>
+                <th className="px-6 sm:px-12">Event Capture</th>
+                <th className="px-6 sm:px-12 text-right pr-10 sm:pr-20">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+            <tbody className="divide-y divide-navy-50">
               {data.recentActivities.map((activity) => (
-                <tr key={activity._id} className="hover:bg-white dark:hover:bg-white/[0.05] transition-all group h-28 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-transparent">
-                  <td className="px-12 whitespace-nowrap">
+                <tr key={activity._id} className="hover:bg-navy-50/50 transition-all group h-28 border-b border-navy-50 bg-white">
+                  <td className="px-6 sm:px-12 whitespace-nowrap">
                     <div className="flex items-center gap-3">
-                       <Clock className="w-4 h-4 text-blue-600" />
-                       <span className="text-sm font-black text-gray-900 dark:text-navy-100">
+                       <Clock className="w-4 h-4 text-navy-400" />
+                       <span className="text-sm font-black text-navy-950">
                          {formatDate(activity.startTime)}
                        </span>
                     </div>
                   </td>
-                  <td className="px-12 whitespace-nowrap">
-                    <div className="px-5 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl">
-                      <span className="font-mono text-[11px] font-black text-gold-700 dark:text-gold-400">
+                  <td className="px-6 sm:px-12 whitespace-nowrap">
+                    <div className="px-4 sm:px-5 py-2 sm:py-3 bg-navy-50/50 border border-navy-50 rounded-2xl">
+                      <span className="font-mono text-[10px] sm:text-[11px] font-black text-gold-600">
                         {activity.ipAddress}
                       </span>
                     </div>
                   </td>
-                  <td className="px-12 text-sm italic">
-                    <div className="max-w-[180px]">
-                       <p className="truncate font-black text-blue-700 dark:text-navy-200 bg-blue-50 dark:bg-white/5 px-4 py-2 rounded-xl text-[10px] border border-blue-100 dark:border-white/5" title={activity.path}>
+                  <td className="px-6 sm:px-12 text-sm italic">
+                    <div className="max-w-[150px] sm:max-w-[180px]">
+                       <p className="truncate font-black text-navy-950 bg-navy-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[9px] sm:text-[10px] border border-navy-50 shadow-inner" title={activity.path}>
                          {activity.path}
                        </p>
                     </div>
                   </td>
-                  <td className="px-12 text-center whitespace-nowrap">
-                     <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-black italic">
+                  <td className="px-6 sm:px-12 text-center whitespace-nowrap">
+                     <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-gold-600/10 text-gold-600 rounded-full border border-gold-600/20 text-xs font-black italic">
                         <Activity className="w-3 h-3" />
                         {activity.duration}s
                      </div>
                   </td>
-                  <td className="px-12">
+                  <td className="px-6 sm:px-12">
                     <div className="flex -space-x-3 items-center">
                        {activity.events.slice(0, 3).map((e, i) => (
-                         <div key={i} className={`w-11 h-11 rounded-full border-[3px] border-white dark:border-navy-950 flex items-center justify-center shadow-2xl transition-all group-hover:-translate-y-1 relative z-${30 - i} ${
-                            e.type === 'click' ? 'bg-gold-500 text-navy-950' : 'bg-navy-700 text-gold-500'
+                         <div key={i} className={`w-9 h-9 sm:w-11 sm:h-11 rounded-full border-[2px] sm:border-[3px] border-white flex items-center justify-center shadow-lg transition-all group-hover:-translate-y-1 relative z-${30 - i} ${
+                            e.type === 'click' ? 'bg-navy-950 text-gold-500' : 'bg-gold-600 text-navy-950'
                          }`} title={e.targetText}>
-                           {e.type === 'click' ? <MousePointer2 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                           {e.type === 'click' ? <MousePointer2 className="w-3 h-3 sm:w-4 sm:h-4" /> : <Eye className="w-3 h-3 sm:w-4 sm:h-4" />}
                          </div>
                        ))}
                        {activity.events.length > 3 && (
-                         <div className="w-11 h-11 rounded-full border-[3px] border-white dark:border-navy-950 bg-gray-200 dark:bg-navy-800 flex items-center justify-center text-[10px] font-black text-gray-600 dark:text-navy-300 relative z-0">
+                         <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-[2px] sm:border-[3px] border-white bg-navy-100 flex items-center justify-center text-[9px] sm:text-[10px] font-black text-navy-400 relative z-0">
                            +{activity.events.length - 3}
                          </div>
                        )}
                     </div>
                   </td>
-                  <td className="px-12 text-right">
+                  <td className="px-6 sm:px-12 text-right pr-10 sm:pr-20">
                     <button 
                       onClick={() => handleViewDetails(activity.ipAddress)}
-                      className="inline-flex items-center gap-4 px-8 py-4 bg-gold-600 hover:bg-gold-500 text-navy-950 font-black text-[11px] uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-gold-900/20 active:scale-95 group-active:scale-95"
+                      className="inline-flex items-center gap-2 sm:gap-4 px-5 sm:px-8 py-3 sm:py-4 bg-navy-950 hover:bg-gold-600 text-gold-500 hover:text-navy-950 font-black text-[10px] sm:text-[11px] uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl active:scale-95 group-active:scale-95"
                     >
-                      <span>Retrieve Profile</span>
+                      <span className="hidden xs:inline">PROFILE</span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </td>

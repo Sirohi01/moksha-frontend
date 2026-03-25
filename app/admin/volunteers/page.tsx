@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { PageHeader, DataTable, LoadingSpinner, ActionButton, Modal } from '@/components/admin/AdminComponents';
+import { UserCheck, RotateCcw } from 'lucide-react';
 
 interface Volunteer {
   _id: string;
@@ -266,108 +267,111 @@ export default function VolunteersManagement() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-12 animate-in fade-in duration-700 max-w-[1700px] mx-auto">
       {/* Page Header */}
       <PageHeader 
-        title="Volunteers Management" 
-        description="Manage volunteer applications and assignments"
-        icon="🤝"
+        title="Volunteer Network" 
+        description="Monitor recruitment, operational availability, and deployment of regional service units."
+        icon={<UserCheck className="w-8 h-8" />}
       >
         <ActionButton 
           onClick={fetchVolunteers}
-          variant="secondary"
-          icon="🔄"
+          icon={<RotateCcw className="w-4 h-4" />}
         >
-          Refresh
+          Sync Data
         </ActionButton>
       </PageHeader>
 
-      {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+      {/* Operations Filter Deck */}
+      <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50">
+        <div className="flex items-center gap-3 mb-8">
+            <div className="w-1.5 h-6 bg-gold-600 rounded-full"></div>
+            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-navy-950 italic">Telemetry Filters</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="space-y-3">
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">Operation Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full h-14 px-6 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 focus:outline-none focus:ring-4 focus:ring-gold-500/5 focus:border-gold-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="rejected">Rejected</option>
+              <option value="">ALL STATUS</option>
+              <option value="pending">PENDING</option>
+              <option value="approved">APPROVED</option>
+              <option value="active">ACTIVE</option>
+              <option value="inactive">INACTIVE</option>
+              <option value="rejected">REJECTED</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Registration Type</label>
+          
+          <div className="space-y-3">
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">Unit Classification</label>
             <select
               value={filters.registrationType}
               onChange={(e) => setFilters({ ...filters, registrationType: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full h-14 px-6 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 focus:outline-none focus:ring-4 focus:ring-gold-500/5 focus:border-gold-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="">All Types</option>
-              <option value="individual">Individual</option>
-              <option value="group">Group</option>
+              <option value="">ALL CLASSIFICATIONS</option>
+              <option value="individual">INDIVIDUAL</option>
+              <option value="group">GROUP UNITS</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
+
+          <div className="space-y-3">
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">City Node</label>
             <input
               type="text"
               value={filters.city}
               onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-              placeholder="Filter by city"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="SEARCH BY CITY..."
+              className="w-full h-14 px-6 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 placeholder:text-navy-200 focus:outline-none focus:ring-4 focus:ring-gold-500/5 focus:border-gold-500 transition-all"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
+
+          <div className="space-y-3">
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">Regional Sector</label>
             <input
               type="text"
               value={filters.state}
               onChange={(e) => setFilters({ ...filters, state: e.target.value })}
-              placeholder="Filter by state"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              placeholder="SEARCH BY STATE..."
+              className="w-full h-14 px-6 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 placeholder:text-navy-200 focus:outline-none focus:ring-4 focus:ring-gold-500/5 focus:border-gold-500 transition-all"
             />
           </div>
         </div>
       </div>
 
-      {/* Volunteers Table */}
+      {/* Network Inventory Table */}
       <DataTable 
         columns={columns}
         data={volunteers}
         loading={loading}
-        emptyMessage="No volunteers found"
+        emptyMessage="NO ASSETS DETECTED IN CURRENT SECTOR"
       />
 
-      {/* Pagination */}
+      {/* Navigation Controller */}
       {totalPages > 1 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-            <div className="text-sm text-gray-700">
-              Page <span className="font-medium">{currentPage}</span> of{' '}
-              <span className="font-medium">{totalPages}</span>
+        <div className="bg-white rounded-[2rem] shadow-sm border border-navy-50 px-8 py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-navy-400 italic">
+              Sector <span className="text-navy-950">{currentPage}</span> of <span className="text-navy-950">{totalPages}</span>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex gap-4">
               <ActionButton
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                variant="secondary"
                 size="sm"
               >
-                Previous
+                Previous Sector
               </ActionButton>
               <ActionButton
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                variant="secondary"
                 size="sm"
               >
-                Next
+                Next Sector
               </ActionButton>
             </div>
           </div>

@@ -20,6 +20,8 @@ interface Donation {
   createdAt: string;
 }
 
+import { CreditCard, RotateCcw, TrendingUp, BarChart3, Wallet } from 'lucide-react';
+
 export default function DonationsManagement() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,15 +75,15 @@ export default function DonationsManagement() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-emerald-100 text-emerald-800';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-amber-100 text-amber-800';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-rose-100 text-rose-800';
       case 'refunded':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-100 text-slate-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-slate-100 text-slate-800';
     }
   };
 
@@ -119,79 +121,66 @@ export default function DonationsManagement() {
   };
 
   if (loading) {
-    return <LoadingSpinner size="lg" message="Loading donations..." />;
+    return <LoadingSpinner size="lg" message="Reading ledger data..." />;
   }
 
   const columns = [
     {
       key: 'donation',
-      label: 'Donation Details',
+      label: 'TRANSACTION ID',
       render: (_value: any, donation: Donation) => (
         <div>
-          <div className="text-sm font-medium text-gray-900">{donation.donationId}</div>
-          <div className="text-sm text-gray-500">Receipt: {donation.receiptNumber}</div>
-          <div className="text-sm text-gray-500">{new Date(donation.createdAt).toLocaleDateString('en-IN')}</div>
+          <div className="text-xs font-black text-navy-950 uppercase tracking-tight">{donation.donationId}</div>
+          <div className="text-[9px] text-navy-400 font-black uppercase tracking-widest mt-1 italic">RCPT: {donation.receiptNumber}</div>
         </div>
       )
     },
     {
       key: 'donor',
-      label: 'Donor Information',
+      label: 'BENEFACTOR',
       render: (_value: any, donation: Donation) => (
         <div>
-          <div className="text-sm font-medium text-gray-900">{donation.name}</div>
-          <div className="text-sm text-gray-500">{donation.email}</div>
-          <div className="text-sm text-gray-500">{donation.phone}</div>
+          <div className="text-xs font-black text-navy-950 uppercase tracking-tight">{donation.name}</div>
+          <div className="text-[9px] text-navy-400 font-black uppercase tracking-widest mt-1">{donation.email}</div>
         </div>
       )
     },
     {
       key: 'amount',
-      label: 'Amount & Payment',
+      label: 'CAPITAL FLUX',
       render: (_value: any, donation: Donation) => (
         <div>
-          <div className="text-sm font-medium text-gray-900">₹{donation.amount.toLocaleString('en-IN')}</div>
-          <div className="text-sm text-gray-500">{donation.paymentMethod.toUpperCase()}</div>
+          <div className="text-xs font-black text-navy-950">₹{donation.amount.toLocaleString('en-IN')}</div>
+          <div className="text-[9px] text-gold-600 font-black uppercase tracking-[0.2em] mt-1 italic">{donation.paymentMethod.toUpperCase()}</div>
         </div>
       )
     },
     {
       key: 'purpose',
-      label: 'Purpose & Type',
+      label: 'ALLOCATION',
       render: (_value: any, donation: Donation) => (
         <div>
-          <div className="text-sm text-gray-900">{donation.purpose.replace('_', ' ').toUpperCase()}</div>
-          <div className="text-sm text-gray-500">{donation.donationType.replace('_', ' ').toUpperCase()}</div>
+          <div className="text-[9px] font-black text-navy-950 uppercase tracking-widest">{donation.purpose.replace('_', ' ')}</div>
+          <div className="text-[8px] text-navy-400 font-black uppercase mt-1 italic">{donation.donationType.replace('_', ' ')}</div>
         </div>
       )
     },
     {
       key: 'status',
-      label: 'Status',
+      label: 'VERIFICATION',
       render: (_value: any, donation: Donation) => (
-        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(donation.paymentStatus)}`}>
+        <span className={`inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest border ${getStatusColor(donation.paymentStatus)}`}>
           {donation.paymentStatus}
         </span>
       )
     },
     {
       key: 'actions',
-      label: 'Actions',
+      label: 'OPERATIONS',
       render: (_value: any, donation: Donation) => (
-        <div className="flex space-x-2">
-          <ActionButton
-            onClick={() => viewReceipt(donation)}
-            variant="primary"
-            size="sm"
-          >
-            View Receipt
-          </ActionButton>
-          <ActionButton
-            onClick={() => viewReceipt(donation)}
-            variant="success"
-            size="sm"
-          >
-            Print
+        <div className="flex gap-2">
+          <ActionButton onClick={() => viewReceipt(donation)} size="sm">
+            RECEIPT
           </ActionButton>
           {donation.paymentStatus === 'completed' && (
             <ActionButton
@@ -199,7 +188,7 @@ export default function DonationsManagement() {
               variant="danger"
               size="sm"
             >
-              Refund
+              REFUND
             </ActionButton>
           )}
         </div>
@@ -208,131 +197,120 @@ export default function DonationsManagement() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
+    <div className="space-y-12 animate-in fade-in duration-700 max-w-[1700px] mx-auto">
       <PageHeader 
-        title="Donations Management" 
-        description="Track and manage donations"
-        icon="💰"
+        title="Financial Ledger" 
+        description="Monitor global contributions, benefactor transactions, and resource allocations."
+        icon={<Wallet className="w-8 h-8" />}
       >
         <ActionButton 
           onClick={fetchDonations}
-          variant="secondary"
-          icon="🔄"
+          icon={<RotateCcw className="w-4 h-4" />}
         >
-          Refresh
+          Re-Sync
         </ActionButton>
       </PageHeader>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Grid Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <StatsCard
-          title="Total Amount"
+          title="Gross Accumulation"
           value={`₹${stats.totalAmount.toLocaleString('en-IN')}`}
-          icon="💰"
-          gradient="from-green-500 to-emerald-600"
-          change="+12%"
+          icon={<CreditCard />}
+          change="+12.4%"
           changeType="positive"
         />
         <StatsCard
-          title="Total Donations"
+          title="Transaction Volume"
           value={stats.totalDonations}
-          icon="📊"
-          gradient="from-blue-500 to-blue-600"
-          change="+8%"
+          icon={<BarChart3 />}
+          change="+8.2%"
           changeType="positive"
         />
         <StatsCard
-          title="Average Donation"
+          title="Mean Contribution"
           value={`₹${Math.round(stats.avgDonation).toLocaleString('en-IN')}`}
-          icon="📈"
-          gradient="from-purple-500 to-purple-600"
-          change="+5%"
+          icon={<TrendingUp />}
+          change="+5.1%"
           changeType="positive"
         />
       </div>
 
-      {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+      {/* Ledger Filters */}
+      <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Audit Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full h-14 px-8 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 focus:outline-none focus:ring-4 focus:ring-gold-500/10 focus:border-gold-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="">All Status</option>
-              <option value="completed">Completed</option>
-              <option value="pending">Pending</option>
-              <option value="failed">Failed</option>
-              <option value="refunded">Refunded</option>
+              <option value="">ALL STATUS</option>
+              <option value="completed">COMPLETED</option>
+              <option value="pending">PENDING</option>
+              <option value="failed">FAILED</option>
+              <option value="refunded">REFUNDED</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Contribution Type</label>
             <select
               value={filters.type}
               onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full h-14 px-8 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 focus:outline-none focus:ring-4 focus:ring-gold-500/10 focus:border-gold-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="">All Types</option>
-              <option value="one_time">One Time</option>
-              <option value="monthly">Monthly</option>
-              <option value="yearly">Yearly</option>
+              <option value="">ALL TYPES</option>
+              <option value="one_time">ONE TIME</option>
+              <option value="monthly">MONTHLY</option>
+              <option value="yearly">YEARLY</option>
             </select>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Purpose</label>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Resource Endpoint</label>
             <select
               value={filters.purpose}
               onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+              className="w-full h-14 px-8 bg-navy-50/50 border border-navy-100 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 focus:outline-none focus:ring-4 focus:ring-gold-500/10 focus:border-gold-500 transition-all appearance-none cursor-pointer"
             >
-              <option value="">All Purposes</option>
-              <option value="general">General</option>
-              <option value="cremation_services">Cremation Services</option>
-              <option value="volunteer_support">Volunteer Support</option>
-              <option value="infrastructure">Infrastructure</option>
-              <option value="emergency_fund">Emergency Fund</option>
+              <option value="">ALL ENDPOINTS</option>
+              <option value="general">GENERAL</option>
+              <option value="cremation_services">CREMATION SERVICES</option>
+              <option value="volunteer_support">VOLUNTEER SUPPORT</option>
+              <option value="infrastructure">INFRASTRUCTURE</option>
+              <option value="emergency_fund">EMERGENCY FUND</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Donations Table */}
       <DataTable 
         columns={columns}
         data={donations}
         loading={loading}
-        emptyMessage="No donations found"
+        emptyMessage="NO FINANCIAL DATA DETECTED IN CURRENT SECTOR"
       />
 
-      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-            <div className="text-sm text-gray-700">
-              Page <span className="font-medium">{currentPage}</span> of{' '}
-              <span className="font-medium">{totalPages}</span>
+        <div className="bg-white rounded-[2rem] shadow-sm border border-navy-50 px-8 py-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-navy-400 italic">
+              Ledger Page <span className="text-navy-950">{currentPage}</span> of <span className="text-navy-950">{totalPages}</span>
             </div>
-            <div className="flex space-x-2">
+            <div className="flex gap-4">
               <ActionButton
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                variant="secondary"
                 size="sm"
               >
-                Previous
+                Previous Page
               </ActionButton>
               <ActionButton
                 onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
-                variant="secondary"
                 size="sm"
               >
-                Next
+                Next Page
               </ActionButton>
             </div>
           </div>
