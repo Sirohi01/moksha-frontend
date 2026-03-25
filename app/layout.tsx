@@ -8,6 +8,11 @@ export const metadata: Metadata = {
     default: "Moksha Seva — Dignity in Departure",
     template: "%s | Moksha Seva",
   },
+  icons: {
+    icon: "/icon.png",
+    apple: "/icons/icon-192x192.png",
+  },
+  manifest: "/manifest.json",
   description:
     "Moksha Seva provides dignified cremation services for unclaimed bodies, homeless individuals, and poor families across India. Transparency, compassion, and service.",
   keywords: [
@@ -83,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <link rel="icon" href="/icon.png?v=3" />
         <meta name="theme-color" content="#8B4513" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />

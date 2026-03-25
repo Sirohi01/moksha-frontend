@@ -1,0 +1,325 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { analyticsAPI } from '@/lib/api';
+import { 
+  Users, 
+  Activity, 
+  MousePointer2, 
+  Eye, 
+  Clock, 
+  ChevronRight, 
+  CircleDot, 
+  ArrowUpRight,
+  Monitor,
+  Calendar,
+  Search,
+  Hash,
+  Layout,
+  Globe,
+  Zap
+} from 'lucide-react';
+
+const formatDate = (date: string | Date, options?: Intl.DateTimeFormatOptions) => {
+  return new Intl.DateTimeFormat('en-IN', options || {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  }).format(new Date(date));
+};
+
+interface VisitorActivity {
+  _id: string;
+  sessionId: string;
+  ipAddress: string;
+  path: string;
+  duration: number;
+  startTime: string;
+  events: Array<{
+    type: string;
+    targetText: string;
+    timestamp: string;
+  }>;
+  location: {
+    city: string;
+    country: string;
+  };
+}
+
+interface AnalyticsData {
+  stats: {
+    totalViews: number;
+    uniqueIPs: number;
+    uniqueSessions: number;
+  };
+  recentActivities: VisitorActivity[];
+  popularPages: Array<{ _id: string; count: number }>;
+  topButtons: Array<{ _id: string; count: number }>;
+  totalVisitors: number;
+  commonPaths: Array<{ _id: string; count: number }>;
+}
+
+export default function VisitorAnalytics() {
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [timeRange, setTimeRange] = useState('24h');
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 30000); 
+    return () => clearInterval(interval);
+  }, [timeRange]);
+
+  const fetchData = async () => {
+    try {
+      const response = await analyticsAPI.getVisitorStats(timeRange);
+      setData(response.data);
+    } catch (error) {
+      console.error('Failed to fetch visitor analytics:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewDetails = (ip: string) => {
+    router.push(`/admin/visitor-analytics/${ip}`);
+  };
+
+  if (loading || !data) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-gold-200 border-t-gold-500 rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+             <Activity className="w-6 h-6 text-gold-600 animate-pulse" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Dashboard Control Bar */}
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6 p-6 bg-white dark:bg-navy-900 rounded-[2rem] border border-gray-100 dark:border-white/5 shadow-xl">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 bg-gold-500/10 rounded-2xl flex items-center justify-center text-gold-600 border border-gold-500/20">
+              <Zap className="w-6 h-6" />
+           </div>
+           <div>
+              <h3 className="text-lg font-black text-navy-950 dark:text-white tracking-tight leading-none mb-1">Live Feed Pipeline</h3>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Global Interaction Metrics</p>
+           </div>
+        </div>
+
+        <div className="flex items-center gap-3 p-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-200/50 dark:border-white/10 shadow-inner">
+           {['24h', '7d', '30d'].map((range) => (
+             <button
+               key={range}
+               onClick={() => setTimeRange(range)}
+               className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 ${
+                 timeRange === range 
+                   ? 'bg-navy-950 dark:bg-gold-500 text-white dark:text-navy-950 shadow-xl scale-105' 
+                   : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+               }`}
+             >
+               Last {range}
+             </button>
+           ))}
+        </div>
+      </div>
+
+
+      {/* Main Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          { label: 'Total Page Views', value: data.stats.totalViews, icon: Eye, color: 'blue', detail: 'Gross site traffic' },
+          { label: 'Unique Explorers', value: data.stats.uniqueIPs, icon: Users, color: 'emerald', detail: 'Distinct IP footprints' },
+          { label: 'Active Sessions', value: data.stats.uniqueSessions, icon: Activity, color: 'gold', detail: 'Live engagement flows' },
+        ].map((stat, i) => (
+          <div key={i} className="group relative bg-white dark:bg-gray-800 p-8 rounded-[2.5rem] shadow-2xl shadow-gray-200/50 dark:shadow-none border border-white dark:border-gray-700 hover:border-gold-500/50 transition-all duration-500 overflow-hidden text-navy-950 dark:text-white">
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-${stat.color === 'gold' ? 'yellow-50' : stat.color + '-50'} dark:bg-${stat.color === 'gold' ? 'yellow-900/10' : stat.color + '-900/10'} rounded-full blur-3xl -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-700`}></div>
+            <div className="relative">
+              <div className={`w-14 h-14 bg-${stat.color === 'gold' ? 'yellow-50' : stat.color + '-50'} dark:bg-${stat.color === 'gold' ? 'yellow-900/40' : stat.color + '-900/40'} rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-${stat.color === 'gold' ? 'yellow-100' : stat.color + '-100'} dark:border-${stat.color === 'gold' ? 'yellow-800' : stat.color + '-800'}/30`}>
+                <stat.icon className={`w-7 h-7 text-${stat.color === 'gold' ? 'yellow-600' : stat.color + '-600'}`} />
+              </div>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">{stat.label}</p>
+              <div className="flex items-baseline gap-2 mt-2">
+                <p className="text-5xl font-black text-navy-950 dark:text-white font-mono tracking-tighter">{stat.value.toLocaleString()}</p>
+                <div className={`w-2 h-2 rounded-full bg-${stat.color === 'gold' ? 'yellow-500' : stat.color + '-500'} animate-pulse`}></div>
+              </div>
+              <p className="text-xs text-gray-400 mt-2 font-medium">{stat.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Secondary Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        {/* Popular Pages Section */}
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-[3rem] shadow-3xl shadow-gray-200/50 dark:shadow-none border border-white dark:border-gray-700">
+          <div className="flex items-center gap-3 mb-8">
+             <div className="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center">
+                <Layout className="w-6 h-6 text-blue-600" />
+             </div>
+             <div>
+                <h4 className="text-sm font-black text-navy-950 dark:text-white uppercase tracking-widest">Top Target Vectors</h4>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Most engaged destinations</p>
+             </div>
+          </div>
+          <div className="space-y-4">
+            {data.popularPages?.map((page, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 group">
+                <span className="text-xs font-black text-gray-900 dark:text-navy-100 italic truncate max-w-[150px]">{page._id}</span>
+                <div className="flex items-center gap-3">
+                   <div className="h-1.5 w-24 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden hidden md:block">
+                      <div 
+                        className="h-full bg-blue-600 rounded-full" 
+                        style={{ width: `${Math.min((page.count / (data.popularPages?.[0]?.count || 1)) * 100, 100)}%` }}
+                      ></div>
+                   </div>
+                   <span className="font-black text-blue-600 dark:text-blue-400 px-5 py-2 bg-blue-100/50 dark:bg-blue-900/30 rounded-2xl text-[10px] whitespace-nowrap border border-blue-100 dark:border-blue-800/30">
+                     {page.count} VISITS
+                   </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Interaction Hotspots Section */}
+        <div className="bg-white dark:bg-gray-800 p-8 rounded-[3rem] shadow-3xl shadow-gray-200/50 dark:shadow-none border border-white dark:border-gray-700">
+          <div className="flex items-center gap-3 mb-8">
+             <div className="w-12 h-12 bg-gold-50 dark:bg-gold-900/20 rounded-2xl flex items-center justify-center">
+                <MousePointer2 className="w-6 h-6 text-gold-600" />
+             </div>
+             <div>
+                <h4 className="text-sm font-black text-navy-950 dark:text-white uppercase tracking-widest">Interaction Hotspots</h4>
+                <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Conversion triggers</p>
+             </div>
+          </div>
+          <div className="space-y-4">
+            {data.topButtons?.map((btn, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 group">
+                <div className="flex items-center gap-3 truncate">
+                   <div className="w-8 h-8 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center text-gold-600 border border-gray-100 dark:border-gray-700 shadow-sm">
+                      <Activity className="w-4 h-4" />
+                   </div>
+                   <span className="text-xs font-black text-gray-900 dark:text-navy-100 truncate italic" title={btn._id}>{btn._id || 'Primary CTA'}</span>
+                </div>
+                <span className="font-black text-gold-700 dark:text-gold-400 px-5 py-2 bg-gold-100/50 dark:bg-gold-900/30 rounded-2xl text-[10px] whitespace-nowrap border border-gold-100 dark:border-gold-800/30">
+                  {btn.count} INTERACTS
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Live Stream Table Section */}
+      <div className="bg-navy-950 rounded-[3.5rem] shadow-3xl shadow-navy-900/20 overflow-hidden border border-navy-900/20">
+        <div className="p-12 border-b border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-black">
+           <div className="space-y-2">
+              <div className="flex items-center gap-2 text-gold-400 font-black text-[10px] uppercase tracking-[0.3em]">
+                 <span className="w-3 h-3 rounded-full bg-red-500 animate-ping"></span>
+                 System: Live Stream
+              </div>
+              <h3 className="text-4xl font-black text-white tracking-tighter italic uppercase">CHRONOLOGICAL FEED</h3>
+              <p className="text-gray-400 font-medium text-sm">Sequential reconstruction of visitor events</p>
+           </div>
+           
+           <div className="flex items-center gap-6">
+              <div className="flex flex-col items-end">
+                 <span className="text-[10px] text-navy-300 font-black uppercase tracking-widest">Feed Status</span>
+                 <span className="text-emerald-400 font-black text-sm flex items-center gap-2">
+                    <Hash className="w-3 h-3" />
+                    BUFFERING ACTIVE
+                 </span>
+              </div>
+              <div className="w-px h-12 bg-white/10 hidden md:block"></div>
+              <div className="hidden md:flex items-center gap-3 bg-white/5 px-6 py-4 rounded-3xl border border-white/20">
+                 <Calendar className="w-5 h-5 text-gold-400" />
+                 <span className="text-white font-bold text-xs">{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</span>
+              </div>
+           </div>
+        </div>
+        
+        <div className="overflow-x-auto bg-gray-50 dark:bg-navy-950">
+          <table className="w-full text-left border-collapse">
+            <thead className="text-gray-600 dark:text-navy-300 uppercase text-[10px] font-black tracking-[0.2em] h-20 border-b border-gray-200 dark:border-white/10 bg-white dark:bg-navy-950 text-navy-950 dark:text-white">
+              <tr>
+                <th className="px-12">Capture Time</th>
+                <th className="px-12">Explorer IP</th>
+                <th className="px-12">Entry Page</th>
+                <th className="px-12 text-center">Engagement</th>
+                <th className="px-12">Event Capture</th>
+                <th className="px-12 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+              {data.recentActivities.map((activity) => (
+                <tr key={activity._id} className="hover:bg-white dark:hover:bg-white/[0.05] transition-all group h-28 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-transparent">
+                  <td className="px-12 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                       <Clock className="w-4 h-4 text-blue-600" />
+                       <span className="text-sm font-black text-gray-900 dark:text-navy-100">
+                         {formatDate(activity.startTime)}
+                       </span>
+                    </div>
+                  </td>
+                  <td className="px-12 whitespace-nowrap">
+                    <div className="px-5 py-3 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl">
+                      <span className="font-mono text-[11px] font-black text-gold-700 dark:text-gold-400">
+                        {activity.ipAddress}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-12 text-sm italic">
+                    <div className="max-w-[180px]">
+                       <p className="truncate font-black text-blue-700 dark:text-navy-200 bg-blue-50 dark:bg-white/5 px-4 py-2 rounded-xl text-[10px] border border-blue-100 dark:border-white/5" title={activity.path}>
+                         {activity.path}
+                       </p>
+                    </div>
+                  </td>
+                  <td className="px-12 text-center whitespace-nowrap">
+                     <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full border border-emerald-500/20 text-xs font-black italic">
+                        <Activity className="w-3 h-3" />
+                        {activity.duration}s
+                     </div>
+                  </td>
+                  <td className="px-12">
+                    <div className="flex -space-x-3 items-center">
+                       {activity.events.slice(0, 3).map((e, i) => (
+                         <div key={i} className={`w-11 h-11 rounded-full border-[3px] border-white dark:border-navy-950 flex items-center justify-center shadow-2xl transition-all group-hover:-translate-y-1 relative z-${30 - i} ${
+                            e.type === 'click' ? 'bg-gold-500 text-navy-950' : 'bg-navy-700 text-gold-500'
+                         }`} title={e.targetText}>
+                           {e.type === 'click' ? <MousePointer2 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                         </div>
+                       ))}
+                       {activity.events.length > 3 && (
+                         <div className="w-11 h-11 rounded-full border-[3px] border-white dark:border-navy-950 bg-gray-200 dark:bg-navy-800 flex items-center justify-center text-[10px] font-black text-gray-600 dark:text-navy-300 relative z-0">
+                           +{activity.events.length - 3}
+                         </div>
+                       )}
+                    </div>
+                  </td>
+                  <td className="px-12 text-right">
+                    <button 
+                      onClick={() => handleViewDetails(activity.ipAddress)}
+                      className="inline-flex items-center gap-4 px-8 py-4 bg-gold-600 hover:bg-gold-500 text-navy-950 font-black text-[11px] uppercase tracking-[0.2em] rounded-2xl transition-all shadow-xl shadow-gold-900/20 active:scale-95 group-active:scale-95"
+                    >
+                      <span>Retrieve Profile</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}

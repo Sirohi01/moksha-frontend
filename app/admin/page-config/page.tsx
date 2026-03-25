@@ -49,7 +49,7 @@ export default function PageConfigManagement() {
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
       
       // Fetch all page configurations
-      const pages = ['homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach', 'board', 'services', 'report', 'impact', 'stories', 'remembrance', 'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate', 'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact', 'press', 'documentaries', 'layout'];
+      const pages = ['homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach', 'board', 'services', 'report', 'impact', 'stories', 'remembrance', 'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate', 'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact', 'press', 'documentaries', 'layout', 'blog', 'compliance'];
       const configPromises = pages.map(async (pageName) => {
         try {
           const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`);
@@ -152,6 +152,8 @@ export default function PageConfigManagement() {
       case 'press': return <FileText className="w-5 h-5" />;
       case 'documentaries': return <Globe className="w-5 h-5" />;
       case 'layout': return <Settings className="w-5 h-5" />;
+      case 'blog': return <FileText className="w-5 h-5" />;
+      case 'compliance': return <Shield className="w-5 h-5" />;
       default: return <Settings className="w-5 h-5" />;
     }
   };
@@ -182,6 +184,8 @@ export default function PageConfigManagement() {
       case 'press': return 'Press';
       case 'documentaries': return 'Documentaries';
       case 'layout': return 'Layout Components';
+      case 'blog': return 'Blog Page';
+      case 'compliance': return 'Compliance Page';
       default: return pageName.charAt(0).toUpperCase() + pageName.slice(1);
     }
   };

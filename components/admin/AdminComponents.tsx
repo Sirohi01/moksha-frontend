@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 interface PageHeaderProps {
   title: string;
   description?: string;
-  icon?: string;
+  icon?: ReactNode;
   children?: ReactNode;
 }
 
@@ -16,8 +16,8 @@ export function PageHeader({ title, description, icon, children }: PageHeaderPro
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center space-x-4 mb-4 sm:mb-0">
           {icon && (
-            <div className="w-12 h-12 bg-gradient-to-r from-teal-400 to-blue-500 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl">{icon}</span>
+            <div className="w-14 h-14 bg-gradient-to-br from-navy-900 to-navy-700 rounded-2xl flex items-center justify-center shadow-xl border border-white/10 text-white">
+              {typeof icon === 'string' ? <span className="text-2xl">{icon}</span> : icon}
             </div>
           )}
           <div>
@@ -41,7 +41,7 @@ export function PageHeader({ title, description, icon, children }: PageHeaderPro
 interface StatsCardProps {
   title: string;
   value: string | number;
-  icon: string;
+  icon: ReactNode;
   gradient: string;
   change?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
@@ -50,9 +50,9 @@ interface StatsCardProps {
 export function StatsCard({ title, value, icon, gradient, change, changeType = 'positive' }: StatsCardProps) {
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300">
-      <div className="flex items-center justify-between mb-4">
-        <div className={`w-12 h-12 bg-gradient-to-r ${gradient} rounded-xl flex items-center justify-center shadow-lg`}>
-          <span className="text-white text-xl">{icon}</span>
+      <div className="flex items-center justify-between mb-6">
+        <div className={`w-14 h-14 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-xl border border-white/20 text-white`}>
+          {typeof icon === 'string' ? <span className="text-2xl">{icon}</span> : icon}
         </div>
         {change && (
           <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
@@ -80,7 +80,7 @@ interface ActionButtonProps {
   children: ReactNode;
   disabled?: boolean;
   loading?: boolean;
-  icon?: string;
+  icon?: ReactNode;
 }
 
 export function ActionButton({ 

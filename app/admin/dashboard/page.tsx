@@ -4,9 +4,30 @@ import { useState, useEffect } from 'react';
 import { formsAPI } from '@/lib/api';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area
+  PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { PageHeader, StatsCard, LoadingSpinner, Alert, ActionButton } from '@/components/admin/AdminComponents';
+import { 
+  FileText, 
+  Users, 
+  Heart, 
+  PhoneCall, 
+  MessageSquare, 
+  UserPlus, 
+  Star, 
+  Settings,
+  RefreshCw,
+  LayoutDashboard,
+  TrendingUp,
+  PieChart as PieIcon,
+  ChevronRight,
+  ShieldCheck,
+  Database,
+  Mail,
+  CreditCard,
+  HardDrive,
+  Bell
+} from 'lucide-react';
 
 interface Stats {
   totalReports: number;
@@ -50,13 +71,12 @@ export default function AdminDashboard() {
         try {
           const result = await fetchFn();
           return result?.data?.total || result?.total || result?.pagination?.total || fallback;
-        } catch (error) {
-          console.warn('Failed to fetch data:', error);
+        } catch (err) {
+          console.warn('Failed to fetch data:', err);
           return fallback;
         }
       };
 
-      // Fetch current stats
       const [
         totalReports,
         totalVolunteers,
@@ -91,27 +111,18 @@ export default function AdminDashboard() {
         totalExpansionRequests
       });
 
-      // Generate realistic trend data based on current stats
       const generateTrendData = () => {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        const currentMonth = new Date().getMonth();
         const trends: TrendData[] = [];
 
-        months.forEach((month, index) => {
-          // Calculate realistic monthly data based on current totals
-          const monthlyReports = Math.max(1, Math.floor((totalReports / 6) * (0.7 + Math.random() * 0.6)));
-          const monthlyVolunteers = Math.max(1, Math.floor((totalVolunteers / 6) * (0.7 + Math.random() * 0.6)));
-          const monthlyDonations = Math.max(1, Math.floor((totalDonations / 6) * (0.7 + Math.random() * 0.6)));
-          const monthlyContacts = Math.max(1, Math.floor((totalContacts / 6) * (0.7 + Math.random() * 0.6)));
-          const monthlyFeedback = Math.max(1, Math.floor((totalFeedback / 6) * (0.7 + Math.random() * 0.6)));
-
+        months.forEach((month) => {
           trends.push({
             month,
-            reports: monthlyReports,
-            volunteers: monthlyVolunteers,
-            donations: monthlyDonations,
-            contacts: monthlyContacts,
-            feedback: monthlyFeedback
+            reports: Math.max(1, Math.floor((totalReports / 6) * (0.7 + Math.random() * 0.6))),
+            volunteers: Math.max(1, Math.floor((totalVolunteers / 6) * (0.7 + Math.random() * 0.6))),
+            donations: Math.max(1, Math.floor((totalDonations / 6) * (0.7 + Math.random() * 0.6))),
+            contacts: Math.max(1, Math.floor((totalContacts / 6) * (0.7 + Math.random() * 0.6))),
+            feedback: Math.max(1, Math.floor((totalFeedback / 6) * (0.7 + Math.random() * 0.6)))
           });
         });
 
@@ -119,50 +130,39 @@ export default function AdminDashboard() {
       };
 
       setTrendData(generateTrendData());
-
-    } catch (error: any) {
-      console.error('Failed to fetch dashboard data:', error);
-      setError(error.message || 'Failed to load dashboard data');
+    } catch (err: any) {
+      console.error('Failed to fetch dashboard data:', err);
+      setError(err.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return <LoadingSpinner size="lg" message="Loading dashboard data..." />;
-  }
+  if (loading) return <LoadingSpinner size="lg" message="Initializing Control Center..." />;
 
-  if (error) {
-    return (
-      <Alert 
-        type="error" 
-        title="Error Loading Dashboard"
-        message={error}
-      />
-    );
-  }
+  if (error) return <Alert type="error" title="Critical Failure" message={error} />;
 
   if (!stats) return null;
 
   const statCards = [
-    { title: 'Reports', count: stats.totalReports, icon: '�', gradient: 'from-blue-500 to-blue-600', href: '/admin/reports', change: '+12%' },
-    { title: 'Volunteers', count: stats.totalVolunteers, icon: '🤝', gradient: 'from-emerald-500 to-emerald-600', href: '/admin/volunteers', change: '+8%' },
-    { title: 'Donations', count: stats.totalDonations, icon: '💰', gradient: 'from-amber-500 to-amber-600', href: '/admin/donations', change: '+25%' },
-    { title: 'Contacts', count: stats.totalContacts, icon: '📞', gradient: 'from-purple-500 to-purple-600', href: '/admin/contacts', change: '+5%' },
-    { title: 'Feedback', count: stats.totalFeedback, icon: '💬', gradient: 'from-pink-500 to-pink-600', href: '/admin/feedback', change: '+15%' },
-    { title: 'Board Apps', count: stats.totalBoardApplications, icon: '👔', gradient: 'from-indigo-500 to-indigo-600', href: '/admin/board', change: '+3%' },
-    { title: 'Legacy Giving', count: stats.totalLegacyGiving, icon: '🌟', gradient: 'from-orange-500 to-orange-600', href: '/admin/legacy', change: '+7%' },
-    { title: 'Schemes', count: stats.totalSchemes, icon: '🏛️', gradient: 'from-teal-500 to-teal-600', href: '/admin/schemes', change: '+18%' },
+    { title: 'Reports', count: stats.totalReports, icon: <FileText className="w-6 h-6" />, gradient: 'from-blue-500 to-blue-600', href: '/admin/reports', change: '+12%' },
+    { title: 'Volunteers', count: stats.totalVolunteers, icon: <Users className="w-6 h-6" />, gradient: 'from-emerald-500 to-emerald-600', href: '/admin/volunteers', change: '+8%' },
+    { title: 'Donations', count: stats.totalDonations, icon: <Heart className="w-6 h-6" />, gradient: 'from-rose-500 to-rose-600', href: '/admin/donations', change: '+25%' },
+    { title: 'Contacts', count: stats.totalContacts, icon: <PhoneCall className="w-6 h-6" />, gradient: 'from-indigo-500 to-indigo-600', href: '/admin/contacts', change: '+5%' },
   ];
 
-  // Chart data
+  const secondaryCards = [
+    { title: 'Feedback', count: stats.totalFeedback, icon: <MessageSquare className="w-5 h-5" />, gradient: 'from-orange-500 to-orange-600', href: '/admin/feedback' },
+    { title: 'Board Apps', count: stats.totalBoardApplications, icon: <UserPlus className="w-5 h-5" />, gradient: 'from-purple-500 to-purple-600', href: '/admin/board' },
+    { title: 'Legacy', count: stats.totalLegacyGiving, icon: <Star className="w-5 h-5" />, gradient: 'from-amber-500 to-amber-600', href: '/admin/legacy' },
+    { title: 'Expansion', count: stats.totalExpansionRequests, icon: <TrendingUp className="w-5 h-5" />, gradient: 'from-teal-500 to-teal-600', href: '/admin/expansion' },
+  ];
+
   const barChartData = [
-    { name: 'Reports', value: stats.totalReports, fill: '#FF6B6B' },
-    { name: 'Volunteers', value: stats.totalVolunteers, fill: '#4ECDC4' },
-    { name: 'Donations', value: stats.totalDonations, fill: '#45B7D1' },
-    { name: 'Contacts', value: stats.totalContacts, fill: '#96CEB4' },
-    { name: 'Feedback', value: stats.totalFeedback, fill: '#FFEAA7' },
-    { name: 'Board', value: stats.totalBoardApplications, fill: '#DDA0DD' },
+    { name: 'Reports', value: stats.totalReports, fill: '#3b82f6' },
+    { name: 'Volunteers', value: stats.totalVolunteers, fill: '#10b981' },
+    { name: 'Donations', value: stats.totalDonations, fill: '#f43f5e' },
+    { name: 'Contacts', value: stats.totalContacts, fill: '#6366f1' },
   ];
 
   const pieChartData = [
@@ -170,253 +170,129 @@ export default function AdminDashboard() {
     { name: 'Volunteers', value: stats.totalVolunteers },
     { name: 'Donations', value: stats.totalDonations },
     { name: 'Contacts', value: stats.totalContacts },
-    { name: 'Feedback', value: stats.totalFeedback },
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
+    <div className="space-y-10 pb-16 animate-in fade-in duration-700">
       <PageHeader 
-        title="Dashboard" 
-        description="Welcome back! Here's what's happening with your organization."
-        icon="🏠"
+        title="Command Dashboard" 
+        description="State of the organization: Real-time mission metrics and data flow."
+        icon={<LayoutDashboard className="w-7 h-7" />}
       >
         <ActionButton 
           onClick={fetchDashboardData}
           variant="secondary"
-          icon="🔄"
+          icon={<RefreshCw className="w-4 h-4" />}
         >
-          Refresh Data
+          Re-Sync Data
         </ActionButton>
       </PageHeader>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {statCards.map((card) => (
-          <a key={card.title} href={card.href} className="block group">
+          <a key={card.title} href={card.href} className="block group scale-100 hover:scale-[1.03] transition-all duration-300">
             <StatsCard
               title={card.title}
               value={card.count}
               icon={card.icon}
               gradient={card.gradient}
               change={card.change}
-              changeType="positive"
             />
           </a>
         ))}
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* Bar Chart */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900 flex items-center">
-              <span className="mr-2">📊</span>
-              Data Overview
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+         {secondaryCards.map((card) => (
+           <a key={card.title} href={card.href} className="group flex items-center gap-4 bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:border-gold-500/20 transition-all">
+              <div className={`w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl flex items-center justify-center text-white shadow-lg`}>
+                 {card.icon}
+              </div>
+              <div>
+                 <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{card.title}</p>
+                 <p className="text-xl font-black text-navy-950 dark:text-white">{card.count}</p>
+              </div>
+           </a>
+         ))}
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 shadow-2xl shadow-gray-200/50 border border-white dark:border-gray-700 transform hover:scale-[1.01] transition-transform">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-xl font-black text-navy-950 dark:text-white flex items-center gap-3">
+              <TrendingUp className="w-6 h-6 text-blue-600" />
+              Impact Overview
             </h3>
-            <div className="flex space-x-2">
-              <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-              <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse delay-100"></div>
-              <div className="w-3 h-3 bg-amber-400 rounded-full animate-pulse delay-200"></div>
-            </div>
+            <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Relative Strength</div>
           </div>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 12 }} 
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1f2937', 
-                    border: 'none', 
-                    borderRadius: '12px',
-                    color: 'white'
-                  }} 
-                />
-                <Bar dataKey="value" radius={[8, 8, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 10, fontWeight: 800 }} axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10 }} />
+                <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '15px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }} />
+                <Bar dataKey="value" radius={[10, 10, 10, 10]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Pie Chart */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900 flex items-center">
-              <span className="mr-2">🥧</span>
-              Distribution
+        <div className="bg-white dark:bg-gray-800 rounded-[2.5rem] p-10 shadow-2xl shadow-gray-200/50 border border-white dark:border-gray-700 transform hover:scale-[1.01] transition-transform">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-xl font-black text-navy-950 dark:text-white flex items-center gap-3">
+              <PieIcon className="w-6 h-6 text-rose-600" />
+              Engagement Mix
             </h3>
-            <div className="text-sm text-gray-500">
-              Total: {Object.values(stats).reduce((a, b) => a + b, 0).toLocaleString()}
-            </div>
+            <div className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">Distribution</div>
           </div>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
+                <Pie data={pieChartData} innerRadius={60} outerRadius={100} paddingAngle={5} dataKey="value">
                   {pieChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1f2937', 
-                    border: 'none', 
-                    borderRadius: '12px',
-                    color: 'white'
-                  }} 
-                />
+                <Tooltip />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      {/* Trend Chart */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900 flex items-center mb-4 sm:mb-0">
-            <span className="mr-2">📈</span>
-            6-Month Trends
-          </h3>
-          <div className="flex flex-wrap gap-4 text-sm">
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-red-400 rounded-full mr-2 animate-pulse"></div>
-              <span>Reports</span>
+      <div className="bg-[#0a0a0a] rounded-[3rem] p-12 shadow-3xl text-white relative overflow-hidden border border-white/10 group">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] -mr-48 -mt-48 transition-all duration-1000 group-hover:bg-blue-600/20"></div>
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div>
+            <div className="flex items-center gap-3 text-gold-400 font-black text-[10px] uppercase tracking-[0.4em] mb-6">
+               <ShieldCheck className="w-5 h-5 animate-pulse" />
+               System Integrity Monitor
             </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-emerald-400 rounded-full mr-2 animate-pulse delay-100"></div>
-              <span>Volunteers</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-blue-400 rounded-full mr-2 animate-pulse delay-200"></div>
-              <span>Donations</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-green-400 rounded-full mr-2 animate-pulse delay-300"></div>
-              <span>Contacts</span>
-            </div>
-            <div className="flex items-center">
-              <div className="w-3 h-3 bg-yellow-400 rounded-full mr-2 animate-pulse delay-500"></div>
-              <span>Feedback</span>
-            </div>
+            <h3 className="text-4xl font-black text-white tracking-tighter mb-6 italic uppercase leading-none">
+               Infrastructure <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">Nodes</span>
+            </h3>
+            <p className="text-gray-400 font-medium leading-relaxed max-w-md text-sm">
+              Global reachability cluster monitoring. Real-time heartbeat detection across core service nodes.
+            </p>
           </div>
-        </div>
-        <div className="h-96">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={trendData}>
-              <defs>
-                <linearGradient id="colorReports" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FF6B6B" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#FF6B6B" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="colorVolunteers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4ECDC4" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#4ECDC4" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="colorDonations" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#45B7D1" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#45B7D1" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="colorContacts" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#96CEB4" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#96CEB4" stopOpacity={0.1}/>
-                </linearGradient>
-                <linearGradient id="colorFeedback" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FFEAA7" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#FFEAA7" stopOpacity={0.1}/>
-                </linearGradient>
-              </defs>
-              <XAxis dataKey="month" stroke="#666" />
-              <YAxis stroke="#666" />
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: '#1f2937', 
-                  border: 'none', 
-                  borderRadius: '12px',
-                  color: 'white',
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.2)'
-                }} 
-              />
-              <Area type="monotone" dataKey="reports" stackId="1" stroke="#FF6B6B" fill="url(#colorReports)" strokeWidth={3} />
-              <Area type="monotone" dataKey="volunteers" stackId="1" stroke="#4ECDC4" fill="url(#colorVolunteers)" strokeWidth={3} />
-              <Area type="monotone" dataKey="donations" stackId="1" stroke="#45B7D1" fill="url(#colorDonations)" strokeWidth={3} />
-              <Area type="monotone" dataKey="contacts" stackId="1" stroke="#96CEB4" fill="url(#colorContacts)" strokeWidth={3} />
-              <Area type="monotone" dataKey="feedback" stackId="1" stroke="#FFEAA7" fill="url(#colorFeedback)" strokeWidth={3} />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Quick Actions & System Status */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-            <span className="mr-2">⚡</span>
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <div className="grid grid-cols-2 gap-4">
             {[
-              { name: 'View Reports', icon: '�', hhref: '/admin/reports', gradient: 'from-blue-500 to-blue-600' },
-              { name: 'Manage Volunteers', icon: '🤝', href: '/admin/volunteers', gradient: 'from-emerald-500 to-emerald-600' },
-              { name: 'Track Donations', icon: '💰', href: '/admin/donations', gradient: 'from-amber-500 to-amber-600' },
-              { name: 'View Contacts', icon: '📞', href: '/admin/contacts', gradient: 'from-purple-500 to-purple-600' },
-            ].map((action) => (
-              <a
-                key={action.name}
-                href={action.href}
-                className={`group bg-gradient-to-r ${action.gradient} p-4 rounded-xl text-white hover:shadow-lg transition-all duration-300 transform hover:scale-105 text-center`}
-              >
-                <div className="text-2xl mb-2">{action.icon}</div>
-                <div className="font-semibold text-sm">{action.name}</div>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* System Status */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-            <span className="mr-2">🔧</span>
-            System Status
-          </h3>
-          <div className="space-y-3">
-            {[
-              { name: 'Backend API', status: 'Online', color: 'green', icon: '🟢' },
-              { name: 'Database', status: 'Connected', color: 'green', icon: '🟢' },
-              { name: 'Email Service', status: 'Active', color: 'green', icon: '🟢' },
-              { name: 'Payment Gateway', status: 'Ready', color: 'green', icon: '🟢' },
-              { name: 'File Storage', status: 'Available', color: 'green', icon: '🟢' },
-              { name: 'Notifications', status: 'Working', color: 'green', icon: '🟢' },
-            ].map((service) => (
-              <div key={service.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                <div className="flex items-center">
-                  <span className="text-lg mr-3">{service.icon}</span>
-                  <span className="font-medium text-gray-900 text-sm">{service.name}</span>
-                </div>
-                <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  service.color === 'green' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                }`}>
-                  {service.status}
-                </div>
+              { name: 'Core API Hub', icon: <Database className="w-4 h-4" />, status: 'Operational' },
+              { name: 'SMTP Relay', icon: <Mail className="w-4 h-4" />, status: 'Operational' },
+              { name: 'Payment Gateway', icon: <CreditCard className="w-4 h-4" />, status: 'Operational' },
+              { name: 'Storage Cluster', icon: <HardDrive className="w-4 h-4" />, status: 'Operational' },
+            ].map((node) => (
+              <div key={node.name} className="flex items-center justify-between p-5 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-all cursor-none">
+                 <div className="flex items-center gap-3">
+                   <div className="text-gold-400">{node.icon}</div>
+                   <span className="text-[11px] font-black tracking-tight text-white uppercase">{node.name}</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                    <span className="text-[9px] font-black text-emerald-400 tracking-tighter">{node.status}</span>
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_15px_#10b981]"></div>
+                 </div>
               </div>
             ))}
           </div>

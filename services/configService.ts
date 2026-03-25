@@ -101,6 +101,8 @@ class ConfigService {
         return this.getAboutFallback();
       case 'donate':
         return this.getDonateFallback();
+      case 'compliance':
+        return this.getComplianceFallback();
       default:
         return this.getDefaultFallback(pageName);
     }
@@ -149,6 +151,32 @@ class ConfigService {
         title: "Support Our Mission",
         subtitle: "Your donation makes a difference",
         description: "Help us provide dignified services to those in need."
+      }
+    };
+  }
+
+  private getComplianceFallback() {
+    return {
+      hero: {
+        badge: "TRUST & ACCOUNTABILITY",
+        title: "AUDIT &",
+        titleHighlight: "COMPLIANCE",
+        description: "Moksha Seva operates with 100% legal compliance and transparency. We are a registered trust with deep accountability to the law and our donors."
+      },
+      taxExemption: {
+        title: "TAX",
+        titleHighlight: "EXEMPTION",
+        description: "All donations made to Moksha Seva Foundation are eligible for tax deduction under Section 80G of the Income Tax Act, 1961. We provide instant digital receipts for all contributions.",
+        registrations: [
+          { label: "NGO DARPAN ID", value: "UP/2023/0345678" },
+          { label: "CSR REGISTRATION NO", value: "CSR00012345" }
+        ],
+        points: [
+          "Ensures all funds are audited monthly.",
+          "Guarantee that mission remains non-profit.",
+          "Enables government tracking and safety.",
+          "Builds permanent trust with the public."
+        ]
       }
     };
   }

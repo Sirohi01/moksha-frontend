@@ -86,17 +86,20 @@ export default function AdminLayout({
   const getNavigationItems = () => {
     if (!user) return [];
     const baseItems = [
-      { name: 'Dashboard', href: '/admin/dashboard', icon: '🏠', gradient: 'from-blue-500 to-blue-600' },
-      { name: 'Tasks', href: '/admin/tasks', icon: '🎯', gradient: 'from-indigo-500 to-purple-600' },
-      { name: 'Reports', href: '/admin/reports', icon: '�', gradient: 'from-emerald-500 to-emerald-600' },
-      { name: 'Board Applications', href: '/admin/board', icon: '�', gradient: 'from-purple-500 to-purple-600' },
-      { name: 'Feedback', href: '/admin/feedback', icon: '💬', gradient: 'from-pink-500 to-pink-600' },
-      { name: 'Government Schemes', href: '/admin/schemes', icon: '🏛️', gradient: 'from-indigo-500 to-indigo-600' },
-      { name: 'Contacts', href: '/admin/contacts', icon: '📞', gradient: 'from-teal-500 to-teal-600' },
-      { name: 'Legacy Giving', href: '/admin/legacy', icon: '🌟', gradient: 'from-amber-500 to-amber-600' },
-      { name: 'Expansion Requests', href: '/admin/expansion', icon: '🌍', gradient: 'from-green-500 to-green-600' },
-      { name: 'Volunteers', href: '/admin/volunteers', icon: '🤝', gradient: 'from-orange-500 to-orange-600' },
-      { name: 'Donations', href: '/admin/donations', icon: '💰', gradient: 'from-yellow-500 to-yellow-600' }
+      { name: 'Dashboard', href: '/admin/dashboard', icon: '💎', gradient: 'from-blue-600 to-indigo-700' },
+      { name: 'Tasks', href: '/admin/tasks', icon: '⚡', gradient: 'from-purple-600 to-pink-600' },
+      { name: 'Reports', href: '/admin/reports', icon: '📈', gradient: 'from-emerald-600 to-teal-700' },
+      { name: 'Board Applications', href: '/admin/board', icon: '🏛️', gradient: 'from-navy-900 to-navy-700' },
+      { name: 'Feedback', href: '/admin/feedback', icon: '💬', gradient: 'from-rose-500 to-pink-600' },
+      { name: 'Government Schemes', href: '/admin/schemes', icon: '📜', gradient: 'from-amber-600 to-orange-700' },
+      { name: 'Contacts', href: '/admin/contacts', icon: '📱', gradient: 'from-sky-500 to-blue-700' },
+      { name: 'Legacy Giving', href: '/admin/legacy', icon: '✨', gradient: 'from-gold-600 to-amber-700' },
+      { name: 'Expansion Requests', href: '/admin/expansion', icon: '🗺️', gradient: 'from-green-600 to-emerald-700' },
+      { name: 'Volunteers', href: '/admin/volunteers', icon: '🤝', gradient: 'from-orange-600 to-red-700' },
+      { name: 'Donations', href: '/admin/donations', icon: '💳', gradient: 'from-yellow-500 to-orange-600' },
+      { name: 'Newsletter', href: '/admin/newsletter', icon: '📬', gradient: 'from-cyan-500 to-blue-700' },
+      { name: 'Blog', href: '/admin/content-editor?page=blog', icon: '🖋️', gradient: 'from-indigo-500 to-purple-700' },
+      { name: 'Compliance', href: '/admin/compliance', icon: '🛡️', gradient: 'from-slate-600 to-gray-800' }
     ];
 
     // SEO Team - Content Management
@@ -116,14 +119,12 @@ export default function AdminLayout({
     //   );
     // }
 
-    // Manager & Super Admin - User Management (COMMENTED OUT - Uncomment as needed)
-    // if (user.role === 'manager' || user.role === 'super_admin') {
-    //   baseItems.push(
-    //     { name: 'User Management', href: '/admin/users', icon: '👥' },
-    //     { name: 'Activity Logs', href: '/admin/activities', icon: '📈' },
-    //     { name: 'Analytics', href: '/admin/analytics', icon: '📊' }
-    //   );
-    // }
+    // Manager & Super Admin - User Management
+    if (user.role === 'manager' || user.role === 'super_admin' || user.role === 'admin') {
+      baseItems.push(
+        { name: 'Visitor Tracking', href: '/admin/visitor-analytics', icon: '🕵️', gradient: 'from-navy-950 to-navy-800' }
+      );
+    }
 
     // Super Admin - System Management (COMMENTED OUT - Uncomment as needed)
     // if (user.role === 'super_admin') {

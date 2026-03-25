@@ -50,6 +50,7 @@ export const layoutConfig: LayoutConfig = {
         subLinks: [
           { href: "/impact", label: "Our Impact", icon: "TrendingUp" },
           { href: "/stories", label: "Stories of Change", icon: "Video" },
+          { href: "/blog", label: "Blogs", icon: "FileText" },
           { href: "/remembrance", label: "Wall of Remembrance", icon: "Bookmark" },
           { href: "/testimonials", label: "Testimonials", icon: "Heart" },
           { href: "/gallery", label: "Gallery", icon: "Video" },

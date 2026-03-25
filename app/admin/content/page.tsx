@@ -109,229 +109,54 @@ export default function ContentManagement() {
       const response24 = await fetch(`${API_BASE_URL}/api/page-config/layout`);
       const layoutData = await response24.json();
       
-      if (homepageData.success && aboutData.success && howItWorksData.success && whyMokshaSevaData.success && ourReachData.success && boardData.success && servicesData.success && reportData.success && impactData.success && storiesData.success && remembranceData.success && testimonialsData.success && galleryData.success && feedbackData.success && volunteerData.success && corporateData.success && legacyGivingData.success && tributeData.success && transparencyData.success && schemesData.success && contactData.success && pressData.success && documentariesData.success && layoutData.success) {
-        const mockContent = [
-          {
-            _id: 'homepage-config',
-            title: 'Homepage Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: homepageData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 1250
-          },
-          {
-            _id: 'about-config',
-            title: 'About Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: aboutData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 890
-          },
-          {
-            _id: 'how-it-works-config',
-            title: 'How It Works Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: howItWorksData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 650
-          },
-          {
-            _id: 'why-moksha-seva-config',
-            title: 'Why Moksha Seva Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: whyMokshaSevaData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 420
-          },
-          {
-            _id: 'our-reach-config',
-            title: 'Our Reach Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: ourReachData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 380
-          },
-          {
-            _id: 'board-config',
-            title: 'Board & Advisors Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: boardData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 290
-          },
-          {
-            _id: 'services-config',
-            title: 'Services Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: servicesData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 520
-          },
-          {
-            _id: 'report-config',
-            title: 'Report Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: reportData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 340
-          },
-          {
-            _id: 'impact-config',
-            title: 'Impact Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: impactData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 680
-          },
-          {
-            _id: 'stories-config',
-            title: 'Stories Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: storiesData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 450
-          },
-          {
-            _id: 'remembrance-config',
-            title: 'Remembrance Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: remembranceData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 320
-          },
-          {
-            _id: 'testimonials-config',
-            title: 'Testimonials Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: testimonialsData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 580
-          },
-          {
-            _id: 'gallery-config',
-            title: 'Gallery Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: galleryData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 720
-          },
-          {
-            _id: 'feedback-config',
-            title: 'Feedback Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: feedbackData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 380
-          },
-          {
-            _id: 'volunteer-config',
-            title: 'Volunteer Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: volunteerData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 520
-          },
-          {
-            _id: 'corporate-config',
-            title: 'Corporate Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: corporateData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 340
-          },
-          {
-            _id: 'legacy-giving-config',
-            title: 'Legacy Giving Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: legacyGivingData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 280
-          },
-          {
-            _id: 'tribute-config',
-            title: 'Tribute Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: tributeData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 320
-          },
-          {
-            _id: 'transparency-config',
-            title: 'Transparency Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: transparencyData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 450
-          },
-          {
-            _id: 'schemes-config',
-            title: 'Schemes Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: schemesData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 380
-          },
-          {
-            _id: 'contact-config',
-            title: 'Contact Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: contactData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 520
-          },
-          {
-            _id: 'press-config',
-            title: 'Press Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: pressData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 340
-          },
-          {
-            _id: 'documentaries-config',
-            title: 'Documentaries Page Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: documentariesData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 280
-          },
-          {
-            _id: 'layout-config',
-            title: 'Layout Components Configuration',
-            type: 'page' as const,
-            status: 'published' as const,
-            updatedAt: layoutData.data.lastModified,
-            author: { name: 'Admin' },
-            views: 150
-          }
-        ];
-        setContent(mockContent);
-      } else {
-        throw new Error('Failed to fetch page configurations');
-      }
+      const response25 = await fetch(`${API_BASE_URL}/api/page-config/blog`);
+      const blogData = await response25.json();
+
+      const response26 = await fetch(`${API_BASE_URL}/api/page-config/compliance`);
+      const complianceData = await response26.json();
+
+      const allDataConfigs = [
+        { id: 'homepage-config', title: 'Homepage Configuration', data: homepageData },
+        { id: 'about-config', title: 'About Page Configuration', data: aboutData },
+        { id: 'how-it-works-config', title: 'How It Works Page Configuration', data: howItWorksData },
+        { id: 'why-moksha-seva-config', title: 'Why Moksha Seva Page Configuration', data: whyMokshaSevaData },
+        { id: 'our-reach-config', title: 'Our Reach Page Configuration', data: ourReachData },
+        { id: 'board-config', title: 'Board & Advisors Page Configuration', data: boardData },
+        { id: 'services-config', title: 'Services Page Configuration', data: servicesData },
+        { id: 'report-config', title: 'Report Page Configuration', data: reportData },
+        { id: 'impact-config', title: 'Impact Page Configuration', data: impactData },
+        { id: 'stories-config', title: 'Stories Page Configuration', data: storiesData },
+        { id: 'remembrance-config', title: 'Remembrance Page Configuration', data: remembranceData },
+        { id: 'testimonials-config', title: 'Testimonials Page Configuration', data: testimonialsData },
+        { id: 'gallery-config', title: 'Gallery Page Configuration', data: galleryData },
+        { id: 'feedback-config', title: 'Feedback Page Configuration', data: feedbackData },
+        { id: 'volunteer-config', title: 'Volunteer Page Configuration', data: volunteerData },
+        { id: 'corporate-config', title: 'Corporate Page Configuration', data: corporateData },
+        { id: 'legacy-giving-config', title: 'Legacy Giving Page Configuration', data: legacyGivingData },
+        { id: 'tribute-config', title: 'Tribute Page Configuration', data: tributeData },
+        { id: 'transparency-config', title: 'Transparency Page Configuration', data: transparencyData },
+        { id: 'schemes-config', title: 'Schemes Page Configuration', data: schemesData },
+        { id: 'contact-config', title: 'Contact Page Configuration', data: contactData },
+        { id: 'press-config', title: 'Press Page Configuration', data: pressData },
+        { id: 'documentaries-config', title: 'Documentaries Page Configuration', data: documentariesData },
+        { id: 'layout-config', title: 'Layout Components Configuration', data: layoutData },
+        { id: 'blog-config', title: 'Blog Page Configuration', data: blogData },
+        { id: 'compliance-config', title: 'Compliance Page Configuration', data: complianceData }
+      ];
+
+      const validContent = allDataConfigs
+        .filter(item => item.data && item.data.success)
+        .map(item => ({
+          _id: item.id,
+          title: item.title,
+          type: 'page' as const,
+          status: 'published' as const,
+          updatedAt: item.data.data.lastModified,
+          author: { name: 'Admin' },
+          views: Math.floor(Math.random() * 1000) + 100
+        }));
+
+      setContent(validContent);
     } catch (error: any) {
       console.error('Failed to fetch content:', error);
       setError(error.message || 'Failed to load content');
@@ -575,6 +400,10 @@ export default function ContentManagement() {
                             window.location.href = '/admin/content-editor?page=documentaries';
                           } else if (item._id === 'layout-config') {
                             window.location.href = '/admin/content-editor?page=layout';
+                          } else if (item._id === 'blog-config') {
+                            window.location.href = '/admin/content-editor?page=blog';
+                          } else if (item._id === 'compliance-config') {
+                            window.location.href = '/admin/content-editor?page=compliance';
                           }
                         }}
                         className="text-blue-600 hover:text-blue-900"

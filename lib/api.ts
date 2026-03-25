@@ -569,6 +569,26 @@ export const analyticsAPI = {
   getRealtime: async () => {
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/realtime`);
   },
+
+  // Visitor Tracking
+  trackVisitorAction: async (data: any) => {
+    return fetch(`${API_ENDPOINTS.ANALYTICS}/track`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      keepalive: true, // Important for tracking on page leave
+    });
+  },
+
+  getVisitorStats: async (timeRange = '24h') => {
+    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/visitors?timeRange=${timeRange}`);
+  },
+
+  getVisitorDetailsByIP: async (ip: string) => {
+    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/visitors/${ip}`);
+  },
 };
 
 export default API_BASE_URL;

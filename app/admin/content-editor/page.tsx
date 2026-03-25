@@ -445,7 +445,7 @@ export default function ContentEditor() {
       case 'text':
       case 'email':
       case 'url':
-        const isImageField = fieldKey.includes('image') || fieldKey.includes('img') || fieldKey.includes('src') || fieldKey.includes('photo') || fieldKey.includes('avatar') || fieldKey.includes('slide') || fieldKey.includes('banner') || fieldKey.includes('background') || fieldKey.includes('hero') || fieldKey.includes('thumbnail') || fieldKey.includes('cover') || fieldKey.includes('poster') || fieldKey.includes('logo') || fieldKey.includes('icon') || 
+        const isImageField = ((fieldKey.includes('image') || fieldKey.includes('img') || fieldKey.includes('src') || fieldKey.includes('photo') || fieldKey.includes('avatar') || fieldKey.includes('slide') || fieldKey.includes('banner') || fieldKey.includes('background') || fieldKey.includes('hero') || fieldKey.includes('thumbnail') || fieldKey.includes('cover') || fieldKey.includes('poster') || fieldKey.includes('logo') || fieldKey.includes('icon')) && !fieldKey.toLowerCase().includes('alt')) || 
           (typeof value === 'string' && (
             value.includes('cloudinary.com') || 
             value.includes('unsplash.com') || 
