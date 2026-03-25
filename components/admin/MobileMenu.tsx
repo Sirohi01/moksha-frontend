@@ -49,7 +49,7 @@ export default function MobileMenu({ navigationItems, isOpen, onClose, user, onL
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
         onClick={onClose}
       />
@@ -60,16 +60,16 @@ export default function MobileMenu({ navigationItems, isOpen, onClose, user, onL
         <div className="relative h-16 sm:h-20 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 flex items-center justify-between px-4 sm:px-6">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/95 rounded-xl flex items-center justify-center backdrop-blur-sm shadow-lg p-1.5 sm:p-2">
-              <Image 
-                src="/logo.png" 
-                alt="Moksha Seva Logo" 
+              <Image
+                src="/logo.png"
+                alt="Moksha Sewa Logo"
                 width={48}
                 height={48}
                 className="object-contain"
               />
             </div>
             <div className="text-white">
-              <h1 className="text-lg sm:text-xl font-bold tracking-wide">Moksha Seva</h1>
+              <h1 className="text-lg sm:text-xl font-bold tracking-wide">Moksha Sewa</h1>
               <p className="text-xs text-white/90 font-medium">Admin Dashboard</p>
             </div>
           </div>
@@ -111,18 +111,16 @@ export default function MobileMenu({ navigationItems, isOpen, onClose, user, onL
               <Link
                 key={item.name}
                 href={item.href}
-                className={`group flex items-center px-3 sm:px-4 py-2.5 sm:py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-blue-50 to-teal-50 text-blue-700 shadow-sm border border-blue-100' 
+                className={`group flex items-center px-3 sm:px-4 py-2.5 sm:py-3 text-sm font-medium rounded-xl transition-all duration-200 ${isActive
+                    ? 'bg-gradient-to-r from-blue-50 to-teal-50 text-blue-700 shadow-sm border border-blue-100'
                     : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                }`}
+                  }`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${
-                  isActive 
-                    ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg` 
+                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-200 ${isActive
+                    ? `bg-gradient-to-r ${item.gradient} text-white shadow-lg`
                     : 'bg-gray-100 group-hover:bg-gray-200'
-                }`}>
+                  }`}>
                   <span className="text-xs sm:text-sm">{item.icon}</span>
                 </div>
                 <span className="flex-1 text-sm">{item.name}</span>
@@ -143,9 +141,9 @@ export default function MobileMenu({ navigationItems, isOpen, onClose, user, onL
               <span className="text-xs font-medium text-gray-700">System Online</span>
             </div>
             <span className="text-xs text-gray-500">
-              {new Date().toLocaleDateString('en-IN', { 
-                month: 'short', 
-                day: 'numeric' 
+              {new Date().toLocaleDateString('en-IN', {
+                month: 'short',
+                day: 'numeric'
               })}
             </span>
           </div>

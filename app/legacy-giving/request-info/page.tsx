@@ -25,43 +25,43 @@ export default function LegacyGivingRequestPage() {
     phone: "",
     alternatePhone: "",
     dateOfBirth: "",
-    
+
     // Address
     address: "",
     city: "",
     state: "",
     pincode: "",
-    
+
     // Legacy Interest
     legacyType: "",
     estimatedAmount: "",
     timeframe: "",
     specificInterest: "",
-    
+
     // Family Details
     hasFamily: "",
     familyAware: "",
     spouseName: "",
     childrenDetails: "",
-    
+
     // Financial Details
     currentAge: "",
     retirementPlanned: "",
     existingWill: "",
     financialAdvisor: "",
     advisorContact: "",
-    
+
     // Preferences
     recognitionPreference: "",
     anonymousGiving: false,
     informationRequested: [] as string[],
-    
+
     // Additional Information
     motivation: "",
     questions: "",
     preferredContact: "",
     bestTimeToCall: "",
-    
+
     // Consent
     agreeToContact: false,
     agreeToPrivacy: false,
@@ -148,7 +148,7 @@ export default function LegacyGivingRequestPage() {
           </div>
           <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">Request Received!</h2>
           <p className="text-stone-600 mb-2">
-            Thank you for your interest in legacy giving with Moksha Seva.
+            Thank you for your interest in legacy giving with Moksha Sewa.
           </p>
           <p className="text-stone-500 text-sm mb-6">
             Reference: <span className="font-mono font-bold text-saffron-600">LG-2024-{Math.floor(Math.random() * 900) + 100}</span>
@@ -156,8 +156,8 @@ export default function LegacyGivingRequestPage() {
           <p className="text-stone-600 text-sm mb-6">
             Our legacy giving specialist will contact you within 3-5 business days with personalized information.
           </p>
-          <button 
-            onClick={() => setSubmitted(false)} 
+          <button
+            onClick={() => setSubmitted(false)}
             className="text-saffron-600 text-sm underline"
             aria-label="Submit another legacy giving request"
           >
@@ -183,7 +183,7 @@ export default function LegacyGivingRequestPage() {
                 Legacy Giving Information Request
               </h1>
               <p className="text-emerald-50 text-base">
-                Request personalized information about creating a lasting legacy with Moksha Seva.
+                Request personalized information about creating a lasting legacy with Moksha Sewa.
               </p>
             </div>
           </div>
@@ -316,7 +316,7 @@ export default function LegacyGivingRequestPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Section 3: Address Details */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">

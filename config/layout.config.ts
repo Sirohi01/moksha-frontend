@@ -8,8 +8,8 @@ export const layoutConfig: LayoutConfig = {
   navbar: {
     logo: {
       src: "/logo.png",
-      alt: "Moksha Seva Logo",
-      title: "Moksha Seva",
+      alt: "Moksha Sewa Logo",
+      title: "Moksha Sewa",
       subtitle: "Liberation Through Service"
     },
     navigation: [
@@ -107,9 +107,9 @@ export const layoutConfig: LayoutConfig = {
     brand: {
       logo: {
         src: "/logo.png",
-        alt: "Moksha Seva Logo"
+        alt: "Moksha Sewa Logo"
       },
-      title: "Moksha Seva",
+      title: "Moksha Sewa",
       subtitle: "THE FINAL DIGNITY",
       description: "A world-class humanitarian force dedicated to the restoration of dignity for the forgotten dead. Powered by devotion and the vision of a society where no one departs alone."
     },
@@ -159,7 +159,7 @@ export const layoutConfig: LayoutConfig = {
     },
     bottom: {
       missionStatus: "MISSION SCALE: 12+ CITIES ACTIVE",
-      copyright: "MOKSHA SEVA",
+      copyright: "Moksha Sewa",
       legalLinks: [
         { label: "TAX EXEMPT (80G)", href: "/compliance" },
         { label: "Privacy Policy", href: "/privacy" }
@@ -179,31 +179,31 @@ export const layoutConfig: LayoutConfig = {
       {
         name: "Facebook",
         icon: "Facebook",
-        url: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK || "https://facebook.com/mokshaseva",
+        url: process.env.NEXT_PUBLIC_SOCIAL_FACEBOOK || "https://facebook.com/MokshaSewa",
         color: "hover:bg-blue-600",
       },
       {
         name: "X (Twitter)",
         icon: "Twitter",
-        url: process.env.NEXT_PUBLIC_SOCIAL_TWITTER || "https://x.com/mokshaseva",
+        url: process.env.NEXT_PUBLIC_SOCIAL_TWITTER || "https://x.com/MokshaSewa",
         color: "hover:bg-black",
       },
       {
         name: "Instagram",
         icon: "Instagram",
-        url: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM || "https://instagram.com/mokshaseva",
+        url: process.env.NEXT_PUBLIC_SOCIAL_INSTAGRAM || "https://instagram.com/MokshaSewa",
         color: "hover:bg-pink-600",
       },
       {
         name: "YouTube",
         icon: "Youtube",
-        url: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "https://youtube.com/@mokshaseva",
+        url: process.env.NEXT_PUBLIC_SOCIAL_YOUTUBE || "https://youtube.com/@MokshaSewa",
         color: "hover:bg-red-600",
       },
       {
         name: "LinkedIn",
         icon: "Linkedin",
-        url: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "https://linkedin.com/company/mokshaseva",
+        url: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "https://linkedin.com/company/MokshaSewa",
         color: "hover:bg-blue-700",
       },
     ]

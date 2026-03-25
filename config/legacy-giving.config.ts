@@ -14,7 +14,7 @@ export const legacyGivingConfig: LegacyGivingPageConfig = {
     badge: "THE 100-YEAR MISSION",
     title: "LEGACY",
     subtitle: "GIVING",
-    description: "Your kindness can be immortal. By including Moksha Seva in your long-term planning, you ensure no individual dies alone or without dignity for the next century."
+    description: "Your kindness can be immortal. By including Moksha Sewa in your long-term planning, you ensure no individual dies alone or without dignity for the next century."
   },
 
   // Legacy Options

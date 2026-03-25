@@ -16,7 +16,7 @@ export default function ChatBot() {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: "1",
-            text: "Namaste! 🙏 Welcome to Moksha Seva. How can I assist you today?",
+            text: "Namaste! 🙏 Welcome to Moksha Sewa. How can I assist you today?",
             sender: "bot",
             timestamp: new Date(),
         }
@@ -79,7 +79,7 @@ export default function ChatBot() {
                                 <Bot className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h3 className="text-white font-bold text-sm">Moksha Seva Assistant</h3>
+                                <h3 className="text-white font-bold text-sm">Moksha Sewa Assistant</h3>
                                 <p className="text-white/80 text-xs">Always here to help</p>
                             </div>
                         </div>
@@ -165,7 +165,7 @@ export default function ChatBot() {
                                     </button>
                                 </div>
                                 <p className="text-xs text-stone-400 mt-2 text-center">
-                                    Powered by Moksha Seva AI
+                                    Powered by Moksha Sewa AI
                                 </p>
                             </div>
                         </>

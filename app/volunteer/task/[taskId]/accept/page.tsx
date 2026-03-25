@@ -46,7 +46,7 @@ export default function AcceptTaskPage() {
   const fetchTask = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks/${taskId}`);
-      
+
       if (response.ok) {
         const data = await response.json();
         setTask(data.data);
@@ -186,7 +186,7 @@ export default function AcceptTaskPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Task Assignment</h1>
-              <p className="text-sm text-gray-600">Moksha Seva Volunteer Portal</p>
+              <p className="text-sm text-gray-600">Moksha Sewa Volunteer Portal</p>
             </div>
           </div>
         </div>
@@ -304,7 +304,7 @@ export default function AcceptTaskPage() {
                     '✅ Accept This Task'
                   )}
                 </button>
-                
+
                 <button
                   onClick={() => window.location.href = `/volunteer/task/${taskId}/reject?token=${token}&volunteerId=${volunteerId}`}
                   className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-red-700 hover:to-red-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"

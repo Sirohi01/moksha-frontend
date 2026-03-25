@@ -36,10 +36,10 @@ export const homepageConfig: HomepageConfig = {
 
   // About Section
   about: {
-    badge: "About Moksha Seva",
+    badge: "About Moksha Sewa",
     title: "Restoring Dignity to the",
     titleHighlight: "Final Journey",
-    description: "Moksha Seva is dedicated to ensuring that no soul departs this world without the sacred rites and dignity they deserve. We serve as guardians of humanity's final chapter, providing compassionate care when families cannot.",
+    description: "Moksha Sewa is dedicated to ensuring that no soul departs this world without the sacred rites and dignity they deserve. We serve as guardians of humanity's final chapter, providing compassionate care when families cannot.",
     secondaryDescription: "Founded on the principle that every life has value, we have transformed the way unclaimed souls are honored across India. Through traditional Hindu rites, modern logistics, and unwavering compassion, we bridge the gap between abandonment and sacred departure.",
     stats: [
       { number: "5000+", label: "Souls Served" },
@@ -282,7 +282,7 @@ export const homepageConfig: HomepageConfig = {
   transparency: {
     title: "TRANSPARENCY",
     titleHighlight: "IS OUR SANCTITY",
-    description: "Every rupee donated to Moksha Seva is a sacred trust. We maintain 100% visibility on all our mission operational costs and final rites expenditures.",
+    description: "Every rupee donated to Moksha Sewa is a sacred trust. We maintain 100% visibility on all our mission operational costs and final rites expenditures.",
     stats: [
       { label: "Direct Mission Costs", percentage: "82%" },
       { label: "Service Maintenance", percentage: "12%" },
@@ -309,7 +309,7 @@ export const homepageConfig: HomepageConfig = {
     badge: "WHISPERED VOICES",
     slides: [
       {
-        quote: "Moksha Seva provided a dignified farewell when we had no one else to turn to.",
+        quote: "Moksha Sewa provided a dignified farewell when we had no one else to turn to.",
         author: "Rajesh K., Beneficiary"
       },
       {
@@ -349,14 +349,14 @@ export const homepageConfig: HomepageConfig = {
       },
       {
         question: "IS THE DONATION TAX-EXEMPT?",
-        answer: "Yes, Moksha Seva is a registered entity and all donations are 80G tax-exempted according to regulations."
+        answer: "Yes, Moksha Sewa is a registered entity and all donations are 80G tax-exempted according to regulations."
       }
     ]
   },
 
   // Global Labels and Alt Texts
   labels: {
-    heroAltText: "Moksha Seva Sacred Mission",
+    heroAltText: "Moksha Sewa Sacred Mission",
     joinMissionAltText: "Join the Mission",
     learnMore: "Learn More"
   }

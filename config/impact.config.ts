@@ -158,13 +158,13 @@ export const impactConfig: ImpactPageConfig = {
     title: "Voices of Impact",
     testimonials: [
       {
-        quote: "Moksha Seva gave my father the dignified farewell he deserved when we had nowhere else to turn.",
+        quote: "Moksha Sewa gave my father the dignified farewell he deserved when we had nowhere else to turn.",
         author: "Priya Sharma, Delhi",
         role: "Beneficiary Family",
         image: "/gallery/image4.png"
       },
       {
-        quote: "Working with Moksha Seva has been the most fulfilling experience of my life. Every soul matters.",
+        quote: "Working with Moksha Sewa has been the most fulfilling experience of my life. Every soul matters.",
         author: "Rajesh Kumar, Volunteer",
         role: "5 Years of Service",
         image: "/gallery/image5.png"

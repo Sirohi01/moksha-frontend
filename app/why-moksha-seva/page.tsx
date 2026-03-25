@@ -2,16 +2,16 @@
 
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
-import { whyMokshaSevaConfig } from "@/config/why-moksha-seva.config";
+import { whyMokshaSewaConfig } from "@/config/why-moksha-seva.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
-export default function WhyMokshaSeva() {
+export default function WhyMokshaSewa() {
   // Use dynamic config with fallback to static config
-  const { config: dynamicConfig, loading, error } = usePageConfig('why-moksha-seva', whyMokshaSevaConfig);
-  
+  const { config: dynamicConfig, loading, error } = usePageConfig('why-moksha-seva', whyMokshaSewaConfig);
+
   // Use dynamic config if available, otherwise fallback to static
-  const config = dynamicConfig || whyMokshaSevaConfig;
+  const config = dynamicConfig || whyMokshaSewaConfig;
 
   // Show loading state
   if (loading) {
@@ -19,7 +19,7 @@ export default function WhyMokshaSeva() {
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading why moksha seva content...</p>
+          <p className="text-gray-600">Loading why Moksha Sewa content...</p>
         </div>
       </div>
     );
@@ -49,9 +49,9 @@ export default function WhyMokshaSeva() {
             </div>
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
-                <Image 
-                  src={config.hero.image} 
-                  alt={config.hero.imageAlt} 
+                <Image
+                  src={config.hero.image}
+                  alt={config.hero.imageAlt}
                   className="w-full h-full object-cover"
                   width={400}
                   height={400}
@@ -97,7 +97,7 @@ export default function WhyMokshaSeva() {
             </h2>
             <div className="w-20 h-1 bg-amber-700 mx-auto"></div>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {config.impact.stats.map((stat, index) => (
               <div key={index} className="text-center">
@@ -124,14 +124,14 @@ export default function WhyMokshaSeva() {
               {config.callToAction.description}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a 
-                href={config.callToAction.buttons.volunteer.href} 
+              <a
+                href={config.callToAction.buttons.volunteer.href}
                 className="bg-amber-100 hover:bg-white text-amber-800 px-8 py-4 rounded-lg font-black uppercase tracking-widest transition-all"
               >
                 {config.callToAction.buttons.volunteer.text}
               </a>
-              <a 
-                href={config.callToAction.buttons.donate.href} 
+              <a
+                href={config.callToAction.buttons.donate.href}
                 className="border-2 border-white text-white hover:bg-white hover:text-amber-800 px-8 py-4 rounded-lg font-black uppercase tracking-widest transition-all"
               >
                 {config.callToAction.buttons.donate.text}

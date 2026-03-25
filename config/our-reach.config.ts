@@ -14,7 +14,7 @@ export const ourReachConfig: OurReachPageConfig = {
     badge: "OUR SERVICE NETWORK",
     title: "OUR GLOBAL",
     titleHighlight: "REACH",
-    description: "Moksha Seva operates across 38+ major cities in India, with a dedicated Force of 400+ Saathis ready to respond to any call for dignity."
+    description: "Moksha Sewa operates across 38+ major cities in India, with a dedicated Force of 400+ Saathis ready to respond to any call for dignity."
   },
 
   // Regional Coverage
@@ -73,11 +73,11 @@ export const ourReachConfig: OurReachPageConfig = {
 
   // Form Configuration
   form: {
-    title: "BRING MOKSHA SEVA",
+    title: "BRING Moksha Sewa",
     titleHighlight: "TO YOUR CITY",
     description: "Help us expand our mission of dignity. We'll work with local partners, volunteers, and authorities to establish operations in your city.",
     successTitle: "REQUEST RECEIVED!",
-    successDescription: "Thank you for your interest in bringing Moksha Seva to your city. Our expansion team will review your request and contact you within 5-7 business days.",
+    successDescription: "Thank you for your interest in bringing Moksha Sewa to your city. Our expansion team will review your request and contact you within 5-7 business days.",
     successRequestId: "Request ID:",
     whatWeProvideText: "What we provide: Training for volunteers, ambulance coordination, legal support, and ongoing operational guidance. All services remain 100% free for beneficiaries.",
     submitButtonText: "SUBMIT EXPANSION REQUEST",
@@ -120,7 +120,7 @@ export const ourReachConfig: OurReachPageConfig = {
     },
     states: [
       "Andhra Pradesh",
-      "Arunachal Pradesh", 
+      "Arunachal Pradesh",
       "Assam",
       "Bihar",
       "Chhattisgarh",

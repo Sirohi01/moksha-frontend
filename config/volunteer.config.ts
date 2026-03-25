@@ -18,7 +18,7 @@ export const volunteerConfig: VolunteerPageConfig = {
 
   // Success Page
   success: {
-    title: "Welcome to the Moksha Seva Family!",
+    title: "Welcome to the Moksha Sewa Family!",
     description: "Thank you for registering as a volunteer. Our coordination team will reach out to you within 2–3 business days.",
     registerAnotherText: "Register another volunteer"
   },
@@ -152,11 +152,11 @@ export const volunteerConfig: VolunteerPageConfig = {
     // Volunteer Types
     selectVolunteerTypes: "Select Volunteer Type(s)",
     selectVolunteerTypesDesc: "Choose one or more areas where you'd like to contribute",
-    
+
     // Registration Type
     registrationType: "Registration Type",
     asRepresentative: "(as representative)",
-    
+
     // Group Details
     groupName: "Group/Organization Name",
     groupSize: "Number of Members",
@@ -165,7 +165,7 @@ export const volunteerConfig: VolunteerPageConfig = {
     groupLeaderName: "Leader Name",
     groupLeaderPhone: "Leader Phone",
     groupLeaderEmail: "Leader Email",
-    
+
     // Personal Details
     fullName: "Full Name",
     emailAddress: "Email Address",
@@ -173,43 +173,43 @@ export const volunteerConfig: VolunteerPageConfig = {
     alternatePhone: "Alternate Phone",
     dateOfBirth: "Date of Birth",
     gender: "Gender",
-    
+
     // Address
     completeAddress: "Complete Address",
     city: "City",
     state: "State",
     pinCode: "PIN Code",
-    
+
     // Professional
     currentOccupation: "Current Occupation",
     organizationInstitution: "Organization/Institution",
     experienceLevel: "Experience Level",
     specialSkills: "Special Skills",
-    
+
     // Social Media
     socialMediaNote: "Help us connect with you and share volunteer opportunities",
     facebookProfile: "Facebook Profile",
     instagramHandle: "Instagram Handle",
     twitterHandle: "Twitter/X Handle",
     linkedinProfile: "LinkedIn Profile",
-    
+
     // Volunteer Preferences
     availability: "Availability",
     preferredLocation: "Preferred Location",
     languagesKnown: "Languages Known",
     hasVehicle: "I have my own vehicle",
     vehicleType: "Vehicle Type",
-    
+
     // Emergency Contact
     emergencyContactName: "Contact Name",
     emergencyContactPhone: "Contact Phone",
     emergencyContactRelation: "Relationship",
-    
+
     // Additional Information
     whyVolunteer: "Why do you want to volunteer with us?",
     previousVolunteerWork: "Previous Volunteer Experience (if any)",
     medicalConditions: "Any Medical Conditions we should know about?",
-    
+
     // Terms & Agreements
     agreeToTerms: "I agree to the",
     termsAndConditions: "Terms & Conditions",
@@ -218,7 +218,7 @@ export const volunteerConfig: VolunteerPageConfig = {
     privacyPolicy: "Privacy Policy",
     privacyLink: "/privacy",
     agreeToBackgroundCheck: "I consent to a background verification check for volunteer safety",
-    
+
     // Submit
     submitButton: "Register as Volunteer",
     reviewNote: "Our team will review your application and contact you within 3-5 business days"
@@ -232,39 +232,39 @@ export const volunteerConfig: VolunteerPageConfig = {
     groupLeaderName: "Full name",
     groupLeaderPhone: "+91 98765 43210",
     groupLeaderEmail: "leader@email.com",
-    
+
     // Personal Details
     fullName: "As per government ID",
     email: "your@email.com",
     phone: "+91 98765 43210",
     alternatePhone: "+91 98765 43210",
-    
+
     // Address
     completeAddress: "House/Flat No., Building, Street, Locality",
     city: "Mumbai",
     pinCode: "400001",
-    
+
     // Professional
     occupation: "e.g., Teacher, Engineer, Student",
     organization: "Company or school name",
     skills: "e.g., Communication, Leadership, Technical",
-    
+
     // Social Media
     facebook: "https://facebook.com/yourprofile",
     instagram: "@yourusername",
     twitter: "@yourusername",
     linkedin: "https://linkedin.com/in/yourprofile",
-    
+
     // Volunteer Preferences
     preferredLocation: "Area or locality",
     languagesKnown: "e.g., Hindi, English, Marathi",
     vehicleType: "e.g., Car, Bike, Van",
-    
+
     // Emergency Contact
     emergencyName: "Full name",
     emergencyPhone: "+91 98765 43210",
     emergencyRelation: "e.g., Father, Spouse",
-    
+
     // Additional Information
     whyVolunteerPlaceholder: "Share your motivation...",
     previousWorkPlaceholder: "Describe your previous volunteer work...",

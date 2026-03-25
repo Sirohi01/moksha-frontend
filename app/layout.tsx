@@ -5,8 +5,8 @@ import RootLayoutContent from "@/components/layout/RootLayoutContent";
 export const metadata: Metadata = {
   metadataBase: new URL('https://moksha-seva.org'),
   title: {
-    default: "Moksha Seva — Dignity in Departure",
-    template: "%s | Moksha Seva",
+    default: "Moksha Sewa — Dignity in Departure",
+    template: "%s | Moksha Sewa",
   },
   icons: {
     icon: "/icon.png",
@@ -14,39 +14,39 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   description:
-    "Moksha Seva provides dignified cremation services for unclaimed bodies, homeless individuals, and poor families across India. Transparency, compassion, and service.",
+    "Moksha Sewa provides dignified cremation services for unclaimed bodies, homeless individuals, and poor families across India. Transparency, compassion, and service.",
   keywords: [
     "cremation", "unclaimed bodies", "humanitarian", "NGO", "India", "dignity",
     "charity", "donation", "volunteer", "social service", "death care", "funeral services",
     "homeless support", "community service", "transparency", "compassion"
   ],
-  authors: [{ name: "Moksha Seva Foundation" }],
-  creator: "Moksha Seva Foundation",
-  publisher: "Moksha Seva Foundation",
+  authors: [{ name: "Moksha Sewa Foundation" }],
+  creator: "Moksha Sewa Foundation",
+  publisher: "Moksha Sewa Foundation",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   openGraph: {
-    title: "Moksha Seva — Dignity in Departure",
+    title: "Moksha Sewa — Dignity in Departure",
     description: "Providing dignified cremation services for unclaimed bodies and poor families across India.",
     type: "website",
     locale: "en_IN",
     url: "https://moksha-seva.org",
-    siteName: "Moksha Seva",
+    siteName: "Moksha Sewa",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Moksha Seva - Dignity in Departure",
+        alt: "Moksha Sewa - Dignity in Departure",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Moksha Seva — Dignity in Departure",
+    title: "Moksha Sewa — Dignity in Departure",
     description: "Providing dignified cremation services for unclaimed bodies and poor families.",
     images: ["/twitter-image.png"],
     creator: "@moksha_seva",
@@ -92,11 +92,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#8B4513" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Moksha Seva" />
+        <meta name="apple-mobile-web-app-title" content="Moksha Sewa" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#8B4513" />
         <meta name="msapplication-tap-highlight" content="no" />
-        
+
         {/* Structured Data */}
         <script
           type="application/ld+json"
@@ -104,8 +104,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "NGO",
-              "name": "Moksha Seva Foundation",
-              "alternateName": "Moksha Seva",
+              "name": "Moksha Sewa Foundation",
+              "alternateName": "Moksha Sewa",
               "url": "https://moksha-seva.org",
               "logo": "https://moksha-seva.org/logo.png",
               "description": "Providing dignified cremation services for unclaimed bodies and poor families across India",

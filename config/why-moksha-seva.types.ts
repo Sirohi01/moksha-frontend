@@ -1,32 +1,32 @@
-// Type definitions for Why Moksha Seva page configuration
+// Type definitions for Why Moksha Sewa page configuration
 
-export interface WhyMokshaSevaReasonConfig {
+export interface WhyMokshaSewaReasonConfig {
   icon: string;
   title: string;
   description: string;
   color: string;
 }
 
-export interface WhyMokshaSevaStatConfig {
+export interface WhyMokshaSewaStatConfig {
   number: string;
   label: string;
 }
 
-export interface WhyMokshaSevaHeroConfig {
+export interface WhyMokshaSewaHeroConfig {
   title: string;
   titleHighlight: string;
   description: string;
-  stats: WhyMokshaSevaStatConfig[];
+  stats: WhyMokshaSewaStatConfig[];
   image: string;
   imageAlt: string;
 }
 
-export interface WhyMokshaSevaImpactConfig {
+export interface WhyMokshaSewaImpactConfig {
   title: string;
-  stats: WhyMokshaSevaStatConfig[];
+  stats: WhyMokshaSewaStatConfig[];
 }
 
-export interface WhyMokshaSevaCallToActionConfig {
+export interface WhyMokshaSewaCallToActionConfig {
   title: string;
   description: string;
   buttons: {
@@ -41,11 +41,11 @@ export interface WhyMokshaSevaCallToActionConfig {
   };
 }
 
-export interface WhyMokshaSevaPageConfig {
-  hero: WhyMokshaSevaHeroConfig;
-  reasons: WhyMokshaSevaReasonConfig[];
-  impact: WhyMokshaSevaImpactConfig;
-  callToAction: WhyMokshaSevaCallToActionConfig;
+export interface WhyMokshaSewaPageConfig {
+  hero: WhyMokshaSewaHeroConfig;
+  reasons: WhyMokshaSewaReasonConfig[];
+  impact: WhyMokshaSewaImpactConfig;
+  callToAction: WhyMokshaSewaCallToActionConfig;
   metadata: {
     title: string;
   };

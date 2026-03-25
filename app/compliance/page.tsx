@@ -32,7 +32,7 @@ export default function CompliancePage() {
         ]);
 
         setConfig(pageConfig);
-        
+
         if (docsRes.ok) {
           const docsData = await docsRes.json();
           if (docsData.success) {
@@ -76,7 +76,7 @@ export default function CompliancePage() {
       <section className="bg-stone-900 text-white py-32 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
         <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#7ab800]/10 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
-        
+
         <Container className="relative z-10">
           <div className="max-w-4xl">
             <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-md">
@@ -90,7 +90,7 @@ export default function CompliancePage() {
               </span>
             </h1>
             <p className="text-stone-400 text-xl md:text-2xl font-medium leading-relaxed max-w-3xl">
-              {hero?.description || "Moksha Seva operates with 100% legal compliance and transparency. We are a registered trust with deep accountability to the law and our donors."}
+              {hero?.description || "Moksha Sewa operates with 100% legal compliance and transparency. We are a registered trust with deep accountability to the law and our donors."}
             </p>
           </div>
         </Container>
@@ -101,9 +101,9 @@ export default function CompliancePage() {
         <Container>
           {error ? (
             <div className="bg-red-50 border border-red-200 rounded-[2.5rem] p-12 text-center max-w-2xl mx-auto">
-               <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-6" />
-               <p className="text-red-900 font-black uppercase tracking-tight text-xl mb-2">Something went wrong</p>
-               <p className="text-red-600 font-medium">{error}</p>
+              <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-6" />
+              <p className="text-red-900 font-black uppercase tracking-tight text-xl mb-2">Something went wrong</p>
+              <p className="text-red-600 font-medium">{error}</p>
             </div>
           ) : documents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
@@ -112,24 +112,24 @@ export default function CompliancePage() {
                 return (
                   <div key={doc._id} className="group relative bg-white p-10 rounded-[3rem] border border-stone-200 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#7ab800]/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    
+
                     <div className="w-14 h-14 rounded-2xl bg-stone-50 flex items-center justify-center mb-8 group-hover:bg-[#7ab800]/10 transition-colors border border-stone-100">
                       <Icon className="text-[#7ab800]" size={28} />
                     </div>
-                    
+
                     <h3 className="text-2xl font-black uppercase tracking-tighter mb-4 text-stone-900 leading-tight min-h-[3rem]">
                       {doc.title}
                     </h3>
-                    
+
                     <div className="flex flex-wrap items-center gap-4 mb-10 text-stone-400 font-black text-[10px] uppercase tracking-widest bg-stone-50 px-5 py-2.5 rounded-full w-fit">
                       <span>VALID: {doc.validityDate}</span>
                       <span className="w-1 h-1 bg-stone-300 rounded-full"></span>
                       <span>{doc.fileSize}</span>
                     </div>
 
-                    <a 
-                      href={doc.fileUrl} 
-                      target="_blank" 
+                    <a
+                      href={doc.fileUrl}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-3 w-full py-5 rounded-2xl bg-stone-950 text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#7ab800] transition-all shadow-lg active:scale-95"
                     >
@@ -163,9 +163,9 @@ export default function CompliancePage() {
                 <span className="text-[#7ab800]">{taxExemption?.titleHighlight || "EXEMPTION"}</span> FOR INDIAN DONORS
               </h2>
               <p className="text-stone-500 font-medium text-xl leading-relaxed mb-10 max-w-2xl">
-                {taxExemption?.description || "All donations made to Moksha Seva Foundation are eligible for tax deduction under Section 80G of the Income Tax Act, 1961. We provide instant digital receipts for all contributions."}
+                {taxExemption?.description || "All donations made to Moksha Sewa Foundation are eligible for tax deduction under Section 80G of the Income Tax Act, 1961. We provide instant digital receipts for all contributions."}
               </p>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {(taxExemption?.registrations || [
                   { label: "NGO DARPAN ID", value: "UP/2023/0345678" },

@@ -26,37 +26,37 @@ export default function BoardApplicationPage() {
     alternatePhone: "",
     dateOfBirth: "",
     gender: "",
-    
+
     // Address
     address: "",
     city: "",
     state: "",
     pincode: "",
-    
+
     // Professional Details (backend expected fields)
     currentPosition: "",
     organization: "",
     industry: "",
     experience: "", // backend expects 'experience' not 'totalExperience'
     qualifications: "", // backend expects 'qualifications' not 'expertise'
-    
+
     // Education
     highestQualification: "",
     institution: "",
     graduationYear: "",
     additionalCertifications: "",
-    
+
     // Board Experience
     previousBoardExperience: false,
     boardDetails: "",
     leadershipRoles: "",
-    
-    // Moksha Seva Interest (backend expected fields)
+
+    // Moksha Sewa Interest (backend expected fields)
     positionInterested: "",
     motivationStatement: "", // backend expects 'motivationStatement' not 'whyJoin'
     contribution: "",
     timeCommitment: "",
-    
+
     // References
     reference1Name: "",
     reference1Position: "",
@@ -64,11 +64,11 @@ export default function BoardApplicationPage() {
     reference2Name: "",
     reference2Position: "",
     reference2Contact: "",
-    
+
     // Documents
     resume: null as File | null,
     coverLetter: null as File | null,
-    
+
     // Agreements
     agreeToTerms: false,
     agreeToBackgroundCheck: false,
@@ -87,7 +87,7 @@ export default function BoardApplicationPage() {
     setLoading(true);
     try {
       const formData = new FormData();
-      
+
       // Add all form fields
       Object.entries(form).forEach(([key, value]) => {
         if (value !== null && value !== undefined && key !== 'resume' && key !== 'coverLetter') {
@@ -148,8 +148,8 @@ export default function BoardApplicationPage() {
           <p className="text-stone-600 text-sm mb-6">
             Our team will review your application and contact you within 7-10 business days.
           </p>
-          <button 
-            onClick={() => setSubmitted(false)} 
+          <button
+            onClick={() => setSubmitted(false)}
             className="text-saffron-600 text-sm underline"
             aria-label="Submit another board application"
           >
@@ -475,11 +475,11 @@ export default function BoardApplicationPage() {
                 </div>
               </div>
 
-              {/* Section 6: Interest in Moksha Seva */}
+              {/* Section 6: Interest in Moksha Sewa */}
               <div className="border border-stone-200 rounded-lg p-3.5 bg-stone-50/50">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-5 h-5 bg-saffron-600 text-white rounded-full flex items-center justify-center text-xs font-bold">6</span>
-                  <h3 className="font-semibold text-stone-800 text-sm">Interest in Moksha Seva</h3>
+                  <h3 className="font-semibold text-stone-800 text-sm">Interest in Moksha Sewa</h3>
                 </div>
                 <div className="space-y-3">
                   <div>
@@ -502,7 +502,7 @@ export default function BoardApplicationPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      Why do you want to join Moksha Seva? *
+                      Why do you want to join Moksha Sewa? *
                     </label>
                     <textarea
                       placeholder="Share your motivation and alignment with our mission (50-2000 characters)"
@@ -523,7 +523,7 @@ export default function BoardApplicationPage() {
                       How can you contribute to our mission? *
                     </label>
                     <textarea
-                      placeholder="Describe specific ways you can contribute to Moksha Seva"
+                      placeholder="Describe specific ways you can contribute to Moksha Sewa"
                       rows={4}
                       required
                       value={form.contribution}

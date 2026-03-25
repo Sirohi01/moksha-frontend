@@ -14,7 +14,7 @@ export const boardConfig: BoardPageConfig = {
     badge: "OUR LEADERSHIP",
     title: "OUR BOARD &",
     titleHighlight: "ADVISORS",
-    description: "Moksha Seva is guided by a collective of experts in legal, medical, and spiritual domains. Together, we ensure the mission remains pure and powerful."
+    description: "Moksha Sewa is guided by a collective of experts in legal, medical, and spiritual domains. Together, we ensure the mission remains pure and powerful."
   },
 
   // Leadership Team

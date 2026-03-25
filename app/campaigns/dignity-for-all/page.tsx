@@ -22,7 +22,7 @@ export default function DignityForAllPage() {
                         </div>
                         <h1 className="text-5xl md:text-8xl font-black uppercase tracking-tighter leading-[0.8] mb-8">DIGNITY <br /><span className="text-[#7ab800]">FOR ALL</span></h1>
                         <p className="text-white text-xl font-medium leading-relaxed mb-10">
-                            The fundamental pillar of Moksha Seva. Our pledge to never let a single soul
+                            The fundamental pillar of Moksha Sewa. Our pledge to never let a single soul
                             leave this world forgotten, unnamed, or without a sacred ritual.
                         </p>
                     </div>

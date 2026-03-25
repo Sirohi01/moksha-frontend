@@ -13,10 +13,10 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 export default function HomePage() {
   // Use dynamic config with fallback to static config
   const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
-  
+
   // Use dynamic config if available, otherwise fallback to static
   const config = dynamicConfig || homepageConfig;
-  
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentLocationSlide, setCurrentLocationSlide] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -34,9 +34,9 @@ export default function HomePage() {
 
   useEffect(() => {
     if (!config.hero?.slides) return;
-    
+
     startTimer();
-    
+
     // Location carousel timer
     if (config.whereWeServe?.carousel?.slides) {
       if (locationTimerRef.current) clearInterval(locationTimerRef.current);
@@ -48,7 +48,7 @@ export default function HomePage() {
         });
       }, config.whereWeServe.carousel.autoSlideInterval);
     }
-    
+
     // Campaign carousel timer
     if (config.urgentCampaigns?.campaigns) {
       if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
@@ -56,13 +56,13 @@ export default function HomePage() {
         setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
       }, config.urgentCampaigns.autoSlideInterval);
     }
-    
+
     // Testimonials timer
     if (config.testimonials?.slides) {
       const tTimer = setInterval(() => {
         setCurrentTestimonial((prev) => (prev + 1) % config.testimonials.slides.length);
       }, config.testimonials.autoSlideInterval);
-      
+
       return () => {
         if (timerRef.current) clearInterval(timerRef.current);
         if (locationTimerRef.current) clearInterval(locationTimerRef.current);
@@ -70,7 +70,7 @@ export default function HomePage() {
         clearInterval(tTimer);
       };
     }
-    
+
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
       if (locationTimerRef.current) clearInterval(locationTimerRef.current);
@@ -104,7 +104,7 @@ export default function HomePage() {
           >
             <Image
               src={src}
-              alt={config.labels?.heroAltText || "Moksha Seva - Dignified Final Journey"}
+              alt={config.labels?.heroAltText || "Moksha Sewa - Dignified Final Journey"}
               fill
               className="object-cover"
               style={{ imageRendering: 'auto', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}
@@ -157,8 +157,8 @@ export default function HomePage() {
               <Link key={index} href={button.href}>
                 <Button className={cn(
                   "px-6 py-2 font-medium",
-                  button.variant === "primary" 
-                    ? "bg-white text-black hover:bg-gray-100" 
+                  button.variant === "primary"
+                    ? "bg-white text-black hover:bg-gray-100"
                     : "bg-gray-800 text-white hover:bg-gray-700"
                 )}>
                   {button.text}
@@ -177,7 +177,7 @@ export default function HomePage() {
           <div className="absolute bottom-20 right-10 w-40 h-40 bg-gray-300/20 rounded-full blur-3xl"></div>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-gray-100/10 to-gray-100/10 rounded-full blur-3xl"></div>
         </div>
-        
+
         <Container className="relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             {/* Content Side */}
@@ -187,20 +187,20 @@ export default function HomePage() {
                 <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{config.about.badge}</span>
                 <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
               </div>
-              
+
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-                {config.about.title} 
+                {config.about.title}
                 <span className="text-gray-700 block">{config.about.titleHighlight}</span>
               </h2>
-              
+
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
                 {config.about.description}
               </p>
-              
+
               <p className="text-gray-600 mb-8 leading-relaxed">
                 {config.about.secondaryDescription}
               </p>
-              
+
               {/* Key Stats */}
               <div className="grid grid-cols-3 gap-6 mb-8">
                 {config.about.stats.map((stat, index) => (
@@ -210,14 +210,14 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              
+
               <div className="flex flex-wrap gap-4">
                 {config.about.buttons.map((button, index) => (
                   <Link key={index} href={button.href}>
                     <Button className={cn(
                       "px-8 py-3 transition-colors shadow-lg",
-                      button.variant === "primary" 
-                        ? "bg-gray-800 text-white hover:bg-gray-900" 
+                      button.variant === "primary"
+                        ? "bg-gray-800 text-white hover:bg-gray-900"
                         : "bg-white/80 text-gray-900 hover:bg-white border border-gray-200"
                     )}>
                       {button.text}
@@ -226,7 +226,7 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-            
+
             {/* Image Side */}
             <div className="order-1 lg:order-2">
               <div className="relative">
@@ -234,18 +234,18 @@ export default function HomePage() {
                 <div className="relative">
                   {/* Background decoration */}
                   <div className="absolute -top-6 -right-6 w-full h-full bg-gradient-to-br from-gray-200/30 to-gray-300/30 rounded-3xl blur-sm"></div>
-                  
+
                   {/* Main image */}
                   <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 backdrop-blur-sm">
                     <Image
                       src={config.about.image}
-                      alt="Moksha Seva - Dignified Final Journey"
+                      alt="Moksha Sewa - Dignified Final Journey"
                       fill
                       className="object-cover"
                     />
                     {/* Subtle overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-                    
+
                     {/* Floating badge */}
                     <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg border border-gray-200/50">
                       <div className="flex items-center gap-2">
@@ -254,7 +254,7 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Floating elements */}
                   <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-xl border border-gray-200/50">
                     <div className="flex items-center gap-3">
@@ -285,7 +285,7 @@ export default function HomePage() {
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236b7280' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }}></div>
         </div>
-        
+
         <Container className="relative z-10">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-6">
@@ -298,7 +298,7 @@ export default function HomePage() {
               {config.ourSeva.description}
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {config.ourSeva.programmes.map((p, index) => {
               const IconComponent = getIcon(p.icon);
@@ -308,7 +308,7 @@ export default function HomePage() {
                   <div className="relative h-full bg-gradient-to-br from-white to-gray-50/50 rounded-3xl p-8 border border-gray-200/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
                     {/* Background decoration */}
                     <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-gray-200/20 to-transparent rounded-bl-3xl rounded-tr-3xl"></div>
-                    
+
                     {/* Icon container */}
                     <div className="relative mb-6">
                       <div className="w-20 h-20 mx-auto bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-lg">
@@ -319,14 +319,14 @@ export default function HomePage() {
                         {String(index + 1).padStart(2, '0')}
                       </div>
                     </div>
-                    
+
                     <h3 className="text-xl font-bold text-gray-900 mb-4 text-center group-hover:text-gray-700 transition-colors">
                       {p.title}
                     </h3>
                     <p className="text-gray-600 text-center leading-relaxed mb-6">
                       {p.description}
                     </p>
-                    
+
                     {/* Service image */}
                     <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-md">
                       <Image
@@ -337,11 +337,11 @@ export default function HomePage() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                     </div>
-                    
+
                     {/* Learn more link */}
                     <div className="text-center">
-                      <Link 
-                        href={p.href} 
+                      <Link
+                        href={p.href}
                         className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium text-sm transition-colors group/link"
                       >
                         {config.labels?.learnMore || "Learn More"}
@@ -360,137 +360,137 @@ export default function HomePage() {
       {config.whereWeServe && (
         <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
           <Container>
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-3 mb-4">
-              <div className="w-8 h-px bg-gray-300"></div>
-              <span className="text-sm text-gray-600 uppercase tracking-wider">{config.whereWeServe.badge}</span>
-              <div className="w-8 h-px bg-gray-300"></div>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-3 mb-4">
+                <div className="w-8 h-px bg-gray-300"></div>
+                <span className="text-sm text-gray-600 uppercase tracking-wider">{config.whereWeServe.badge}</span>
+                <div className="w-8 h-px bg-gray-300"></div>
+              </div>
+              <h2 className="text-4xl font-bold text-gray-900 mb-6">{config.whereWeServe.title}</h2>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                {config.whereWeServe.description}
+              </p>
             </div>
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">{config.whereWeServe.title}</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              {config.whereWeServe.description}
-            </p>
-          </div>
-          
-          <div className="max-w-6xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
-              {/* Featured Image Carousel */}
-              <div className="lg:col-span-3">
-                <div className="relative">
-                  <div className="absolute -top-4 -left-4 w-full h-full bg-gray-100 rounded-2xl"></div>
-                  <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
-                    {/* Carousel Images */}
-                    {config.whereWeServe.carousel.slides.map((slide, idx) => (
-                      <div
-                        key={idx}
-                        className={cn(
-                          "absolute inset-0 transition-all duration-1000 ease-in-out",
-                          idx === currentLocationSlide ? "opacity-100 scale-100 z-10" : "opacity-0 scale-105 z-0"
-                        )}
-                      >
-                        <Image
-                          src={slide.src}
-                          alt={slide.title}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                        <div className="absolute bottom-8 left-8 text-white">
-                          <div className="flex items-center gap-2 mb-3">
-                            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium">{slide.location}</span>
-                          </div>
-                          <h3 className="text-3xl font-bold mb-2">{slide.title}</h3>
-                          <p className="text-lg opacity-90">{slide.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                    
-                    {/* Carousel Controls */}
-                    <div className="absolute bottom-4 right-4 flex gap-2">
-                      {config.whereWeServe.carousel.slides.map((_, idx) => (
-                        <button
+
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+                {/* Featured Image Carousel */}
+                <div className="lg:col-span-3">
+                  <div className="relative">
+                    <div className="absolute -top-4 -left-4 w-full h-full bg-gray-100 rounded-2xl"></div>
+                    <div className="relative h-96 rounded-2xl overflow-hidden shadow-xl">
+                      {/* Carousel Images */}
+                      {config.whereWeServe.carousel.slides.map((slide, idx) => (
+                        <div
                           key={idx}
-                          onClick={() => {
-                            setCurrentLocationSlide(idx);
-                            // Reset timer
-                            if (locationTimerRef.current) clearInterval(locationTimerRef.current);
-                            locationTimerRef.current = setInterval(() => {
-                              setCurrentLocationSlide((prev) => (prev + 1) % config.whereWeServe.carousel.slides.length);
-                            }, config.whereWeServe.carousel.autoSlideInterval);
-                          }}
-                          aria-label={`Go to location slide ${idx + 1}`}
                           className={cn(
-                            "h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80",
-                            idx === currentLocationSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+                            "absolute inset-0 transition-all duration-1000 ease-in-out",
+                            idx === currentLocationSlide ? "opacity-100 scale-100 z-10" : "opacity-0 scale-105 z-0"
                           )}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Service Network Panel */}
-              <div className="lg:col-span-2">
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-full">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900">{config.whereWeServe.activeNetwork.title}</h3>
-                  </div>
-                  
-                  <div className="space-y-3 mb-8">
-                    {config.whereWeServe.activeNetwork.locations.map((location) => (
-                      <div key={location.city} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-green-400 rounded-full group-hover:scale-125 transition-transform"></div>
-                          <span className="font-medium text-gray-800">{location.city}</span>
+                        >
+                          <Image
+                            src={slide.src}
+                            alt={slide.title}
+                            fill
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                          <div className="absolute bottom-8 left-8 text-white">
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+                              <span className="text-sm font-medium">{slide.location}</span>
+                            </div>
+                            <h3 className="text-3xl font-bold mb-2">{slide.title}</h3>
+                            <p className="text-lg opacity-90">{slide.description}</p>
+                          </div>
                         </div>
-                        <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                          {location.status}
-                        </span>
+                      ))}
+
+                      {/* Carousel Controls */}
+                      <div className="absolute bottom-4 right-4 flex gap-2">
+                        {config.whereWeServe.carousel.slides.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => {
+                              setCurrentLocationSlide(idx);
+                              // Reset timer
+                              if (locationTimerRef.current) clearInterval(locationTimerRef.current);
+                              locationTimerRef.current = setInterval(() => {
+                                setCurrentLocationSlide((prev) => (prev + 1) % config.whereWeServe.carousel.slides.length);
+                              }, config.whereWeServe.carousel.autoSlideInterval);
+                            }}
+                            aria-label={`Go to location slide ${idx + 1}`}
+                            className={cn(
+                              "h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80",
+                              idx === currentLocationSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+                            )}
+                          />
+                        ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
-                  
-                  {/* Stats */}
-                  <div className="border-t pt-6">
-                    <div className="grid grid-cols-2 gap-6">
-                      {config.whereWeServe.activeNetwork.stats.map((stat, index) => (
-                        <div key={index} className="text-center">
-                          <div className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</div>
-                          <div className="text-sm text-gray-600">{stat.label}</div>
+                </div>
+
+                {/* Service Network Panel */}
+                <div className="lg:col-span-2">
+                  <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-full">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">{config.whereWeServe.activeNetwork.title}</h3>
+                    </div>
+
+                    <div className="space-y-3 mb-8">
+                      {config.whereWeServe.activeNetwork.locations.map((location) => (
+                        <div key={location.city} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors group">
+                          <div className="flex items-center gap-3">
+                            <div className="w-2 h-2 bg-green-400 rounded-full group-hover:scale-125 transition-transform"></div>
+                            <span className="font-medium text-gray-800">{location.city}</span>
+                          </div>
+                          <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                            {location.status}
+                          </span>
                         </div>
                       ))}
+                    </div>
+
+                    {/* Stats */}
+                    <div className="border-t pt-6">
+                      <div className="grid grid-cols-2 gap-6">
+                        {config.whereWeServe.activeNetwork.stats.map((stat, index) => (
+                          <div key={index} className="text-center">
+                            <div className="text-2xl font-bold text-gray-900 mb-1">{stat.number}</div>
+                            <div className="text-sm text-gray-600">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Extended Network */}
-            <div className="mt-12 text-center">
-              <div className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-sm border border-gray-200 mb-6">
-                <span className="text-sm font-medium text-gray-700">{config.whereWeServe.extendedNetwork.title}</span>
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
-                  <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+              {/* Extended Network */}
+              <div className="mt-12 text-center">
+                <div className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-sm border border-gray-200 mb-6">
+                  <span className="text-sm font-medium text-gray-700">{config.whereWeServe.extendedNetwork.title}</span>
+                  <div className="flex gap-1">
+                    <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                    <div className="w-1 h-1 bg-green-400 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                  </div>
+                </div>
+                <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
+                  {config.whereWeServe.extendedNetwork.cities.map((city) => (
+                    <div key={city} className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-gray-300 hover:shadow-sm transition-all">
+                      {city}
+                    </div>
+                  ))}
                 </div>
               </div>
-              <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-                {config.whereWeServe.extendedNetwork.cities.map((city) => (
-                  <div key={city} className="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:border-gray-300 hover:shadow-sm transition-all">
-                    {city}
-                  </div>
-                ))}
-              </div>
             </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
       )}
 
       {/* Mission Pillars */}
@@ -519,8 +519,8 @@ export default function HomePage() {
                 {config.missionPillars.pillars.map((pillar, index) => {
                   const IconComponent = getIcon(pillar.icon);
                   return (
-                    <div 
-                      key={pillar.number} 
+                    <div
+                      key={pillar.number}
                       className={cn(
                         "group relative transition-all duration-300 hover:-translate-y-1",
                         // Subtle alternating heights
@@ -533,7 +533,7 @@ export default function HomePage() {
                         <div className="relative w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center shadow-md border-2 border-stone-200 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
                           {/* Icon */}
                           <IconComponent className="w-6 h-6 text-amber-800 group-hover:text-amber-900" />
-                          
+
                           {/* Number Badge */}
                           <div className="absolute -top-1 -right-1 w-5 h-5 bg-amber-800 text-stone-50 rounded-full flex items-center justify-center text-xs font-bold">
                             {pillar.number}
@@ -566,29 +566,29 @@ export default function HomePage() {
       {/* ── STORIES IN MOTION (CAROUSEL) ── */}
       {config.storiesInMotion && (
         <section className="py-12 bg-white overflow-hidden">
-        <Container>
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 leading-none border-b-4 border-[#f4c430] inline-block pb-1">{config.storiesInMotion.title}</h2>
-          </div>
+          <Container>
+            <div className="text-center mb-10">
+              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 leading-none border-b-4 border-[#f4c430] inline-block pb-1">{config.storiesInMotion.title}</h2>
+            </div>
 
-          <div className="relative group/carousel">
-            <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4">
-              {config.storiesInMotion.stories.map((story, i) => (
-                <div key={i} className="relative min-w-[280px] md:min-w-[400px] aspect-[16/10] rounded-[2rem] overflow-hidden group shadow-lg">
-                  <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute bottom-5 left-6">
-                    <p className="text-white font-black uppercase text-[10px] tracking-widest">{story.title}</p>
+            <div className="relative group/carousel">
+              <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4">
+                {config.storiesInMotion.stories.map((story, i) => (
+                  <div key={i} className="relative min-w-[280px] md:min-w-[400px] aspect-[16/10] rounded-[2rem] overflow-hidden group shadow-lg">
+                    <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute bottom-5 left-6">
+                      <p className="text-white font-black uppercase text-[10px] tracking-widest">{story.title}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+              {/* Indicator for scrolling hint */}
+              <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-12 h-12 bg-white shadow-2xl rounded-full hidden md:flex items-center justify-center text-stone-400 group-hover/carousel:-right-6 transition-all border border-stone-100 italic">
+                <ChevronRight size={24} className="animate-pulse" />
+              </div>
             </div>
-            {/* Indicator for scrolling hint */}
-            <div className="absolute top-1/2 -right-4 -translate-y-1/2 w-12 h-12 bg-white shadow-2xl rounded-full hidden md:flex items-center justify-center text-stone-400 group-hover/carousel:-right-6 transition-all border border-stone-100 italic">
-              <ChevronRight size={24} className="animate-pulse" />
-            </div>
-          </div>
-        </Container>
-      </section>
+          </Container>
+        </section>
       )}
 
       {/* Join The Mission */}
@@ -622,8 +622,8 @@ export default function HomePage() {
                 <Link key={index} href={button.href}>
                   <Button variant="ghost" className={cn(
                     "px-8 py-3 transition-colors",
-                    button.variant === "primary" 
-                      ? "bg-gray-600 text-white hover:bg-gray-700" 
+                    button.variant === "primary"
+                      ? "bg-gray-600 text-white hover:bg-gray-700"
                       : "bg-white text-gray-800 hover:bg-yellow-400 hover:text-gray-900"
                   )}>
                     {button.text}
@@ -651,7 +651,7 @@ export default function HomePage() {
           <div className="absolute top-20 left-20 w-32 h-32 bg-amber-200/20 rounded-full blur-3xl"></div>
           <div className="absolute bottom-20 right-20 w-40 h-40 bg-amber-300/20 rounded-full blur-3xl"></div>
         </div>
-        
+
         <Container className="relative z-10">
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
@@ -662,7 +662,7 @@ export default function HomePage() {
             <h2 className="text-4xl font-bold text-black mb-3">{config.urgentCampaigns.title}</h2>
             <p className="text-black text-lg">{config.urgentCampaigns.description}</p>
           </div>
-          
+
           {/* Enhanced 3D Circular Carousel */}
           <div className="relative max-w-7xl mx-auto h-[500px] overflow-visible" style={{ perspective: '1200px' }}>
             <div className="relative w-full h-full flex items-center justify-center">
@@ -671,14 +671,14 @@ export default function HomePage() {
                 let position = index - currentCampaignSlide;
                 if (position < 0) position += config.urgentCampaigns.campaigns.length;
                 if (position >= config.urgentCampaigns.campaigns.length) position -= config.urgentCampaigns.campaigns.length;
-                
+
                 // Enhanced 3D positioning
                 let transform = '';
                 let zIndex = 0;
                 let opacity = 0.3;
                 let scale = 0.7;
                 let blur = 'blur(2px)';
-                
+
                 if (position === 0) {
                   // Center (active) - enhanced
                   transform = 'translateX(0) translateY(0) translateZ(50px) rotateY(0deg)';
@@ -701,7 +701,7 @@ export default function HomePage() {
                   scale = 0.8;
                   blur = 'blur(1px)';
                 }
-                
+
                 return (
                   <div
                     key={c.title}
@@ -725,22 +725,22 @@ export default function HomePage() {
                   >
                     <div className={cn(
                       "w-80 bg-white rounded-3xl overflow-hidden transition-all duration-500",
-                      position === 0 
-                        ? "shadow-2xl shadow-gray-900/20 ring-1 ring-gray-200" 
+                      position === 0
+                        ? "shadow-2xl shadow-gray-900/20 ring-1 ring-gray-200"
                         : "shadow-lg shadow-gray-500/20 hover:shadow-xl"
                     )}>
                       <div className="relative aspect-[4/3] overflow-hidden">
-                        <Image 
-                          src={c.image} 
-                          alt={c.title} 
-                          fill 
+                        <Image
+                          src={c.image}
+                          alt={c.title}
+                          fill
                           className={cn(
                             "object-cover transition-transform duration-700",
                             position === 0 ? "scale-100" : "scale-105 group-hover:scale-100"
-                          )} 
+                          )}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                        
+
                         {/* Enhanced overlay content */}
                         <div className="absolute bottom-6 left-6 right-6">
                           <div className="flex items-center gap-2 mb-3">
@@ -748,11 +748,11 @@ export default function HomePage() {
                             <span className="text-white/80 text-xs font-medium uppercase tracking-wider">{config.urgentCampaigns.labels.activeCampaign}</span>
                           </div>
                           <h4 className="text-white font-bold text-xl mb-3 leading-tight">{c.title}</h4>
-                          
+
                           {/* Enhanced progress bar */}
                           <div className="relative mb-3">
                             <div className="bg-white/20 backdrop-blur-sm rounded-full h-3 w-full overflow-hidden">
-                              <div 
+                              <div
                                 className="bg-white h-full rounded-full transition-all duration-1000"
                                 style={{ width: c.percentage }}
                               >
@@ -762,7 +762,7 @@ export default function HomePage() {
                               <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                             </div>
                           </div>
-                          
+
                           <div className="flex justify-between items-center text-white">
                             <div className="text-sm">
                               <span className="text-white/70">{config.urgentCampaigns.labels.raised}</span>
@@ -774,17 +774,17 @@ export default function HomePage() {
                           </div>
                         </div>
                       </div>
-                      
+
                       {/* Enhanced card content */}
                       <div className="p-6">
                         <p className="text-gray-600 text-sm mb-5 leading-relaxed line-clamp-2">{c.description}</p>
                         <Link href="/donate">
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             className={cn(
                               "w-full transition-all duration-300",
-                              position === 0 
-                                ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900 shadow-lg" 
+                              position === 0
+                                ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900 shadow-lg"
                                 : "bg-gray-600 text-white hover:bg-gray-700"
                             )}
                           >
@@ -814,7 +814,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
-            
+
             <button
               onClick={() => {
                 setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
@@ -844,8 +844,8 @@ export default function HomePage() {
                   aria-label={`Go to campaign ${index + 1}`}
                   className={cn(
                     "h-3 rounded-full transition-all duration-500 border-2",
-                    index === currentCampaignSlide 
-                      ? "w-12 bg-gray-700 border-gray-700 shadow-lg" 
+                    index === currentCampaignSlide
+                      ? "w-12 bg-gray-700 border-gray-700 shadow-lg"
                       : "w-3 bg-white/70 border-gray-300 hover:bg-white hover:border-gray-400"
                   )}
                 />

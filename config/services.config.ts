@@ -105,7 +105,7 @@ export const servicesConfig: ServicesPageConfig = {
     title: "Who Can Access Our Services?",
     description: "Our services are completely free and available to anyone in need. We believe dignity in death is a fundamental right, not a privilege.",
     mainImage: "/gallery/image6.png",
-    mainImageAlt: "Moksha Seva services",
+    mainImageAlt: "Moksha Sewa services",
     items: [
       {
         icon: "UserCheck",

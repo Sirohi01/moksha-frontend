@@ -53,25 +53,25 @@ export const feedbackConfig: FeedbackPageConfig = {
     yourName: "Your Name *",
     emailAddress: "Email Address *",
     phoneNumber: "Phone Number",
-    
+
     // Feedback Type
     typeOfFeedback: "Type of Feedback *",
     serviceUsed: "Service Used",
-    
+
     // Experience Rating
     overallExperienceRating: "Overall Experience Rating *",
-    
+
     // Detailed Feedback
     subject: "Subject *",
     detailedMessage: "Detailed Message *",
-    
+
     // Suggestions
     suggestionsForImprovement: "Suggestions for Improvement",
-    wouldRecommend: "Would you recommend Moksha Seva to others? *",
-    
+    wouldRecommend: "Would you recommend Moksha Sewa to others? *",
+
     // Consent
-    consentToPublish: "I consent to Moksha Seva using my feedback (anonymously) for testimonials and service improvement purposes",
-    
+    consentToPublish: "I consent to Moksha Sewa using my feedback (anonymously) for testimonials and service improvement purposes",
+
     // Submit
     submitButton: "Submit Feedback",
     confidentialityText: "Your feedback is confidential and helps us serve better."
@@ -141,8 +141,8 @@ export const feedbackConfig: FeedbackPageConfig = {
       display: "📞 1800-123-456"
     },
     email: {
-      address: "feedback@mokshaseva.org",
-      display: "✉️ feedback@mokshaseva.org"
+      address: "feedback@MokshaSewa.org",
+      display: "✉️ feedback@MokshaSewa.org"
     }
   }
 };

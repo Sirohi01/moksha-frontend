@@ -22,7 +22,7 @@ export default function FAQPage() {
           <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">✦ Help Center ✦</span>
           <h1 className="font-serif text-4xl font-bold mt-3 mb-4">Frequently Asked Questions</h1>
           <p className="text-stone-300 text-lg max-w-2xl">
-            Find answers to common questions about Moksha Seva, our services, and how you can help.
+            Find answers to common questions about Moksha Sewa, our services, and how you can help.
           </p>
         </Container>
       </section>
@@ -35,11 +35,10 @@ export default function FAQPage() {
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  activeCategory === cat
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat
                     ? "bg-saffron-600 text-white"
                     : "bg-white text-stone-600 border border-stone-200 hover:border-saffron-400"
-                }`}
+                  }`}
               >
                 {cat}
               </button>

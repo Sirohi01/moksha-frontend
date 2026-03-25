@@ -33,7 +33,7 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         role: "Beneficiary Family",
         location: "Delhi",
         rating: 5,
-        quote: "When my father passed away and we had no resources for proper rites, Moksha Seva stepped in like angels. They performed every ritual with such care and respect, following all Hindu traditions perfectly. I will be forever grateful.",
+        quote: "When my father passed away and we had no resources for proper rites, Moksha Sewa stepped in like angels. They performed every ritual with such care and respect, following all Hindu traditions perfectly. I will be forever grateful.",
         image: "/gallery/image1.png"
       },
       {
@@ -41,7 +41,7 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         role: "Hospital Administrator",
         location: "Mumbai",
         rating: 5,
-        quote: "We work closely with Moksha Seva for unclaimed bodies at our hospital. Their professionalism, speed of response, and adherence to legal protocols is exemplary. They treat every case with dignity.",
+        quote: "We work closely with Moksha Sewa for unclaimed bodies at our hospital. Their professionalism, speed of response, and adherence to legal protocols is exemplary. They treat every case with dignity.",
         image: "/gallery/image2.png"
       },
       {
@@ -49,7 +49,7 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         role: "Volunteer",
         location: "Varanasi",
         rating: 5,
-        quote: "Being a volunteer with Moksha Seva for 3 years has been the most fulfilling experience of my life. Every soul we serve reminds me why this work is so sacred and important.",
+        quote: "Being a volunteer with Moksha Sewa for 3 years has been the most fulfilling experience of my life. Every soul we serve reminds me why this work is so sacred and important.",
         image: "/gallery/image3.png"
       },
       {
@@ -57,7 +57,7 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         role: "Corporate Partner",
         location: "Ahmedabad",
         rating: 5,
-        quote: "Our company has been supporting Moksha Seva for 2 years. Their transparency in fund utilization and regular impact reports give us complete confidence in their mission.",
+        quote: "Our company has been supporting Moksha Sewa for 2 years. Their transparency in fund utilization and regular impact reports give us complete confidence in their mission.",
         image: "/gallery/image4.png"
       },
       {
@@ -65,7 +65,7 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         role: "Social Worker",
         location: "Lucknow",
         rating: 5,
-        quote: "I've referred many families to Moksha Seva during their most difficult times. The compassion and support they provide goes beyond just the final rites - they truly care for the families.",
+        quote: "I've referred many families to Moksha Sewa during their most difficult times. The compassion and support they provide goes beyond just the final rites - they truly care for the families.",
         image: "/gallery/image5.png"
       },
       {
@@ -73,7 +73,7 @@ export const testimonialsConfig: TestimonialsPageConfig = {
         role: "Government Official",
         location: "Patna",
         rating: 5,
-        quote: "Moksha Seva has been an invaluable partner in our efforts to ensure dignified treatment of unclaimed bodies. Their systematic approach and documentation is commendable.",
+        quote: "Moksha Sewa has been an invaluable partner in our efforts to ensure dignified treatment of unclaimed bodies. Their systematic approach and documentation is commendable.",
         image: "/gallery/image6.png"
       }
     ]

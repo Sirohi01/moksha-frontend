@@ -18,7 +18,7 @@ export default function AdminHeader() {
             <span className="text-white font-bold text-sm">MS</span>
           </div>
           <span className="font-semibold text-gray-900 dark:text-white">
-            Moksha Seva Admin
+            Moksha Sewa Admin
           </span>
         </Link>
 
@@ -37,7 +37,7 @@ export default function AdminHeader() {
         {/* Actions */}
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          
+
           {/* Notifications */}
           <div className="relative">
             <button
@@ -47,7 +47,7 @@ export default function AdminHeader() {
               <Bell className="w-5 h-5" />
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs"></span>
             </button>
-            
+
             {showNotifications && (
               <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
                 <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
@@ -90,7 +90,7 @@ export default function AdminHeader() {
               </div>
               <span className="text-sm font-medium">Admin</span>
             </button>
-            
+
             {showUserMenu && (
               <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-2">
                 <Link

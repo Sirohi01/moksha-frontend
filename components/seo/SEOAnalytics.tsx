@@ -47,7 +47,7 @@ export default function SEOAnalytics({ pageId, timeRange = '30d' }: SEOAnalytics
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      
+
       // Mock data for now - replace with real API call
       const mockData: AnalyticsData = {
         overview: {
@@ -62,7 +62,7 @@ export default function SEOAnalytics({ pageId, timeRange = '30d' }: SEOAnalytics
           rankings: generateTrendData(30, 8, 20)
         },
         keywords: [
-          { keyword: 'moksha seva', position: 3, clicks: 245, impressions: 8900, ctr: 2.75 },
+          { keyword: 'Moksha Sewa', position: 3, clicks: 245, impressions: 8900, ctr: 2.75 },
           { keyword: 'last rites services', position: 8, clicks: 156, impressions: 5600, ctr: 2.79 },
           { keyword: 'funeral services india', position: 12, clicks: 89, impressions: 3400, ctr: 2.62 },
           { keyword: 'dignified funeral', position: 15, clicks: 67, impressions: 2800, ctr: 2.39 },
@@ -107,7 +107,7 @@ export default function SEOAnalytics({ pageId, timeRange = '30d' }: SEOAnalytics
   const getChangeIndicator = (current: number, previous: number) => {
     const change = ((current - previous) / previous) * 100;
     const isPositive = change > 0;
-    
+
     return {
       value: Math.abs(change).toFixed(1),
       isPositive,
@@ -208,11 +208,10 @@ export default function SEOAnalytics({ pageId, timeRange = '30d' }: SEOAnalytics
               <button
                 key={metric.key}
                 onClick={() => setSelectedMetric(metric.key)}
-                className={`px-3 py-2 text-sm rounded-md transition-colors ${
-                  selectedMetric === metric.key
+                className={`px-3 py-2 text-sm rounded-md transition-colors ${selectedMetric === metric.key
                     ? 'bg-blue-100 text-blue-700'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
+                  }`}
               >
                 {metric.label}
               </button>
@@ -225,7 +224,7 @@ export default function SEOAnalytics({ pageId, timeRange = '30d' }: SEOAnalytics
           {data.trends[selectedMetric as keyof typeof data.trends]?.map((point, index) => {
             const maxValue = Math.max(...data.trends[selectedMetric as keyof typeof data.trends].map(p => p.value));
             const height = (point.value / maxValue) * 100;
-            
+
             return (
               <div
                 key={index}
@@ -257,11 +256,10 @@ export default function SEOAnalytics({ pageId, timeRange = '30d' }: SEOAnalytics
                 <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="py-3 px-4 font-medium text-gray-900">{keyword.keyword}</td>
                   <td className="py-3 px-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      keyword.position <= 3 ? 'bg-green-100 text-green-800' :
-                      keyword.position <= 10 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${keyword.position <= 3 ? 'bg-green-100 text-green-800' :
+                        keyword.position <= 10 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                      }`}>
                       #{keyword.position}
                     </span>
                   </td>

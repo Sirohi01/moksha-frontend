@@ -48,20 +48,20 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
         <div className="text-center mb-8 border-b-2 border-orange-200 pb-6">
           <div className="flex items-center justify-center mb-4">
             <div className="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg mr-4">
-              <Image 
-                src="/logo.png" 
-                alt="Moksha Seva Logo" 
+              <Image
+                src="/logo.png"
+                alt="Moksha Sewa Logo"
                 width={48}
                 height={48}
                 className="object-contain"
               />
             </div>
             <div className="text-left">
-              <h1 className="text-3xl font-bold text-gray-800 tracking-wide">Moksha Seva</h1>
+              <h1 className="text-3xl font-bold text-gray-800 tracking-wide">Moksha Sewa</h1>
               <p className="text-sm text-gray-600 font-medium">Dignity in Departure</p>
             </div>
           </div>
-          
+
           <div className="text-center">
             <h2 className="text-2xl font-bold text-orange-600 mb-2">DONATION RECEIPT</h2>
             <p className="text-gray-600">Tax Exemption under Section 80G of Income Tax Act, 1961</p>
@@ -90,11 +90,10 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600 font-medium">Status:</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  donation.paymentStatus === 'completed' 
-                    ? 'bg-green-100 text-green-800' 
+                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${donation.paymentStatus === 'completed'
+                    ? 'bg-green-100 text-green-800'
                     : 'bg-yellow-100 text-yellow-800'
-                }`}>
+                  }`}>
                   {donation.paymentStatus.toUpperCase()}
                 </span>
               </div>
@@ -133,7 +132,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
           <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
             Donation Details
           </h3>
-          
+
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-3">
               <div className="flex justify-between">
@@ -149,7 +148,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
                 <span className="font-semibold">{donation.paymentMethod.toUpperCase()}</span>
               </div>
             </div>
-            
+
             <div className="text-center">
               <div className="bg-white rounded-lg p-4 shadow-md border-2 border-orange-300">
                 <p className="text-gray-600 font-medium mb-1">Total Amount</p>
@@ -181,7 +180,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
           </h3>
           <div className="text-sm text-blue-700 space-y-2">
             <p>• This donation is eligible for tax deduction under Section 80G of the Income Tax Act, 1961.</p>
-            <p>• Moksha Seva is registered under Section 12A and has valid 80G certification.</p>
+            <p>• Moksha Sewa is registered under Section 12A and has valid 80G certification.</p>
             <p>• Please retain this receipt for your tax filing purposes.</p>
             <p>• For any queries regarding tax exemption, please contact our accounts department.</p>
           </div>
@@ -193,14 +192,14 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">Organization Details</h4>
               <div className="text-sm text-gray-600 space-y-1">
-                <p><strong>Moksha Seva Foundation</strong></p>
+                <p><strong>Moksha Sewa Foundation</strong></p>
                 <p>Registered Address: [Mohan Nagar, Ghazibabad]</p>
                 {/* <p>Phone: [Your Phone Number]</p>
                 <p>Email: info@moksha-seva.org</p>
                 <p>Website: www.moksha-seva.org</p> */}
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">Registration Details</h4>
               <div className="text-sm text-gray-600 space-y-1">
@@ -221,7 +220,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
             <p className="text-sm font-semibold text-gray-800">[Vijay Sharma]</p>
             <p className="text-xs text-gray-600">[Founder]</p>
           </div>
-          
+
           <div className="text-xs text-gray-500 space-y-1">
             <p>This is a computer-generated receipt and does not require a physical signature.</p>
             <p>Generated on: {new Date().toLocaleString('en-IN')}</p>

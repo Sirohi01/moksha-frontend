@@ -1,6 +1,6 @@
 # Configuration System Documentation
 
-This directory contains all configuration files for the Moksha Seva website pages. All hardcoded text, images, and content have been moved to these configuration files for easy management and updates.
+This directory contains all configuration files for the Moksha Sewa website pages. All hardcoded text, images, and content have been moved to these configuration files for easy management and updates.
 
 ## Available Page Configurations
 
@@ -25,7 +25,7 @@ This directory contains all configuration files for the Moksha Seva website page
 - **Page**: `app/how-it-works/page.tsx`
 - **Status**: Complete - All content configurable
 
-### 4. Why Moksha Seva Page Configuration ✅
+### 4. Why Moksha Sewa Page Configuration ✅
 - **Config File**: `why-moksha-seva.config.ts`
 - **Types**: `why-moksha-seva.types.ts`
 - **Validator**: `why-moksha-seva-validator.ts`
@@ -128,7 +128,7 @@ Each page has its own validator that checks for:
 import { logHomepageValidationResults } from './config-validator';
 import { logAboutValidationResults } from './about-validator';
 import { logHowItWorksValidationResults } from './how-it-works-validator';
-import { logWhyMokshaSevaValidationResults } from './why-moksha-seva-validator';
+import { logWhyMokshaSewaValidationResults } from './why-moksha-seva-validator';
 import { logOurReachValidationResults } from './our-reach-validator';
 
 import { logBoardValidationResults } from './board-validator';
@@ -141,7 +141,7 @@ import { logReportValidationResults } from './report-validator';
 logHomepageValidationResults();
 logAboutValidationResults();
 logHowItWorksValidationResults();
-logWhyMokshaSevaValidationResults();
+logWhyMokshaSewaValidationResults();
 logOurReachValidationResults();
 logBoardValidationResults();
 logServicesValidationResults();
@@ -150,7 +150,7 @@ logReportValidationResults();
 
 ## Page-Specific Features
 
-### Why Moksha Seva Page
+### Why Moksha Sewa Page
 - **6 Key Reasons**: Compassionate Care, Trusted Legacy, Community Driven, 24/7 Availability, Recognized Excellence, Complete Compliance
 - **Impact Statistics**: 4 key metrics showcasing service reach
 - **Dual CTA**: Volunteer and Donate buttons
@@ -234,7 +234,7 @@ All 8 main pages now have complete configuration systems:
 1. **Homepage** - Hero, services, impact, testimonials, CTA
 2. **About Us** - Hero, mission/vision, story, values, team, certifications
 3. **How It Works** - Hero, 6-step process, CTA
-4. **Why Moksha Seva** - Hero, 6 reasons, impact stats, dual CTA
+4. **Why Moksha Sewa** - Hero, 6 reasons, impact stats, dual CTA
 5. **Our Reach** - Hero, regions, network stats, expansion form, modals
 6. **Board** - Hero, leadership team, advisory stats, join council CTA
 7. **Services** - Hero, 6 main services, eligibility criteria, service images

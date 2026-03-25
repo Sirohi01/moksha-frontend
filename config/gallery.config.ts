@@ -37,7 +37,7 @@ export const galleryConfig: GalleryPageConfig = {
       }
     },
     backgroundImages: [
-      "/gallery/image1.png", "/gallery/image2.png", "/gallery/image3.png", 
+      "/gallery/image1.png", "/gallery/image2.png", "/gallery/image3.png",
       "/gallery/image4.png", "/gallery/image5.png", "/gallery/image6.png",
       "/gallery/gallery_cremation_ceremony_1772861295131.png",
       "/gallery/gallery_volunteer_service_1772861316550.png",
@@ -82,7 +82,7 @@ export const galleryConfig: GalleryPageConfig = {
       },
       {
         src: "/gallery/gallery_ambulance_unit_1772862517482.png",
-        title: "Moksha Seva Mobile Unit",
+        title: "Moksha Sewa Mobile Unit",
         category: "Infrastructure",
         location: "Service Station",
         date: "Feb 2024",
@@ -130,7 +130,7 @@ export const galleryConfig: GalleryPageConfig = {
       },
       {
         src: "/gallery/hero_moksha_1.png",
-        title: "Moksha Seva Team",
+        title: "Moksha Sewa Team",
         category: "Team",
         location: "Head Office",
         date: "Oct 2023",

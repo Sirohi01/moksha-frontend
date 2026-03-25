@@ -43,7 +43,7 @@ export const donateConfig: DonatePageConfig = {
   // Trust Signals
   trustSignals: [
     "80G Tax Exemption",
-    "100% Transparent Fund Use", 
+    "100% Transparent Fund Use",
     "Registered NGO",
     "No Platform Fee"
   ],
@@ -87,7 +87,7 @@ export const donateConfig: DonatePageConfig = {
 
   // Trust Badges
   trustBadges: {
-    title: "Why Donate to Moksha Seva?",
+    title: "Why Donate to Moksha Sewa?",
     badges: [
       { icon: "✓", text: "80G Tax Exemption" },
       { icon: "✓", text: "100% Transparent" },

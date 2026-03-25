@@ -30,7 +30,7 @@ export const reportConfig: ReportPageConfig = {
   // Important Notice
   importantNotice: {
     title: "Important Notice",
-    message: "Please also inform your nearest police station. Moksha Seva works in coordination with law enforcement. Do not move or disturb the body."
+    message: "Please also inform your nearest police station. Moksha Sewa works in coordination with law enforcement. Do not move or disturb the body."
   },
 
   // Form Header
@@ -62,7 +62,7 @@ export const reportConfig: ReportPageConfig = {
     reporterEmail: "Email Address",
     reporterAddress: "Your Address",
     reporterRelation: "Relation to Case",
-    
+
     // Location Details
     exactLocation: "Exact Location *",
     landmark: "Landmark",
@@ -72,12 +72,12 @@ export const reportConfig: ReportPageConfig = {
     pincode: "Pincode",
     locationType: "Location Type *",
     gpsCoordinates: "GPS Coordinates (if available)",
-    
+
     // Time Details
     dateFound: "Date Found *",
     timeFound: "Time Found *",
     approximateDeathTime: "Approximate Time of Death (if known)",
-    
+
     // Body Details
     gender: "Gender *",
     approximateAge: "Approximate Age",
@@ -86,7 +86,7 @@ export const reportConfig: ReportPageConfig = {
     complexion: "Complexion",
     hairColor: "Hair Color",
     eyeColor: "Eye Color",
-    
+
     // Identification Marks
     tattoos: "Tattoos",
     scars: "Scars",
@@ -94,31 +94,31 @@ export const reportConfig: ReportPageConfig = {
     jewelry: "Jewelry",
     clothing: "Clothing Description",
     personalBelongings: "Personal Belongings",
-    
+
     // Physical Condition
     bodyCondition: "Body Condition *",
     visibleInjuries: "Visible Injuries",
     causeOfDeathSuspected: "Suspected Cause of Death",
-    
+
     // Authority Details
     policeInformed: "Police has been informed",
     policeStationName: "Police Station Name",
     firNumber: "FIR Number (if filed)",
     hospitalName: "Hospital Name (if body is at hospital)",
     postMortemDone: "Post-mortem has been conducted",
-    
+
     // Additional Information
     identityDocumentsFound: "Identity documents found with body",
     documentDetails: "Document Details",
     suspectedIdentity: "Suspected Identity",
     familyContacted: "Family members have been contacted",
     additionalNotes: "Additional Notes",
-    
+
     // Witness Information
     witnessName: "Witness Name",
     witnessPhone: "Witness Phone",
     witnessAddress: "Witness Address",
-    
+
     // Document Uploads
     bplCardNumber: "BPL Card Number",
     bplCardPhoto: "Upload BPL Card Photo",
@@ -128,11 +128,11 @@ export const reportConfig: ReportPageConfig = {
     nocPhoto: "Upload Certificate Photo",
     panNumber: "PAN Number",
     panPhoto: "Upload PAN Card Photo",
-    
+
     // Consent
     agreeToTerms: "I confirm that the information provided is accurate to the best of my knowledge *",
-    consentToShare: "I consent to share this information with authorities and Moksha Seva team *",
-    
+    consentToShare: "I consent to share this information with authorities and Moksha Sewa team *",
+
     // Submit
     submitButton: "Submit Emergency Report",
     confidentialityText: "Your information is confidential and used only for case resolution."

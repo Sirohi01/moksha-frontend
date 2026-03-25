@@ -1,4 +1,4 @@
-# Moksha Seva — Dignity in Departure
+# Moksha Sewa — Dignity in Departure
 
 A production-ready Next.js 14 platform for providing dignified cremation services for unclaimed bodies, homeless individuals, and poor families.
 
@@ -17,7 +17,7 @@ moksha-seva/
 ├── app/                        # Next.js App Router pages
 │   ├── layout.tsx              # Global layout (Navbar + Footer)
 │   ├── page.tsx                # Home page
-│   ├── about/page.tsx          # About Moksha Seva
+│   ├── about/page.tsx          # About Moksha Sewa
 │   ├── services/page.tsx       # Services
 │   ├── how-it-works/page.tsx   # Process walkthrough
 │   ├── transparency/page.tsx   # Public dashboard
@@ -64,7 +64,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the platform.
 | Route | Page |
 |-------|------|
 | `/` | Home |
-| `/about` | About Moksha Seva |
+| `/about` | About Moksha Sewa |
 | `/services` | Services |
 | `/how-it-works` | How It Works |
 | `/transparency` | Transparency Dashboard |
@@ -114,7 +114,7 @@ npm start
 ## Environment Variables (for backend integration)
 
 ```env
-NEXT_PUBLIC_API_URL=https://api.mokshaseva.org
+NEXT_PUBLIC_API_URL=https://api.MokshaSewa.org
 NEXT_PUBLIC_RAZORPAY_KEY=your_razorpay_key
 DATABASE_URL=your_database_url
 ```

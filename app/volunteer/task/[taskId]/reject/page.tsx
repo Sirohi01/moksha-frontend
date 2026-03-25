@@ -47,7 +47,7 @@ export default function RejectTaskPage() {
   const fetchTask = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/tasks/${taskId}`);
-      
+
       if (response.ok) {
         const data = await response.json();
         setTask(data.data);
@@ -175,7 +175,7 @@ export default function RejectTaskPage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Decline Task Assignment</h1>
-              <p className="text-sm text-gray-600">Moksha Seva Volunteer Portal</p>
+              <p className="text-sm text-gray-600">Moksha Sewa Volunteer Portal</p>
             </div>
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function RejectTaskPage() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   We understand you cannot take on this task. Please let us know why:
                 </h3>
-                
+
                 <div className="space-y-3">
                   {rejectionReasons.map((reasonOption, index) => (
                     <label key={index} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
@@ -242,7 +242,7 @@ export default function RejectTaskPage() {
                 >
                   ✅ Actually, I'll Accept
                 </button>
-                
+
                 <button
                   onClick={rejectTask}
                   disabled={submitting || !reason.trim()}

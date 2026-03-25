@@ -38,7 +38,7 @@ class ConfigService {
       }
 
       console.log(`🌐 Fetching config for: ${pageName}`);
-      
+
       const response = await fetch(`${this.API_BASE_URL}/api/page-config/${pageName}`, {
         method: 'GET',
         headers: {
@@ -57,7 +57,7 @@ class ConfigService {
       }
 
       const data: ConfigResponse = await response.json();
-      
+
       if (!data.success) {
         throw new Error(data.message || 'Failed to fetch configuration');
       }
@@ -74,7 +74,7 @@ class ConfigService {
 
     } catch (error) {
       console.error(`❌ Error fetching config for ${pageName}:`, error);
-      
+
       // Return cached version if available
       const cached = this.cache[pageName];
       if (cached) {
@@ -92,7 +92,7 @@ class ConfigService {
    */
   private getFallbackConfig(pageName: string): any {
     console.log(`🔄 Using fallback config for: ${pageName}`);
-    
+
     // Import local config files as fallback
     switch (pageName) {
       case 'homepage':
@@ -122,10 +122,10 @@ class ConfigService {
         ]
       },
       about: {
-        badge: "About Moksha Seva",
+        badge: "About Moksha Sewa",
         title: "Restoring Dignity to the",
         titleHighlight: "Final Journey",
-        description: "Moksha Seva is dedicated to ensuring that no soul departs this world without the sacred rites and dignity they deserve.",
+        description: "Moksha Sewa is dedicated to ensuring that no soul departs this world without the sacred rites and dignity they deserve.",
         stats: [
           { number: "5000+", label: "Souls Served" },
           { number: "38+", label: "Cities" },
@@ -138,7 +138,7 @@ class ConfigService {
   private getAboutFallback() {
     return {
       hero: {
-        title: "About Moksha Seva",
+        title: "About Moksha Sewa",
         subtitle: "Restoring dignity to the final journey",
         description: "We are guardians of humanity's final chapter."
       }
@@ -161,12 +161,12 @@ class ConfigService {
         badge: "TRUST & ACCOUNTABILITY",
         title: "AUDIT &",
         titleHighlight: "COMPLIANCE",
-        description: "Moksha Seva operates with 100% legal compliance and transparency. We are a registered trust with deep accountability to the law and our donors."
+        description: "Moksha Sewa operates with 100% legal compliance and transparency. We are a registered trust with deep accountability to the law and our donors."
       },
       taxExemption: {
         title: "TAX",
         titleHighlight: "EXEMPTION",
-        description: "All donations made to Moksha Seva Foundation are eligible for tax deduction under Section 80G of the Income Tax Act, 1961. We provide instant digital receipts for all contributions.",
+        description: "All donations made to Moksha Sewa Foundation are eligible for tax deduction under Section 80G of the Income Tax Act, 1961. We provide instant digital receipts for all contributions.",
         registrations: [
           { label: "NGO DARPAN ID", value: "UP/2023/0345678" },
           { label: "CSR REGISTRATION NO", value: "CSR00012345" }
@@ -207,8 +207,8 @@ class ConfigService {
    */
   async preloadConfigs(pageNames: string[]) {
     console.log(`🚀 Preloading configs for: ${pageNames.join(', ')}`);
-    
-    const promises = pageNames.map(pageName => 
+
+    const promises = pageNames.map(pageName =>
       this.getPageConfig(pageName).catch(error => {
         console.warn(`Failed to preload ${pageName}:`, error.message);
         return null;

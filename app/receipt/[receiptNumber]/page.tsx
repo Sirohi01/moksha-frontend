@@ -108,20 +108,20 @@ export default function PublicReceiptPage() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-4">
               <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center">
-                <Image 
-                  src="/logo.png" 
-                  alt="Moksha Seva Logo" 
+                <Image
+                  src="/logo.png"
+                  alt="Moksha Sewa Logo"
                   width={32}
                   height={32}
                   className="object-contain"
                 />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Moksha Seva</h1>
+                <h1 className="text-xl font-bold text-gray-900">Moksha Sewa</h1>
                 <p className="text-sm text-gray-600">Donation Receipt</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <button
                 onClick={handlePrint}
@@ -132,7 +132,7 @@ export default function PublicReceiptPage() {
                 </svg>
                 Print Receipt
               </button>
-              
+
               <a
                 href="/"
                 className="flex items-center px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-200 text-sm font-medium"
@@ -160,15 +160,15 @@ export default function PublicReceiptPage() {
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <div className="w-8 h-8 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg flex items-center justify-center mr-3">
-                <Image 
-                  src="/logo.png" 
-                  alt="Moksha Seva Logo" 
+                <Image
+                  src="/logo.png"
+                  alt="Moksha Sewa Logo"
                   width={24}
                   height={24}
                   className="object-contain"
                 />
               </div>
-              <span className="text-lg font-bold text-gray-900">Moksha Seva Foundation</span>
+              <span className="text-lg font-bold text-gray-900">Moksha Sewa Foundation</span>
             </div>
             <p className="text-gray-600 mb-4">
               Thank you for your generous donation. Your contribution helps us provide dignified services to those in need.

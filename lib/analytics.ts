@@ -22,7 +22,7 @@ export const initGA = () => {
     window.gtag = function gtag() {
       window.dataLayer.push(arguments);
     };
-    
+
     window.gtag('js', new Date());
     window.gtag('config', GA_TRACKING_ID, {
       page_title: document.title,
@@ -64,7 +64,7 @@ export const trackFormSubmission = (formType: string, success: boolean = true) =
 // Track donations
 export const trackDonation = (amount: number, method: string) => {
   trackEvent('donation', 'engagement', method, amount);
-  
+
   // Enhanced ecommerce tracking for donations
   if (typeof window !== 'undefined' && window.gtag) {
     window.gtag('event', 'purchase', {
@@ -73,7 +73,7 @@ export const trackDonation = (amount: number, method: string) => {
       currency: 'INR',
       items: [{
         item_id: 'donation',
-        item_name: 'Donation to Moksha Seva',
+        item_name: 'Donation to Moksha Sewa',
         category: 'donation',
         quantity: 1,
         price: amount
@@ -119,7 +119,7 @@ export const trackPerformance = () => {
       setTimeout(() => {
         const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         const loadTime = perfData.loadEventEnd - perfData.loadEventStart;
-        
+
         if (loadTime > 0) {
           trackEvent('page_load_time', 'performance', window.location.pathname, Math.round(loadTime));
         }

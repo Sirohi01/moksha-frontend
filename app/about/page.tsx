@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 export default function AboutPage() {
   // Use dynamic config with fallback to static config
   const { config: dynamicConfig, loading, error } = usePageConfig('about', aboutConfig);
-  
+
   // Use dynamic config if available, otherwise fallback to static
   const config = dynamicConfig || aboutConfig;
 
@@ -35,7 +35,7 @@ export default function AboutPage() {
           <div className="absolute top-10 right-10 w-32 h-32 bg-amber-200/20 rounded-full blur-2xl"></div>
           <div className="absolute bottom-10 left-10 w-24 h-24 bg-amber-300/20 rounded-full blur-xl"></div>
         </div>
-        
+
         <Container>
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="max-w-xl">
@@ -60,14 +60,14 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-full h-full bg-amber-100 rounded-2xl"></div>
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
-                  <Image 
-                    src={config.hero?.image || "/gallery/image007.png"} 
-                    alt={config.hero?.cardTitle || "About Moksha Seva"} 
+                  <Image
+                    src={config.hero?.image || "/gallery/image007.png"}
+                    alt={config.hero?.cardTitle || "About Moksha Sewa"}
                     className="w-full h-full object-cover"
                     width={400}
                     height={300}
@@ -123,7 +123,7 @@ export default function AboutPage() {
       <section className="py-12 bg-stone-50">
         <Container size="lg">
           <SectionHeader tag={config.story?.tag} title={config.story?.title} centered={false} />
-          
+
           <div className="grid md:grid-cols-2 gap-8 items-start">
             <div className="space-y-4 text-gray-700 leading-relaxed">
               {config.story?.paragraphs?.map((paragraph, index) => (
@@ -131,7 +131,7 @@ export default function AboutPage() {
                   {paragraph}
                 </p>
               ))}
-              
+
               {/* Key Statistics */}
               <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-stone-200">
                 {config.story?.stats?.map((stat, index) => (
@@ -142,12 +142,12 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
-                <Image 
-                  src={config.story?.image || "/gallery/image009.png"} 
-                  alt={config.story?.imageAlt || "Our Journey"} 
+                <Image
+                  src={config.story?.image || "/gallery/image009.png"}
+                  alt={config.story?.imageAlt || "Our Journey"}
                   className="w-full h-full object-cover"
                   width={400}
                   height={300}
@@ -162,7 +162,7 @@ export default function AboutPage() {
       <section className="py-12 bg-stone-100">
         <Container>
           <SectionHeader tag={config.values?.tag} title={config.values?.title} />
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {config.values?.values?.map((value) => {
               const Icon = getIcon(value.icon);
@@ -184,7 +184,7 @@ export default function AboutPage() {
       <section className="py-12 bg-stone-50">
         <Container>
           <SectionHeader tag={config.team?.tag} title={config.team?.title} />
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {config.team?.members?.map((member) => (
               <Card key={member.name} variant="bordered" padding="md" className="flex items-start gap-4 hover:shadow-lg transition-all duration-300">

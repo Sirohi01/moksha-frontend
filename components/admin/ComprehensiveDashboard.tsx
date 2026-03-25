@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Heart, 
-  FileText, 
-  TrendingUp, 
-  AlertCircle, 
+import {
+  Users,
+  Heart,
+  FileText,
+  TrendingUp,
+  AlertCircle,
   CheckCircle,
   Clock,
   DollarSign,
@@ -85,7 +85,7 @@ export default function ComprehensiveDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
-    
+
     // Auto-refresh every 5 minutes
     const interval = setInterval(fetchDashboardData, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -134,7 +134,7 @@ export default function ComprehensiveDashboard() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Comprehensive Dashboard</h1>
-          <p className="text-gray-600">Real-time overview of Moksha Seva operations</p>
+          <p className="text-gray-600">Real-time overview of Moksha Sewa operations</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -236,7 +236,7 @@ export default function ComprehensiveDashboard() {
               {stats.systemHealth.charAt(0).toUpperCase() + stats.systemHealth.slice(1)}
             </div>
           </div>
-          
+
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">API Response Time</span>
@@ -260,7 +260,7 @@ export default function ComprehensiveDashboard() {
         {/* Recent Activity */}
         <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
-          
+
           <div className="space-y-3 max-h-64 overflow-y-auto">
             {stats.recentActivity.map((activity) => (
               <div key={activity.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
@@ -282,23 +282,23 @@ export default function ComprehensiveDashboard() {
       {/* Quick Actions */}
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <button className="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
             <FileText className="w-6 h-6 text-blue-600 mb-2" />
             <span className="text-sm font-medium text-blue-900">Review Forms</span>
           </button>
-          
+
           <button className="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
             <Heart className="w-6 h-6 text-green-600 mb-2" />
             <span className="text-sm font-medium text-green-900">Process Donations</span>
           </button>
-          
+
           <button className="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
             <Users className="w-6 h-6 text-purple-600 mb-2" />
             <span className="text-sm font-medium text-purple-900">Manage Volunteers</span>
           </button>
-          
+
           <button className="flex flex-col items-center p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
             <Globe className="w-6 h-6 text-orange-600 mb-2" />
             <span className="text-sm font-medium text-orange-900">Update Content</span>

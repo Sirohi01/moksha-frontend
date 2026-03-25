@@ -46,10 +46,10 @@ export default function ImageGallery({
   }, []);
 
   const navigateImage = useCallback((direction: 'prev' | 'next') => {
-    const newIndex = direction === 'next' 
+    const newIndex = direction === 'next'
       ? (currentIndex + 1) % images.length
       : (currentIndex - 1 + images.length) % images.length;
-    
+
     setCurrentIndex(newIndex);
     setSelectedImage(images[newIndex]);
     setIsZoomed(false);
@@ -77,7 +77,7 @@ export default function ImageGallery({
       try {
         await navigator.share({
           title: image.title || image.alt,
-          text: image.description || 'Check out this image from Moksha Seva',
+          text: image.description || 'Check out this image from Moksha Sewa',
           url: window.location.href,
         });
       } catch (error) {
@@ -94,7 +94,7 @@ export default function ImageGallery({
       <div className={cn('w-full', className)}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {images.map((image, index) => (
-            <div 
+            <div
               key={image.id}
               className="relative group cursor-pointer overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800"
               onClick={() => openLightbox(image, index)}
@@ -107,7 +107,7 @@ export default function ImageGallery({
                 className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
                 sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
-              
+
               {/* Overlay */}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
                 <ZoomIn className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

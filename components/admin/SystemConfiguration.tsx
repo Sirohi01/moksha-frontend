@@ -47,8 +47,8 @@ interface SystemConfig {
 export default function SystemConfiguration() {
   const [config, setConfig] = useState<SystemConfig>({
     general: {
-      siteName: 'Moksha Seva',
-      siteUrl: 'https://mokshaseva.org',
+      siteName: 'Moksha Sewa',
+      siteUrl: 'https://MokshaSewa.org',
       adminEmail: 'officialmanishsirohi.01@gmail.com',
       timezone: 'Asia/Kolkata',
       language: 'en',
@@ -67,8 +67,8 @@ export default function SystemConfiguration() {
       smtpPort: 587,
       smtpUser: '',
       smtpPassword: '',
-      fromEmail: 'noreply@mokshaseva.org',
-      fromName: 'Moksha Seva'
+      fromEmail: 'noreply@MokshaSewa.org',
+      fromName: 'Moksha Sewa'
     },
     features: {
       enableReports: true,
@@ -273,11 +273,10 @@ export default function SystemConfiguration() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                activeTab === tab.id
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === tab.id
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
             >
               <span>{tab.icon}</span>
               <span>{tab.label}</span>
@@ -345,7 +344,7 @@ export default function SystemConfiguration() {
                 </select>
               </div>
             </div>
-            
+
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -392,7 +391,7 @@ export default function SystemConfiguration() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-3">
               <label className="flex items-center">
                 <input
@@ -505,7 +504,7 @@ export default function SystemConfiguration() {
                 />
               </div>
             </div>
-            
+
             <div className="flex justify-end">
               <button
                 onClick={testEmailConfiguration}
@@ -564,7 +563,7 @@ export default function SystemConfiguration() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-3">
               <label className="flex items-center">
                 <input

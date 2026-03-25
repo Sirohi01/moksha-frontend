@@ -1,13 +1,17 @@
 {
-  "name": "Moksha Seva - Dignity in Departure",
-  "short_name": "Moksha Seva",
+  "name": "Moksha Sewa - Dignity in Departure",
+  "short_name": "Moksha Sewa",
   "description": "Providing dignified cremation services for unclaimed bodies and poor families across India",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#8B4513",
   "orientation": "portrait-primary",
-  "categories": ["social", "lifestyle", "utilities"],
+  "categories": [
+    "social",
+    "lifestyle",
+    "utilities"
+  ],
   "lang": "en",
   "dir": "ltr",
   "icons": [

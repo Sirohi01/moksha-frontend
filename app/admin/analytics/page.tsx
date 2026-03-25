@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 
 export const metadata: Metadata = {
-  title: 'Analytics | Admin | Moksha Seva',
-  description: 'Comprehensive analytics and insights for Moksha Seva operations',
+  title: 'Analytics | Admin | Moksha Sewa',
+  description: 'Comprehensive analytics and insights for Moksha Sewa operations',
 };
 
 export default function AdminAnalyticsPage() {

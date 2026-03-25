@@ -35,7 +35,7 @@ export const pressConfig: PressPageConfig = {
       {
         source: "Times of India",
         date: "February 2024",
-        title: "Moksha Seva's Saathi Force expands to 38 cities",
+        title: "Moksha Sewa's Saathi Force expands to 38 cities",
         type: "News Report"
       },
       {
@@ -84,8 +84,8 @@ export const pressConfig: PressPageConfig = {
       {
         icon: "Mail",
         label: "EMAIL US",
-        value: "media@mokshaseva.org",
-        href: "mailto:media@mokshaseva.org"
+        value: "media@MokshaSewa.org",
+        href: "mailto:media@MokshaSewa.org"
       },
       {
         icon: "Phone",

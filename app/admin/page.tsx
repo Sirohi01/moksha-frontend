@@ -5,7 +5,7 @@ import QuickActions from '@/components/admin/QuickActions';
 import AnalyticsChart from '@/components/admin/AnalyticsChart';
 
 export const metadata: Metadata = {
-  title: 'Dashboard | Admin | Moksha Seva',
+  title: 'Dashboard | Admin | Moksha Sewa',
 };
 
 export default function AdminDashboard() {
@@ -14,12 +14,12 @@ export default function AdminDashboard() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Welcome to the Moksha Seva admin dashboard
+          Welcome to the Moksha Sewa admin dashboard
         </p>
       </div>
 
       <DashboardStats />
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <AnalyticsChart />
         <QuickActions />

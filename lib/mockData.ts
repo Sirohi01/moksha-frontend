@@ -175,9 +175,9 @@ export const mockSchemes: GovernmentScheme[] = [
 export const mockFAQs: FAQ[] = [
   {
     id: "1",
-    question: "What is Moksha Seva?",
+    question: "What is Moksha Sewa?",
     answer:
-      "Moksha Seva is a humanitarian platform that provides dignified cremation services for unclaimed bodies, homeless individuals, and poor families who cannot afford funeral rites. We work in coordination with police departments, hospitals, and municipal authorities.",
+      "Moksha Sewa is a humanitarian platform that provides dignified cremation services for unclaimed bodies, homeless individuals, and poor families who cannot afford funeral rites. We work in coordination with police departments, hospitals, and municipal authorities.",
     category: "General",
   },
   {
@@ -189,9 +189,9 @@ export const mockFAQs: FAQ[] = [
   },
   {
     id: "3",
-    question: "Is Moksha Seva a government organization?",
+    question: "Is Moksha Sewa a government organization?",
     answer:
-      "Moksha Seva is an NGO working in partnership with government authorities. We operate with official approvals and work alongside police departments, municipalities, and health authorities.",
+      "Moksha Sewa is an NGO working in partnership with government authorities. We operate with official approvals and work alongside police departments, municipalities, and health authorities.",
     category: "General",
   },
   {

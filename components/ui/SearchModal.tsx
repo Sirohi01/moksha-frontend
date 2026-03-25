@@ -46,7 +46,7 @@ const mockResults: SearchResult[] = [
   },
   {
     id: '5',
-    title: 'About Moksha Seva',
+    title: 'About Moksha Sewa',
     description: 'Learn about our mission, vision, and the work we do to serve humanity.',
     url: '/about',
     type: 'page',
@@ -204,7 +204,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               {results.map((result, index) => {
                 const Icon = getIcon(result.type);
                 const isSelected = index === selectedIndex;
-                
+
                 return (
                   <Link
                     key={result.id}
@@ -305,7 +305,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
               <span>↵ Select</span>
               <span>ESC Close</span>
             </div>
-            <span>Powered by Moksha Seva Search</span>
+            <span>Powered by Moksha Sewa Search</span>
           </div>
         </div>
       </div>

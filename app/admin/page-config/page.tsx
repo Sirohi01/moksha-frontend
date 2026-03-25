@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { 
-  Search, 
-  Edit, 
-  Save, 
-  X, 
+import {
+  Search,
+  Edit,
+  Save,
+  X,
   Clock,
   FileText,
   Settings,
@@ -45,9 +45,9 @@ export default function PageConfigManagement() {
     try {
       setLoading(true);
       setError('');
-      
+
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      
+
       // Fetch all page configurations
       const pages = ['homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach', 'board', 'services', 'report', 'impact', 'stories', 'remembrance', 'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate', 'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact', 'press', 'documentaries', 'layout', 'blog', 'compliance'];
       const configPromises = pages.map(async (pageName) => {
@@ -68,7 +68,7 @@ export default function PageConfigManagement() {
           return null;
         }
       });
-      
+
       const results = await Promise.all(configPromises);
       setConfigs(results.filter(Boolean) as PageConfig[]);
     } catch (error: any) {
@@ -88,7 +88,7 @@ export default function PageConfigManagement() {
     try {
       const parsedConfig = JSON.parse(editContent);
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      
+
       const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`, {
         method: 'PUT',
         headers: {
@@ -163,7 +163,7 @@ export default function PageConfigManagement() {
       case 'homepage': return 'Homepage';
       case 'about': return 'About Us';
       case 'how-it-works': return 'How It Works';
-      case 'why-moksha-seva': return 'Why Moksha Seva';
+      case 'why-moksha-seva': return 'Why Moksha Sewa';
       case 'our-reach': return 'Our Reach';
       case 'board': return 'Board & Advisors';
       case 'services': return 'Services';
@@ -208,7 +208,7 @@ export default function PageConfigManagement() {
           <h1 className="text-2xl font-bold text-gray-900">Page Configuration Management</h1>
           <p className="text-gray-600 mt-1">Manage content for all website pages</p>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -254,7 +254,7 @@ export default function PageConfigManagement() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   {editingConfig === pageConfig.pageName ? (
                     <>
@@ -285,7 +285,7 @@ export default function PageConfigManagement() {
                 </div>
               </div>
             </div>
-            
+
             <div className="p-6">
               {editingConfig === pageConfig.pageName ? (
                 <div className="space-y-4">
@@ -316,20 +316,20 @@ export default function PageConfigManagement() {
                       </p>
                       <p className="text-sm text-blue-700">Available sections</p>
                     </div>
-                    
+
                     <div className="bg-green-50 rounded-lg p-4">
                       <h4 className="font-medium text-green-900 mb-2">Status</h4>
                       <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">Published</span>
                       <p className="text-sm text-green-700 mt-1">Live on website</p>
                     </div>
-                    
+
                     <div className="bg-purple-50 rounded-lg p-4">
                       <h4 className="font-medium text-purple-900 mb-2">Version</h4>
                       <p className="text-2xl font-bold text-purple-600">v{pageConfig.version}</p>
                       <p className="text-sm text-purple-700">Current version</p>
                     </div>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium text-gray-900 mb-3">Available Sections:</h4>
                     <div className="flex flex-wrap gap-2">

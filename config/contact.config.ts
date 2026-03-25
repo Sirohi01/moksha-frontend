@@ -28,9 +28,9 @@ export const contactConfig: ContactPageConfig = {
     {
       icon: "Mail",
       title: "Email",
-      info: "help@mokshaseva.org",
+      info: "help@MokshaSewa.org",
       sub: "Response within 24 hours",
-      href: "mailto:help@mokshaseva.org"
+      href: "mailto:help@MokshaSewa.org"
     },
     {
       icon: "MapPin",

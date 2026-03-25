@@ -185,7 +185,7 @@ class SocialMediaService {
     ];
 
     const platformResults = await Promise.allSettled(promises);
-    
+
     platformResults.forEach(result => {
       if (result.status === 'fulfilled') {
         Object.assign(results, result.value);
@@ -197,7 +197,7 @@ class SocialMediaService {
 
   // Generate social media content for different events
   generateEventContent(eventType: string, data: any): SocialMediaPost {
-    const baseHashtags = ['MokshaSeva', 'CommunityService', 'SocialImpact'];
+    const baseHashtags = ['MokshaSewa', 'CommunityService', 'SocialImpact'];
 
     switch (eventType) {
       case 'new_volunteer':
@@ -245,10 +245,10 @@ class SocialMediaService {
     try {
       const post = this.generateEventContent(eventType, data);
       const results = await this.postToMultiplePlatforms(post);
-      
+
       // Log results
       console.log('Social media posting results:', results);
-      
+
       // Return true if at least one platform succeeded
       return Object.values(results).some(success => success);
     } catch (error) {
@@ -282,11 +282,11 @@ class SocialMediaService {
   async getAnalytics(platform: string, dateRange: { start: Date; end: Date }) {
     try {
       const response = await fetch(`/api/social/analytics/${platform}?start=${dateRange.start.toISOString()}&end=${dateRange.end.toISOString()}`);
-      
+
       if (response.ok) {
         return await response.json();
       }
-      
+
       return null;
     } catch (error) {
       console.error('Analytics fetch error:', error);

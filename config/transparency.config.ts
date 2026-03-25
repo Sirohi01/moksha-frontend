@@ -13,7 +13,7 @@ export const transparencyConfig: TransparencyPageConfig = {
   hero: {
     badge: "✦ Public Record ✦",
     title: "Transparency Dashboard",
-    description: "Every cremation performed by Moksha Seva is publicly documented. Search, verify, and download certificates freely.",
+    description: "Every cremation performed by Moksha Sewa is publicly documented. Search, verify, and download certificates freely.",
     icon: "Shield"
   },
 
@@ -33,7 +33,7 @@ export const transparencyConfig: TransparencyPageConfig = {
     downloadButton: "Download CSV",
     tableHeaders: [
       "Body ID",
-      "Location Found", 
+      "Location Found",
       "Date Found",
       "Cremation Date",
       "Cremation Ground",

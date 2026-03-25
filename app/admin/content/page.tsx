@@ -33,82 +33,82 @@ export default function ContentManagement() {
     try {
       setLoading(true);
       setError('');
-      
+
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      
+
       // For now, show page configurations as content since that's what we have
       const response = await fetch(`${API_BASE_URL}/api/page-config/homepage`);
       const homepageData = await response.json();
-      
+
       const response2 = await fetch(`${API_BASE_URL}/api/page-config/about`);
       const aboutData = await response2.json();
-      
+
       const response3 = await fetch(`${API_BASE_URL}/api/page-config/how-it-works`);
       const howItWorksData = await response3.json();
-      
+
       const response4 = await fetch(`${API_BASE_URL}/api/page-config/why-moksha-seva`);
-      const whyMokshaSevaData = await response4.json();
-      
+      const whyMokshaSewaData = await response4.json();
+
       const response5 = await fetch(`${API_BASE_URL}/api/page-config/our-reach`);
       const ourReachData = await response5.json();
-      
+
       const response6 = await fetch(`${API_BASE_URL}/api/page-config/board`);
       const boardData = await response6.json();
-      
+
       const response7 = await fetch(`${API_BASE_URL}/api/page-config/services`);
       const servicesData = await response7.json();
-      
+
       const response8 = await fetch(`${API_BASE_URL}/api/page-config/report`);
       const reportData = await response8.json();
-      
+
       const response9 = await fetch(`${API_BASE_URL}/api/page-config/impact`);
       const impactData = await response9.json();
-      
+
       const response10 = await fetch(`${API_BASE_URL}/api/page-config/stories`);
       const storiesData = await response10.json();
-      
+
       const response11 = await fetch(`${API_BASE_URL}/api/page-config/remembrance`);
       const remembranceData = await response11.json();
-      
+
       const response12 = await fetch(`${API_BASE_URL}/api/page-config/testimonials`);
       const testimonialsData = await response12.json();
-      
+
       const response13 = await fetch(`${API_BASE_URL}/api/page-config/gallery`);
       const galleryData = await response13.json();
-      
+
       const response14 = await fetch(`${API_BASE_URL}/api/page-config/feedback`);
       const feedbackData = await response14.json();
-      
+
       const response15 = await fetch(`${API_BASE_URL}/api/page-config/volunteer`);
       const volunteerData = await response15.json();
-      
+
       const response16 = await fetch(`${API_BASE_URL}/api/page-config/corporate`);
       const corporateData = await response16.json();
-      
+
       const response17 = await fetch(`${API_BASE_URL}/api/page-config/legacy-giving`);
       const legacyGivingData = await response17.json();
-      
+
       const response18 = await fetch(`${API_BASE_URL}/api/page-config/tribute`);
       const tributeData = await response18.json();
-      
+
       const response19 = await fetch(`${API_BASE_URL}/api/page-config/transparency`);
       const transparencyData = await response19.json();
-      
+
       const response20 = await fetch(`${API_BASE_URL}/api/page-config/schemes`);
       const schemesData = await response20.json();
-      
+
       const response21 = await fetch(`${API_BASE_URL}/api/page-config/contact`);
       const contactData = await response21.json();
-      
+
       const response22 = await fetch(`${API_BASE_URL}/api/page-config/press`);
       const pressData = await response22.json();
-      
+
       const response23 = await fetch(`${API_BASE_URL}/api/page-config/documentaries`);
       const documentariesData = await response23.json();
-      
+
       const response24 = await fetch(`${API_BASE_URL}/api/page-config/layout`);
       const layoutData = await response24.json();
-      
+
       const response25 = await fetch(`${API_BASE_URL}/api/page-config/blog`);
       const blogData = await response25.json();
 
@@ -119,7 +119,7 @@ export default function ContentManagement() {
         { id: 'homepage-config', title: 'Homepage Configuration', data: homepageData },
         { id: 'about-config', title: 'About Page Configuration', data: aboutData },
         { id: 'how-it-works-config', title: 'How It Works Page Configuration', data: howItWorksData },
-        { id: 'why-moksha-seva-config', title: 'Why Moksha Seva Page Configuration', data: whyMokshaSevaData },
+        { id: 'why-moksha-seva-config', title: 'Why Moksha Sewa Page Configuration', data: whyMokshaSewaData },
         { id: 'our-reach-config', title: 'Our Reach Page Configuration', data: ourReachData },
         { id: 'board-config', title: 'Board & Advisors Page Configuration', data: boardData },
         { id: 'services-config', title: 'Services Page Configuration', data: servicesData },
@@ -350,7 +350,7 @@ export default function ContentManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button 
+                      <button
                         onClick={() => {
                           if (item._id === 'homepage-config') {
                             window.location.href = '/admin/content-editor?page=homepage';
@@ -489,8 +489,8 @@ export default function ContentManagement() {
           <div className="text-6xl mb-4">📄</div>
           <h3 className="text-lg font-medium text-gray-900 mb-2">No content found</h3>
           <p className="text-gray-600 mb-6">
-            {filters.search || filters.type || filters.status 
-              ? 'No content matches your current filters.' 
+            {filters.search || filters.type || filters.status
+              ? 'No content matches your current filters.'
               : 'Get started by creating your first content item.'}
           </p>
           <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">

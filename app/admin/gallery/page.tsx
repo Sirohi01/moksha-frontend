@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import GalleryManager from '@/components/admin/GalleryManager';
 
 export const metadata: Metadata = {
-  title: 'Gallery Management | Admin | Moksha Seva',
+  title: 'Gallery Management | Admin | Moksha Sewa',
 };
 
 export default function AdminGalleryPage() {

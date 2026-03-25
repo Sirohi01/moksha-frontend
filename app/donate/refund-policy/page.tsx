@@ -68,13 +68,13 @@ export default function RefundPolicyPage() {
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-4">Policy Overview</h2>
               <p className="text-stone-600 leading-relaxed mb-4">
-                At Moksha Seva, we understand that sometimes circumstances change. While donations are generally 
-                non-refundable as they support our ongoing humanitarian work, we have established this policy to 
+                At Moksha Sewa, we understand that sometimes circumstances change. While donations are generally
+                non-refundable as they support our ongoing humanitarian work, we have established this policy to
                 address genuine cases where refunds may be warranted.
               </p>
               <p className="text-stone-600 leading-relaxed">
-                This policy applies to all donations made through our website, mobile app, or any other digital 
-                payment channels. We are committed to handling all refund requests fairly, transparently, and 
+                This policy applies to all donations made through our website, mobile app, or any other digital
+                payment channels. We are committed to handling all refund requests fairly, transparently, and
                 in accordance with applicable laws.
               </p>
             </div>
@@ -82,7 +82,7 @@ export default function RefundPolicyPage() {
             {/* Refund Eligibility */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">Refund Eligibility Criteria</h2>
-              
+
               <div className="space-y-6">
                 {/* Eligible Cases */}
                 <div>
@@ -94,35 +94,35 @@ export default function RefundPolicyPage() {
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Duplicate Transaction:</strong> If you were charged multiple times for the same donation 
+                        <strong>Duplicate Transaction:</strong> If you were charged multiple times for the same donation
                         due to technical error or payment gateway issue.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Unauthorized Transaction:</strong> If the donation was made without your knowledge or 
+                        <strong>Unauthorized Transaction:</strong> If the donation was made without your knowledge or
                         authorization (requires proof and police complaint in some cases).
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Technical Error:</strong> If you were charged an incorrect amount due to a system error 
+                        <strong>Technical Error:</strong> If you were charged an incorrect amount due to a system error
                         (refund will be issued for the excess amount).
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Payment Failure:</strong> If your account was debited but the donation was not processed 
+                        <strong>Payment Failure:</strong> If your account was debited but the donation was not processed
                         or reflected in our system.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Accidental Donation:</strong> If you made a donation by mistake and request a refund 
+                        <strong>Accidental Donation:</strong> If you made a donation by mistake and request a refund
                         within 24 hours of the transaction.
                       </span>
                     </li>
@@ -139,35 +139,35 @@ export default function RefundPolicyPage() {
                     <li className="flex items-start gap-2">
                       <span className="text-red-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Change of Mind:</strong> Refunds are not provided if you simply change your mind after 
+                        <strong>Change of Mind:</strong> Refunds are not provided if you simply change your mind after
                         making a voluntary donation.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>After Fund Utilization:</strong> Once the donated funds have been allocated or utilized 
+                        <strong>After Fund Utilization:</strong> Once the donated funds have been allocated or utilized
                         for our charitable activities (typically after 7 days).
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Tax Receipt Issued:</strong> If an 80G tax exemption certificate has already been issued 
+                        <strong>Tax Receipt Issued:</strong> If an 80G tax exemption certificate has already been issued
                         and claimed for tax benefits.
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Recurring Donations:</strong> For monthly/yearly recurring donations after the first 
+                        <strong>Recurring Donations:</strong> For monthly/yearly recurring donations after the first
                         successful payment (you can cancel future payments).
                       </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-red-600 mt-1">•</span>
                       <span className="text-stone-600">
-                        <strong>Campaign-Specific Donations:</strong> Donations made to specific campaigns or memorial 
+                        <strong>Campaign-Specific Donations:</strong> Donations made to specific campaigns or memorial
                         funds after the campaign has commenced.
                       </span>
                     </li>
@@ -179,10 +179,10 @@ export default function RefundPolicyPage() {
             {/* Refund Process */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">How to Request a Refund</h2>
-              
+
               <div className="space-y-6">
                 <p className="text-stone-600 leading-relaxed">
-                  If you believe your donation qualifies for a refund based on the eligibility criteria above, 
+                  If you believe your donation qualifies for a refund based on the eligibility criteria above,
                   please follow these steps:
                 </p>
 
@@ -192,7 +192,7 @@ export default function RefundPolicyPage() {
                     {
                       step: "1",
                       title: "Submit Refund Request",
-                      description: "Send an email to refunds@mokshaseva.org with the subject line 'Refund Request - [Transaction ID]'",
+                      description: "Send an email to refunds@MokshaSewa.org with the subject line 'Refund Request - [Transaction ID]'",
                       details: [
                         "Include your full name as per donation",
                         "Transaction ID / Receipt number",
@@ -260,13 +260,13 @@ export default function RefundPolicyPage() {
             {/* Cancellation Policy */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">Cancellation Policy</h2>
-              
+
               <div className="space-y-6">
                 <div>
                   <h3 className="font-semibold text-stone-800 mb-3">One-Time Donations</h3>
                   <p className="text-stone-600 leading-relaxed">
-                    One-time donations can be cancelled only if the request is made within 24 hours of the transaction 
-                    and before the funds have been allocated. After 24 hours, cancellation requests will be treated as 
+                    One-time donations can be cancelled only if the request is made within 24 hours of the transaction
+                    and before the funds have been allocated. After 24 hours, cancellation requests will be treated as
                     refund requests and subject to the refund eligibility criteria.
                   </p>
                 </div>
@@ -287,7 +287,7 @@ export default function RefundPolicyPage() {
                     </li>
                     <li className="flex items-start gap-2 text-stone-600">
                       <span className="text-saffron-600 mt-1">•</span>
-                      <span>Or email us at support@mokshaseva.org with your donor ID</span>
+                      <span>Or email us at support@MokshaSewa.org with your donor ID</span>
                     </li>
                     <li className="flex items-start gap-2 text-stone-600">
                       <span className="text-saffron-600 mt-1">•</span>
@@ -303,8 +303,8 @@ export default function RefundPolicyPage() {
                 <div>
                   <h3 className="font-semibold text-stone-800 mb-3">Campaign-Specific Donations</h3>
                   <p className="text-stone-600 leading-relaxed">
-                    Donations made to specific campaigns (e.g., Adopt-a-City, Sacred River) cannot be cancelled once 
-                    the campaign has started. If a campaign is cancelled or does not reach its goal, donors will be 
+                    Donations made to specific campaigns (e.g., Adopt-a-City, Sacred River) cannot be cancelled once
+                    the campaign has started. If a campaign is cancelled or does not reach its goal, donors will be
                     notified and given the option to redirect their donation to general funds or request a refund.
                   </p>
                 </div>
@@ -314,7 +314,7 @@ export default function RefundPolicyPage() {
             {/* Refund Timeline */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">Refund Processing Timeline</h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start gap-4 p-4 bg-cream-50 rounded-lg">
                   <Clock className="w-6 h-6 text-saffron-600 flex-shrink-0 mt-1" />
@@ -352,10 +352,10 @@ export default function RefundPolicyPage() {
             {/* Tax Implications */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">Tax Implications of Refunds</h2>
-              
+
               <div className="space-y-4">
                 <p className="text-stone-600 leading-relaxed">
-                  If you have received an 80G tax exemption certificate for your donation and later receive a refund, 
+                  If you have received an 80G tax exemption certificate for your donation and later receive a refund,
                   please note the following:
                 </p>
 
@@ -379,7 +379,7 @@ export default function RefundPolicyPage() {
                         </li>
                         <li className="flex items-start gap-2">
                           <span>•</span>
-                          <span>Moksha Seva will report the cancellation to tax authorities as per regulations</span>
+                          <span>Moksha Sewa will report the cancellation to tax authorities as per regulations</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <span>•</span>
@@ -395,7 +395,7 @@ export default function RefundPolicyPage() {
             {/* Contact Information */}
             <div className="bg-gradient-to-br from-saffron-50 to-gold-50 rounded-2xl border border-saffron-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">Contact Us for Refund Queries</h2>
-              
+
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center flex-shrink-0">
@@ -404,8 +404,8 @@ export default function RefundPolicyPage() {
                   <div>
                     <h3 className="font-semibold text-stone-800 mb-1">Email Support</h3>
                     <p className="text-sm text-stone-600 mb-2">For refund requests and queries</p>
-                    <a href="mailto:refunds@mokshaseva.org" className="text-saffron-600 font-medium hover:underline">
-                      refunds@mokshaseva.org
+                    <a href="mailto:refunds@MokshaSewa.org" className="text-saffron-600 font-medium hover:underline">
+                      refunds@MokshaSewa.org
                     </a>
                     <p className="text-xs text-stone-500 mt-1">Response within 24-48 hours</p>
                   </div>
@@ -428,7 +428,7 @@ export default function RefundPolicyPage() {
 
               <div className="mt-6 pt-6 border-t border-saffron-200">
                 <p className="text-sm text-stone-600 leading-relaxed">
-                  For general donation queries, please email <a href="mailto:support@mokshaseva.org" className="text-saffron-600 underline">support@mokshaseva.org</a> or 
+                  For general donation queries, please email <a href="mailto:support@MokshaSewa.org" className="text-saffron-600 underline">support@MokshaSewa.org</a> or
                   visit our <Link href="/contact" className="text-saffron-600 underline">Contact Page</Link>.
                 </p>
               </div>
@@ -437,7 +437,7 @@ export default function RefundPolicyPage() {
             {/* Dispute Resolution */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-6">Dispute Resolution</h2>
-              
+
               <div className="space-y-4">
                 <p className="text-stone-600 leading-relaxed">
                   If you are not satisfied with our refund decision or process, you have the following options:
@@ -447,8 +447,8 @@ export default function RefundPolicyPage() {
                   <div className="border-l-4 border-stone-300 pl-4">
                     <h3 className="font-semibold text-stone-800 mb-2">1. Escalation to Senior Management</h3>
                     <p className="text-sm text-stone-600">
-                      You can escalate your case by emailing <span className="font-medium">grievance@mokshaseva.org</span> with 
-                      your refund request details and reason for escalation. A senior manager will review your case within 
+                      You can escalate your case by emailing <span className="font-medium">grievance@MokshaSewa.org</span> with
+                      your refund request details and reason for escalation. A senior manager will review your case within
                       5 business days.
                     </p>
                   </div>
@@ -456,7 +456,7 @@ export default function RefundPolicyPage() {
                   <div className="border-l-4 border-stone-300 pl-4">
                     <h3 className="font-semibold text-stone-800 mb-2">2. Payment Gateway Dispute</h3>
                     <p className="text-sm text-stone-600">
-                      If the issue is related to payment processing, you can raise a dispute with your bank or payment 
+                      If the issue is related to payment processing, you can raise a dispute with your bank or payment
                       provider. Please note that chargebacks may take 30-45 days to resolve.
                     </p>
                   </div>
@@ -464,7 +464,7 @@ export default function RefundPolicyPage() {
                   <div className="border-l-4 border-stone-300 pl-4">
                     <h3 className="font-semibold text-stone-800 mb-2">3. Legal Recourse</h3>
                     <p className="text-sm text-stone-600">
-                      All disputes are subject to the jurisdiction of courts in [City Name], India. We encourage 
+                      All disputes are subject to the jurisdiction of courts in [City Name], India. We encourage
                       resolving disputes amicably through our internal process before pursuing legal action.
                     </p>
                   </div>
@@ -475,9 +475,9 @@ export default function RefundPolicyPage() {
             {/* Policy Updates */}
             <div className="bg-white rounded-2xl border border-cream-200 shadow-sm p-8">
               <h2 className="font-serif text-2xl font-bold text-stone-800 mb-4">Policy Updates & Amendments</h2>
-              
+
               <p className="text-stone-600 leading-relaxed mb-4">
-                Moksha Seva reserves the right to modify this Refund & Cancellation Policy at any time. Changes will 
+                Moksha Sewa reserves the right to modify this Refund & Cancellation Policy at any time. Changes will
                 be effective immediately upon posting on our website. We will notify donors of significant changes via:
               </p>
 
@@ -497,7 +497,7 @@ export default function RefundPolicyPage() {
               </ul>
 
               <p className="text-stone-600 leading-relaxed">
-                Continued use of our donation services after policy changes constitutes acceptance of the updated policy. 
+                Continued use of our donation services after policy changes constitutes acceptance of the updated policy.
                 We recommend reviewing this policy periodically.
               </p>
             </div>
@@ -509,7 +509,7 @@ export default function RefundPolicyPage() {
                 <div>
                   <h2 className="font-serif text-xl font-bold text-stone-800 mb-3">Donor Acknowledgment</h2>
                   <p className="text-stone-600 leading-relaxed mb-4">
-                    By making a donation to Moksha Seva, you acknowledge that you have read, understood, and agree to 
+                    By making a donation to Moksha Sewa, you acknowledge that you have read, understood, and agree to
                     this Refund & Cancellation Policy. You understand that:
                   </p>
                   <ul className="space-y-2 text-sm text-stone-600">
@@ -527,7 +527,7 @@ export default function RefundPolicyPage() {
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-600">✓</span>
-                      <span>All refund decisions are at the discretion of Moksha Seva management</span>
+                      <span>All refund decisions are at the discretion of Moksha Sewa management</span>
                     </li>
                   </ul>
                 </div>
@@ -549,13 +549,13 @@ export default function RefundPolicyPage() {
               Our support team is here to help clarify any doubts or concerns you may have.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link 
+              <Link
                 href="/contact"
                 className="px-6 py-3 bg-white text-amber-800 rounded-lg font-semibold hover:bg-stone-50 transition-colors"
               >
                 Contact Support
               </Link>
-              <Link 
+              <Link
                 href="/donate"
                 className="px-6 py-3 bg-amber-700 text-white rounded-lg font-semibold hover:bg-amber-600 transition-colors border-2 border-amber-600"
               >

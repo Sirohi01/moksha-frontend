@@ -26,41 +26,41 @@ export default function ExpansionRequestPage() {
     alternatePhone: "",
     designation: "",
     organization: "",
-    
+
     // Location Details
     requestedCity: "",
     requestedState: "",
     requestedDistrict: "",
     population: "",
     currentServices: "",
-    
+
     // Need Assessment
     urgencyLevel: "",
     estimatedCases: "",
     existingInfrastructure: "",
     localSupport: "",
-    
+
     // Justification
     whyNeeded: "",
     communitySupport: "",
     localChallenges: "",
     proposedSolution: "",
-    
+
     // Resources
     volunteerCommitment: "",
     fundingSupport: "",
     governmentSupport: "",
     partnerOrganizations: "",
-    
+
     // Contact Information
     localContactName: "",
     localContactPhone: "",
     localContactEmail: "",
-    
+
     // Additional Information
     additionalInfo: "",
     timeframe: "",
-    
+
     // Consent
     agreeToTerms: false,
     agreeToFollowUp: false,
@@ -130,8 +130,8 @@ export default function ExpansionRequestPage() {
           <p className="text-stone-600 text-sm mb-6">
             Our team will review your request and contact you within 5-7 business days.
           </p>
-          <button 
-            onClick={() => setSubmitted(false)} 
+          <button
+            onClick={() => setSubmitted(false)}
             className="text-saffron-600 text-sm underline"
             aria-label="Submit another expansion request"
           >
@@ -154,7 +154,7 @@ export default function ExpansionRequestPage() {
             <div>
               <span className="text-green-300 text-xs font-semibold tracking-wider uppercase">Service Expansion</span>
               <h1 className="font-serif text-3xl font-bold mt-1 mb-2">
-                Request Moksha Seva in Your City
+                Request Moksha Sewa in Your City
               </h1>
               <p className="text-green-50 text-base">
                 Help us bring dignified last rites services to your community. Submit a detailed expansion request.
@@ -280,7 +280,7 @@ export default function ExpansionRequestPage() {
                 <div className="space-y-3">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1">
-                      Why is Moksha Seva needed in this location? *
+                      Why is Moksha Sewa needed in this location? *
                     </label>
                     <textarea
                       placeholder="Describe the current situation and need for dignified last rites services"

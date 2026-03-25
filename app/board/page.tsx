@@ -11,7 +11,7 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 export default function BoardPage() {
     // Use dynamic config with fallback to static config
     const { config: dynamicConfig, loading: configLoading } = usePageConfig('board', boardConfig);
-    
+
     // Use dynamic config if available, otherwise fallback to static
     const config = dynamicConfig || boardConfig;
     return (
@@ -50,7 +50,7 @@ export default function BoardPage() {
                                     </p>
 
                                     <div className="flex items-center gap-4 border-t border-stone-50 pt-8 mt-auto">
-                                        <a href={`mailto:${member.id}@mokshaseva.org`} className="w-10 h-10 rounded-full bg-stone-50 flex items-center justify-center hover:bg-[#7ab800] hover:text-white transition-all">
+                                        <a href={`mailto:${member.id}@MokshaSewa.org`} className="w-10 h-10 rounded-full bg-stone-50 flex items-center justify-center hover:bg-[#7ab800] hover:text-white transition-all">
                                             <Mail size={16} />
                                         </a>
                                         {/* <Link href={`/board/profile/${member.id}`} className="flex-1">

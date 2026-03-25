@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
                         </div>
                         <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8">PRIVACY <br /><span className="text-[#7ab800]">AND POLICY</span></h1>
                         <p className="text-stone-400 text-lg md:text-xl font-medium leading-relaxed">
-                            At Moksha Seva, your trust is as sacred as our mission. We are committed to protecting
+                            At Moksha Sewa, your trust is as sacred as our mission. We are committed to protecting
                             the privacy of our donors, volunteers, and the individuals we serve.
                         </p>
                     </div>
@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#7ab800]/10 blur-3xl rounded-full" />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-[#7ab800] mb-4">Grievance Officer</h3>
                                     <p className="text-stone-400 text-xs leading-relaxed mb-6">If you have any concerns regarding your data, contact our Nodal Officer.</p>
-                                    <p className="font-mono text-[11px] text-white">trust@mokshaseva.org</p>
+                                    <p className="font-mono text-[11px] text-white">trust@MokshaSewa.org</p>
                                 </div>
                             </div>
                         </div>

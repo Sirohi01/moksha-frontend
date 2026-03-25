@@ -13,7 +13,7 @@ export const howItWorksConfig: HowItWorksPageConfig = {
   hero: {
     badge: "✦ Our Sacred Process ✦",
     title: "How",
-    titleHighlight: "Moksha Seva",
+    titleHighlight: "Moksha Sewa",
     description: "A transparent, humane, and legally compliant 6-step process — from the first report to a permanent public record."
   },
 
@@ -33,7 +33,7 @@ export const howItWorksConfig: HowItWorksPageConfig = {
     },
     {
       icon: "Shield",
-      step: "Step 2", 
+      step: "Step 2",
       title: "Police Coordination & Verification",
       description: "Our team coordinates with the nearest police station within 2 hours of the report. Police file an FIR, and we register the case in our system.",
       timeline: "2 - 6 hours",
@@ -46,7 +46,7 @@ export const howItWorksConfig: HowItWorksPageConfig = {
     {
       icon: "Search",
       step: "Step 3",
-      title: "Identification Attempt", 
+      title: "Identification Attempt",
       description: "We make every effort to identify the deceased — using our database, social media outreach, Missing Persons helplines, and hospital records. Family is notified if found.",
       timeline: "24 - 72 hours",
       actions: [
@@ -64,7 +64,7 @@ export const howItWorksConfig: HowItWorksPageConfig = {
       timeline: "During 72-hour window",
       actions: [
         "Death certificate filed",
-        "Police NOC obtained", 
+        "Police NOC obtained",
         "All documentation digitized",
         "Legal compliance verified"
       ]

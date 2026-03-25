@@ -25,7 +25,7 @@ export const documentariesConfig: DocumentariesPageConfig = {
         duration: "18:00",
         type: "Main Feature",
         year: "2024",
-        desc: "A cinematic deep-dive into the founding philosophy of Moksha Seva and the people who make it possible.",
+        desc: "A cinematic deep-dive into the founding philosophy of Moksha Sewa and the people who make it possible.",
         image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2000&auto=format&fit=crop",
         youtubeId: "Jm_X9J-J9yY"
       },

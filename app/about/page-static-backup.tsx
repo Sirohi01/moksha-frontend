@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 export default function AboutPage() {
   // Use dynamic config with fallback to static config
   const { config: dynamicConfig, loading, error } = usePageConfig('about', aboutConfig);
-  
+
   // Use dynamic config if available, otherwise fallback to static
   const config = dynamicConfig || aboutConfig;
 
@@ -62,7 +62,7 @@ export default function AboutPage() {
           <div className="absolute top-10 right-10 w-32 h-32 bg-amber-200/20 rounded-full blur-2xl"></div>
           <div className="absolute bottom-10 left-10 w-24 h-24 bg-amber-300/20 rounded-full blur-xl"></div>
         </div>
-        
+
         <Container>
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div className="max-w-xl">
@@ -87,14 +87,14 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-full h-full bg-amber-100 rounded-2xl"></div>
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
-                  <Image 
-                    src={aboutConfig.hero.image} 
-                    alt={aboutConfig.hero.cardTitle} 
+                  <Image
+                    src={aboutConfig.hero.image}
+                    alt={aboutConfig.hero.cardTitle}
                     className="w-full h-full object-cover"
                     width={400}
                     height={300}
@@ -157,7 +157,7 @@ export default function AboutPage() {
                   {paragraph}
                 </p>
               ))}
-              
+
               {/* Key Statistics */}
               <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-stone-200">
                 {aboutConfig.story.stats.map((stat, index) => (
@@ -168,13 +168,13 @@ export default function AboutPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="relative">
                 <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
-                  <Image 
-                    src={aboutConfig.story.image} 
-                    alt={aboutConfig.story.imageAlt} 
+                  <Image
+                    src={aboutConfig.story.image}
+                    alt={aboutConfig.story.imageAlt}
                     className="w-full h-full object-cover"
                     width={400}
                     height={300}
@@ -221,7 +221,7 @@ export default function AboutPage() {
                   <h3 className="font-semibold text-gray-900">{member.name}</h3>
                   <p className="text-amber-700 text-sm">{member.role}</p>
                   <p className="text-gray-600 text-xs mt-1">
-                    {member.city} · {member.years} with Moksha Seva
+                    {member.city} · {member.years} with Moksha Sewa
                   </p>
                 </div>
               </Card>

@@ -41,12 +41,12 @@ export default function AdminLogin() {
         role: "super_admin",
         loginTime: new Date().toISOString()
       }));
-      
+
       router.push("/admin");
     } else {
       setError("Invalid email or password");
     }
-    
+
     setLoading(false);
   };
 
@@ -67,14 +67,14 @@ export default function AdminLogin() {
               <div className="relative w-20 h-20 bg-white rounded-full shadow-lg p-3 border-4 border-saffron-100">
                 <Image
                   src="/logo.png"
-                  alt="Moksha Seva Logo"
+                  alt="Moksha Sewa Logo"
                   fill
                   className="object-contain p-2"
                 />
               </div>
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-saffron-600 to-orange-600 bg-clip-text text-transparent mb-2">
-              Moksha Seva
+              Moksha Sewa
             </h1>
             <h2 className="text-xl font-semibold text-gray-800 mb-2">Admin Portal</h2>
             <p className="text-gray-600">Secure access to dashboard and management tools</p>
@@ -189,15 +189,15 @@ export default function AdminLogin() {
               Need assistance? Contact our support team
             </p>
             <div className="flex items-center justify-center gap-4 text-sm">
-              <a 
-                href="mailto:help@mokshasewa.org" 
+              <a
+                href="mailto:help@mokshasewa.org"
                 className="text-saffron-600 hover:text-saffron-700 font-medium hover:underline transition-colors"
               >
                 help@mokshasewa.org
               </a>
               <span className="text-gray-300">|</span>
-              <a 
-                href="tel:+919773992516" 
+              <a
+                href="tel:+919773992516"
                 className="text-saffron-600 hover:text-saffron-700 font-medium hover:underline transition-colors"
               >
                 +91 97739 92516

@@ -105,14 +105,14 @@ export default function Footer() {
             <div className="flex items-center gap-6 ml-2">
               {activeConfig.footer.bottom.socialPlatforms.map((platform, i) => {
                 const Icon = getIcon(platform);
-                const socialLink = activeConfig.socialFloating?.socialLinks?.find(link => 
+                const socialLink = activeConfig.socialFloating?.socialLinks?.find(link =>
                   link.name.toLowerCase().includes(platform.toLowerCase())
                 );
-                const href = socialLink?.url || `https://${platform.toLowerCase()}.com/mokshaseva`;
-                
+                const href = socialLink?.url || `https://${platform.toLowerCase()}.com/MokshaSewa`;
+
                 return (
-                  <a 
-                    key={i} 
+                  <a
+                    key={i}
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"

@@ -1,10 +1,10 @@
-// Why Moksha Seva Page Configuration Validator
-// Helps validate the why moksha seva page configuration for common issues
+// Why Moksha Sewa Page Configuration Validator
+// Helps validate the why Moksha Sewa page configuration for common issues
 
-import { whyMokshaSevaConfig } from './why-moksha-seva.config';
+import { whyMokshaSewaConfig } from './why-moksha-seva.config';
 import { iconMap } from './icons.config';
 
-interface WhyMokshaSevaValidationResult {
+interface WhyMokshaSewaValidationResult {
   isValid: boolean;
   errors: string[];
   warnings: string[];
@@ -15,23 +15,23 @@ interface WhyMokshaSevaValidationResult {
   };
 }
 
-export function validateWhyMokshaSevaConfig(): WhyMokshaSevaValidationResult {
+export function validateWhyMokshaSewaConfig(): WhyMokshaSewaValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
   // Validate hero section
-  if (!whyMokshaSevaConfig.hero?.title) {
+  if (!whyMokshaSewaConfig.hero?.title) {
     errors.push('Hero title is missing');
   }
-  if (!whyMokshaSevaConfig.hero?.description) {
+  if (!whyMokshaSewaConfig.hero?.description) {
     errors.push('Hero description is missing');
   }
-  if (!whyMokshaSevaConfig.hero?.stats?.length) {
+  if (!whyMokshaSewaConfig.hero?.stats?.length) {
     errors.push('Hero stats array is empty or missing');
   }
 
   // Validate reasons
-  if (!whyMokshaSevaConfig.reasons?.length) {
+  if (!whyMokshaSewaConfig.reasons?.length) {
     errors.push('Reasons array is empty or missing');
   }
 
@@ -43,9 +43,9 @@ export function validateWhyMokshaSevaConfig(): WhyMokshaSevaValidationResult {
   };
 
   // Check reason icons
-  whyMokshaSevaConfig.reasons?.forEach((reason, index) => {
+  whyMokshaSewaConfig.reasons?.forEach((reason, index) => {
     checkIcon(reason.icon, `reasons[${index}]`);
-    
+
     // Validate reason content
     if (!reason.title) {
       errors.push(`Reason ${index + 1} is missing title`);
@@ -59,31 +59,31 @@ export function validateWhyMokshaSevaConfig(): WhyMokshaSevaValidationResult {
   });
 
   // Validate impact section
-  if (!whyMokshaSevaConfig.impact?.title) {
+  if (!whyMokshaSewaConfig.impact?.title) {
     errors.push('Impact section title is missing');
   }
-  if (!whyMokshaSevaConfig.impact?.stats?.length) {
+  if (!whyMokshaSewaConfig.impact?.stats?.length) {
     errors.push('Impact stats array is empty or missing');
   }
 
   // Validate call to action
-  if (!whyMokshaSevaConfig.callToAction?.title) {
+  if (!whyMokshaSewaConfig.callToAction?.title) {
     errors.push('Call to action title is missing');
   }
-  if (!whyMokshaSevaConfig.callToAction?.buttons?.volunteer?.href) {
+  if (!whyMokshaSewaConfig.callToAction?.buttons?.volunteer?.href) {
     errors.push('Volunteer button href is missing');
   }
-  if (!whyMokshaSevaConfig.callToAction?.buttons?.donate?.href) {
+  if (!whyMokshaSewaConfig.callToAction?.buttons?.donate?.href) {
     errors.push('Donate button href is missing');
   }
 
   // Validate required sections
-  const requiredSections: (keyof typeof whyMokshaSevaConfig)[] = [
+  const requiredSections: (keyof typeof whyMokshaSewaConfig)[] = [
     'hero', 'reasons', 'impact', 'callToAction'
   ];
 
   requiredSections.forEach(section => {
-    if (!whyMokshaSevaConfig[section]) {
+    if (!whyMokshaSewaConfig[section]) {
       errors.push(`Required section "${section}" is missing from config`);
     }
   });
@@ -96,7 +96,7 @@ export function validateWhyMokshaSevaConfig(): WhyMokshaSevaValidationResult {
   };
 
   // Check hero image
-  checkImagePath(whyMokshaSevaConfig.hero?.image, 'hero.image');
+  checkImagePath(whyMokshaSewaConfig.hero?.image, 'hero.image');
 
   // Validate href format
   const checkHref = (href: string, location: string) => {
@@ -106,8 +106,8 @@ export function validateWhyMokshaSevaConfig(): WhyMokshaSevaValidationResult {
   };
 
   // Check button hrefs
-  checkHref(whyMokshaSevaConfig.callToAction?.buttons?.volunteer?.href, 'callToAction.buttons.volunteer.href');
-  checkHref(whyMokshaSevaConfig.callToAction?.buttons?.donate?.href, 'callToAction.buttons.donate.href');
+  checkHref(whyMokshaSewaConfig.callToAction?.buttons?.volunteer?.href, 'callToAction.buttons.volunteer.href');
+  checkHref(whyMokshaSewaConfig.callToAction?.buttons?.donate?.href, 'callToAction.buttons.donate.href');
 
   return {
     isValid: errors.length === 0,
@@ -122,29 +122,29 @@ export function validateWhyMokshaSevaConfig(): WhyMokshaSevaValidationResult {
 }
 
 // Helper function to log validation results
-export function logWhyMokshaSevaValidationResults(): WhyMokshaSevaValidationResult {
-  const results = validateWhyMokshaSevaConfig();
-  
-  console.log('🔍 Why Moksha Seva Page Config Validation Results:');
+export function logWhyMokshaSewaValidationResults(): WhyMokshaSewaValidationResult {
+  const results = validateWhyMokshaSewaConfig();
+
+  console.log('🔍 Why Moksha Sewa Page Config Validation Results:');
   console.log(`✅ Valid: ${results.isValid ? 'Yes' : 'No'}`);
   console.log(`❌ Errors: ${results.summary.totalErrors}`);
   console.log(`⚠️  Warnings: ${results.summary.totalWarnings}`);
-  
+
   if (results.errors.length > 0) {
     console.log('\n❌ Errors:');
     results.errors.forEach(error => console.log(`  - ${error}`));
   }
-  
+
   if (results.warnings.length > 0) {
     console.log('\n⚠️  Warnings:');
     results.warnings.forEach(warning => console.log(`  - ${warning}`));
   }
-  
+
   if (results.isValid && results.warnings.length === 0) {
-    console.log('\n🎉 Why Moksha Seva page configuration is perfect!');
+    console.log('\n🎉 Why Moksha Sewa page configuration is perfect!');
   }
-  
+
   return results;
 }
 
-export default validateWhyMokshaSevaConfig;
+export default validateWhyMokshaSewaConfig;

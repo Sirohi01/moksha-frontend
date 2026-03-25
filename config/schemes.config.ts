@@ -250,7 +250,7 @@ export const schemesConfig: SchemesPageConfig = {
   // Help Sources
   helpSources: [
     "Panchayat",
-    "Municipal Corporation", 
+    "Municipal Corporation",
     "District Magistrate office",
     "Social Welfare Department"
   ],
@@ -325,7 +325,7 @@ export const schemesConfig: SchemesPageConfig = {
     subtitle: "FOR APPLYING?",
     description: "Dealing with government paperwork can be overwhelming during a crisis. Our trained volunteers will help you navigate the entire process, 100% free.",
     phone: "1800-123-456",
-    email: "schemes@mokshaseva.org",
+    email: "schemes@MokshaSewa.org",
     callLabel: "CALL US",
     emailLabel: "EMAIL SUPPORT"
   },

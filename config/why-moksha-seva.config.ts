@@ -1,18 +1,18 @@
-// Why Moksha Seva Page Configuration
-// All text, images, and content for the why moksha seva page
+// Why Moksha Sewa Page Configuration
+// All text, images, and content for the why Moksha Sewa page
 
-import { WhyMokshaSevaPageConfig } from './why-moksha-seva.types';
+import { WhyMokshaSewaPageConfig } from './why-moksha-seva.types';
 
-export const whyMokshaSevaConfig: WhyMokshaSevaPageConfig = {
+export const whyMokshaSewaConfig: WhyMokshaSewaPageConfig = {
   // Page Metadata
   metadata: {
-    title: "Why Moksha Seva"
+    title: "Why Moksha Sewa"
   },
 
   // Hero Section
   hero: {
     title: "Why Choose",
-    titleHighlight: "Moksha Seva",
+    titleHighlight: "Moksha Sewa",
     description: "When dignity matters most, trust the organization that has served with compassion for over 8 years",
     stats: [
       { number: "2,840+", label: "Lives Honored" },
@@ -20,7 +20,7 @@ export const whyMokshaSevaConfig: WhyMokshaSevaPageConfig = {
       { number: "8+", label: "Years" }
     ],
     image: "/gallery/image0010.png",
-    imageAlt: "Moksha Seva service"
+    imageAlt: "Moksha Sewa service"
   },
 
   // Main Reasons Section
@@ -91,4 +91,4 @@ export const whyMokshaSevaConfig: WhyMokshaSevaPageConfig = {
   }
 };
 
-export default whyMokshaSevaConfig;
+export default whyMokshaSewaConfig;

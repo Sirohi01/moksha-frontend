@@ -28,17 +28,17 @@ export default function SitemapManager() {
       sitemap: `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://mokshaseva.org/</loc>
+    <loc>https://MokshaSewa.org/</loc>
     <lastmod>2024-01-15</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://mokshaseva.org/about</loc>
+    <loc>https://MokshaSewa.org/about</loc>
     <lastmod>2024-01-14</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mokshaseva.org/services</loc>
+    <loc>https://MokshaSewa.org/services</loc>
     <lastmod>2024-01-13</lastmod>
     <priority>0.9</priority>
   </url>
@@ -48,7 +48,7 @@ export default function SitemapManager() {
       lastSubmitted: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
       status: 'submitted'
     };
-    
+
     setSitemapData(mockData);
   };
 
@@ -58,7 +58,7 @@ export default function SitemapManager() {
       setError('');
 
       const result = await seoAPI.generateSitemap();
-      
+
       setSitemapData({
         sitemap: result.data.sitemap,
         urlCount: result.data.urlCount,
@@ -190,7 +190,7 @@ export default function SitemapManager() {
       {sitemapData && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Sitemap Status</h3>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg mr-4">
@@ -257,7 +257,7 @@ export default function SitemapManager() {
       {sitemapData && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Sitemap Preview</h3>
-          
+
           <div className="bg-gray-50 rounded-lg p-4 overflow-x-auto">
             <pre className="text-sm text-gray-800 whitespace-pre-wrap">
               {sitemapData.sitemap}
@@ -296,7 +296,7 @@ export default function SitemapManager() {
       {/* Search Engine Submission Status */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Search Engine Submission</h3>
-        
+
         <div className="space-y-4">
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center">
