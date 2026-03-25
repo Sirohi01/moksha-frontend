@@ -104,6 +104,7 @@ export interface LayoutConfig {
       tooltip: string;
     };
     socialLinks: SocialLink[];
+    whatsapp?: string;
   };
 }
 

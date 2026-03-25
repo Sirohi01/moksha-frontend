@@ -2,6 +2,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MessageCircle, X, Send, Bot, User, Minimize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { usePageConfig } from "@/hooks/usePageConfig";
+import { layoutConfig } from "@/config/layout.config";
+import { LayoutConfig } from "@/config/layout.types";
 
 interface Message {
     id: string;
@@ -11,6 +14,7 @@ interface Message {
 }
 
 export default function ChatBot() {
+    const { config } = usePageConfig<LayoutConfig>('layout', layoutConfig);
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
@@ -210,7 +214,7 @@ export default function ChatBot() {
 
                 {/* WhatsApp Button */}
                 <a
-                    href={`https://wa.me/${process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP?.replace(/\D/g, "") || "919773992516"}`}
+                    href={`https://wa.me/${(config?.socialFloating?.whatsapp || "919773992516").replace(/\D/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group relative flex items-center justify-center w-12 h-12 bg-[#25D366] text-white rounded-full shadow-lg hover:shadow-green-500/40 transition-all duration-300 hover:scale-110 active:scale-95"

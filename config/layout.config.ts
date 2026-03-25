@@ -206,7 +206,8 @@ export const layoutConfig: LayoutConfig = {
         url: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN || "https://linkedin.com/company/MokshaSewa",
         color: "hover:bg-blue-700",
       },
-    ]
+    ],
+    whatsapp: process.env.NEXT_PUBLIC_SOCIAL_WHATSAPP || "919773992516",
   }
 };
 
