@@ -4,7 +4,9 @@ import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Elements";
-import { Users, CheckCircle, Upload, FileText, User, Mail, Briefcase, GraduationCap } from "lucide-react";
+import { Users, CheckCircle, Upload, FileText, User, Mail, Briefcase, GraduationCap, RefreshCw } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
@@ -73,6 +75,8 @@ export default function BoardApplicationPage() {
     agreeToTerms: false,
     agreeToBackgroundCheck: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   const handleFileUpload = (field: string, file: File | null) => {
     setForm({ ...form, [field]: file });
@@ -81,6 +85,16 @@ export default function BoardApplicationPage() {
     // Validation
     if (!form.name || !form.email || !form.phone || !form.positionInterested || !form.motivationStatement) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (!isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
       return;
     }
 
@@ -213,24 +227,50 @@ export default function BoardApplicationPage() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                     />
+                    <div className="space-y-4">
                     <InputField
-                      label="Email Address *"
+                      label="Email Address (Official/Personal) *"
                       type="email"
                       placeholder="your@email.com"
                       required
                       value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      onChange={(e) => {
+                        setForm({ ...form, email: e.target.value });
+                        setIsEmailVerified(false);
+                      }}
+                      disabled={isEmailVerified}
                     />
+                    
+                    {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                      <EmailVerification 
+                        email={form.email} 
+                        onVerified={setIsEmailVerified} 
+                      />
+                    )}
+                  </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <InputField
-                      label="Phone Number *"
-                      type="tel"
-                      placeholder="+91 98765 43210"
-                      required
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label="Phone Number *"
+                        type="tel"
+                        placeholder="+91 98765 43210"
+                        required
+                        value={form.phone}
+                        onChange={(e) => {
+                          setForm({ ...form, phone: e.target.value });
+                          setIsMobileVerified(false);
+                        }}
+                        disabled={isMobileVerified}
+                      />
+                      
+                      {form.phone && form.phone.length >= 10 && (
+                        <MobileVerification 
+                          mobile={form.phone} 
+                          onVerified={setIsMobileVerified} 
+                        />
+                      )}
+                    </div>
                     <InputField
                       label="Alternate Phone"
                       type="tel"
@@ -686,12 +726,14 @@ export default function BoardApplicationPage() {
               {/* Submit Button */}
               <div className="pt-3 border-t border-stone-200 mt-2">
                 <Button
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  loading={loading}
                   onClick={handleSubmit}
+                  loading={loading}
+                  variant="primary"
+                  className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
                   disabled={
+                    loading ||
+                    !isEmailVerified ||
+                    !isMobileVerified ||
                     !form.name ||
                     !form.email ||
                     !form.phone ||
@@ -702,7 +744,12 @@ export default function BoardApplicationPage() {
                     !form.agreeToBackgroundCheck
                   }
                 >
-                  Submit Application
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <RefreshCw className="w-5 h-5 animate-spin" />
+                      SUBMITTING...
+                    </span>
+                  ) : "Submit Application"}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
                   Your application will be reviewed within 7-10 business days.

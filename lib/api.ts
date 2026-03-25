@@ -8,6 +8,10 @@ export const API_ENDPOINTS = {
   ME: `${API_BASE_URL}/api/auth/me`,
   REFRESH_TOKEN: `${API_BASE_URL}/api/auth/refresh-token`,
   CHANGE_PASSWORD: `${API_BASE_URL}/api/auth/change-password`,
+  SEND_OTP: `${API_BASE_URL}/api/auth/send-otp`,
+  VERIFY_OTP: `${API_BASE_URL}/api/auth/verify-otp`,
+  SEND_MOBILE_OTP: `${API_BASE_URL}/api/auth/send-mobile-otp`,
+  VERIFY_MOBILE_OTP: `${API_BASE_URL}/api/auth/verify-mobile-otp`,
 
   // Admin endpoints
   ADMIN_USERS: `${API_BASE_URL}/api/admin/users`,
@@ -140,6 +144,34 @@ export const authAPI = {
     return apiRequest(API_ENDPOINTS.CHANGE_PASSWORD, {
       method: 'PUT',
       body: JSON.stringify({ currentPassword, newPassword }),
+    });
+  },
+
+  sendOTP: async (email: string) => {
+    return apiRequest(API_ENDPOINTS.SEND_OTP, {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  verifyOTP: async (email: string, otp: string) => {
+    return apiRequest(API_ENDPOINTS.VERIFY_OTP, {
+      method: 'POST',
+      body: JSON.stringify({ email, otp }),
+    });
+  },
+
+  sendMobileOTP: async (mobile: string) => {
+    return apiRequest(API_ENDPOINTS.SEND_MOBILE_OTP, {
+      method: 'POST',
+      body: JSON.stringify({ mobile }),
+    });
+  },
+
+  verifyMobileOTP: async (mobile: string, otp: string) => {
+    return apiRequest(API_ENDPOINTS.VERIFY_MOBILE_OTP, {
+      method: 'POST',
+      body: JSON.stringify({ mobile, otp }),
     });
   },
 };

@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import { InputField, TextareaField, SelectField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 import { CheckCircle } from "lucide-react";
 import { contactConfig } from "@/config/contact.config";
 import { getIcon } from "@/config/icons.config";
@@ -15,10 +17,22 @@ export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   const handleSubmit = async () => {
     if (!form.name || !form.email || !form.message) {
       alert(activeConfig.form.validation.fillRequiredFields);
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (!isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
       return;
     }
 
@@ -150,30 +164,57 @@ export default function ContactPage() {
                     {activeConfig.form.title}
                   </h3>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-6">
                       <InputField
                         label={activeConfig.form.labels.yourName}
                         placeholder={activeConfig.form.placeholders.fullName}
-                        required
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.form.labels.email}
-                        type="email"
-                        placeholder={activeConfig.form.placeholders.email}
                         required
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
                       />
+                      
+                      <div className="space-y-4">
+                        <InputField
+                          label={activeConfig.form.labels.email}
+                          placeholder={activeConfig.form.placeholders.email}
+                          type="email"
+                          value={form.email}
+                          onChange={(e) => {
+                            setForm({ ...form, email: e.target.value });
+                            setIsEmailVerified(false); // Reset verification if email changes
+                          }}
+                          required
+                          disabled={isEmailVerified}
+                        />
+                        
+                        {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                          <EmailVerification 
+                            email={form.email} 
+                            onVerified={setIsEmailVerified} 
+                          />
+                        )}
+                      </div>
                     </div>
-                    <InputField
-                      label={activeConfig.form.labels.phone}
-                      type="tel"
-                      placeholder={activeConfig.form.placeholders.phone}
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label={activeConfig.form.labels.phone}
+                        type="tel"
+                        placeholder={activeConfig.form.placeholders.phone}
+                        value={form.phone}
+                        onChange={(e) => {
+                          setForm({ ...form, phone: e.target.value });
+                          setIsMobileVerified(false);
+                        }}
+                        disabled={isMobileVerified}
+                      />
+                      
+                      {form.phone && form.phone.length >= 10 && (
+                        <MobileVerification 
+                          mobile={form.phone} 
+                          onVerified={setIsMobileVerified} 
+                        />
+                      )}
+                    </div>
                     <SelectField
                       label={activeConfig.form.labels.subject}
                       required
@@ -191,14 +232,13 @@ export default function ContactPage() {
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                     />
                     <Button
-                      variant="primary"
-                      size="lg"
-                      className="w-full"
-                      loading={loading}
                       onClick={handleSubmit}
-                      disabled={!form.name || !form.email || !form.message}
+                      loading={loading}
+                      variant="primary"
+                      className="w-full text-lg mt-4 py-4 font-bold shadow-xl border-b-4 border-amber-900"
+                      disabled={!isEmailVerified || !isMobileVerified || !form.name || !form.email || !form.message}
                     >
-                      {activeConfig.form.submitButton}
+                      {loading ? "SENDING..." : activeConfig.form.submitButton}
                     </Button>
                   </div>
                 </>

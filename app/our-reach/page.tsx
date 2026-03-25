@@ -1,7 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { Container } from "@/components/ui/Elements";
-import { MapPin, Globe, ShieldCheck, ChevronRight, X, UsersIcon } from "lucide-react";
+import { MapPin, Globe, ShieldCheck, ChevronRight, X, UsersIcon, RefreshCw, MessageCircle, AlertCircle, Smartphone } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 import Button from "@/components/ui/Button";
 import { ourReachConfig } from "@/config/our-reach.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -27,9 +29,21 @@ export default function OurReachPage() {
         localSupport: "",
         population: ""
     });
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [isMobileVerified, setIsMobileVerified] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!isEmailVerified) {
+            alert("Please verify your email address first");
+            return;
+        }
+
+        if (!isMobileVerified) {
+            alert("Please verify your mobile number via WhatsApp first");
+            return;
+        }
         
         // Enhanced validation with early return
         const errors = [];
@@ -335,8 +349,8 @@ export default function OurReachPage() {
                                         </div>
 
                                         <div className="grid md:grid-cols-2 gap-6">
-                                            <div>
-                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.email}</label>
+                                            <div className="space-y-4">
+                                                <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">Email Address *</label>
                                                 <input
                                                     type="email"
                                                     required
@@ -347,16 +361,27 @@ export default function OurReachPage() {
                                                 />
                                             </div>
 
-                                            <div>
+                                            <div className="space-y-4">
                                                 <label className="block text-stone-700 font-black text-[10px] uppercase tracking-widest mb-2">{config.form.labels.phone}</label>
                                                 <input
                                                     type="tel"
                                                     required
                                                     value={form.phone}
-                                                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                                                    onChange={(e) => {
+                                                        setForm({ ...form, phone: e.target.value });
+                                                        setIsMobileVerified(false);
+                                                    }}
+                                                    disabled={isMobileVerified}
                                                     className="w-full px-6 py-4 rounded-xl border-2 border-stone-200 focus:border-[#7ab800] focus:ring-4 focus:ring-[#7ab800]/10 outline-none transition-all font-medium"
                                                     placeholder={config.form.placeholders.phone}
                                                 />
+                                                
+                                                {form.phone && form.phone.length >= 10 && (
+                                                    <MobileVerification 
+                                                        mobile={form.phone} 
+                                                        onVerified={setIsMobileVerified} 
+                                                    />
+                                                )}
                                             </div>
                                         </div>
 
@@ -468,6 +493,8 @@ export default function OurReachPage() {
                                             type="submit"
                                             disabled={Boolean(
                                                 formLoading || 
+                                                !isEmailVerified ||
+                                                !isMobileVerified ||
                                                 !form.name || 
                                                 !form.email || 
                                                 !form.phone || 

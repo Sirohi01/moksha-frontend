@@ -4,7 +4,8 @@ import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Elements";
-import { Heart, CheckCircle, Shield, User, Mail, Phone, FileText } from "lucide-react";
+import { Heart, CheckCircle, Shield, User, Mail, Phone, FileText, RefreshCw } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
@@ -66,11 +67,17 @@ export default function LegacyGivingRequestPage() {
     agreeToContact: false,
     agreeToPrivacy: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   const handleSubmit = async () => {
     // Validation
     if (!form.name || !form.email || !form.phone || !form.legacyType) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
       return;
     }
 
@@ -222,14 +229,27 @@ export default function LegacyGivingRequestPage() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                     />
-                    <InputField
-                      label="Email Address *"
-                      type="email"
-                      placeholder="your@email.com"
-                      required
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label="Email Address *"
+                        type="email"
+                        placeholder="your@email.com"
+                        required
+                        value={form.email}
+                        onChange={(e) => {
+                          setForm({ ...form, email: e.target.value });
+                          setIsEmailVerified(false);
+                        }}
+                        disabled={isEmailVerified}
+                      />
+                      
+                      {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                        <EmailVerification 
+                          email={form.email} 
+                          onVerified={setIsEmailVerified} 
+                        />
+                      )}
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <InputField
@@ -413,12 +433,18 @@ export default function LegacyGivingRequestPage() {
                 <Button
                   variant="primary"
                   size="lg"
-                  className="w-full"
-                  loading={loading}
+                  className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
+                  disabled={loading || !isEmailVerified || !form.name || !form.email || !form.phone || !form.legacyType}
                   onClick={handleSubmit}
-                  disabled={!form.name || !form.email || !form.phone || !form.legacyType}
                 >
-                  Request Information
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                       <RefreshCw className="w-5 h-5 animate-spin" />
+                       SUBMITTING...
+                    </span>
+                  ) : (
+                    "SUBMIT LEGACY REQUEST"
+                  )}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
                   This is a no-obligation information request.

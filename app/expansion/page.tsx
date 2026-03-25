@@ -4,7 +4,9 @@ import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Elements";
-import { MapPin, CheckCircle } from "lucide-react";
+import { MapPin, CheckCircle, RefreshCw } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
@@ -65,11 +67,23 @@ export default function ExpansionRequestPage() {
     agreeToTerms: false,
     agreeToFollowUp: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   const handleSubmit = async () => {
     // Validation
     if (!form.requesterName || !form.email || !form.phone || !form.requestedCity || !form.whyNeeded) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (!isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
       return;
     }
 
@@ -193,24 +207,50 @@ export default function ExpansionRequestPage() {
                       value={form.requesterName}
                       onChange={(e) => setForm({ ...form, requesterName: e.target.value })}
                     />
+                    <div className="space-y-4">
                     <InputField
                       label="Email Address *"
                       type="email"
                       placeholder="your@email.com"
                       required
                       value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      onChange={(e) => {
+                        setForm({ ...form, email: e.target.value });
+                        setIsEmailVerified(false);
+                      }}
+                      disabled={isEmailVerified}
                     />
+                    
+                    {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                      <EmailVerification 
+                        email={form.email} 
+                        onVerified={setIsEmailVerified} 
+                      />
+                    )}
+                  </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <InputField
-                      label="Phone Number *"
-                      type="tel"
-                      placeholder="+91 98765 43210"
-                      required
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label="Phone Number *"
+                        type="tel"
+                        placeholder="+91 98765 43210"
+                        required
+                        value={form.phone}
+                        onChange={(e) => {
+                          setForm({ ...form, phone: e.target.value });
+                          setIsMobileVerified(false);
+                        }}
+                        disabled={isMobileVerified}
+                      />
+                      
+                      {form.phone && form.phone.length >= 10 && (
+                        <MobileVerification 
+                          mobile={form.phone} 
+                          onVerified={setIsMobileVerified} 
+                        />
+                      )}
+                    </div>
                     <InputField
                       label="Organization/Designation"
                       placeholder="Your role or organization"
@@ -321,14 +361,20 @@ export default function ExpansionRequestPage() {
               {/* Submit Button */}
               <div className="pt-3 border-t border-stone-200 mt-2">
                 <Button
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  loading={loading}
                   onClick={handleSubmit}
-                  disabled={!form.requesterName || !form.email || !form.phone || !form.requestedCity || !form.whyNeeded}
+                  loading={loading}
+                  variant="primary"
+                  className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
+                  disabled={loading || !isEmailVerified || !isMobileVerified || !form.requesterName || !form.email || !form.phone || !form.requestedCity || !form.requestedState}
                 >
-                  Submit Expansion Request
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                       <RefreshCw className="w-5 h-5 animate-spin" />
+                       SUBMITTING...
+                    </span>
+                  ) : (
+                    "SUBMIT EXPANSION REQUEST"
+                  )}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
                   We will review your request and contact you within 5-7 business days.

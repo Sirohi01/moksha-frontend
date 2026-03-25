@@ -4,7 +4,9 @@ import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Elements";
-import { FileText, CheckCircle, Upload, User, Home, Banknote } from "lucide-react";
+import { FileText, CheckCircle, Upload, User, Home, Banknote, RefreshCw } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 
 const indianStates = [
   "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat",
@@ -74,6 +76,8 @@ export default function SchemesApplicationPage() {
     agreeToTerms: false,
     agreeToVerification: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files) {
@@ -90,6 +94,16 @@ export default function SchemesApplicationPage() {
     // Validation
     if (!form.applicantName || !form.email || !form.phone || !form.schemeAppliedFor || !form.address || !form.city || !form.state || !form.pincode || !form.agreeToTerms) {
       alert('Please fill in all required fields and agree to terms');
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (!isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
       return;
     }
 
@@ -232,24 +246,50 @@ export default function SchemesApplicationPage() {
                       value={form.applicantName}
                       onChange={(e) => setForm({ ...form, applicantName: e.target.value })}
                     />
+                    <div className="space-y-4">
                     <InputField
                       label="Email Address *"
                       type="email"
                       placeholder="your@email.com"
                       required
                       value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      onChange={(e) => {
+                        setForm({ ...form, email: e.target.value });
+                        setIsEmailVerified(false);
+                      }}
+                      disabled={isEmailVerified}
                     />
+                    
+                    {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                      <EmailVerification 
+                        email={form.email} 
+                        onVerified={setIsEmailVerified} 
+                      />
+                    )}
+                  </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <InputField
-                      label="Phone Number *"
-                      type="tel"
-                      placeholder="+91 98765 43210"
-                      required
-                      value={form.phone}
-                      onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label="Phone Number *"
+                        type="tel"
+                        placeholder="+91 98765 43210"
+                        required
+                        value={form.phone}
+                        onChange={(e) => {
+                          setForm({ ...form, phone: e.target.value });
+                          setIsMobileVerified(false);
+                        }}
+                        disabled={isMobileVerified}
+                      />
+                      
+                      {form.phone && form.phone.length >= 10 && (
+                        <MobileVerification 
+                          mobile={form.phone} 
+                          onVerified={setIsMobileVerified} 
+                        />
+                      )}
+                    </div>
                     <InputField
                       label="Aadhaar Number"
                       placeholder="1234 5678 9012"
@@ -353,10 +393,13 @@ export default function SchemesApplicationPage() {
                 <Button
                   variant="primary"
                   size="lg"
-                  className="w-full"
+                  className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
                   loading={loading}
                   onClick={handleSubmit}
                   disabled={
+                    loading ||
+                    !isEmailVerified ||
+                    !isMobileVerified ||
                     !form.applicantName ||
                     !form.email ||
                     !form.phone ||
@@ -368,7 +411,12 @@ export default function SchemesApplicationPage() {
                     !form.agreeToTerms
                   }
                 >
-                  Submit Application
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                       <RefreshCw className="w-5 h-5 animate-spin" />
+                       SUBMITTING...
+                    </span>
+                  ) : "Submit Application"}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
                   Your application will be processed within 5-7 business days.

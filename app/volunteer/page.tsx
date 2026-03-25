@@ -3,7 +3,10 @@ import { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 import Link from "next/link";
+import { RefreshCw } from "lucide-react";
 import { volunteerConfig } from "@/config/volunteer.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -91,6 +94,8 @@ export default function VolunteerPage() {
     agreeToTerms: false,
     agreeToBackgroundCheck: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   // Handle loading and error states after all hooks
   if (loading) {
@@ -117,6 +122,16 @@ export default function VolunteerPage() {
         if (!form.name || !form.email || !form.phone || !selectedTypes.length) {
             alert(activeConfig.validationMessages.fillRequiredFields);
             return;
+        }
+
+        if (!isEmailVerified) {
+          alert("Please verify your email address first");
+          return;
+        }
+
+        if (!isMobileVerified) {
+          alert("Please verify your mobile number via WhatsApp first");
+          return;
         }
 
         setLoadingSubmit(true);
@@ -421,22 +436,48 @@ export default function VolunteerPage() {
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                       />
-                      <InputField
-                        label={activeConfig.labels.emailAddress}
-                        type="email"
-                        placeholder={activeConfig.placeholders.email}
-                        required
-                        value={form.email}
-                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.phoneNumber}
-                        type="tel"
-                        placeholder={activeConfig.placeholders.phone}
-                        required
-                        value={form.phone}
-                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      />
+                      <div className="space-y-4">
+                        <InputField
+                          label={activeConfig.labels.emailAddress}
+                          placeholder={activeConfig.placeholders.email}
+                          type="email"
+                          required
+                          value={form.email}
+                          onChange={(e) => {
+                            setForm({ ...form, email: e.target.value });
+                            setIsEmailVerified(false);
+                          }}
+                          disabled={isEmailVerified}
+                        />
+                        
+                        {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                          <EmailVerification 
+                            email={form.email} 
+                            onVerified={setIsEmailVerified} 
+                          />
+                        )}
+                      </div>
+                      <div className="space-y-4">
+                        <InputField
+                          label={activeConfig.labels.phoneNumber}
+                          type="tel"
+                          placeholder={activeConfig.placeholders.phone}
+                          required
+                          value={form.phone}
+                          onChange={(e) => {
+                            setForm({ ...form, phone: e.target.value });
+                            setIsMobileVerified(false);
+                          }}
+                          disabled={isMobileVerified}
+                        />
+                        
+                        {form.phone && form.phone.length >= 10 && (
+                          <MobileVerification 
+                            mobile={form.phone} 
+                            onVerified={setIsMobileVerified} 
+                          />
+                        )}
+                      </div>
                       <InputField
                         label={activeConfig.labels.alternatePhone}
                         type="tel"
@@ -774,36 +815,41 @@ export default function VolunteerPage() {
                   {/* Submit Button */}
                   <div className="pt-6">
                     <Button
-                      variant="primary"
-                      size="lg"
-                      className="w-full text-lg py-4 bg-gradient-to-r from-saffron-600 to-orange-600 hover:from-saffron-700 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all"
-                      loading={loading}
                       onClick={handleSubmit}
-                      disabled={
-                        selectedTypes.length === 0 ||
-                        !form.name ||
-                        !form.email ||
-                        !form.phone ||
-                        !form.dateOfBirth ||
-                        !form.gender ||
-                        !form.address ||
-                        !form.city ||
-                        !form.state ||
-                        !form.pincode ||
-                        !form.occupation ||
-                        !form.availability ||
-                        !form.emergencyContactName ||
-                        !form.emergencyContactPhone ||
-                        !form.emergencyContactRelation ||
-                        !form.whyVolunteer ||
-                        !form.agreeToTerms ||
-                        !form.agreeToBackgroundCheck ||
-                        (form.registrationType === "group" && (!form.groupName || !form.groupSize || !form.groupType || !form.groupLeaderName || !form.groupLeaderPhone || !form.groupLeaderEmail))
-                      }
-                    >
-                      <Heart className="w-5 h-5 mr-2 fill-white" />
-                      {activeConfig.labels.submitButton}
-                    </Button>
+                      className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
+                    disabled={
+                      loadingSubmit || 
+                      !isEmailVerified ||
+                      selectedTypes.length === 0 ||
+                      !form.name ||
+                      !form.email ||
+                      !form.phone ||
+                      !form.dateOfBirth ||
+                      !form.gender ||
+                      !form.address ||
+                      !form.city ||
+                      !form.state ||
+                      !form.pincode ||
+                      !form.occupation ||
+                      !form.availability ||
+                      !form.emergencyContactName ||
+                      !form.emergencyContactPhone ||
+                      !form.emergencyContactRelation ||
+                      !form.whyVolunteer ||
+                      !form.agreeToTerms ||
+                      !form.agreeToBackgroundCheck ||
+                      (form.registrationType === "group" && (!form.groupName || !form.groupSize || !form.groupType || !form.groupLeaderName || !form.groupLeaderPhone || !form.groupLeaderEmail))
+                    }
+                  >
+                    {loadingSubmit ? (
+                      <span className="flex items-center gap-2">
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                        SUBMITTING...
+                      </span>
+                    ) : (
+                      activeConfig.labels.submitButton
+                    )}
+                  </Button>
                     
                     <p className="text-stone-500 text-xs text-center mt-4">
                       {activeConfig.labels.reviewNote}

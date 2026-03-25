@@ -7,6 +7,9 @@ import { Alert } from "@/components/ui/Elements";
 import { feedbackConfig } from "@/config/feedback.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
+import { RefreshCw } from "lucide-react";
 
 export default function FeedbackPage() {
   const { config, loading, error } = usePageConfig('feedback', feedbackConfig);
@@ -36,6 +39,8 @@ export default function FeedbackPage() {
     wouldRecommend: "",
     consentToPublish: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   // Handle loading and error states after all hooks
   if (loading) {
@@ -55,6 +60,16 @@ export default function FeedbackPage() {
     // Validation
     if (!form.name || !form.email || !form.feedbackType || !form.subject || !form.message || !form.wouldRecommend) {
       alert(activeConfig.validationMessages.fillRequiredFields);
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (form.phone && !isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
       return;
     }
 
@@ -190,22 +205,48 @@ export default function FeedbackPage() {
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                     />
-                    <InputField
-                      label={activeConfig.labels.emailAddress}
-                      type="email"
-                      placeholder={activeConfig.placeholders.email}
-                      required
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label={activeConfig.labels.emailAddress}
+                        placeholder={activeConfig.placeholders.email}
+                        type="email"
+                        required
+                        value={form.email}
+                        onChange={(e) => {
+                          setForm({ ...form, email: e.target.value });
+                          setIsEmailVerified(false);
+                        }}
+                        disabled={isEmailVerified}
+                      />
+                      
+                      {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                        <EmailVerification 
+                          email={form.email} 
+                          onVerified={setIsEmailVerified} 
+                        />
+                      )}
+                    </div>
                   </div>
-                  <InputField
-                    label={activeConfig.labels.phoneNumber}
-                    type="tel"
-                    placeholder={activeConfig.placeholders.phone}
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  />
+                  <div className="space-y-4">
+                    <InputField
+                      label={activeConfig.labels.phoneNumber}
+                      type="tel"
+                      placeholder={activeConfig.placeholders.phone}
+                      value={form.phone}
+                      onChange={(e) => {
+                        setForm({ ...form, phone: e.target.value });
+                        setIsMobileVerified(false);
+                      }}
+                      disabled={isMobileVerified}
+                    />
+                    
+                    {form.phone && form.phone.length >= 10 && (
+                      <MobileVerification 
+                        mobile={form.phone} 
+                        onVerified={setIsMobileVerified} 
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -405,22 +446,20 @@ export default function FeedbackPage() {
               {/* Submit Button */}
               <div className="pt-3 border-t border-stone-200 mt-2">
                 <Button
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  loading={loadingSubmit}
                   onClick={handleSubmit}
-                  disabled={
-                    !form.name ||
-                    !form.email ||
-                    !form.feedbackType ||
-                    !form.subject ||
-                    !form.message ||
-                    !form.wouldRecommend ||
-                    form.experienceRating === 0
-                  }
+                  loading={loadingSubmit}
+                  variant="primary"
+                  className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
+                  disabled={loadingSubmit || !isEmailVerified || (form.phone ? !isMobileVerified : false) || !form.name || !form.email || !form.feedbackType || !form.subject || !form.message || !form.wouldRecommend || form.experienceRating === 0}
                 >
-                  {activeConfig.labels.submitButton}
+                  {loadingSubmit ? (
+                    <span className="flex items-center gap-2">
+                       <RefreshCw className="w-5 h-5 animate-spin" />
+                       SUBMITTING...
+                    </span>
+                  ) : (
+                    activeConfig.labels.submitButton
+                  )}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
                   {activeConfig.labels.confidentialityText}

@@ -4,7 +4,9 @@ import { Container } from "@/components/ui/Elements";
 import { InputField } from "@/components/ui/FormFields";
 import Button from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Elements";
-import { AlertTriangle, CheckCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle, RefreshCw } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
 import { reportConfig } from "@/config/report.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -95,8 +97,19 @@ export default function ReportPage() {
     agreeToTerms: false,
     consentToShare: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   const handleSubmit = async () => {
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (!isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
+      return;
+    }
     setLoading(true);
     
     try {
@@ -297,27 +310,49 @@ export default function ReportPage() {
                       value={form.reporterName}
                       onChange={(e) => setForm({ ...form, reporterName: e.target.value })}
                     />
-                    <InputField
-                      label={config.labels.reporterPhone}
-                      type="tel"
-                      placeholder={config.placeholders.reporterPhone}
-                      required
-                      value={form.reporterPhone}
-                      onChange={(e) => setForm({ ...form, reporterPhone: e.target.value })}
-                    />
+                    <div className="space-y-4">
+                      <InputField
+                        label={config.labels.reporterPhone}
+                        type="tel"
+                        placeholder={config.placeholders.reporterPhone}
+                        required
+                        value={form.reporterPhone}
+                        onChange={(e) => {
+                          setForm({ ...form, reporterPhone: e.target.value });
+                          setIsMobileVerified(false);
+                        }}
+                        disabled={isMobileVerified}
+                      />
+                      
+                      {form.reporterPhone && form.reporterPhone.length >= 10 && (
+                        <MobileVerification 
+                          mobile={form.reporterPhone} 
+                          onVerified={setIsMobileVerified} 
+                        />
+                      )}
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1">
-                      {config.labels.reporterEmail}
-                    </label>
-                    <input
-                      type="email"
+                  <div className="space-y-4">
+                    <InputField
+                      label={config.labels.reporterEmail}
                       placeholder={config.placeholders.reporterEmail}
+                      type="email"
+                      required
                       value={form.reporterEmail}
-                      onChange={(e) => setForm({ ...form, reporterEmail: e.target.value })}
-                      className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:ring-2 focus:ring-saffron-500 focus:border-transparent"
+                      onChange={(e) => {
+                        setForm({ ...form, reporterEmail: e.target.value });
+                        setIsEmailVerified(false);
+                      }}
+                      disabled={isEmailVerified}
                     />
+                    
+                    {form.reporterEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.reporterEmail) && (
+                      <EmailVerification 
+                        email={form.reporterEmail} 
+                        onVerified={setIsEmailVerified} 
+                      />
+                    )}
                   </div>
                     <div>
                       <label className="block text-sm font-medium text-stone-700 mb-1">
@@ -898,27 +933,20 @@ export default function ReportPage() {
               {/* Submit Button */}
               <div className="pt-3 border-t border-stone-200 mt-2">
                 <Button
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  loading={loading}
                   onClick={handleSubmit}
-                  disabled={
-                    !form.reporterPhone ||
-                    !form.exactLocation ||
-                    !form.area ||
-                    !form.city ||
-                    !form.state ||
-                    !form.locationType ||
-                    !form.dateFound ||
-                    !form.timeFound ||
-                    !form.gender ||
-                    !form.bodyCondition ||
-                    !form.agreeToTerms ||
-                    !form.consentToShare
-                  }
+                  loading={loading}
+                  variant="primary"
+                  className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
+                  disabled={loading || !isEmailVerified || !isMobileVerified || !form.reporterName || !form.reporterEmail || !form.reporterPhone || !form.exactLocation || !form.city || !form.state || !form.agreeToTerms}
                 >
-                  {config.labels.submitButton}
+                  {loading ? (
+                    <span className="flex items-center justify-center gap-2">
+                       <RefreshCw className="w-5 h-5 animate-spin" />
+                       SUBMITTING...
+                    </span>
+                  ) : (
+                    config.labels?.submitButton || "SUBMIT CASE REPORT"
+                  )}
                 </Button>
                 <p className="text-stone-500 text-xs text-center mt-2">
                   {config.labels.confidentialityText}

@@ -3,7 +3,9 @@ import { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import Button from "@/components/ui/Button";
 import { InputField } from "@/components/ui/FormFields";
-import { Heart, CheckCircle, ShieldCheck, Info, FileText } from "lucide-react";
+import EmailVerification from "@/components/ui/EmailVerification";
+import MobileVerification from "@/components/ui/MobileVerification";
+import { Heart, CheckCircle, ShieldCheck, Info, FileText, RefreshCw } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { loadRazorpayScript, createRazorpayOrder, initiatePayment } from "@/lib/razorpay";
@@ -66,6 +68,8 @@ export default function DonatePage() {
     agreeToTerms: false,
     agreeToRefundPolicy: false,
   });
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [isMobileVerified, setIsMobileVerified] = useState(false);
 
   const finalAmount = customAmount ? parseInt(customAmount) : selectedAmount;
 
@@ -73,6 +77,16 @@ export default function DonatePage() {
     // Validation
     if (!finalAmount || finalAmount < 100) {
       alert(donateConfig.validation.minAmount);
+      return;
+    }
+
+    if (!isEmailVerified) {
+      alert("Please verify your email address first");
+      return;
+    }
+
+    if (!isMobileVerified) {
+      alert("Please verify your mobile number via WhatsApp first");
       return;
     }
 
@@ -463,22 +477,48 @@ export default function DonatePage() {
                             value={form.name}
                             onChange={(e) => setForm({ ...form, name: e.target.value })}
                           />
-                          <InputField
-                            label={donateConfig.form.sections.personalInfo.fields.email.label}
-                            type="email"
-                            placeholder={donateConfig.form.sections.personalInfo.fields.email.placeholder}
-                            required
-                            value={form.email}
-                            onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          />
-                          <InputField
-                            label={donateConfig.form.sections.personalInfo.fields.phone.label}
-                            type="tel"
-                            placeholder={donateConfig.form.sections.personalInfo.fields.phone.placeholder}
-                            required
-                            value={form.phone}
-                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                          />
+                          <div className="space-y-4">
+                            <InputField
+                              label={donateConfig.form.sections.personalInfo.fields.email.label}
+                              type="email"
+                              placeholder={donateConfig.form.sections.personalInfo.fields.email.placeholder}
+                              required
+                              value={form.email}
+                              onChange={(e) => {
+                                setForm({ ...form, email: e.target.value });
+                                setIsEmailVerified(false);
+                              }}
+                              disabled={isEmailVerified}
+                            />
+                            
+                            {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
+                              <EmailVerification 
+                                email={form.email} 
+                                onVerified={setIsEmailVerified} 
+                              />
+                            )}
+                          </div>
+                          <div className="space-y-4">
+                            <InputField
+                              label={donateConfig.form.sections.personalInfo.fields.phone.label}
+                              type="tel"
+                              placeholder={donateConfig.form.sections.personalInfo.fields.phone.placeholder}
+                              required
+                              value={form.phone}
+                              onChange={(e) => {
+                                setForm({ ...form, phone: e.target.value });
+                                setIsMobileVerified(false);
+                              }}
+                              disabled={isMobileVerified}
+                            />
+                            
+                            {form.phone && form.phone.length >= 10 && (
+                              <MobileVerification 
+                                mobile={form.phone} 
+                                onVerified={setIsMobileVerified} 
+                              />
+                            )}
+                          </div>
                         </div>
                       </div>
 
@@ -851,22 +891,20 @@ export default function DonatePage() {
                     size="lg"
                     className="w-full text-lg py-4 bg-gradient-to-r from-saffron-600 to-orange-600 hover:from-saffron-700 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all"
                     loading={loading}
+                    disabled={loading || !isEmailVerified || !isMobileVerified || !finalAmount || !form.name || !form.email || !form.phone || !form.address || !form.city}
                     onClick={handleDonate}
-                    disabled={
-                      !finalAmount || 
-                      !form.name || 
-                      !form.email || 
-                      !form.phone ||
-                      !form.address ||
-                      !form.city ||
-                      !form.state ||
-                      !form.pincode ||
-                      !form.agreeToTerms ||
-                      !form.agreeToRefundPolicy
-                    }
                   >
-                    <Heart className="w-5 h-5 mr-2 fill-white" />
-                    {donateConfig.form.submitButton} {finalAmount ? formatCurrency(finalAmount) : "Now"}
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                        Processing...
+                      </span>
+                    ) : (
+                      <span className="flex items-center justify-center gap-2">
+                        <Heart className="w-5 h-5 fill-white" />
+                        {donateConfig.form.submitButton} {finalAmount ? formatCurrency(finalAmount) : "Now"}
+                      </span>
+                    )}
                   </Button>
                   
                   <div className="flex items-center justify-center gap-2 text-stone-500 text-xs mt-4">
