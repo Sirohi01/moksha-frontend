@@ -37,6 +37,7 @@ export const API_ENDPOINTS = {
   SEO: `${API_BASE_URL}/api/seo`,
   SETTINGS: `${API_BASE_URL}/api/settings`,
   ANALYTICS: `${API_BASE_URL}/api/analytics`,
+  CHAT: `${API_BASE_URL}/api/chat`,
 };
 
 // Token management
@@ -60,11 +61,7 @@ export const removeToken = () => {
   }
 };
 
-// Enhanced API utility functions with retry and error handling
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
-  console.log('🌐 API Request:', url);
-  console.log('📋 Options:', options);
-
   const token = getToken();
 
   const defaultOptions: RequestInit = {
@@ -83,15 +80,9 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
     },
   };
 
-  console.log('🔧 Final options:', finalOptions);
-
   try {
-    console.log('📡 Making fetch request...');
     const response = await fetch(url, finalOptions);
-    console.log('📨 Response status:', response.status);
-    console.log('📨 Response ok:', response.ok);
 
-    // Handle 401 - Token expired
     if (response.status === 401) {
       removeToken();
       if (typeof window !== 'undefined') {
@@ -107,11 +98,8 @@ export const apiRequest = async (url: string, options: RequestInit = {}) => {
       throw new Error(error.message || 'API request failed');
     }
 
-    const result = await response.json();
-    console.log('✅ API Response:', result);
-    return result;
+    return await response.json();
   } catch (error) {
-    console.error('❌ API Request failed:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error('Network error. Please check your connection.');
     }
@@ -191,105 +179,81 @@ export const adminAPI = {
 };
 
 export const formsAPI = {
-  // Reports
   getReports: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.REPORTS}?${params}`);
   },
-
   updateReportStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.REPORTS}/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-
-  // Feedback
   getFeedback: async (page = 1, limit = 10) => {
     return apiRequest(`${API_ENDPOINTS.FEEDBACK}?page=${page}&limit=${limit}`);
   },
-
   updateFeedbackStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.FEEDBACK}/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-
-  // Volunteers
   getVolunteers: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.VOLUNTEERS}?${params}`);
   },
-
   updateVolunteerStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.VOLUNTEERS}/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-
-  // Contacts
   getContacts: async (page = 1, limit = 10) => {
     return apiRequest(`${API_ENDPOINTS.CONTACTS}?page=${page}&limit=${limit}`);
   },
-
-  // Donations
   getDonations: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.DONATIONS}?${params}`);
   },
-
   updateDonationStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.DONATIONS}/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-
-  // Board Applications
   getBoardApplications: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.BOARD}?${params}`);
   },
-
   updateBoardApplicationStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.BOARD}/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-
-  // Legacy Giving
   getLegacyGiving: async (page = 1, limit = 10) => {
     return apiRequest(`${API_ENDPOINTS.LEGACY}?page=${page}&limit=${limit}`);
   },
-
-  // Government Schemes
   getSchemes: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.SCHEMES}?${params}`);
   },
-
   updateSchemeStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.SCHEMES}/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
   },
-
-  // Expansion Requests
   getExpansionRequests: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.EXPANSION}?${params}`);
   },
-
   updateExpansionStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.EXPANSION}/${id}/status`, {
       method: 'PUT',
@@ -305,31 +269,26 @@ export const galleryAPI = {
     if (search) params.append('search', search);
     return apiRequest(`${API_ENDPOINTS.GALLERY}?${params}`);
   },
-
   uploadImage: async (formData: FormData) => {
     return apiRequest(API_ENDPOINTS.GALLERY, {
       method: 'POST',
       body: formData,
       headers: {
-        // Don't set Content-Type for FormData, let browser set it
         'Authorization': `Bearer ${getToken()}`,
       },
     });
   },
-
   updateImage: async (id: string, data: any) => {
     return apiRequest(`${API_ENDPOINTS.GALLERY}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   },
-
   deleteImage: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.GALLERY}/${id}`, {
       method: 'DELETE',
     });
   },
-
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.GALLERY}/stats`);
   },
@@ -343,31 +302,26 @@ export const contentAPI = {
     if (search) params.append('search', search);
     return apiRequest(`${API_ENDPOINTS.CONTENT}?${params}`);
   },
-
   getContentItem: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.CONTENT}/${id}`);
   },
-
   createContent: async (data: any) => {
     return apiRequest(API_ENDPOINTS.CONTENT, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
-
   updateContent: async (id: string, data: any) => {
     return apiRequest(`${API_ENDPOINTS.CONTENT}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   },
-
   deleteContent: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.CONTENT}/${id}`, {
       method: 'DELETE',
     });
   },
-
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.CONTENT}/stats`);
   },
@@ -381,31 +335,26 @@ export const pressAPI = {
     if (search) params.append('search', search);
     return apiRequest(`${API_ENDPOINTS.PRESS}?${params}`);
   },
-
   getPressRelease: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.PRESS}/${id}`);
   },
-
   createPressRelease: async (data: any) => {
     return apiRequest(API_ENDPOINTS.PRESS, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
-
   updatePressRelease: async (id: string, data: any) => {
     return apiRequest(`${API_ENDPOINTS.PRESS}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   },
-
   deletePressRelease: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.PRESS}/${id}`, {
       method: 'DELETE',
     });
   },
-
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.PRESS}/stats`);
   },
@@ -419,31 +368,26 @@ export const documentaryAPI = {
     if (search) params.append('search', search);
     return apiRequest(`${API_ENDPOINTS.DOCUMENTARIES}?${params}`);
   },
-
   getDocumentary: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.DOCUMENTARIES}/${id}`);
   },
-
   createDocumentary: async (data: any) => {
     return apiRequest(API_ENDPOINTS.DOCUMENTARIES, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
-
   updateDocumentary: async (id: string, data: any) => {
     return apiRequest(`${API_ENDPOINTS.DOCUMENTARIES}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   },
-
   deleteDocumentary: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.DOCUMENTARIES}/${id}`, {
       method: 'DELETE',
     });
   },
-
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.DOCUMENTARIES}/stats`);
   },
@@ -456,63 +400,33 @@ export const seoAPI = {
     if (search) params.append('search', search);
     return apiRequest(`${API_ENDPOINTS.SEO}?${params}`);
   },
-
   getSEOPage: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.SEO}/${id}`);
   },
-
   createSEOPage: async (data: any) => {
     return apiRequest(API_ENDPOINTS.SEO, {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
-
   updateSEOPage: async (id: string, data: any) => {
     return apiRequest(`${API_ENDPOINTS.SEO}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   },
-
   deleteSEOPage: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.SEO}/${id}`, {
       method: 'DELETE',
     });
   },
-
   runAudit: async (id: string) => {
     return apiRequest(`${API_ENDPOINTS.SEO}/${id}/audit`, {
       method: 'POST',
     });
   },
-
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.SEO}/stats`);
-  },
-
-  generateSitemap: async () => {
-    return apiRequest(`${API_ENDPOINTS.SEO}/sitemap`, {
-      method: 'POST',
-    });
-  },
-
-  analyzeKeywords: async (keywords: string[]) => {
-    return apiRequest(`${API_ENDPOINTS.SEO}/keywords/analyze`, {
-      method: 'POST',
-      body: JSON.stringify({ keywords }),
-    });
-  },
-
-  getSEOReport: async (days = 30) => {
-    return apiRequest(`${API_ENDPOINTS.SEO}/report?days=${days}`);
-  },
-
-  bulkUpdateMetaTags: async (pageIds: string[], metaData: any) => {
-    return apiRequest(`${API_ENDPOINTS.SEO}/bulk/meta-tags`, {
-      method: 'PUT',
-      body: JSON.stringify({ pageIds, metaData }),
-    });
   },
 };
 
@@ -520,42 +434,19 @@ export const settingsAPI = {
   getSettings: async () => {
     return apiRequest(API_ENDPOINTS.SETTINGS);
   },
-
   updateSettings: async (data: any) => {
     return apiRequest(API_ENDPOINTS.SETTINGS, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   },
-
   getSettingsSection: async (section: string) => {
     return apiRequest(`${API_ENDPOINTS.SETTINGS}/${section}`);
   },
-
   updateSettingsSection: async (section: string, data: any) => {
     return apiRequest(`${API_ENDPOINTS.SETTINGS}/${section}`, {
       method: 'PUT',
       body: JSON.stringify(data),
-    });
-  },
-
-  resetSettings: async (section?: string) => {
-    return apiRequest(`${API_ENDPOINTS.SETTINGS}/reset`, {
-      method: 'POST',
-      body: JSON.stringify({ section }),
-    });
-  },
-
-  backupSettings: async () => {
-    return apiRequest(`${API_ENDPOINTS.SETTINGS}/backup`, {
-      method: 'POST',
-    });
-  },
-
-  testEmail: async (testEmail?: string) => {
-    return apiRequest(`${API_ENDPOINTS.SETTINGS}/test-email`, {
-      method: 'POST',
-      body: JSON.stringify({ testEmail }),
     });
   },
 };
@@ -565,44 +456,19 @@ export const analyticsAPI = {
     const params = new URLSearchParams({ timeRange, category });
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}?${params}`);
   },
-
   getOverview: async () => {
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/overview`);
   },
-
   getTrends: async (type = 'all', period = '6m') => {
     const params = new URLSearchParams({ type, period });
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/trends?${params}`);
   },
-
   getDemographics: async () => {
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/demographics`);
   },
-
-  getPerformance: async () => {
-    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/performance`);
-  },
-
-  getGeographic: async () => {
-    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/geographic`);
-  },
-
-  getTimeAnalysis: async () => {
-    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/time`);
-  },
-
-  exportData: async (format = 'json', timeRange = '30d', sections = ['all']) => {
-    return apiRequest(`${API_ENDPOINTS.ANALYTICS}/export`, {
-      method: 'POST',
-      body: JSON.stringify({ format, timeRange, sections }),
-    });
-  },
-
   getRealtime: async () => {
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/realtime`);
   },
-
-  // Visitor Tracking
   trackVisitorAction: async (data: any) => {
     return fetch(`${API_ENDPOINTS.ANALYTICS}/track`, {
       method: 'POST',
@@ -613,16 +479,39 @@ export const analyticsAPI = {
       keepalive: true,
     });
   },
-
   getVisitorStats: async (timeRange = '24h', customStart?: string, customEnd?: string) => {
     const params = new URLSearchParams({ timeRange });
     if (customStart) params.append('customStart', customStart);
     if (customEnd) params.append('customEnd', customEnd);
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/visitors?${params.toString()}`);
   },
-
   getVisitorDetailsByIP: async (ip: string) => {
     return apiRequest(`${API_ENDPOINTS.ANALYTICS}/visitors/${ip}`);
+  },
+};
+
+export const chatAPI = {
+  initiateChat: async (data: { name: string; email: string; phone: string }) => {
+    return apiRequest(`${API_ENDPOINTS.CHAT}/initiate`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  getHistory: async (chatId: string) => {
+    return apiRequest(`${API_ENDPOINTS.CHAT}/history/${chatId}`);
+  },
+  getAllChats: async () => {
+    return apiRequest(`${API_ENDPOINTS.CHAT}/admin/all`);
+  },
+  markAsRead: async (chatId: string) => {
+    return apiRequest(`${API_ENDPOINTS.CHAT}/admin/read/${chatId}`, {
+      method: 'PUT',
+    });
+  },
+  closeChat: async (chatId: string) => {
+    return apiRequest(`${API_ENDPOINTS.CHAT}/close/${chatId}`, {
+      method: 'PUT',
+    });
   },
 };
 

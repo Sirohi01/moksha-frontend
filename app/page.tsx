@@ -1,20 +1,19 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRight, Globe, Heart, Users } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { Container } from "@/components/ui/Elements";
-import { useState, useEffect, useRef } from "react";
+import { usePageConfig } from "@/hooks/usePageConfig";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Skeleton, CardSkeleton } from "@/components/ui/Skeleton";
+import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { homepageConfig } from "@/config/homepage.config";
 import { getIcon } from "@/config/icons.config";
-import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function HomePage() {
-  // Use dynamic config with fallback to static config
   const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
-
-  // Use dynamic config if available, otherwise fallback to static
   const config = dynamicConfig || homepageConfig;
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -36,8 +35,6 @@ export default function HomePage() {
     if (!config.hero?.slides) return;
 
     startTimer();
-
-    // Location carousel timer
     if (config.whereWeServe?.carousel?.slides) {
       if (locationTimerRef.current) clearInterval(locationTimerRef.current);
       locationTimerRef.current = setInterval(() => {
@@ -48,16 +45,12 @@ export default function HomePage() {
         });
       }, config.whereWeServe.carousel.autoSlideInterval);
     }
-
-    // Campaign carousel timer
     if (config.urgentCampaigns?.campaigns) {
       if (campaignTimerRef.current) clearInterval(campaignTimerRef.current);
       campaignTimerRef.current = setInterval(() => {
         setCurrentCampaignSlide((prev) => (prev + 1) % config.urgentCampaigns.campaigns.length);
       }, config.urgentCampaigns.autoSlideInterval);
     }
-
-    // Testimonials timer
     if (config.testimonials?.slides) {
       const tTimer = setInterval(() => {
         setCurrentTestimonial((prev) => (prev + 1) % config.testimonials.slides.length);
@@ -78,14 +71,18 @@ export default function HomePage() {
     };
   }, [config]);
 
-  // Show loading state
+  // Show premium loading state
   if (loading) {
     return (
-      <div className="bg-stone-50 min-h-screen font-sans flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-gray-300 border-t-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading page content...</p>
-        </div>
+      <div className="bg-stone-50 min-h-screen">
+        <Skeleton className="h-[75vh] w-full" />
+        <Container className="py-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        </Container>
       </div>
     );
   }
@@ -145,6 +142,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
 
       {/* Action Banner */}
       <div className="bg-black py-4">
@@ -1002,23 +1000,5 @@ export default function HomePage() {
         }
       `}</style>
     </div>
-  );
-}
-
-function ChevronRight({ size = 16, className = "" }: { size?: number; className?: string }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="m9 18 6-6-6-6" />
-    </svg>
   );
 }

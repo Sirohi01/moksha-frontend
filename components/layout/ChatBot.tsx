@@ -214,7 +214,7 @@ export default function ChatBot() {
 
                 {/* WhatsApp Button */}
                 <a
-                    href={`https://wa.me/${(config?.socialFloating?.whatsapp || "919773992516").replace(/\D/g, "")}`}
+                    href={`https://wa.me/${(config?.socialFloating?.whatsapp || "919773992516").replace(/\D/g, "")}?text=Namaste%20Moksha%20Sewa!%20I%20need%20assistance%20with%20your%20services.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group relative flex items-center justify-center w-12 h-12 bg-[#25D366] text-white rounded-full shadow-lg hover:shadow-green-500/40 transition-all duration-300 hover:scale-110 active:scale-95"

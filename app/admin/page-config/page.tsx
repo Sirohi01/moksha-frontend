@@ -3,23 +3,30 @@
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import {
-  Search,
-  Edit,
-  Save,
-  X,
-  Clock,
-  FileText,
-  Settings,
-  Globe,
-  Smartphone,
-  Users,
-  Heart,
-  AlertTriangle,
-  TrendingUp,
-  Briefcase,
-  Shield
+import { 
+  Search, 
+  Edit, 
+  Save, 
+  X, 
+  Clock, 
+  FileText, 
+  Settings, 
+  Globe, 
+  Smartphone, 
+  Users, 
+  Heart, 
+  AlertTriangle, 
+  TrendingUp, 
+  Briefcase, 
+  Shield, 
+  Layout, 
+  Eye, 
+  Code,
+  RefreshCw
 } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
+import { cn } from '@/lib/utils';
+import VisualConfigEditor from '@/components/admin/VisualConfigEditor';
 
 interface PageConfig {
   pageName: string;
@@ -29,13 +36,14 @@ interface PageConfig {
 }
 
 export default function PageConfigManagement() {
+  const { success: showSuccess, error: showError } = useToast();
   const [configs, setConfigs] = useState<PageConfig[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [editingConfig, setEditingConfig] = useState<string | null>(null);
-  const [editContent, setEditContent] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const [editData, setEditData] = useState<any>(null);
+  const [editMode, setEditMode] = useState<'visual' | 'json'>('visual');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchConfigs();
@@ -44,12 +52,10 @@ export default function PageConfigManagement() {
   const fetchConfigs = async () => {
     try {
       setLoading(true);
-      setError('');
-
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
-      // Fetch all page configurations
       const pages = ['homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach', 'board', 'services', 'report', 'impact', 'stories', 'remembrance', 'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate', 'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact', 'press', 'documentaries', 'layout', 'blog', 'compliance'];
+      
       const configPromises = pages.map(async (pageName) => {
         try {
           const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`);
@@ -64,7 +70,6 @@ export default function PageConfigManagement() {
           }
           return null;
         } catch (error) {
-          console.error(`Failed to fetch ${pageName} config:`, error);
           return null;
         }
       });
@@ -72,54 +77,57 @@ export default function PageConfigManagement() {
       const results = await Promise.all(configPromises);
       setConfigs(results.filter(Boolean) as PageConfig[]);
     } catch (error: any) {
-      console.error('Failed to fetch configs:', error);
-      setError(error.message || 'Failed to load page configurations');
+      showError('Failed to load page configurations');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleEdit = (pageName: string, config: any) => {
-    setEditingConfig(pageName);
-    setEditContent(JSON.stringify(config, null, 2));
+  const handleEdit = (pageConfig: PageConfig) => {
+    setEditingConfig(pageConfig.pageName);
+    setEditData(JSON.parse(JSON.stringify(pageConfig.config))); // Deep clone
+    setEditMode('visual');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSave = async (pageName: string) => {
+  const handleSave = async () => {
+    if (!editingConfig) return;
+    
     try {
-      const parsedConfig = JSON.parse(editContent);
+      setIsSaving(true);
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
-      const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`, {
+      const response = await fetch(`${API_BASE_URL}/api/page-config/${editingConfig}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         },
         body: JSON.stringify({
-          config: parsedConfig,
-          changeLog: 'Updated via admin panel'
+          config: editData,
+          changeLog: 'Updated via Visual Content Editor'
         })
       });
 
       if (response.ok) {
-        setSuccessMessage(`${pageName} configuration updated successfully!`);
+        showSuccess(`${editingConfig} configuration updated successfully!`);
         setEditingConfig(null);
-        setEditContent('');
-        fetchConfigs(); // Refresh the list
-        setTimeout(() => setSuccessMessage(''), 3000);
+        setEditData(null);
+        fetchConfigs();
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to update configuration');
       }
     } catch (error: any) {
-      console.error('Failed to save config:', error);
-      setError(error.message || 'Failed to save configuration');
+      showError(error.message || 'Failed to save configuration');
+    } finally {
+      setIsSaving(false);
     }
   };
 
   const handleCancel = () => {
     setEditingConfig(null);
-    setEditContent('');
+    setEditData(null);
   };
 
   const filteredConfigs = configs.filter(config =>
@@ -128,234 +136,202 @@ export default function PageConfigManagement() {
 
   const getPageIcon = (pageName: string) => {
     switch (pageName) {
-      case 'homepage': return <Globe className="w-5 h-5" />;
-      case 'about': return <FileText className="w-5 h-5" />;
-      case 'how-it-works': return <Settings className="w-5 h-5" />;
-      case 'why-moksha-seva': return <Smartphone className="w-5 h-5" />;
-      case 'our-reach': return <Globe className="w-5 h-5" />;
-      case 'board': return <Users className="w-5 h-5" />;
-      case 'services': return <Heart className="w-5 h-5" />;
-      case 'report': return <AlertTriangle className="w-5 h-5" />;
-      case 'impact': return <TrendingUp className="w-5 h-5" />;
-      case 'stories': return <FileText className="w-5 h-5" />;
-      case 'remembrance': return <Heart className="w-5 h-5" />;
-      case 'testimonials': return <Users className="w-5 h-5" />;
-      case 'gallery': return <Globe className="w-5 h-5" />;
-      case 'feedback': return <FileText className="w-5 h-5" />;
-      case 'volunteer': return <Users className="w-5 h-5" />;
-      case 'corporate': return <Briefcase className="w-5 h-5" />;
-      case 'legacy-giving': return <Heart className="w-5 h-5" />;
-      case 'tribute': return <Heart className="w-5 h-5" />;
-      case 'transparency': return <Shield className="w-5 h-5" />;
-      case 'schemes': return <FileText className="w-5 h-5" />;
-      case 'contact': return <Users className="w-5 h-5" />;
-      case 'press': return <FileText className="w-5 h-5" />;
-      case 'documentaries': return <Globe className="w-5 h-5" />;
-      case 'layout': return <Settings className="w-5 h-5" />;
-      case 'blog': return <FileText className="w-5 h-5" />;
-      case 'compliance': return <Shield className="w-5 h-5" />;
-      default: return <Settings className="w-5 h-5" />;
-    }
-  };
-
-  const getPageTitle = (pageName: string) => {
-    switch (pageName) {
-      case 'homepage': return 'Homepage';
-      case 'about': return 'About Us';
-      case 'how-it-works': return 'How It Works';
-      case 'why-moksha-seva': return 'Why Moksha Sewa';
-      case 'our-reach': return 'Our Reach';
-      case 'board': return 'Board & Advisors';
-      case 'services': return 'Services';
-      case 'report': return 'Report';
-      case 'impact': return 'Impact';
-      case 'stories': return 'Stories';
-      case 'remembrance': return 'Remembrance';
-      case 'testimonials': return 'Testimonials';
-      case 'gallery': return 'Gallery';
-      case 'feedback': return 'Feedback';
-      case 'volunteer': return 'Volunteer';
-      case 'corporate': return 'Corporate';
-      case 'legacy-giving': return 'Legacy Giving';
-      case 'tribute': return 'Tribute';
-      case 'transparency': return 'Transparency';
-      case 'schemes': return 'Schemes';
-      case 'contact': return 'Contact';
-      case 'press': return 'Press';
-      case 'documentaries': return 'Documentaries';
-      case 'layout': return 'Layout Components';
-      case 'blog': return 'Blog Page';
-      case 'compliance': return 'Compliance Page';
-      default: return pageName.charAt(0).toUpperCase() + pageName.slice(1);
+      case 'homepage': return <Globe className="w-5 h-5 text-blue-600" />;
+      case 'about': return <FileText className="w-5 h-5 text-orange-600" />;
+      case 'services': return <Heart className="w-5 h-5 text-red-600" />;
+      case 'volunteer': return <Users className="w-5 h-5 text-emerald-600" />;
+      case 'transparency': return <Shield className="w-5 h-5 text-indigo-600" />;
+      default: return <Settings className="w-5 h-5 text-stone-400" />;
     }
   };
 
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="p-8 max-w-7xl mx-auto space-y-6">
+        <div className="h-20 bg-stone-100 rounded-3xl animate-pulse" />
+        <div className="grid gap-6">
+          {[1,2,3].map(i => <div key={i} className="h-48 bg-stone-50 rounded-3xl animate-pulse" />)}
+        </div>
+      </div>
+    );
+  }
+
+  // EDIT VIEW
+  if (editingConfig && editData) {
+    const pageTitle = editingConfig.charAt(0).toUpperCase() + editingConfig.slice(1);
+    
+    return (
+      <div className="min-h-screen bg-stone-50 pb-20">
+        {/* Editor Header */}
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-stone-200">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-4">
+              <button onClick={handleCancel} className="p-2 hover:bg-stone-100 rounded-xl transition-colors">
+                <X className="w-6 h-6 text-stone-400" />
+              </button>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-bold text-stone-900">{pageTitle} Editor</h1>
+                  <span className="px-2 py-0.5 bg-stone-100 rounded text-[10px] font-bold text-stone-500 uppercase tracking-widest leading-none">Config</span>
+                </div>
+                <p className="text-xs text-stone-500 font-medium">Drafting changes for live website</p>
+              </div>
+            </div>
+
+            <div className="flex items-center bg-stone-100 p-1 rounded-xl">
+               <button 
+                 onClick={() => setEditMode('visual')}
+                 className={cn(
+                   "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all",
+                   editMode === 'visual' ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                 )}
+               >
+                 <Eye className="w-4 h-4" />
+                 Visual
+               </button>
+               <button 
+                 onClick={() => setEditMode('json')}
+                 className={cn(
+                   "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold transition-all",
+                   editMode === 'json' ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"
+                 )}
+               >
+                 <Code className="w-4 h-4" />
+                 JSON
+               </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+               <Button onClick={handleSave} loading={isSaving} className="bg-[#000080] hover:bg-black text-white px-8 py-2.5 rounded-xl shadow-xl shadow-blue-900/10 transition-all hover:scale-105 active:scale-95 border-b-4 border-amber-900">
+                 <Save className="w-4 h-4 mr-2" />
+                 PUBLISH CHANGES
+               </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 mt-8">
+           {editMode === 'visual' ? (
+             <VisualConfigEditor value={editData} onChange={setEditData} />
+           ) : (
+             <div className="bg-stone-900 rounded-3xl p-6 shadow-2xl relative">
+                <div className="absolute top-4 right-4 flex items-center gap-2">
+                   <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                   <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                   <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                </div>
+                <label className="block text-[10px] font-black text-stone-500 uppercase tracking-widest mb-4">raw_config.json</label>
+                <textarea
+                  value={JSON.stringify(editData, null, 2)}
+                  onChange={(e) => {
+                    try {
+                      setEditData(JSON.parse(e.target.value));
+                    } catch(err) {} // Allow invalid JSON while typing
+                  }}
+                  className="w-full h-[600px] bg-transparent text-emerald-400 font-mono text-sm focus:outline-none resize-none selection:bg-emerald-500/20"
+                />
+             </div>
+           )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Page Configuration Management</h1>
-          <p className="text-gray-600 mt-1">Manage content for all website pages</p>
-        </div>
+    <div className="min-h-screen bg-stone-50 p-6 md:p-10">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+          <div className="space-y-2">
+            <span className="text-[10px] font-black text-saffron-600 uppercase tracking-[0.3em]">Infrastructure Control</span>
+            <h1 className="text-4xl font-serif font-black text-stone-900">Page CMS</h1>
+            <p className="text-stone-500 font-medium">Manage dynamic content for {configs.length} platform nodes</p>
+          </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="relative w-full md:w-80 group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4 group-focus-within:text-saffron-600 transition-colors" />
             <input
               type="text"
-              placeholder="Search pages..."
+              placeholder="Search page context..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-stone-200 rounded-2xl focus:ring-4 focus:ring-saffron-500/10 focus:border-saffron-500 transition-all shadow-sm font-medium text-sm text-stone-900"
             />
           </div>
         </div>
-      </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600">{error}</p>
-        </div>
-      )}
-
-      {successMessage && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-600">{successMessage}</p>
-        </div>
-      )}
-
-      {/* Page Configurations */}
-      <div className="grid gap-6">
-        {filteredConfigs.map((pageConfig) => (
-          <Card key={pageConfig.pageName} className="overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 border-b">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {getPageIcon(pageConfig.pageName)}
-                  <div>
-                    <h3 className="text-lg font-semibold">{getPageTitle(pageConfig.pageName)}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {new Date(pageConfig.lastModified).toLocaleDateString()}
+        {/* Config Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredConfigs.map((pageConfig) => (
+            <Card key={pageConfig.pageName} className="group relative overflow-hidden bg-white border-none shadow-sm hover:shadow-2xl hover:shadow-stone-200/50 transition-all duration-500 p-0 rounded-3xl">
+              <div className="p-6 space-y-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-stone-50 rounded-2xl flex items-center justify-center group-hover:bg-stone-900 transition-colors duration-500">
+                       <span className="group-hover:scale-110 transition-transform duration-500">
+                        {getPageIcon(pageConfig.pageName)}
+                       </span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-stone-900 text-lg tracking-tight">
+                        {pageConfig.pageName.charAt(0).toUpperCase() + pageConfig.pageName.slice(1)}
+                      </h3>
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest mt-0.5">
+                        <Clock className="w-3 h-3" />
+                        Updated {new Date(pageConfig.lastModified).toLocaleDateString()}
                       </div>
-                      <span className="px-2 py-1 bg-gray-200 rounded text-xs">v{pageConfig.version}</span>
                     </div>
                   </div>
+                  
+                  <span className="px-2.5 py-1 bg-stone-100 rounded-lg text-[10px] font-black text-stone-600">
+                    V{pageConfig.version}
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  {editingConfig === pageConfig.pageName ? (
-                    <>
-                      <Button
-                        onClick={() => handleSave(pageConfig.pageName)}
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm"
-                      >
-                        <Save className="w-4 h-4 mr-1" />
-                        Save
-                      </Button>
-                      <Button
-                        onClick={handleCancel}
-                        className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 text-sm"
-                      >
-                        <X className="w-4 h-4 mr-1" />
-                        Cancel
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      onClick={() => handleEdit(pageConfig.pageName, pageConfig.config)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm"
-                    >
-                      <Edit className="w-4 h-4 mr-1" />
-                      Edit
-                    </Button>
+                <div className="flex flex-wrap gap-1.5 min-h-[40px]">
+                  {Object.keys(pageConfig.config).slice(0, 4).map(key => (
+                    <span key={key} className="px-2 py-1 bg-stone-50 text-stone-500 text-[9px] font-bold uppercase tracking-wider rounded border border-stone-100">
+                      {key}
+                    </span>
+                  ))}
+                  {Object.keys(pageConfig.config).length > 4 && (
+                    <span className="px-2 py-1 bg-stone-50 text-stone-400 text-[9px] font-bold rounded border border-stone-100">
+                      +{Object.keys(pageConfig.config).length - 4} more
+                    </span>
                   )}
                 </div>
+
+                <div className="flex items-center gap-2 pt-2">
+                  <Button 
+                    onClick={() => handleEdit(pageConfig)}
+                    className="flex-1 bg-stone-900 hover:bg-black text-white h-11 rounded-xl font-bold shadow-lg shadow-stone-900/10"
+                  >
+                    Manage Content
+                  </Button>
+                  <button className="w-11 h-11 border border-stone-100 rounded-xl flex items-center justify-center text-stone-400 hover:bg-stone-50 hover:text-stone-900 transition-all">
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="p-6">
-              {editingConfig === pageConfig.pageName ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Configuration JSON
-                    </label>
-                    <textarea
-                      value={editContent}
-                      onChange={(e) => setEditContent(e.target.value)}
-                      className="w-full h-96 p-4 border border-gray-300 rounded-lg font-mono text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter JSON configuration..."
-                    />
-                  </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-yellow-800 text-sm">
-                      <strong>Warning:</strong> Please ensure valid JSON format. Invalid JSON will cause errors on the website.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-blue-50 rounded-lg p-4">
-                      <h4 className="font-medium text-blue-900 mb-2">Sections</h4>
-                      <p className="text-2xl font-bold text-blue-600">
-                        {Object.keys(pageConfig.config).length}
-                      </p>
-                      <p className="text-sm text-blue-700">Available sections</p>
-                    </div>
-
-                    <div className="bg-green-50 rounded-lg p-4">
-                      <h4 className="font-medium text-green-900 mb-2">Status</h4>
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">Published</span>
-                      <p className="text-sm text-green-700 mt-1">Live on website</p>
-                    </div>
-
-                    <div className="bg-purple-50 rounded-lg p-4">
-                      <h4 className="font-medium text-purple-900 mb-2">Version</h4>
-                      <p className="text-2xl font-bold text-purple-600">v{pageConfig.version}</p>
-                      <p className="text-sm text-purple-700">Current version</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Available Sections:</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {Object.keys(pageConfig.config).map((section) => (
-                        <span key={section} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                          {section}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </Card>
-        ))}
-      </div>
-
-      {filteredConfigs.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No configurations found</h3>
-          <p className="text-gray-600">
-            {searchTerm ? 'No pages match your search criteria.' : 'No page configurations available.'}
-          </p>
+              {/* Decorative accent */}
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-stone-100 group-hover:bg-saffron-500 transition-colors duration-500" />
+            </Card>
+          ))}
         </div>
-      )}
+
+        {filteredConfigs.length === 0 && (
+          <div className="py-20 text-center space-y-4">
+            <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto">
+              <Search className="w-8 h-8 text-stone-300" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-stone-900">No nodes found</h3>
+              <p className="text-stone-500 max-w-xs mx-auto">Try searching for a specific page name or module identifier.</p>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
-}
+}

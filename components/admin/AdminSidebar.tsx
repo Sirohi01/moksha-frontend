@@ -33,6 +33,11 @@ const sidebarItems = [
     icon: BarChart3,
   },
   {
+    title: 'Live Support',
+    href: '/admin/support',
+    icon: MessageSquare,
+  },
+  {
     title: 'Content Management',
     items: [
       {

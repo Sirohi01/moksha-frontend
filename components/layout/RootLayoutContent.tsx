@@ -7,8 +7,11 @@ import Footer from './Footer';
 import SocialFloating from './SocialFloating';
 import EmergencyFloating from './EmergencyFloating';
 import ChatBot from './ChatBot';
+import ChatWidget from '../ChatWidget';
 import VisitorTracker from '../VisitorTracker';
 import PremiumLoader from '@/components/ui/PremiumLoader';
+
+import { ToastProvider } from '@/context/ToastContext';
 
 export default function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -16,28 +19,33 @@ export default function RootLayoutContent({ children }: { children: React.ReactN
 
   if (isAdminRoute) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <Suspense fallback={<PremiumLoader />}>
-          <VisitorTracker />
-        </Suspense>
-        {children}
-      </div>
+      <ToastProvider>
+        <div className="min-h-screen bg-gray-100">
+          <Suspense fallback={<PremiumLoader />}>
+            <VisitorTracker />
+          </Suspense>
+          {children}
+        </div>
+      </ToastProvider>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream-100">
-      <Suspense fallback={<PremiumLoader />}>
-        <VisitorTracker />
-      </Suspense>
-      <Navbar />
-      <main className="flex-1" id="main-content">
-        {children}
-      </main>
-      <SocialFloating />
-      <EmergencyFloating />
-      <ChatBot />
-      <Footer />
-    </div>
+    <ToastProvider>
+      <div className="min-h-screen flex flex-col bg-cream-100">
+        <Suspense fallback={<PremiumLoader />}>
+          <VisitorTracker />
+        </Suspense>
+        <Navbar />
+        <main className="flex-1" id="main-content">
+          {children}
+        </main>
+        <SocialFloating />
+        <EmergencyFloating />
+        <ChatBot />
+        <ChatWidget />
+        <Footer />
+      </div>
+    </ToastProvider>
   );
 }

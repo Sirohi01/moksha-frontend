@@ -7,21 +7,33 @@ import EmailVerification from "@/components/ui/EmailVerification";
 import MobileVerification from "@/components/ui/MobileVerification";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { volunteerConfig } from "@/config/volunteer.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
+import { useCallback, useEffect } from "react";
+import { useToast } from "@/context/ToastContext";
+import { FormSkeleton, Skeleton } from "@/components/ui/Skeleton";
+
 export default function VolunteerPage() {
-  const { config, loading, error } = usePageConfig('volunteer', volunteerConfig);
+  const { config, loading, error: configError } = usePageConfig('volunteer', volunteerConfig);
+  const { success: showSuccessToast, error: showErrorToast, warning: showWarningToast } = useToast();
   
   // Use fallback config if dynamic config is null
   const activeConfig = config || volunteerConfig;
+
+  // Multi-step State
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 4;
 
   // Get icons
   const Heart = getIcon('Heart');
   const CheckCircle = getIcon('CheckCircle');
   const Users = getIcon('Users');
   const User = getIcon('User');
+  const ArrowRight = getIcon('ChevronRight');
+  const ArrowLeft = getIcon('ChevronLeft');
 
   const volunteerTypes = activeConfig.volunteerTypes.map(type => ({
     ...type,
@@ -97,41 +109,53 @@ export default function VolunteerPage() {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isMobileVerified, setIsMobileVerified] = useState(false);
 
-  // Handle loading and error states after all hooks
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    console.error('Failed to load Volunteer page config:', error);
-    // Fallback to static config
-  }
-
   const toggleType = (type: string) => {
     setSelectedTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
 
+  const nextStep = () => {
+    // Basic validation per step
+    if (currentStep === 1 && selectedTypes.length === 0) {
+      showWarningToast("Please select at least one mission type");
+      return;
+    }
+    if (currentStep === 2) {
+      if (!form.name || !form.email || !form.phone || !form.dateOfBirth || !form.gender) {
+        showWarningToast("Please fill all required personal details");
+        return;
+      }
+      if (!isEmailVerified) {
+        showWarningToast("Please verify your email address to continue");
+        return;
+      }
+      if (!isMobileVerified) {
+        showWarningToast("Please verify your mobile number via WhatsApp");
+        return;
+      }
+    }
+    if (currentStep === 3) {
+      if (!form.address || !form.city || !form.state || !form.pincode) {
+        showWarningToast("Please provide your complete address");
+        return;
+      }
+    }
+    
+    if (currentStep < totalSteps) setCurrentStep(prev => prev + 1);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+
+  const prevStep = () => {
+    if (currentStep > 1) setCurrentStep(prev => prev - 1);
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  };
+
     const handleSubmit = async () => {
-        // Validation
-        if (!form.name || !form.email || !form.phone || !selectedTypes.length) {
-            alert(activeConfig.validationMessages.fillRequiredFields);
+        // Final Validation
+        if (!form.whyVolunteer || !form.agreeToTerms) {
+            showWarningToast("Please share why you want to join and accept the terms");
             return;
-        }
-
-        if (!isEmailVerified) {
-          alert("Please verify your email address first");
-          return;
-        }
-
-        if (!isMobileVerified) {
-          alert("Please verify your mobile number via WhatsApp first");
-          return;
         }
 
         setLoadingSubmit(true);
@@ -150,7 +174,7 @@ export default function VolunteerPage() {
                 volunteerData.groupSize = parseInt(form.groupSize) || 0;
             }
 
-            // Remove empty optional fields to avoid validation issues
+            // Remove empty optional fields 
             const cleanedData: any = {};
             Object.keys(volunteerData).forEach(key => {
                 const value = volunteerData[key as keyof typeof volunteerData];
@@ -159,8 +183,6 @@ export default function VolunteerPage() {
                 }
             });
             volunteerData = cleanedData;
-
-            console.log('Submitting volunteer data:', volunteerData);
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/volunteers`, {
                 method: 'POST',
@@ -171,30 +193,15 @@ export default function VolunteerPage() {
             });
 
             if (response.ok) {
-                const result = await response.json();
-                console.log('Volunteer application submitted successfully:', result);
+                showSuccessToast(activeConfig.success.title);
                 setSubmitted(true);
-                // Reset form
-                setForm({
-                    registrationType: "individual",
-                    name: "", email: "", phone: "", alternatePhone: "", dateOfBirth: "", gender: "",
-                    address: "", city: "", state: "", pincode: "",
-                    occupation: "", organization: "", experience: "", skills: "",
-                    facebookProfile: "", instagramHandle: "", twitterHandle: "", linkedinProfile: "",
-                    availability: "", preferredLocation: "", hasVehicle: false, vehicleType: "", languagesKnown: "",
-                    groupName: "", groupSize: "", groupType: "", groupLeaderName: "", groupLeaderPhone: "", groupLeaderEmail: "",
-                    emergencyContactName: "", emergencyContactPhone: "", emergencyContactRelation: "",
-                    whyVolunteer: "", previousVolunteerWork: "", medicalConditions: "",
-                    agreeToTerms: false, agreeToBackgroundCheck: false,
-                });
-                setSelectedTypes([]);
             } else {
                 const error = await response.json().catch(() => ({ message: 'Network error' }));
                 throw new Error(error.message || 'Failed to submit volunteer application');
             }
         } catch (error) {
             console.error('Volunteer form error:', error);
-            alert(`${activeConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            showErrorToast(`${activeConfig.validationMessages.submitFailed}: ${error instanceof Error ? error.message : 'Unknown error'}`);
         } finally {
             setLoadingSubmit(false);
         }
@@ -227,639 +234,346 @@ export default function VolunteerPage() {
 
   return (
     <>
-      <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-12 md:py-16 lg:py-20">
+      <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-12 md:py-16 lg:py-20 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-saffron-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
+        
         <Container>
-          <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{activeConfig.hero.badge}</span>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mt-3 mb-4">
-            {activeConfig.hero.title}
-          </h1>
-          <p className="text-stone-300 text-lg max-w-2xl">
-            {activeConfig.hero.description}
-          </p>
-        </Container>
-      </section>
-
-      {/* Why volunteer */}
-      <section className="py-12 bg-saffron-50 border-b border-saffron-100">
-        <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            {activeConfig.whyVolunteer.map((item) => {
-              const Icon = getIcon(item.icon);
-              return (
-                <div key={item.title}>
-                  <Icon className="w-8 h-8 text-saffron-600 mx-auto mb-3" />
-                  <h3 className="font-serif font-semibold text-stone-800 mb-1">{item.title}</h3>
-                  <p className="text-stone-600 text-sm">{item.desc}</p>
-                </div>
-              );
-            })}
+          <div className="relative z-10">
+            <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{activeConfig.hero.badge}</span>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold mt-3 mb-4">
+              {activeConfig.hero.title}
+            </h1>
+            <p className="text-stone-300 text-lg max-w-2xl">
+              {activeConfig.hero.description}
+            </p>
           </div>
         </Container>
       </section>
 
-      <section className="py-16 bg-cream-50">
-        <Container size="xl">
-          <div className="max-w-6xl mx-auto">
-            
-            {/* Volunteer Types Selection */}
-            <div className="bg-white rounded-xl border border-cream-200 shadow-md p-6 mb-6">
-              <h2 className="font-serif text-2xl font-bold text-stone-800 mb-2 text-center">
-                {activeConfig.labels.selectVolunteerTypes}
-              </h2>
-              <p className="text-stone-600 text-sm text-center mb-6">
-                {activeConfig.labels.selectVolunteerTypesDesc}
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {volunteerTypes.map((type) => {
-                  const Icon = type.icon;
-                  const selected = selectedTypes.includes(type.value);
-                  return (
-                    <button
-                      key={type.value}
-                      onClick={() => toggleType(type.value)}
-                      className={`p-4 rounded-lg border-2 text-left transition-all ${
-                        selected
-                          ? "border-saffron-600 bg-saffron-50 shadow-md"
-                          : "border-stone-200 bg-white hover:border-saffron-400"
-                      }`}
+      {/* Progress Bar */}
+      {!submitted && (
+        <div className="sticky top-0 z-40 bg-white border-b border-stone-200 shadow-sm">
+          <Container>
+            <div className="py-4 md:py-6">
+              <div className="flex justify-between items-center max-w-4xl mx-auto px-4">
+                {[
+                  { label: "Mission", icon: Heart },
+                  { label: "Identity", icon: User },
+                  { label: "Details", icon: Users },
+                  { label: "Confirm", icon: CheckCircle }
+                ].map((step, idx) => (
+                  <div key={idx} className="flex flex-col items-center gap-2 relative">
+                    <div 
+                      className={cn(
+                        "w-10 h-10 border-2 rounded-full flex items-center justify-center transition-all duration-500 z-10",
+                        currentStep > idx + 1 ? "bg-saffron-600 border-saffron-600 text-white" : 
+                        currentStep === idx + 1 ? "border-saffron-600 text-saffron-600 scale-110 shadow-lg" : 
+                        "border-stone-200 text-stone-300 bg-white"
+                      )}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          selected ? "bg-saffron-600" : "bg-stone-100"
-                        }`}>
-                          <Icon className={`w-5 h-5 ${selected ? "text-white" : "text-stone-600"}`} />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-stone-800 text-sm mb-1">{type.label}</h3>
-                          <p className="text-stone-600 text-xs mb-2">{type.desc}</p>
-                          <p className="text-saffron-600 text-xs font-medium">{type.commitment}</p>
-                        </div>
-                        {selected && (
-                          <CheckCircle className="w-5 h-5 text-saffron-600 flex-shrink-0" />
-                        )}
+                      {currentStep > idx + 1 ? <CheckCircle className="w-6 h-6" /> : <step.icon className="w-5 h-5" />}
+                    </div>
+                    <span className={cn(
+                      "text-[10px] md:text-xs font-bold uppercase tracking-tighter",
+                      currentStep === idx + 1 ? "text-saffron-600" : "text-stone-400"
+                    )}>
+                      {step.label}
+                    </span>
+                    {/* Connector */}
+                    {idx < 3 && (
+                      <div className="absolute left-[2.5rem] top-5 w-[calc(100vw/4)] md:w-48 h-0.5 bg-stone-100 -z-0">
+                        <div 
+                          className="h-full bg-saffron-600 transition-all duration-700" 
+                          style={{ width: currentStep > idx + 1 ? '100%' : '0%' }}
+                        />
                       </div>
-                    </button>
-                  );
-                })}
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
+          </Container>
+        </div>
+      )}
 
-            {/* Registration Form */}
-            <div className="bg-white rounded-xl border border-cream-200 shadow-md overflow-hidden">
-              <div className="bg-gradient-to-r from-saffron-600 to-orange-600 text-white p-6 text-center">
-                <h3 className="font-serif text-2xl font-bold mb-1">{activeConfig.formHeader.title}</h3>
-                <p className="text-saffron-100 text-sm">{activeConfig.formHeader.subtitle}</p>
+      <section className="py-12 md:py-16 bg-cream-50 min-h-screen">
+        <Container>
+          <div className="max-w-4xl mx-auto">
+            {loading ? (
+              <FormSkeleton />
+            ) : submitted ? (
+              <div className="bg-white rounded-3xl border border-stone-200 shadow-2xl p-12 text-center animate-in fade-in zoom-in duration-500">
+                <div className="w-24 h-24 bg-saffron-100 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+                  <CheckCircle className="w-12 h-12 text-saffron-600" />
+                </div>
+                <h2 className="font-serif text-3xl font-bold text-stone-900 mb-4">
+                  {activeConfig.success.title}
+                </h2>
+                <p className="text-stone-600 text-lg mb-8 leading-relaxed">
+                  {activeConfig.success.description}
+                </p>
+                <button 
+                  onClick={() => {
+                    setSubmitted(false);
+                    setCurrentStep(1);
+                  }} 
+                  className="bg-stone-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-stone-800 transition-all shadow-xl"
+                >
+                  {activeConfig.success.registerAnotherText}
+                </button>
               </div>
+            ) : (
+              <div className="bg-white rounded-3xl border border-stone-200 shadow-xl overflow-hidden min-h-[500px] flex flex-col">
+                <div className="flex-1 p-8 md:p-10">
+                  {/* STEP 1: Volunteer Types */}
+                  {currentStep === 1 && (
+                    <div className="animate-in slide-in-from-right-4 duration-300">
+                      <div className="mb-8">
+                        <h2 className="font-serif text-2xl font-bold text-stone-900 mb-2">
+                          {activeConfig.labels.selectVolunteerTypes}
+                        </h2>
+                        <p className="text-stone-500">
+                          {activeConfig.labels.selectVolunteerTypesDesc}
+                        </p>
+                      </div>
 
-              <div className="p-8">
-                <div className="space-y-8">
-
-                  {/* Registration Type */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200">
-                      {activeConfig.labels.registrationType}
-                    </h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button
-                        type="button"
-                        onClick={() => setForm({ ...form, registrationType: "individual" })}
-                        className={`p-4 rounded-lg border-2 text-center transition-all ${
-                          form.registrationType === "individual"
-                            ? "border-saffron-600 bg-saffron-50 shadow-md"
-                            : "border-stone-200 bg-white hover:border-saffron-400"
-                        }`}
-                      >
-                        <User className={`w-8 h-8 mx-auto mb-2 ${form.registrationType === "individual" ? "text-saffron-600" : "text-stone-400"}`} />
-                        <p className="font-semibold text-stone-800 text-sm">{activeConfig.registrationTypes.individual.title}</p>
-                        <p className="text-stone-500 text-xs mt-1">{activeConfig.registrationTypes.individual.description}</p>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setForm({ ...form, registrationType: "group" })}
-                        className={`p-4 rounded-lg border-2 text-center transition-all ${
-                          form.registrationType === "group"
-                            ? "border-saffron-600 bg-saffron-50 shadow-md"
-                            : "border-stone-200 bg-white hover:border-saffron-400"
-                        }`}
-                      >
-                        <Users className={`w-8 h-8 mx-auto mb-2 ${form.registrationType === "group" ? "text-saffron-600" : "text-stone-400"}`} />
-                        <p className="font-semibold text-stone-800 text-sm">{activeConfig.registrationTypes.group.title}</p>
-                        <p className="text-stone-500 text-xs mt-1">{activeConfig.registrationTypes.group.description}</p>
-                      </button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {volunteerTypes.map((type) => {
+                          const Icon = type.icon;
+                          const selected = selectedTypes.includes(type.value);
+                          return (
+                            <button
+                              key={type.value}
+                              onClick={() => toggleType(type.value)}
+                              className={cn(
+                                "p-5 rounded-2xl border-2 text-left transition-all group relative overflow-hidden",
+                                selected
+                                  ? "border-saffron-600 bg-saffron-50/50 shadow-md ring-1 ring-saffron-600"
+                                  : "border-stone-100 bg-white hover:border-saffron-200 hover:shadow-sm"
+                              )}
+                            >
+                              <div className="flex items-start gap-4 relative z-10">
+                                <div className={cn(
+                                  "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors",
+                                  selected ? "bg-saffron-600" : "bg-stone-50 group-hover:bg-saffron-50"
+                                )}>
+                                  <Icon className={cn("w-6 h-6", selected ? "text-white" : "text-stone-600")} />
+                                </div>
+                                <div className="flex-1">
+                                  <h3 className="font-bold text-stone-900 text-base mb-1">{type.label}</h3>
+                                  <p className="text-stone-500 text-xs leading-relaxed mb-3">{type.desc}</p>
+                                  <div className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-saffron-600"></span>
+                                    <p className="text-saffron-700 text-[10px] font-bold uppercase tracking-wider">{type.commitment}</p>
+                                  </div>
+                                </div>
+                                {selected && (
+                                  <div className="bg-saffron-600 rounded-full p-1 border-2 border-white shadow-sm">
+                                    <CheckCircle className="w-4 h-4 text-white" />
+                                  </div>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Group Details (only if group selected) */}
-                  {form.registrationType === "group" && (
-                    <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-200">
-                      <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-blue-300 flex items-center gap-2">
-                        <Users className="w-6 h-6 text-blue-600" />
-                        {activeConfig.labels.groupName.replace("/Organization Name", " Information")}
-                      </h4>
-                      <div className="space-y-4">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <InputField
-                            label={activeConfig.labels.groupName}
-                            placeholder={activeConfig.placeholders.groupName}
-                            required
-                            value={form.groupName}
-                            onChange={(e) => setForm({ ...form, groupName: e.target.value })}
-                          />
-                          <InputField
-                            label={activeConfig.labels.groupSize}
-                            type="number"
-                            placeholder={activeConfig.placeholders.groupSize}
-                            required
-                            value={form.groupSize}
-                            onChange={(e) => setForm({ ...form, groupSize: e.target.value })}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            {activeConfig.labels.groupType} <span className="text-red-500">*</span>
-                          </label>
-                          <select
-                            required
-                            value={form.groupType}
-                            onChange={(e) => setForm({ ...form, groupType: e.target.value })}
-                            className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
+                  {/* STEP 2: Identity & Registration */}
+                  {currentStep === 2 && (
+                    <div className="animate-in slide-in-from-right-4 duration-300 space-y-8">
+                      <div>
+                        <h2 className="font-serif text-2xl font-bold text-stone-900 mb-6">Personal Identity</h2>
+                        
+                        <div className="grid grid-cols-2 gap-4 mb-8">
+                          <button
+                            type="button"
+                            onClick={() => setForm({ ...form, registrationType: "individual" })}
+                            className={cn(
+                              "p-4 rounded-xl border-2 text-center transition-all",
+                              form.registrationType === "individual" ? "border-saffron-600 bg-saffron-50 shadow-sm" : "border-stone-100"
+                            )}
                           >
-                            {activeConfig.selectOptions.groupTypes.map((option) => (
-                              <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                          </select>
+                            <User className={cn("w-6 h-6 mx-auto mb-2", form.registrationType === "individual" ? "text-saffron-600" : "text-stone-300")} />
+                            <p className="font-bold text-stone-800 text-sm">Individual</p>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setForm({ ...form, registrationType: "group" })}
+                            className={cn(
+                              "p-4 rounded-xl border-2 text-center transition-all",
+                              form.registrationType === "group" ? "border-saffron-600 bg-saffron-50 shadow-sm" : "border-stone-100"
+                            )}
+                          >
+                            <Users className={cn("w-6 h-6 mx-auto mb-2", form.registrationType === "group" ? "text-saffron-600" : "text-stone-300")} />
+                            <p className="font-bold text-stone-800 text-sm">Group/Org</p>
+                          </button>
                         </div>
-                        <div className="pt-4 border-t border-blue-300">
-                          <p className="text-sm font-semibold text-stone-700 mb-3">{activeConfig.labels.groupLeaderDetails}</p>
-                          <div className="grid md:grid-cols-3 gap-4">
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <InputField
+                            label="Full Name"
+                            placeholder="e.g. Manish Sirohi"
+                            required
+                            value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                          />
+                          <div className="space-y-3">
                             <InputField
-                              label={activeConfig.labels.groupLeaderName}
-                              placeholder={activeConfig.placeholders.groupLeaderName}
-                              required
-                              value={form.groupLeaderName}
-                              onChange={(e) => setForm({ ...form, groupLeaderName: e.target.value })}
-                            />
-                            <InputField
-                              label={activeConfig.labels.groupLeaderPhone}
-                              type="tel"
-                              placeholder={activeConfig.placeholders.groupLeaderPhone}
-                              required
-                              value={form.groupLeaderPhone}
-                              onChange={(e) => setForm({ ...form, groupLeaderPhone: e.target.value })}
-                            />
-                            <InputField
-                              label={activeConfig.labels.groupLeaderEmail}
+                              label="Email Address"
                               type="email"
-                              placeholder={activeConfig.placeholders.groupLeaderEmail}
                               required
-                              value={form.groupLeaderEmail}
-                              onChange={(e) => setForm({ ...form, groupLeaderEmail: e.target.value })}
+                              value={form.email}
+                              onChange={(e) => {
+                                setForm({ ...form, email: e.target.value });
+                                setIsEmailVerified(false);
+                              }}
+                              disabled={isEmailVerified}
                             />
+                            {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && !isEmailVerified && (
+                              <EmailVerification email={form.email} onVerified={setIsEmailVerified} />
+                            )}
+                          </div>
+                          <div className="space-y-3">
+                            <InputField
+                              label="WhatsApp Number"
+                              type="tel"
+                              required
+                              value={form.phone}
+                              onChange={(e) => {
+                                setForm({ ...form, phone: e.target.value });
+                                setIsMobileVerified(false);
+                              }}
+                              disabled={isMobileVerified}
+                            />
+                            {form.phone && form.phone.length >= 10 && !isMobileVerified && (
+                              <MobileVerification mobile={form.phone} onVerified={setIsMobileVerified} />
+                            )}
+                          </div>
+                          <InputField
+                            label="Date of Birth"
+                            type="date"
+                            required
+                            value={form.dateOfBirth}
+                            onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* STEP 3: Details & Skills */}
+                  {currentStep === 3 && (
+                    <div className="animate-in slide-in-from-right-4 duration-300 space-y-8">
+                      <div>
+                        <h2 className="font-serif text-2xl font-bold text-stone-900 mb-6 font-serif">Reach & Expertise</h2>
+                        
+                        <div className="space-y-6">
+                          <div className="grid md:grid-cols-2 gap-6">
+                            <div className="md:col-span-2">
+                              <label className="block text-sm font-bold text-stone-700 mb-2">Residential Address</label>
+                              <textarea
+                                value={form.address}
+                                onChange={(e) => setForm({ ...form, address: e.target.value })}
+                                className="w-full p-4 border-2 border-stone-100 rounded-xl focus:border-saffron-500 focus:outline-none min-h-[100px]"
+                                placeholder="House No, Street, Area..."
+                              />
+                            </div>
+                            <InputField label="City" value={form.city} onChange={e => setForm({...form, city: e.target.value})} />
+                            <InputField label="Pincode" maxLength={6} value={form.pincode} onChange={e => setForm({...form, pincode: e.target.value})} />
+                          </div>
+
+                          <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-stone-50">
+                            <InputField label="Occupation" value={form.occupation} onChange={e => setForm({...form, occupation: e.target.value})} />
+                            <InputField label="Special Skills" placeholder="e.g. Photography, Driving, Yoga..." value={form.skills} onChange={e => setForm({...form, skills: e.target.value})} />
                           </div>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* Personal Details */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[0].number}</span>
-                      {form.registrationType === "group" ? `${activeConfig.sections[0].title} ${activeConfig.labels.asRepresentative}` : activeConfig.sections[0].title}
-                    </h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <InputField
-                        label={activeConfig.labels.fullName}
-                        placeholder={activeConfig.placeholders.fullName}
-                        required
-                        value={form.name}
-                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      />
-                      <div className="space-y-4">
-                        <InputField
-                          label={activeConfig.labels.emailAddress}
-                          placeholder={activeConfig.placeholders.email}
-                          type="email"
-                          required
-                          value={form.email}
-                          onChange={(e) => {
-                            setForm({ ...form, email: e.target.value });
-                            setIsEmailVerified(false);
-                          }}
-                          disabled={isEmailVerified}
-                        />
-                        
-                        {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
-                          <EmailVerification 
-                            email={form.email} 
-                            onVerified={setIsEmailVerified} 
-                          />
-                        )}
-                      </div>
-                      <div className="space-y-4">
-                        <InputField
-                          label={activeConfig.labels.phoneNumber}
-                          type="tel"
-                          placeholder={activeConfig.placeholders.phone}
-                          required
-                          value={form.phone}
-                          onChange={(e) => {
-                            setForm({ ...form, phone: e.target.value });
-                            setIsMobileVerified(false);
-                          }}
-                          disabled={isMobileVerified}
-                        />
-                        
-                        {form.phone && form.phone.length >= 10 && (
-                          <MobileVerification 
-                            mobile={form.phone} 
-                            onVerified={setIsMobileVerified} 
-                          />
-                        )}
-                      </div>
-                      <InputField
-                        label={activeConfig.labels.alternatePhone}
-                        type="tel"
-                        placeholder={activeConfig.placeholders.alternatePhone}
-                        value={form.alternatePhone}
-                        onChange={(e) => setForm({ ...form, alternatePhone: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.dateOfBirth}
-                        type="date"
-                        required
-                        value={form.dateOfBirth}
-                        onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                      />
+                  {/* STEP 4: Mission Commitment */}
+                  {currentStep === 4 && (
+                    <div className="animate-in slide-in-from-right-4 duration-300 space-y-8">
                       <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.gender} <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          required
-                          value={form.gender}
-                          onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
-                        >
-                          {activeConfig.selectOptions.genders.map((option) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
+                        <h2 className="font-serif text-2xl font-bold text-stone-900 mb-6 font-serif">Final Commitment</h2>
+                        
+                        <div className="space-y-6">
+                          <div>
+                            <label className="block text-sm font-bold text-stone-700 mb-2">Why do you want to join Moksha Sewa Foundation?</label>
+                            <textarea
+                              value={form.whyVolunteer}
+                              onChange={(e) => setForm({ ...form, whyVolunteer: e.target.value })}
+                              className="w-full p-4 border-2 border-stone-100 rounded-xl focus:border-saffron-500 focus:outline-none min-h-[120px]"
+                              placeholder="Share your passion or story..."
+                            />
+                          </div>
 
-                  {/* Address Details */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[1].number}</span>
-                      {activeConfig.sections[1].title}
-                    </h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.completeAddress} <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          placeholder={activeConfig.placeholders.completeAddress}
-                          rows={2}
-                          required
-                          value={form.address}
-                          onChange={(e) => setForm({ ...form, address: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500"
-                        />
-                      </div>
-                      <div className="grid md:grid-cols-3 gap-4">
-                        <InputField
-                          label={activeConfig.labels.city}
-                          placeholder={activeConfig.placeholders.city}
-                          required
-                          value={form.city}
-                          onChange={(e) => setForm({ ...form, city: e.target.value })}
-                        />
-                        <div>
-                          <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            {activeConfig.labels.state} <span className="text-red-500">*</span>
-                          </label>
-                          <select
-                            required
-                            value={form.state}
-                            onChange={(e) => setForm({ ...form, state: e.target.value })}
-                            className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
-                          >
-                            <option value="">{activeConfig.selectOptions.stateSelectLabel}</option>
-                            {indianStates.map((state) => (
-                              <option key={state} value={state}>{state}</option>
-                            ))}
-                          </select>
+                          <div className="bg-stone-50 rounded-2xl p-6 border border-stone-100">
+                             <div className="space-y-4">
+                               <label className="flex items-center gap-3 cursor-pointer group">
+                                 <input 
+                                   type="checkbox" 
+                                   checked={form.agreeToTerms}
+                                   onChange={e => setForm({...form, agreeToTerms: e.target.checked})}
+                                   className="w-5 h-5 rounded border-stone-300 text-saffron-600 focus:ring-saffron-500"
+                                 />
+                                 <span className="text-sm text-stone-600 font-medium">I agree to the terms of service and code of conduct.</span>
+                               </label>
+                               <label className="flex items-center gap-3 cursor-pointer group">
+                                 <input 
+                                   type="checkbox" 
+                                   checked={form.agreeToBackgroundCheck}
+                                   onChange={e => setForm({...form, agreeToBackgroundCheck: e.target.checked})}
+                                   className="w-5 h-5 rounded border-stone-300 text-saffron-600 focus:ring-saffron-500"
+                                 />
+                                 <span className="text-sm text-stone-600 font-medium">I consent to a basic background verification.</span>
+                               </label>
+                             </div>
+                          </div>
                         </div>
-                        <InputField
-                          label={activeConfig.labels.pinCode}
-                          placeholder={activeConfig.placeholders.pinCode}
-                          required
-                          maxLength={6}
-                          value={form.pincode}
-                          onChange={(e) => setForm({ ...form, pincode: e.target.value })}
-                        />
                       </div>
                     </div>
-                  </div>
+                  )}
+                </div>
 
-                  {/* Professional Details */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[2].number}</span>
-                      {activeConfig.sections[2].title}
-                    </h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <InputField
-                        label={activeConfig.labels.currentOccupation}
-                        placeholder={activeConfig.placeholders.occupation}
-                        required
-                        value={form.occupation}
-                        onChange={(e) => setForm({ ...form, occupation: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.organizationInstitution}
-                        placeholder={activeConfig.placeholders.organization}
-                        value={form.organization}
-                        onChange={(e) => setForm({ ...form, organization: e.target.value })}
-                      />
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.experienceLevel}
-                        </label>
-                        <select
-                          value={form.experience}
-                          onChange={(e) => setForm({ ...form, experience: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
-                        >
-                          {experienceLevels.map((level) => (
-                            <option key={level.value} value={level.value}>{level.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <InputField
-                        label={activeConfig.labels.specialSkills}
-                        placeholder={activeConfig.placeholders.skills}
-                        value={form.skills}
-                        onChange={(e) => setForm({ ...form, skills: e.target.value })}
-                      />
-                    </div>
-                  </div>
+                {/* Navigation Buttons */}
+                <div className="bg-stone-50/80 backdrop-blur-sm p-6 md:p-8 flex items-center justify-between border-t border-stone-100">
+                  <button
+                    onClick={prevStep}
+                    disabled={currentStep === 1 || loadingSubmit}
+                    className={cn(
+                      "flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all",
+                      currentStep === 1 ? "opacity-0 invisible" : "text-stone-600 hover:bg-white hover:shadow-md"
+                    )}
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    Back
+                  </button>
 
-                  {/* Social Media Links */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[3].number}</span>
-                      {activeConfig.sections[3].title}
-                    </h4>
-                    <p className="text-stone-600 text-sm mb-4">{activeConfig.labels.socialMediaNote}</p>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <InputField
-                        label={activeConfig.labels.facebookProfile}
-                        placeholder={activeConfig.placeholders.facebook}
-                        value={form.facebookProfile}
-                        onChange={(e) => setForm({ ...form, facebookProfile: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.instagramHandle}
-                        placeholder={activeConfig.placeholders.instagram}
-                        value={form.instagramHandle}
-                        onChange={(e) => setForm({ ...form, instagramHandle: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.twitterHandle}
-                        placeholder={activeConfig.placeholders.twitter}
-                        value={form.twitterHandle}
-                        onChange={(e) => setForm({ ...form, twitterHandle: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.linkedinProfile}
-                        placeholder={activeConfig.placeholders.linkedin}
-                        value={form.linkedinProfile}
-                        onChange={(e) => setForm({ ...form, linkedinProfile: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Volunteer Preferences */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[4].number}</span>
-                      {activeConfig.sections[4].title}
-                    </h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.availability} <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          required
-                          value={form.availability}
-                          onChange={(e) => setForm({ ...form, availability: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white"
-                        >
-                          {availabilityOptions.map((option) => (
-                            <option key={option.value} value={option.value}>{option.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <InputField
-                          label={activeConfig.labels.preferredLocation}
-                          placeholder={activeConfig.placeholders.preferredLocation}
-                          value={form.preferredLocation}
-                          onChange={(e) => setForm({ ...form, preferredLocation: e.target.value })}
-                        />
-                        <InputField
-                          label={activeConfig.labels.languagesKnown}
-                          placeholder={activeConfig.placeholders.languagesKnown}
-                          value={form.languagesKnown}
-                          onChange={(e) => setForm({ ...form, languagesKnown: e.target.value })}
-                        />
-                      </div>
-                      <div className="space-y-3">
-                        <label className="flex items-center gap-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={form.hasVehicle}
-                            onChange={(e) => setForm({ ...form, hasVehicle: e.target.checked })}
-                            className="w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                          />
-                          <span className="text-sm text-stone-700 font-medium">{activeConfig.labels.hasVehicle}</span>
-                        </label>
-                        {form.hasVehicle && (
-                          <InputField
-                            label={activeConfig.labels.vehicleType}
-                            placeholder={activeConfig.placeholders.vehicleType}
-                            value={form.vehicleType}
-                            onChange={(e) => setForm({ ...form, vehicleType: e.target.value })}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Emergency Contact */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[5].number}</span>
-                      {activeConfig.sections[5].title}
-                    </h4>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      <InputField
-                        label={activeConfig.labels.emergencyContactName}
-                        placeholder={activeConfig.placeholders.emergencyName}
-                        required
-                        value={form.emergencyContactName}
-                        onChange={(e) => setForm({ ...form, emergencyContactName: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.emergencyContactPhone}
-                        type="tel"
-                        placeholder={activeConfig.placeholders.emergencyPhone}
-                        required
-                        value={form.emergencyContactPhone}
-                        onChange={(e) => setForm({ ...form, emergencyContactPhone: e.target.value })}
-                      />
-                      <InputField
-                        label={activeConfig.labels.emergencyContactRelation}
-                        placeholder={activeConfig.placeholders.emergencyRelation}
-                        required
-                        value={form.emergencyContactRelation}
-                        onChange={(e) => setForm({ ...form, emergencyContactRelation: e.target.value })}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Additional Information */}
-                  <div>
-                    <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                      <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{activeConfig.sections[6].number}</span>
-                      {activeConfig.sections[6].title}
-                    </h4>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.whyVolunteer} <span className="text-red-500">*</span>
-                        </label>
-                        <textarea
-                          placeholder={activeConfig.placeholders.whyVolunteerPlaceholder}
-                          rows={3}
-                          required
-                          value={form.whyVolunteer}
-                          onChange={(e) => setForm({ ...form, whyVolunteer: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.previousVolunteerWork}
-                        </label>
-                        <textarea
-                          placeholder={activeConfig.placeholders.previousWorkPlaceholder}
-                          rows={2}
-                          value={form.previousVolunteerWork}
-                          onChange={(e) => setForm({ ...form, previousVolunteerWork: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {activeConfig.labels.medicalConditions}
-                        </label>
-                        <textarea
-                          placeholder={activeConfig.placeholders.medicalConditionsPlaceholder}
-                          rows={2}
-                          value={form.medicalConditions}
-                          onChange={(e) => setForm({ ...form, medicalConditions: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Terms & Agreements */}
-                  <div className="space-y-4 pt-4 border-t-2 border-stone-200">
-                    <div className="space-y-3">
-                      <label className="flex items-start gap-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          checked={form.agreeToTerms}
-                          onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
-                          className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                          required
-                        />
-                        <span className="text-sm text-stone-700 font-medium">
-                          {activeConfig.labels.agreeToTerms} <Link href={activeConfig.labels.termsLink} className="text-saffron-600 underline font-bold">{activeConfig.labels.termsAndConditions}</Link> {activeConfig.labels.andText} <Link href={activeConfig.labels.privacyLink} className="text-saffron-600 underline font-bold">{activeConfig.labels.privacyPolicy}</Link> <span className="text-red-500">*</span>
-                        </span>
-                      </label>
-
-                      <label className="flex items-start gap-3 cursor-pointer group">
-                        <input
-                          type="checkbox"
-                          checked={form.agreeToBackgroundCheck}
-                          onChange={(e) => setForm({ ...form, agreeToBackgroundCheck: e.target.checked })}
-                          className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                          required
-                        />
-                        <span className="text-sm text-stone-700 font-medium">
-                          {activeConfig.labels.agreeToBackgroundCheck} <span className="text-red-500">*</span>
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-6">
+                  {currentStep < totalSteps ? (
+                    <Button
+                      onClick={nextStep}
+                      className="px-10 py-3 shadow-xl bg-[#000080] hover:bg-black text-white hover:scale-105 transition-all text-sm font-black uppercase tracking-widest border-b-4 border-amber-900"
+                    >
+                      Next Step
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  ) : (
                     <Button
                       onClick={handleSubmit}
-                      className="w-full text-lg py-4 font-bold shadow-xl border-b-4 border-amber-900"
-                    disabled={
-                      loadingSubmit || 
-                      !isEmailVerified ||
-                      selectedTypes.length === 0 ||
-                      !form.name ||
-                      !form.email ||
-                      !form.phone ||
-                      !form.dateOfBirth ||
-                      !form.gender ||
-                      !form.address ||
-                      !form.city ||
-                      !form.state ||
-                      !form.pincode ||
-                      !form.occupation ||
-                      !form.availability ||
-                      !form.emergencyContactName ||
-                      !form.emergencyContactPhone ||
-                      !form.emergencyContactRelation ||
-                      !form.whyVolunteer ||
-                      !form.agreeToTerms ||
-                      !form.agreeToBackgroundCheck ||
-                      (form.registrationType === "group" && (!form.groupName || !form.groupSize || !form.groupType || !form.groupLeaderName || !form.groupLeaderPhone || !form.groupLeaderEmail))
-                    }
-                  >
-                    {loadingSubmit ? (
-                      <span className="flex items-center gap-2">
-                        <RefreshCw className="w-5 h-5 animate-spin" />
-                        SUBMITTING...
-                      </span>
-                    ) : (
-                      activeConfig.labels.submitButton
-                    )}
-                  </Button>
-                    
-                    <p className="text-stone-500 text-xs text-center mt-4">
-                      {activeConfig.labels.reviewNote}
-                    </p>
-                  </div>
-
+                      loading={loadingSubmit}
+                      className="px-12 py-4 shadow-2xl bg-saffron-600 hover:bg-saffron-700 text-white hover:scale-105 transition-all text-lg font-black uppercase tracking-widest border-b-4 border-amber-900"
+                    >
+                      Submit Application
+                    </Button>
+                  )}
                 </div>
               </div>
-            </div>
-
+            )}
           </div>
         </Container>
       </section>

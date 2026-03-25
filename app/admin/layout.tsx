@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { authAPI, removeToken } from '@/lib/api';
 import MobileMenu from '@/components/admin/MobileMenu';
+import GlobalNotification from '@/components/admin/GlobalNotification';
 
 interface AdminUser {
   id: string;
@@ -87,6 +88,7 @@ export default function AdminLayout({
     if (!user) return [];
     const baseItems = [
       { name: 'Dashboard', href: '/admin/dashboard', icon: '💎', gradient: 'from-blue-600 to-indigo-700' },
+      { name: 'Live Support', href: '/admin/support', icon: '🎧', gradient: 'from-amber-500 to-orange-600' },
       { name: 'Tasks', href: '/admin/tasks', icon: '⚡', gradient: 'from-purple-600 to-pink-600' },
       { name: 'Reports', href: '/admin/reports', icon: '📈', gradient: 'from-emerald-600 to-teal-700' },
       { name: 'Board Applications', href: '/admin/board', icon: '🏛️', gradient: 'from-navy-900 to-navy-700' },
@@ -259,6 +261,9 @@ export default function AdminLayout({
           </button>
         </div>
       </div>
+
+      {/* Global Admin Notifications (Calls, Message Alerts) */}
+      <GlobalNotification user={user} />
 
       {/* Main Content */}
       <div className="lg:ml-72">
