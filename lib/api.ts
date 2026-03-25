@@ -553,6 +553,16 @@ export const chatAPI = {
       method: 'PUT',
     });
   },
+  uploadAudio: async (formData: FormData) => {
+    // Note: Don't set Content-Type header; fetch will auto-set it for FormData
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_ENDPOINTS.CHAT}/upload-audio`, {
+      method: 'POST',
+      headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+      body: formData,
+    });
+    return response.json();
+  },
   closeChat: async (chatId: string) => {
     return apiRequest(`${API_ENDPOINTS.CHAT}/close/${chatId}`, {
       method: 'PUT',

@@ -17,7 +17,10 @@ import {
   MoreVertical,
   X,
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  Mic,
+  Square,
+  Headphones
 } from 'lucide-react';
 
 interface ChatSession {
@@ -35,6 +38,7 @@ interface Message {
   _id?: string;
   sender: 'user' | 'admin' | 'system';
   content: string;
+  type?: 'text' | 'image' | 'file' | 'audio';
   timestamp?: string;
   read?: boolean;
 }
@@ -48,8 +52,13 @@ export default function SupportInbox() {
   const [searchTerm, setSearchTerm] = useState('');
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [callAlert, setCallAlert] = useState<{ type: string; chatId: string; userName: string } | null>(null);
+  const [isUserTyping, setIsUserTyping] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   // Fetch initial sessions
   useEffect(() => {
@@ -109,6 +118,9 @@ export default function SupportInbox() {
           if (data.type === 'chat_read_update' && data.chatId === selectedChat._id) {
             setMessages(prev => prev.map(m => m.sender === 'admin' ? { ...m, read: true } : m));
           }
+          if (data.type === 'chat_typing' && data.chatId === selectedChat._id) {
+            if (data.sender === 'user') setIsUserTyping(data.isTyping);
+          }
           if (data.type === 'chat_call_response' && data.chatId === selectedChat._id) {
              if (data.message) {
                  setMessages(prev => [...prev, data.message]);
@@ -167,6 +179,81 @@ export default function SupportInbox() {
       content: inputMessage
     }));
     setInputMessage('');
+    socket.send(JSON.stringify({ type: 'chat_typing', chatId: selectedChat._id, sender: 'admin', isTyping: false }));
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        setIsRecording(false);
+        setTimeout(async () => {
+            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+            await handleAudioUpload(audioBlob);
+            stream.getTracks().forEach(track => track.stop());
+        }, 200);
+      };
+
+      mediaRecorder.start(100);
+      setIsRecording(true);
+    } catch (err) {
+      console.error('Recording Error:', err);
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const handleAudioUpload = async (blob: Blob) => {
+    if (!selectedChat || !socket) return;
+    try {
+      const formData = new FormData();
+      formData.append('audio', blob, 'voice-note.webm');
+      formData.append('chatId', selectedChat._id);
+      formData.append('sender', 'admin');
+      
+      const adminStr = localStorage.getItem('admin');
+      if (adminStr) {
+          const admin = JSON.parse(adminStr);
+          if (admin._id) formData.append('adminId', admin._id);
+      }
+
+      const res = await chatAPI.uploadAudio(formData);
+      if (res.success) {
+        setMessages(prev => [...prev, res.data]);
+        socket.send(JSON.stringify({ 
+          type: 'chat_message', 
+          chatId: selectedChat._id, 
+          message: res.data 
+        }));
+      }
+    } catch (err) {
+      console.error('Audio Upload Error:', err);
+    }
+  };
+
+  const handleTyping = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputMessage(e.target.value);
+    if (!socket || !selectedChat) return;
+
+    socket.send(JSON.stringify({ type: 'chat_typing', chatId: selectedChat._id, sender: 'admin', isTyping: true }));
+    
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+        socket?.send(JSON.stringify({ type: 'chat_typing', chatId: selectedChat._id, sender: 'admin', isTyping: false }));
+    }, 3000);
   };
 
   return (
@@ -272,7 +359,26 @@ export default function SupportInbox() {
                   <div className={`max-w-[75%] p-4 rounded-2xl text-xs font-bold ${
                     msg.sender === 'admin' ? 'bg-navy-900 text-white rounded-tr-none' : msg.sender === 'system' ? 'bg-gold-600/10 text-gold-600 text-[10px] font-black uppercase px-6 py-2 rounded-full border border-gold-600/20' : 'bg-white border border-navy-50 rounded-tl-none'
                   }`}>
-                    {msg.content}
+                    {msg.type === 'audio' ? (
+                      <div className="flex flex-col gap-3 min-w-[200px] p-2 bg-navy-50/20 rounded-xl">
+                        <div className="flex items-center gap-2 text-gray-400">
+                          <Mic className="w-4 h-4" />
+                          <p className="text-[10px] font-black uppercase tracking-widest italic">Voice Transmission</p>
+                        </div>
+                        <a 
+                          href={msg.content} 
+                          target="_blank" 
+                          className={`flex items-center justify-center gap-3 py-4 rounded-2xl text-[10px] font-black uppercase transition-all shadow-lg active:scale-95 group ${
+                            msg.sender === 'admin' ? 'bg-gold-600 text-navy-900 hover:bg-white hover:text-gold-600' : 'bg-navy-900 text-gold-600 hover:bg-gold-600 hover:text-navy-900'
+                          }`}
+                        >
+                          <Headphones className="w-4 h-4 group-hover:animate-bounce" />
+                          Listen to Voice
+                        </a>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                   </div>
                   {msg.sender === 'admin' && (
                     <div className="flex gap-1 mt-1">
@@ -281,20 +387,36 @@ export default function SupportInbox() {
                   )}
                 </div>
               ))}
+              {isUserTyping && (
+                <div className="flex justify-start">
+                  <div className="bg-navy-100/50 px-4 py-2 rounded-full text-[10px] font-black text-navy-400 uppercase tracking-widest animate-pulse border border-navy-50 italic">
+                    User is typing...
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
             <div className="p-8 border-t border-navy-50">
               <div className="relative flex items-center gap-4">
+                <button 
+                  onClick={isRecording ? stopRecording : startRecording}
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${
+                    isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-stone-50 text-navy-400 hover:text-navy-900 border border-navy-50'
+                  }`}
+                >
+                  {isRecording ? <Square className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                </button>
                 <textarea 
-                  placeholder="TRANSMIT MESSAGE..."
+                  placeholder={isRecording ? "RECORDING..." : "TRANSMIT MESSAGE..."}
                   rows={2}
                   value={inputMessage}
-                  onChange={e => setInputMessage(e.target.value)}
+                  disabled={isRecording}
+                  onChange={handleTyping}
                   onKeyPress={e => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), sendMessage())}
                   className="flex-1 bg-stone-50 border-none rounded-3xl py-5 px-8 text-[10px] font-black uppercase outline-none focus:ring-4 ring-gold-600/10 transition-all resize-none"
                 />
-                <button onClick={sendMessage} className="w-14 h-14 bg-navy-900 text-gold-600 rounded-2xl flex items-center justify-center shadow-2xl transition-all active:scale-95"><Send className="w-6 h-6" /></button>
+                <button onClick={sendMessage} disabled={isRecording} className="w-14 h-14 bg-navy-900 text-gold-600 rounded-2xl flex items-center justify-center shadow-2xl transition-all active:scale-95"><Send className="w-6 h-6" /></button>
               </div>
             </div>
           </>

@@ -15,7 +15,9 @@ import {
   Headphones,
   Check,
   CheckCheck,
-  Clock
+  Clock,
+  Mic,
+  Square
 } from 'lucide-react';
 import { authAPI, chatAPI } from '@/lib/api';
 
@@ -23,6 +25,7 @@ interface Message {
   _id?: string;
   sender: 'user' | 'admin' | 'system';
   content: string;
+  type?: 'text' | 'image' | 'file' | 'audio';
   timestamp?: string;
   read?: boolean;
 }
@@ -46,7 +49,12 @@ export default function ChatWidget() {
 
   const socketRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [isAgentTyping, setIsAgentTyping] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   const connectSocket = useCallback((id: string) => {
     if (socketRef.current && (socketRef.current.readyState === WebSocket.OPEN || socketRef.current.readyState === WebSocket.CONNECTING)) return;
@@ -79,6 +87,9 @@ export default function ChatWidget() {
             setMessages(prev => [...prev, data.message]);
           }
           setCallAlert(null);
+        }
+        if (data.type === 'chat_typing' && data.chatId === id) {
+          if (data.sender === 'admin') setIsAgentTyping(data.isTyping);
         }
         if (data.type === 'chat_call_request' && data.chatId === id) {
           if (data.sender === 'admin') {
@@ -138,6 +149,82 @@ export default function ChatWidget() {
       content: inputMessage
     }));
     setInputMessage('');
+    if (socketRef.current) {
+        socketRef.current.send(JSON.stringify({ type: 'chat_typing', chatId, sender: 'user', isTyping: false }));
+    }
+  };
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        setIsRecording(false);
+        // Small delay to ensure last chunks are pushed
+        setTimeout(async () => {
+            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+            await handleAudioUpload(audioBlob);
+            stream.getTracks().forEach(track => track.stop());
+        }, 200);
+      };
+
+      mediaRecorder.start(100); // Record in 100ms chunks for better reliability
+      setIsRecording(true);
+    } catch (err) {
+      console.error('Recording Error:', err);
+      setError('Could not access microphone');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+    }
+  };
+
+  const handleAudioUpload = async (blob: Blob) => {
+    if (!chatId) return;
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append('audio', blob, 'voice-note.webm');
+      formData.append('chatId', chatId);
+      formData.append('sender', 'user');
+
+      const res = await chatAPI.uploadAudio(formData);
+      if (res.success) {
+        setMessages(prev => [...prev, res.data]);
+        socketRef.current?.send(JSON.stringify({ 
+          type: 'chat_message', 
+          chatId, 
+          message: res.data 
+        }));
+      }
+    } catch (err) {
+      console.error('Audio Upload Error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTyping = (e: any) => {
+    setInputMessage(e.target.value);
+    if (!socketRef.current || !chatId) return;
+
+    socketRef.current.send(JSON.stringify({ type: 'chat_typing', chatId, sender: 'user', isTyping: true }));
+    
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(() => {
+        socketRef.current?.send(JSON.stringify({ type: 'chat_typing', chatId, sender: 'user', isTyping: false }));
+    }, 3000);
   };
 
   return (
@@ -235,7 +322,25 @@ export default function ChatWidget() {
                     <div className="max-w-[80%] flex flex-col">
                       <div className={`p-4 rounded-2xl text-[11px] font-bold shadow-sm ${msg.sender === 'user' ? 'bg-stone-900 text-[#f4c430] rounded-tr-none' : msg.sender === 'system' ? 'bg-[#f4c430]/10 text-[#f4c430] text-[9px] uppercase font-black tracking-tighter text-center py-2 border border-[#f4c430]/20' : 'bg-white text-stone-800 rounded-tl-none'
                         }`}>
-                        {msg.content}
+                        {msg.type === 'audio' ? (
+                          <div className="flex flex-col gap-3 min-w-[200px]">
+                            <div className="flex items-center gap-2 opacity-50">
+                                <Mic className="w-4 h-4" />
+                                <p className="text-[10px] uppercase font-black tracking-widest">Voice Recording</p>
+                            </div>
+                            <a 
+                                href={msg.content} 
+                                target="_blank" 
+                                className="bg-stone-800 text-[#f4c430] py-3 px-4 rounded-xl text-[9px] font-black uppercase text-center hover:bg-[#f4c430] hover:text-stone-900 transition-all flex items-center justify-center gap-2 group"
+                            >
+                                <Headphones className="w-3 h-3 group-hover:scale-110 transition-transform" />
+                                Listen to Voice Note
+                            </a>
+                            <p className="text-[7px] opacity-30 text-center uppercase font-bold">Opens in new tab</p>
+                          </div>
+                        ) : (
+                          msg.content
+                        )}
                       </div>
                       {msg.sender === 'user' && (
                         <div className="flex justify-end mt-1 items-center gap-1">
@@ -249,14 +354,36 @@ export default function ChatWidget() {
                     </div>
                   </div>
                 ))}
+                {isAgentTyping && (
+                  <div className="flex justify-start">
+                    <div className="bg-white/50 px-4 py-2 rounded-full text-[9px] font-black text-stone-400 uppercase tracking-widest animate-pulse border border-stone-100 italic">
+                      Agent is typing...
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
             )}
           </div>
 
           {step === 'chat' && (
-            <div className="p-4 bg-white border-t border-stone-100 flex gap-2">
-              <input placeholder="Type..." value={inputMessage} onChange={e => setInputMessage(e.target.value)} onKeyPress={e => e.key === 'Enter' && sendMessage()} className="flex-1 bg-stone-50 rounded-xl py-3 px-4 text-xs font-bold outline-none" />
+            <div className="p-4 bg-white border-t border-stone-100 flex items-center gap-2">
+              <button 
+                onClick={isRecording ? stopRecording : startRecording}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                  isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-stone-50 text-stone-400 hover:text-stone-900'
+                }`}
+              >
+                {isRecording ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              </button>
+              <input 
+                placeholder={isRecording ? "RECORDING..." : "Type..."}
+                value={inputMessage} 
+                onChange={handleTyping} 
+                disabled={isRecording}
+                onKeyPress={e => e.key === 'Enter' && sendMessage()} 
+                className="flex-1 bg-stone-50 rounded-xl py-3 px-4 text-xs font-bold outline-none" 
+              />
               <button onClick={sendMessage} className="w-10 h-10 bg-stone-900 text-[#f4c430] rounded-xl flex items-center justify-center"><Send className="w-4 h-4" /></button>
             </div>
           )}
