@@ -428,6 +428,35 @@ export const seoAPI = {
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.SEO}/stats`);
   },
+  generateSitemap: async () => {
+    return apiRequest(`${API_ENDPOINTS.SEO}/sitemap`, {
+      method: 'POST',
+    });
+  },
+  getSEOReport: async () => {
+    return apiRequest(`${API_ENDPOINTS.SEO}/report`);
+  },
+  getSEOPageByName: async (pageName: string) => {
+    return apiRequest(`${API_ENDPOINTS.SEO}/page/${pageName}`);
+  },
+  updateSEOPageByName: async (pageName: string, data: any) => {
+    return apiRequest(`${API_ENDPOINTS.SEO}/page/${pageName}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+  analyzeKeywords: async (keywords: string[]) => {
+    return apiRequest(`${API_ENDPOINTS.SEO}/keywords/analyze`, {
+      method: 'POST',
+      body: JSON.stringify({ keywords }),
+    });
+  },
+  bulkUpdateMetaTags: async (updates: any[]) => {
+    return apiRequest(`${API_ENDPOINTS.SEO}/bulk/meta-tags`, {
+      method: 'PUT',
+      body: JSON.stringify({ updates }),
+    });
+  },
 };
 
 export const settingsAPI = {
