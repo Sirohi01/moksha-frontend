@@ -2,19 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { formsAPI } from '@/lib/api';
-import { 
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { PageHeader, StatsCard, LoadingSpinner, Alert, ActionButton } from '@/components/admin/AdminComponents';
-import { 
-  FileText, 
-  Users, 
-  Heart, 
-  PhoneCall, 
-  MessageSquare, 
-  UserPlus, 
-  Star, 
+import {
+  FileText,
+  Users,
+  Heart,
+  PhoneCall,
+  MessageSquare,
+  UserPlus,
+  Star,
   Settings,
   RefreshCw,
   LayoutDashboard,
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
       setError('');
-      
+
       const fetchWithFallback = async (fetchFn: () => Promise<any>, fallback = 0) => {
         try {
           const result = await fetchFn();
@@ -174,12 +174,12 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-1000">
-      <PageHeader 
-        title="Mission Intelligence" 
+      <PageHeader
+        title="Mission Intelligence"
         description="Global operation status and real-time impact trajectory."
         icon={<LayoutDashboard className="w-7 h-7" />}
       >
-        <ActionButton 
+        <ActionButton
           onClick={fetchDashboardData}
           variant="secondary"
           icon={<RefreshCw className="w-3.5 h-3.5" />}
@@ -188,7 +188,7 @@ export default function AdminDashboard() {
         </ActionButton>
       </PageHeader>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {statCards.map((card) => (
           <a key={card.title} href={card.href} className="block group">
             <StatsCard
@@ -202,24 +202,24 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-         {secondaryCards.map((card) => (
-           <a key={card.title} href={card.href} className="group flex flex-col bg-white p-6 rounded-[2rem] border border-navy-50 hover:border-gold-50 shadow-sm hover:shadow-xl transition-all duration-500">
-              <div className="w-10 h-10 bg-navy-50 rounded-xl flex items-center justify-center text-navy-950 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all mb-4">
-                 {card.icon}
-              </div>
-              <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{card.title}</p>
-              <p className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors">{card.count}</p>
-           </a>
-         ))}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {secondaryCards.map((card) => (
+          <a key={card.title} href={card.href} className="group flex flex-col bg-white p-6 rounded-[2rem] border border-navy-50 hover:border-gold-50 shadow-sm hover:shadow-xl transition-all duration-500">
+            <div className="w-10 h-10 bg-navy-50 rounded-xl flex items-center justify-center text-navy-950 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all mb-4">
+              {card.icon}
+            </div>
+            <p className="text-[11px] font-black text-navy-800 uppercase tracking-widest mb-1">{card.title}</p>
+            <p className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors">{card.count}</p>
+          </a>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 sm:gap-8">
         <div className="bg-white rounded-[3rem] p-12 shadow-[0_20px_60px_rgba(0,0,0,0.02)] border border-navy-50 hover:shadow-2xl transition-all duration-700">
           <div className="flex items-center justify-between mb-10">
             <div className="space-y-1">
-                <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em]">Impact Matrix</p>
-                <h3 className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter">Operational Strength</h3>
+              <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em]">Impact Matrix</p>
+              <h3 className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter">Operational Strength</h3>
             </div>
             <div className="px-4 py-2 bg-navy-50 text-navy-950 rounded-xl text-[10px] font-black uppercase tracking-widest">Active Batch</div>
           </div>
@@ -239,12 +239,12 @@ export default function AdminDashboard() {
         <div className="bg-white rounded-[3rem] p-12 shadow-[0_20px_60px_rgba(0,0,0,0.02)] border border-navy-50 hover:shadow-2xl transition-all duration-700">
           <div className="flex items-center justify-between mb-10">
             <div className="space-y-1">
-                <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em]">Engagement Hub</p>
-                <h3 className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter">Mission Distribution</h3>
+              <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.3em]">Engagement Hub</p>
+              <h3 className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter">Mission Distribution</h3>
             </div>
             <div className="flex items-center gap-1">
-                <div className="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></div>
-                <span className="text-[10px] font-black text-navy-400 uppercase tracking-widest">Live Flow</span>
+              <div className="w-2 h-2 rounded-full bg-gold-500 animate-pulse"></div>
+              <span className="text-[10px] font-black text-navy-700 uppercase tracking-widest">Live Flow</span>
             </div>
           </div>
           <div className="h-80 flex items-center justify-center">
@@ -267,17 +267,17 @@ export default function AdminDashboard() {
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16">
           <div>
             <div className="flex items-center gap-3 sm:gap-4 text-gold-500 font-black text-[9px] sm:text-[10px] uppercase tracking-[0.3em] sm:tracking-[0.4em] mb-6 sm:mb-8">
-               <ShieldCheck className="w-4 h-4 sm:w-5 h-5 animate-pulse" />
-               Critical Perimeter Integrity
+              <ShieldCheck className="w-4 h-4 sm:w-5 h-5 animate-pulse" />
+              Critical Perimeter Integrity
             </div>
             <h3 className="text-3xl sm:text-5xl font-black text-white tracking-tighter mb-6 sm:mb-8 italic uppercase leading-tight">
-               Infrastructure <span className="text-transparent bg-clip-text bg-gold-500">Nodes</span>
+              Infrastructure <span className="text-transparent bg-clip-text bg-gold-500">Nodes</span>
             </h3>
             <p className="text-navy-300 font-bold leading-relaxed max-w-lg text-[9px] sm:text-[11px] uppercase tracking-widest opacity-60">
               Global reachability cluster monitoring. High-fidelity heartbeat detection across core mission-critical service nodes.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {[
               { name: 'Core API Hub', icon: <Database className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, status: 'Optimized' },
@@ -286,14 +286,14 @@ export default function AdminDashboard() {
               { name: 'Storage Cluster', icon: <HardDrive className="w-3.5 h-3.5 sm:w-4 sm:h-4" />, status: 'Optimized' },
             ].map((node) => (
               <div key={node.name} className="flex items-center justify-between p-4 sm:p-6 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-gold-500/30 transition-all duration-500 group/node cursor-crosshair">
-                 <div className="flex items-center gap-3 sm:gap-4">
-                   <div className="text-gold-500 group-hover/node:scale-125 transition-transform">{node.icon}</div>
-                   <span className="text-[9px] sm:text-[10px] font-black tracking-widest text-white uppercase">{node.name}</span>
-                 </div>
-                 <div className="flex items-center gap-2 sm:gap-3">
-                    <span className="text-[7px] sm:text-[8px] font-black text-gold-500/50 tracking-tighter uppercase italic">{node.status}</span>
-                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.7)] group-hover/node:animate-ping"></div>
-                 </div>
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="text-gold-500 group-hover/node:scale-125 transition-transform">{node.icon}</div>
+                  <span className="text-[9px] sm:text-[10px] font-black tracking-widest text-white uppercase">{node.name}</span>
+                </div>
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-[7px] sm:text-[8px] font-black text-gold-500/50 tracking-tighter uppercase italic">{node.status}</span>
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.7)] group-hover/node:animate-ping"></div>
+                </div>
               </div>
             ))}
           </div>

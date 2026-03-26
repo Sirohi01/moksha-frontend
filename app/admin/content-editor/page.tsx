@@ -51,8 +51,26 @@ import {
   Users,
   ShieldCheck,
   Handshake,
-  Flame
+  Flame,
+  LayoutDashboard,
+  History,
+  CheckCircle2,
+  Clock,
+  ArrowRightCircle,
+  Menu,
+  PanelLeft,
+  PanelRight,
+  Maximize2,
+  Minimize2,
+  Settings2,
+  Terminal,
+  ChevronUp,
+  GripVertical,
+  PlusCircle,
+  XCircle,
+  Layers as LayersIcon
 } from 'lucide-react';
+import { useRef } from 'react';
 
 // Icon mapping for string icon names from backend
 const getIconComponent = (iconName: string) => {
@@ -119,7 +137,7 @@ export default function ContentEditor() {
   const [saving, setSaving] = useState(false);
   const [pageData, setPageData] = useState<any>({});
   const [pageSchema, setPageSchema] = useState<SectionSchema[]>([]);
-  const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'settings'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'history'>('content');
   const [seoData, setSeoData] = useState({
     title: '',
     description: '',
@@ -135,12 +153,49 @@ export default function ContentEditor() {
   const [availableImages, setAvailableImages] = useState<any[]>([]);
   const [loadingImages, setLoadingImages] = useState(false);
   const [selectedImageField, setSelectedImageField] = useState<{ sectionId: string, fieldPath: string } | null>(null);
-  const [previewMode, setPreviewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [activeHistoryIndex, setActiveHistoryIndex] = useState(-1);
+  const [revisionHistory, setRevisionHistory] = useState<any[]>([]);
+  const [showSidebar, setShowSidebar] = useState(true);
+  const [assetSearchQuery, setAssetSearchQuery] = useState('');
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [sectionStatus, setSectionStatus] = useState<Record<string, 'draft' | 'published' | 'edited'>>({});
+  const [sidebarSearch, setSidebarSearch] = useState('');
+  const [draggedItem, setDraggedItem] = useState<{ sectionId: string, fieldPath: string, index: number } | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
     fetchPageData();
   }, [pageName]);
+
+  // Auto-save logic
+  useEffect(() => {
+    const autoSaveInterval = setInterval(() => {
+      if (Object.keys(pageData).length > 0) {
+        saveChanges(true); // Silent save
+      }
+    }, 30000); // 30 seconds
+    return () => clearInterval(autoSaveInterval);
+  }, [pageData]);
+
+  // History tracking
+  useEffect(() => {
+    if (pageData && Object.keys(pageData).length > 0) {
+      const historyEntry = JSON.stringify(pageData);
+      setRevisionHistory(prev => {
+        if (prev.length > 0 && prev[prev.length - 1] === historyEntry) return prev;
+        const newHistory = [...prev, historyEntry].slice(-10); // Keep last 10
+        return newHistory;
+      });
+    }
+  }, [pageData]);
+
+  const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    sectionRefs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const fetchPageData = async () => {
     try {
@@ -374,9 +429,9 @@ export default function ContentEditor() {
   };
 
   const filteredImages = availableImages.filter(image =>
-    !searchQuery ||
-    (image.title && image.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    (image.tags && image.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase())))
+    !assetSearchQuery ||
+    (image.title && image.title.toLowerCase().includes(assetSearchQuery.toLowerCase())) ||
+    (image.tags && image.tags.some((tag: string) => tag.toLowerCase().includes(assetSearchQuery.toLowerCase())))
   );
 
   const uploadImageToCloudinary = async (file: File, fieldPath: string) => {
@@ -619,8 +674,8 @@ export default function ContentEditor() {
                         disabled={uploadingImage === fieldPath}
                       />
                       <div className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${uploadingImage === fieldPath
-                          ? 'border-blue-400 bg-blue-50'
-                          : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                        ? 'border-blue-400 bg-blue-50'
+                        : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
                         }`}>
                         <div className="flex flex-col items-center gap-3">
                           {uploadingImage === fieldPath ? (
@@ -663,22 +718,60 @@ export default function ContentEditor() {
       case 'textarea':
         return (
           <div key={fieldId} className="group">
-            <label htmlFor={fieldId} className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-3">
+            <label htmlFor={fieldId} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-navy-700 mb-4">
               {fieldIcon}
               {fieldSchema.label}
               {fieldSchema.required && <span className="text-red-500">*</span>}
             </label>
-            <div className="relative">
-              <textarea
+            <div className="relative bg-white border border-navy-50 rounded-[1.5rem] overflow-hidden focus-within:ring-4 focus-within:ring-gold-500/10 focus-within:border-gold-500 transition-all">
+              {/* Rich Text Toolbar */}
+              <div className="flex items-center gap-1 p-2 bg-navy-50/50 border-b border-navy-50">
+                <button
+                  onClick={() => document.execCommand('bold', false)}
+                  className="p-1.5 hover:bg-white rounded transition-colors text-navy-900" title="Bold"
+                >
+                  <span className="font-bold text-xs">B</span>
+                </button>
+                <button
+                  onClick={() => document.execCommand('italic', false)}
+                  className="p-1.5 hover:bg-white rounded transition-colors text-navy-900 italic px-2" title="Italic"
+                >
+                  <span className="text-xs">I</span>
+                </button>
+                <button
+                  onClick={() => document.execCommand('underline', false)}
+                  className="p-1.5 hover:bg-white rounded transition-colors text-navy-900 underline px-2" title="Underline"
+                >
+                  <span className="text-xs">U</span>
+                </button>
+                <div className="w-px h-4 bg-navy-100 mx-1" />
+                <button
+                  onClick={() => document.execCommand('insertUnorderedList', false)}
+                  className="p-1.5 hover:bg-white rounded transition-colors text-navy-900" title="Bullet List"
+                >
+                  <List className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={() => {
+                    const url = prompt('Enter URL:');
+                    if (url) document.execCommand('createLink', false, url);
+                  }}
+                  className="p-1.5 hover:bg-white rounded transition-colors text-navy-900" title="Add Link"
+                >
+                  <Link className="w-3 h-3" />
+                </button>
+              </div>
+
+              <div
                 id={fieldId}
-                value={value || ''}
-                onChange={(e) => updateFieldValue(sectionId, fieldPath, e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical min-h-[120px]"
-                placeholder={fieldSchema.placeholder}
-                required={fieldSchema.required}
+                contentEditable
+                onBlur={(e) => updateFieldValue(sectionId, fieldPath, e.currentTarget.innerHTML)}
+                dangerouslySetInnerHTML={{ __html: value || '' }}
+                className="w-full p-5 min-h-[150px] focus:outline-none text-sm text-navy-900 leading-relaxed"
               />
-              <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-white/80 px-2 py-1 rounded-md">
-                {value ? `${value.length} chars` : '0 chars'}
+
+              <div className="absolute bottom-3 right-3 text-[8px] font-black text-gray-300 uppercase tracking-widest bg-white/80 px-2 py-1 rounded-md border border-navy-50">
+                {value ? `${value.replace(/<[^>]*>/g, '').length} glyphs` : '0 glyphs'}
               </div>
             </div>
           </div>
@@ -906,8 +999,8 @@ export default function ContentEditor() {
                           <button
                             type="button"
                             className={`w-full p-2 text-xs rounded border-2 border-dashed transition-colors ${uploadingImage === `${fieldPath}.${index}`
-                                ? 'border-blue-400 bg-blue-50 text-blue-600'
-                                : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50 text-gray-600'
+                              ? 'border-blue-400 bg-blue-50 text-blue-600'
+                              : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50 text-gray-600'
                               }`}
                           >
                             {uploadingImage === `${fieldPath}.${index}` ? (
@@ -935,51 +1028,85 @@ export default function ContentEditor() {
                 </div>
               </div>
             )}
-            <div className="space-y-3">
+            <div className="space-y-4">
               {(value || []).map((item: any, index: number) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-sm font-medium text-gray-600 flex items-center gap-2">
-                      <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">
+                <div
+                  key={index}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData('text/plain', index.toString());
+                    setDraggedItem({ sectionId, fieldPath, index });
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                    const toIndex = index;
+                    if (fromIndex === toIndex) return;
+
+                    const newArray = [...value];
+                    const [movedItem] = newArray.splice(fromIndex, 1);
+                    newArray.splice(toIndex, 0, movedItem);
+                    updateFieldValue(sectionId, fieldPath, newArray);
+                    setDraggedItem(null);
+                  }}
+                  className={`group/item border rounded-[2rem] p-6 transition-all duration-300 ${draggedItem?.index === index ? 'opacity-30 border-dashed border-gold-500 bg-gold-50' : 'bg-gray-50/50 border-navy-50 hover:border-gold-500/30 hover:bg-white shadow-sm hover:shadow-xl'
+                    }`}
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="cursor-move p-2 text-gray-300 hover:text-navy-950 transition-colors">
+                        <GripVertical className="w-5 h-5" />
+                      </div>
+                      <div className="w-10 h-10 bg-navy-950 text-gold-500 rounded-xl flex items-center justify-center text-xs font-black shadow-lg">
                         {index + 1}
                       </div>
-                      Item {index + 1}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newArray = [...value];
-                        newArray.splice(index, 1);
-                        updateFieldValue(sectionId, fieldPath, newArray);
-                      }}
-                      className="text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                      <div>
+                        <span className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em]">Sequence Member {index + 1}</span>
+                        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Component Matrix Segment</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const newArray = [...value];
+                          newArray.splice(index, 1);
+                          updateFieldValue(sectionId, fieldPath, newArray);
+                        }}
+                        className="text-rose-500 hover:bg-rose-50 border-transparent text-[9px] font-black scale-90"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 mr-1" />
+                        TERMINATE
+                      </Button>
+                    </div>
                   </div>
 
-                  {fieldSchema.arrayItemSchema?.type === 'object' && fieldSchema.arrayItemSchema.objectSchema ? (
-                    <div className="space-y-4">
-                      {Object.entries(fieldSchema.arrayItemSchema.objectSchema).map(([subKey, subSchema]) =>
-                        renderField(
-                          sectionId,
-                          subKey,
-                          subSchema,
-                          item[subKey],
-                          `${fieldPath}.${index}.${subKey}`
-                        )
-                      )}
-                    </div>
-                  ) : (
-                    renderField(
-                      sectionId,
-                      `item-${index}`,
-                      fieldSchema.arrayItemSchema || { type: 'text', label: 'Item' },
-                      item,
-                      `${fieldPath}.${index}`
-                    )
-                  )}
+                  <div className="pl-14">
+                    {fieldSchema.arrayItemSchema?.type === 'object' && fieldSchema.arrayItemSchema.objectSchema ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {Object.entries(fieldSchema.arrayItemSchema.objectSchema).map(([subKey, subSchema]) =>
+                          renderField(
+                            sectionId,
+                            subKey,
+                            subSchema,
+                            item[subKey],
+                            `${fieldPath}.${index}.${subKey}`
+                          )
+                        )}
+                      </div>
+                    ) : (
+                      renderField(
+                        sectionId,
+                        `item-${index}`,
+                        fieldSchema.arrayItemSchema || { type: 'text', label: 'Item' },
+                        item,
+                        `${fieldPath}.${index}`
+                      )
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -1022,9 +1149,12 @@ export default function ContentEditor() {
         return null;
     }
   };
-  const saveChanges = async () => {
+
+
+  const saveChanges = async (isSilent = false) => {
     try {
-      setSaving(true);
+      if (!isSilent) setSaving(true);
+      if (isSilent) setIsAutoSaving(true);
       setError('');
 
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
@@ -1042,8 +1172,10 @@ export default function ContentEditor() {
       });
 
       if (!configResponse.ok) {
-        const errorData = await configResponse.json();
-        throw new Error(errorData.message || 'Failed to save page configuration');
+        if (!isSilent) {
+          const errorData = await configResponse.json();
+          throw new Error(errorData.message || 'Failed to save page configuration');
+        }
       }
 
       // Save SEO data if provided
@@ -1064,23 +1196,23 @@ export default function ContentEditor() {
               status: 'published'
             })
           });
-
-          if (!seoResponse.ok) {
-            console.warn('SEO data save failed, but page config saved successfully');
-          }
         } catch (seoError) {
           console.warn('SEO save error:', seoError);
         }
       }
 
-      setSuccessMessage('Changes saved successfully!');
-      setTimeout(() => setSuccessMessage(''), 3000);
+      setLastSaved(new Date());
+      if (!isSilent) {
+        setSuccessMessage('Changes saved to protocol successfully!');
+        setTimeout(() => setSuccessMessage(''), 3000);
+      }
 
     } catch (error: any) {
       console.error('Save failed:', error);
-      setError(error.message || 'Failed to save changes');
+      if (!isSilent) setError(error.message || 'Failed to save changes');
     } finally {
-      setSaving(false);
+      if (!isSilent) setSaving(false);
+      setIsAutoSaving(false);
     }
   };
 
@@ -1096,93 +1228,128 @@ export default function ContentEditor() {
     );
   }
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b shadow-sm sticky top-0 z-40">
+    <div className="h-screen flex flex-col bg-gray-50 overflow-hidden font-sans">
+      {/* Protocol Master Header */}
+      <div className="bg-white border-b border-navy-50/50 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)] z-50 flex-shrink-0">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
               <Button
                 variant="outline"
                 onClick={() => window.history.back()}
-                className="hover:bg-gray-50"
+                className="hover:bg-gray-50 bg-white border-navy-100 text-navy-950 font-bold text-xs"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
+                BACK
               </Button>
 
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <Edit3 className="w-5 h-5 text-white" />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                  <Edit3 className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Content Editor</h1>
-                  <p className="text-sm text-gray-600">{formatTitle(pageName)}</p>
+                  <h1 className="text-xl font-black text-navy-950 uppercase italic tracking-tight">Content Editor</h1>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{pageName.replace(/-/g, ' ')} node active</p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center bg-gray-50 border border-navy-50 rounded-xl p-1 mr-2">
+                <button
+                  onClick={() => setShowSidebar(!showSidebar)}
+                  className={`p-2.5 rounded-lg transition-all ${showSidebar ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-400 hover:text-navy-950'}`}
+                  title="Toggle Sidebar"
+                >
+                  <PanelLeft className="w-4.5 h-4.5" />
+                </button>
+              </div>
+
               <Button
                 variant="outline"
                 onClick={() => window.open(`/${pageName}`, '_blank')}
-                className="hover:bg-gray-50"
+                className="bg-white border-navy-50 text-navy-950 hover:bg-navy-50 text-[10px] font-black uppercase tracking-widest h-11"
               >
                 <Eye className="w-4 h-4 mr-2" />
-                Preview
-                <ExternalLink className="w-3 h-3 ml-1" />
+                LIVE SITE
+                <ExternalLink className="w-3 h-3 ml-2 opacity-30" />
               </Button>
 
               <Button
-                onClick={saveChanges}
+                onClick={() => saveChanges()}
                 disabled={saving}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-navy-950 text-gold-500 hover:bg-gold-600 hover:text-navy-950 font-black text-[10px] uppercase tracking-[0.2em] px-8 h-11 shadow-2xl shadow-navy-950/20 border-t border-white/10"
               >
                 {saving ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Saving...
+                    SYNCING...
                   </>
                 ) : (
                   <>
                     <Save className="w-4 h-4 mr-2" />
-                    Save Changes
+                    SAVE PROTOCOL
                   </>
                 )}
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
-              {[
-                { id: 'content', label: 'Content', icon: FileText, count: pageSchema.length },
-                { id: 'seo', label: 'SEO', icon: Globe, count: 5 },
-                { id: 'settings', label: 'Settings', icon: Settings, count: 3 }
-              ].map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${isActive
-                        ? 'bg-white text-blue-600 shadow-sm'
-                        : 'text-gray-600 hover:text-gray-800'
-                      }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {tab.label}
-                    <span className="text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                      {tab.count}
-                    </span>
-                  </button>
-                );
-              })}
+          {/* Sub-Header Actions */}
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-navy-50/50">
+            <div className="flex items-center gap-12">
+              <div className="flex gap-1 p-1 bg-gray-50 border border-navy-50 rounded-2xl">
+                {[
+                  { id: 'content', label: 'Content', icon: FileText, count: pageSchema.length },
+                  { id: 'seo', label: 'SEO', icon: Globe, count: 5 },
+                  { id: 'history', label: 'Revisions', icon: History, count: revisionHistory.length }
+                ].map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === (tab.id as any);
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id as any)}
+                      className={`flex items-center gap-3 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${isActive
+                        ? 'bg-navy-950 text-gold-500 shadow-2xl scale-105'
+                        : 'text-gray-400 hover:text-navy-950 hover:bg-white'
+                        }`}
+                    >
+                      <Icon className={`w-4 h-4 ${isActive ? 'text-gold-500' : 'text-gray-300'}`} />
+                      {tab.label}
+                      <span className={`text-[8px] px-2 py-0.5 rounded-md ${isActive ? 'bg-gold-500/20 text-gold-500' : 'bg-gray-200 text-gray-500'}`}>
+                        {tab.count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="hidden lg:flex items-center gap-4 bg-white/50 px-5 py-2.5 rounded-2xl border border-navy-50/50 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${isAutoSaving ? 'bg-amber-500' : 'bg-emerald-500'} animate-pulse shadow-[0_0_10px] ${isAutoSaving ? 'shadow-amber-500/50' : 'shadow-emerald-500/50'}`} />
+                  <span className="text-[10px] font-black text-navy-950 uppercase tracking-widest leading-none">
+                    {isAutoSaving ? 'SYNCING MATRIX...' : 'SYSTEM SECURE'}
+                  </span>
+                </div>
+                <div className="w-px h-4 bg-navy-50 mx-1" />
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                  {lastSaved ? `LAST SYNC: ${lastSaved.toLocaleTimeString()}` : 'WAITING FOR DATA'}
+                </span>
+              </div>
             </div>
 
-            <div className="flex items-center gap-4 text-sm text-gray-600">
-              <span>{pageSchema.length} Sections</span>
-              <span>{availableImages.length} Images</span>
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-gold-600 transition-colors" />
+                <input
+                  type="text"
+                  placeholder="SEARCH MODULES..."
+                  className="pl-12 pr-6 py-3 bg-white border border-navy-50 rounded-2xl text-[10px] font-black tracking-[0.2em] focus:ring-4 focus:ring-gold-500/10 focus:border-gold-500 transition-all w-80 shadow-sm"
+                  value={sidebarSearch}
+                  onChange={(e) => setSidebarSearch(e.target.value)}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -1211,255 +1378,434 @@ export default function ContentEditor() {
         </div>
       )}
 
-      <div className="p-6">
-        {activeTab === 'content' && (
-          <div className="space-y-6">
-            {pageSchema.map((section, index) => {
-              const sectionIcon = getSectionIcon(section.id);
-              const isExpanded = expandedSections.has(section.id);
+      <div className="flex-1 flex overflow-hidden">
+        {/* Glassmorphic Sidebar Navigation */}
+        {showSidebar && (
+          <div className="w-80 h-full border-r bg-white/40 backdrop-blur-xl flex flex-col animate-slideRight">
+            <div className="p-4 border-b border-gray-100">
+              <div className="flex items-center gap-3 mb-4">
+                <PanelLeft className="w-5 h-5 text-gray-400" />
+                <h3 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Module Index</h3>
+              </div>
+            </div>
 
-              return (
-                <div key={section.id}>
-                  <Card className="shadow-sm hover:shadow-md transition-shadow">
-                    <div
-                      className="p-6 bg-gray-50 border-b cursor-pointer flex items-center justify-between hover:bg-gray-100 transition-colors"
-                      onClick={() => toggleSection(section.id)}
-                    >
-                      <div className="flex items-center space-x-4">
-                        <div className={`transform transition-transform ${isExpanded ? 'rotate-90' : ''}`}>
-                          <ChevronRight className="w-5 h-5 text-gray-600" />
-                        </div>
-                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                          {sectionIcon}
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
-                          <p className="text-sm text-gray-600">{Object.keys(section.fields).length} fields</p>
-                        </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+              {pageSchema
+                .filter(s => !sidebarSearch || s.title.toLowerCase().includes(sidebarSearch.toLowerCase()))
+                .map((section) => (
+                  <button
+                    key={section.id}
+                    onClick={() => scrollToSection(section.id)}
+                    className={`w-full group text-left p-3 rounded-2xl transition-all duration-300 relative overflow-hidden ${activeSection === section.id
+                      ? 'bg-navy-950 text-gold-500 shadow-2xl scale-[1.02] border border-white/10'
+                      : 'hover:bg-navy-50 text-gray-600'
+                      }`}
+                  >
+                    {activeSection === section.id && (
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gold-600" />
+                    )}
+                    <div className="flex items-center gap-3 relative z-10">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${activeSection === section.id ? 'bg-white/10' : 'bg-gray-100 group-hover:bg-white'}`}>
+                        {getSectionIcon(section.id)}
                       </div>
-
-                      <div className="flex items-center space-x-3">
-                        <span className="text-sm text-gray-500">
-                          {isExpanded ? 'Expanded' : 'Collapsed'}
-                        </span>
-                        <div className={`w-3 h-3 rounded-full ${isExpanded ? 'bg-green-400' : 'bg-gray-300'
-                          }`}></div>
+                      <div className="min-w-0">
+                        <p className={`text-[10px] font-black uppercase tracking-widest truncate ${activeSection === section.id ? 'text-gold-500' : 'text-navy-950'}`}>
+                          {section.title}
+                        </p>
+                        <p className={`text-[8px] font-bold uppercase tracking-widest opacity-60 mt-0.5 ${activeSection === section.id ? 'text-white' : 'text-gray-400'}`}>
+                          {Object.keys(section.fields).length} FIELDS ACTIVE
+                        </p>
                       </div>
                     </div>
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
 
-                    {isExpanded && (
-                      <div className="p-6 space-y-6 bg-white">
-                        <div className="grid gap-6">
-                          {Object.entries(section.fields).map(([fieldKey, fieldSchema]) =>
-                            renderField(section.id, fieldKey, fieldSchema, pageData[section.id]?.[fieldKey])
+        {/* Main Editor Canvas */}
+        <div className="flex-1 overflow-y-auto p-12 custom-scrollbar bg-gray-50/30 relative">
+          {/* Scroll Progress Bar */}
+          <div className="fixed top-0 left-0 right-0 h-1 z-[60] pointer-events-none">
+            <div
+              className="h-full bg-gold-600 shadow-[0_0_10px_rgba(184,135,33,0.5)] transition-all duration-300"
+              style={{ width: `${(pageSchema.indexOf(pageSchema.find(s => s.id === activeSection)!) + 1) / pageSchema.length * 100}%` }}
+            />
+          </div>
+
+          <div className="max-w-5xl mx-auto pb-32">
+            {activeTab === 'content' && (
+              <div className="space-y-12 pb-16">
+                <div className="flex items-center justify-between mb-12">
+                  <div>
+                    <h2 className="text-2xl font-black text-navy-950 uppercase italic tracking-tight">Main Protocol Interface</h2>
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Configure your primary data matrix modules below.</p>
+                  </div>
+                  <div className="flex gap-2">
+                    {[
+                      { label: 'HERO', fields: { title: 'text', subtitle: 'text', image: 'url', buttonText: 'text' } },
+                      { label: 'FEATURES', fields: { items: 'array' } },
+                      { label: 'TESTIMONIALS', fields: { reviews: 'array' } }
+                    ].map(template => (
+                      <Button
+                        key={template.label}
+                        size="sm"
+                        onClick={() => {
+                          const newSectionId = `${template.label.toLowerCase()}_${Date.now()}`;
+                          const fields: any = {};
+                          Object.entries(template.fields).forEach(([k, v]) => {
+                            fields[k] = { type: v, label: formatTitle(k) };
+                          });
+
+                          setPageSchema((prev: SectionSchema[]) => [...prev, {
+                            id: newSectionId,
+                            title: `${template.label} MODULE`,
+                            fields: fields
+                          }]);
+
+                          const initialData: any = {};
+                          Object.keys(template.fields).forEach(k => {
+                            initialData[k] = template.fields[k as keyof typeof template.fields] === 'array' ? [] : '';
+                          });
+
+                          setPageData((prev: any) => ({ ...prev, [newSectionId]: initialData }));
+                          setTimeout(() => scrollToSection(newSectionId), 100);
+                        }}
+                        className="bg-navy-50 text-navy-950 border border-navy-100 hover:border-gold-500 hover:text-gold-600 text-[9px] font-black"
+                      >
+                        <PlusCircle className="w-3 h-3 mr-1" />
+                        {template.label}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {pageSchema.map((section, index) => {
+                  const sectionIcon = getSectionIcon(section.id);
+                  const isExpanded = expandedSections.has(section.id);
+
+                  return (
+                    <div key={section.id} ref={el => { sectionRefs.current[section.id] = el }} className="scroll-mt-32">
+                      <div className="group relative">
+                        <div className="absolute -left-12 top-8 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
+                          <button className="p-2 bg-white rounded-lg shadow-lg border border-gray-100 hover:text-blue-600">
+                            <GripVertical className="w-4 h-4" />
+                          </button>
+                          <button className="p-2 bg-white rounded-lg shadow-lg border border-gray-100 hover:text-red-500">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className={`bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border transition-all duration-500 overflow-hidden ${activeSection === section.id ? 'border-gold-500 ring-4 ring-gold-500/10' : 'border-navy-50'
+                          }`}>
+                          <div
+                            className={`p-8 cursor-pointer flex items-center justify-between transition-colors ${isExpanded ? 'bg-navy-950' : 'hover:bg-navy-50'
+                              }`}
+                            onClick={() => toggleSection(section.id)}
+                          >
+                            <div className="flex items-center space-x-6">
+                              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl border w-12 h-12 ${isExpanded
+                                  ? 'bg-gold-500 text-navy-950 rotate-3 border-gold-400'
+                                  : 'bg-navy-950 text-gold-500 border-white/10'
+                                }`}>
+                                {sectionIcon}
+                              </div>
+                              <div>
+                                <div className="flex items-center gap-3">
+                                  <h3 className={`text-xl font-black uppercase italic tracking-tight ${isExpanded ? 'text-gold-500' : 'text-navy-950'}`}>
+                                    {section.title}
+                                  </h3>
+                                  <div className="flex gap-1.5">
+                                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${sectionStatus[section.id] === 'published' ? 'bg-emerald-500/10 text-emerald-500' :
+                                        sectionStatus[section.id] === 'draft' ? 'bg-orange-500/10 text-orange-500' :
+                                          'bg-blue-500/10 text-blue-500'
+                                      }`}>
+                                      {sectionStatus[section.id] || 'PUBLISHED'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <p className={`text-[10px] font-bold uppercase tracking-[0.2em] mt-2 opacity-60 ${isExpanded ? 'text-white' : 'text-gray-400'}`}>
+                                  NODE INFRASTRUCTURE: {Object.keys(section.fields).length} CONFIGURABLE HANDLERS
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-6">
+                              <div className="hidden md:flex flex-col items-end">
+                                <span className={`text-[9px] font-black uppercase tracking-widest ${isExpanded ? 'text-gold-500' : 'text-gray-300'}`}>Last Edit</span>
+                                <span className={`text-[10px] font-bold ${isExpanded ? 'text-white/60' : 'text-gray-400'}`}>T-MINUS 12M</span>
+                              </div>
+                              <div className={`transform transition-all duration-500 w-10 h-10 rounded-xl flex items-center justify-center ${isExpanded ? 'rotate-180 bg-white/10 text-white' : 'text-gray-400 bg-gray-100'}`}>
+                                <ChevronDown className="w-5 h-5" />
+                              </div>
+                            </div>
+                          </div>
+
+                          {isExpanded && (
+                            <div className="p-10 space-y-10 bg-white animate-fadeInUp">
+                              <div className="grid gap-8">
+                                {Object.entries(section.fields)
+                                  .filter(([key]) => !sidebarSearch || key.toLowerCase().includes(sidebarSearch.toLowerCase()))
+                                  .map(([fieldKey, fieldSchema]) =>
+                                    renderField(section.id, fieldKey, fieldSchema, pageData[section.id]?.[fieldKey])
+                                  )}
+                              </div>
+                            </div>
                           )}
                         </div>
                       </div>
-                    )}
-                  </Card>
-                </div>
-              );
-            })}
+                    </div>
+                  );
+                })}
 
-            {pageSchema.length === 0 && (
-              <div className="text-center py-20">
-                <div className="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <FileText className="w-12 h-12 text-gray-400" />
+                {pageSchema.length === 0 && (
+                  <div className="text-center py-32 bg-white rounded-[3rem] border border-dashed border-navy-100">
+                    <div className="w-24 h-24 bg-navy-50 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                      <Terminal className="w-12 h-12 text-navy-300" />
+                    </div>
+                    <h3 className="text-2xl font-black text-navy-950 uppercase italic tracking-tight mb-4">No Matrix Modules Detected</h3>
+                    <p className="text-gray-400 text-xs font-bold uppercase tracking-widest max-w-sm mx-auto mb-10 leading-relaxed">
+                      Initialize the system by adding a new configuration module to the current dataset index.
+                    </p>
+                    <Button
+                      onClick={() => { }}
+                      className="bg-navy-950 text-gold-500 hover:bg-gold-600 hover:text-navy-950 font-bold px-10 py-5 rounded-2xl"
+                    >
+                      <PlusCircle className="w-4 h-4 mr-2" />
+                      BOOTSTRAP MODULE
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'seo' && (
+              <div className="pb-32 animate-fadeIn">
+                <div className="mb-10">
+                  <h2 className="text-2xl font-black text-navy-950 uppercase italic tracking-tight">Signal Optimization (SEO)</h2>
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Configure global meta parameters for maximum crawler visibility.</p>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-4">No content sections found</h3>
-                <p className="text-gray-500 max-w-md mx-auto mb-8">
-                  This page doesn't have any configurable content sections yet.
-                </p>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Content Section
-                </Button>
+
+                <Card className="p-10 rounded-[3rem] shadow-2xl border-navy-50">
+                  <div className="space-y-10">
+                    <div>
+                      <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-navy-700">
+                        <Terminal className="w-3.5 h-3.5 text-gold-600" />
+                        Protocol Meta Title
+                      </label>
+                      <input
+                        type="text"
+                        value={seoData.title}
+                        onChange={(e) => setSeoData((prev: typeof seoData) => ({ ...prev, title: e.target.value }))}
+                        className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-gold-500/10 focus:bg-white focus:border-gold-500 text-sm font-bold transition-all"
+                        placeholder="Moksha Platform | Secure Digital Architecture"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-navy-700">
+                        <Terminal className="w-3.5 h-3.5 text-gold-600" />
+                        Transmission Meta Description
+                      </label>
+                      <textarea
+                        value={seoData.description}
+                        onChange={(e) => setSeoData((prev: typeof seoData) => ({ ...prev, description: e.target.value }))}
+                        className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-gold-500/10 focus:bg-white focus:border-gold-500 text-sm font-bold transition-all min-h-[150px]"
+                        placeholder="Describe the content matrix for signal optimization..."
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div>
+                        <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-navy-700">
+                          <Globe className="w-3.5 h-3.5 text-gold-600" />
+                          Indexing Keywords
+                        </label>
+                        <input
+                          type="text"
+                          value={seoData.keywords}
+                          onChange={(e) => setSeoData(prev => ({ ...prev, keywords: e.target.value }))}
+                          className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-gold-500/10 focus:bg-white focus:border-gold-500 text-sm font-bold transition-all"
+                          placeholder="MOKSHA, ARCHITECTURE, SECURE"
+                        />
+                      </div>
+                      <div>
+                        <label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] mb-4 text-navy-700">
+                          <Link className="w-3.5 h-3.5 text-gold-600" />
+                          Canonical Endpoint
+                        </label>
+                        <input
+                          type="url"
+                          value={seoData.canonical}
+                          onChange={(e) => setSeoData(prev => ({ ...prev, canonical: e.target.value }))}
+                          className="w-full p-5 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-gold-500/10 focus:bg-white focus:border-gold-500 text-sm font-bold transition-all"
+                          placeholder="https://moksha.app/protocol"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            )}
+
+            {activeTab === 'history' && (
+              <div className="pb-32 animate-fadeIn">
+                <div className="mb-10">
+                  <h2 className="text-2xl font-black text-navy-950 uppercase italic tracking-tight">Temporal Registry (Revision History)</h2>
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Review and restore previous system states from the local packet journal.</p>
+                </div>
+
+                <div className="space-y-4">
+                  {revisionHistory.length === 0 ? (
+                    <div className="text-center py-20 bg-white rounded-[2rem] border border-navy-50">
+                      <History className="w-12 h-12 text-gray-200 mx-auto mb-4" />
+                      <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">No previous system snapshots available.</p>
+                    </div>
+                  ) : (
+                    revisionHistory.map((entry, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => {
+                          setPageData(JSON.parse(entry));
+                          setActiveHistoryIndex(idx);
+                          setSuccessMessage(`System state restored to T-Index ${idx + 1}`);
+                        }}
+                        className={`w-full flex items-center justify-between p-6 rounded-3xl border transition-all duration-300 ${activeHistoryIndex === idx ? 'bg-navy-950 border-gold-500 shadow-2xl translate-x-3' : 'bg-white border-navy-50 hover:bg-navy-50'}`}
+                      >
+                        <div className="flex items-center gap-5">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black ${activeHistoryIndex === idx ? 'bg-gold-500 text-navy-950 shadow-lg' : 'bg-navy-50 text-navy-950'}`}>
+                            {idx + 1}
+                          </div>
+                          <div className="text-left">
+                            <p className={`text-[11px] font-black uppercase tracking-widest ${activeHistoryIndex === idx ? 'text-gold-500' : 'text-navy-950'}`}>Snapshot Sequence ID-{8492 + idx}</p>
+                            <p className={`text-[9px] font-bold uppercase tracking-widest ${activeHistoryIndex === idx ? 'text-white/60' : 'text-gray-400'}`}>Protocol Sync Recorded via {idx === revisionHistory.length - 1 ? 'ACTIVE SESSION' : 'AUTO-REGISTRY'}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="flex flex-col items-end">
+                            <span className={`text-[9px] font-black uppercase tracking-widest ${activeHistoryIndex === idx ? 'text-emerald-400' : 'text-gray-300'}`}>System Status</span>
+                            <span className={`text-[10px] font-bold ${activeHistoryIndex === idx ? 'text-white' : 'text-navy-700'}`}>{idx === revisionHistory.length - 1 ? 'STABLE' : 'ARCHIVED'}</span>
+                          </div>
+                          <ArrowRightCircle className={`w-5 h-5 ${activeHistoryIndex === idx ? 'text-gold-500' : 'text-gray-300'}`} />
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
               </div>
             )}
           </div>
-        )}
-        {activeTab === 'seo' && (
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-6">SEO Settings</h3>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">Meta Title</label>
-                <input
-                  type="text"
-                  value={seoData.title}
-                  onChange={(e) => setSeoData((prev: typeof seoData) => ({ ...prev, title: e.target.value }))}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter meta title"
-                />
-              </div>
+        </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Meta Description</label>
-                <textarea
-                  value={seoData.description}
-                  onChange={(e) => setSeoData((prev: typeof seoData) => ({ ...prev, description: e.target.value }))}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 h-24"
-                  placeholder="Enter meta description"
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Keywords</label>
-                <input
-                  type="text"
-                  value={seoData.keywords}
-                  onChange={(e) => setSeoData(prev => ({ ...prev, keywords: e.target.value }))}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter keywords separated by commas"
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">OG Image URL</label>
-                <input
-                  type="url"
-                  value={seoData.ogImage}
-                  onChange={(e) => setSeoData(prev => ({ ...prev, ogImage: e.target.value }))}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter OG image URL"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Canonical URL</label>
-                <input
-                  type="url"
-                  value={seoData.canonical}
-                  onChange={(e) => setSeoData(prev => ({ ...prev, canonical: e.target.value }))}
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter canonical URL"
-                />
-              </div>
-            </div>
-          </Card>
-        )}
-
-        {activeTab === 'settings' && (
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-6">Page Settings</h3>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium mb-2">Page Name</label>
-                <input
-                  type="text"
-                  value={pageName}
-                  disabled
-                  className="w-full p-3 border rounded-lg bg-gray-50 text-gray-500"
-                />
-                <p className="text-sm text-gray-500 mt-1">Page name cannot be changed</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Last Updated</label>
-                <input
-                  type="text"
-                  value={new Date().toLocaleString()}
-                  disabled
-                  className="w-full p-3 border rounded-lg bg-gray-50 text-gray-500"
-                />
-              </div>
-            </div>
-          </Card>
-        )}
-      </div>
-      {showImageBrowser && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
-            <div className="p-6 border-b">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Browse Gallery</h3>
-                <button
-                  onClick={() => setShowImageBrowser(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="mt-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search images..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+        {showImageBrowser && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] overflow-hidden">
+              <div className="p-6 border-b">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Browse Gallery</h3>
+                  <button
+                    onClick={() => setShowImageBrowser(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
-            </div>
 
-            <div className="p-6 overflow-y-auto max-h-[60vh]">
-              {loadingImages ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-                  <span className="ml-2 text-gray-600">Loading images...</span>
-                </div>
-              ) : filteredImages.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {filteredImages.map((image, index) => (
-                    <div
-                      key={index}
-                      className="relative group cursor-pointer"
-                      onClick={() => selectedImageField && selectImageFromGallery(image.url, selectedImageField.sectionId, selectedImageField.fieldPath)}
+              <div className="p-6 border-b flex items-center justify-between bg-gray-50/50">
+                <div className="flex gap-2">
+                  {['all', 'assets', 'hero', 'team', 'gallery'].map(folder => (
+                    <button
+                      key={folder}
+                      onClick={() => setSidebarSearch(folder === 'all' ? '' : folder)}
+                      className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${sidebarSearch === folder ? 'bg-navy-950 text-gold-500 shadow-lg' : 'bg-white text-gray-400 hover:text-navy-950 hover:bg-white border border-navy-50'}`}
                     >
-                      <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
-                        <Image
-                          src={image.url}
-                          alt={image.title || `Gallery image ${index + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-200 group-hover:scale-105"
-                        />
+                      {folder}
+                    </button>
+                  ))}
+                </div>
+                <div className="w-64">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search assets..."
+                      value={assetSearchQuery}
+                      onChange={(e) => setAssetSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-4 py-2 border border-navy-50 rounded-xl text-xs focus:ring-4 focus:ring-gold-500/10 focus:border-gold-500"
+                    />
+                  </div>
+                </div>
+              </div>
 
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                          <div className="text-white text-sm font-bold truncate mb-1">
-                            {image.title || `Image ${index + 1}`}
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="text-white/80 text-xs">
-                              {typeof image.url === 'string' && image.url.includes('cloudinary.com') ? 'CDN' : 'External'}
+              <div className="p-8 overflow-y-auto max-h-[60vh] custom-scrollbar">
+                {loadingImages ? (
+                  <div className="flex items-center justify-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                    <span className="ml-2 text-gray-600">Loading images...</span>
+                  </div>
+                ) : filteredImages.length > 0 ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    {filteredImages.map((image, index) => (
+                      <div
+                        key={index}
+                        className="relative group cursor-pointer"
+                        onClick={() => selectedImageField && selectImageFromGallery(image.url, selectedImageField.sectionId, selectedImageField.fieldPath)}
+                      >
+                        <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
+                          <Image
+                            src={image.url}
+                            alt={image.title || `Gallery image ${index + 1}`}
+                            fill
+                            className="object-cover transition-transform duration-200 group-hover:scale-105"
+                          />
+
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                            <div className="text-white text-sm font-bold truncate mb-1">
+                              {image.title || `Image ${index + 1}`}
                             </div>
-                            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300">
-                              <CheckCircle className="w-4 h-4 text-white" />
+                            <div className="flex items-center justify-between">
+                              <div className="text-white/80 text-xs">
+                                {typeof image.url === 'string' && image.url.includes('cloudinary.com') ? 'CDN' : 'External'}
+                              </div>
+                              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                                <CheckCircle className="w-4 h-4 text-white" />
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {searchQuery ? 'No matching images found' : 'No images in gallery'}
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    {searchQuery
-                      ? `Try adjusting your search for "${searchQuery}"`
-                      : 'Upload some images to your gallery first.'
-                    }
-                  </p>
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-                    >
-                      Clear Search
-                    </button>
-                  )}
-                </div>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {assetSearchQuery ? 'No matching images found' : 'No images in gallery'}
+                    </h3>
+                    <p className="text-gray-500 mb-6">
+                      {assetSearchQuery
+                        ? `Try adjusting your search for "${assetSearchQuery}"`
+                        : 'Upload some images to your gallery first.'
+                      }
+                    </p>
+                    {assetSearchQuery && (
+                      <button
+                        onClick={() => setAssetSearchQuery('')}
+                        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+                      >
+                        Clear Search
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

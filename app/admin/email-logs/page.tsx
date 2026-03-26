@@ -54,7 +54,7 @@ export default function EmailLogsPage() {
       render: (_: any, log: EmailLog) => (
         <div className="flex flex-col">
           <span className="font-black text-navy-950">{log.recipientName || 'Unspecified'}</span>
-          <span className="text-[10px] text-navy-400 lowercase italic">{log.recipientEmail}</span>
+          <span className="text-[10px] text-navy-700 lowercase italic">{log.recipientEmail}</span>
         </div>
       )
     },
@@ -83,7 +83,7 @@ export default function EmailLogsPage() {
       key: 'createdAt',
       label: 'Transmitted',
       render: (val: string) => (
-        <div className="flex items-center gap-2 text-navy-400 font-bold">
+        <div className="flex items-center gap-2 text-navy-700 font-bold">
           <Clock className="w-3 h-3" />
           <span>{new Date(val).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
         </div>
@@ -110,7 +110,7 @@ export default function EmailLogsPage() {
         {/* Top Analysis Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-10 rounded-[3rem] border border-navy-50 shadow-sm mb-12">
           <div className="flex items-center gap-6">
-            <button 
+            <button
               onClick={() => setSelectedLog(null)}
               className="px-8 py-4 bg-navy-950 text-gold-500 rounded-2xl font-black uppercase text-[11px] tracking-widest hover:bg-gold-600 hover:text-navy-950 transition-all flex items-center gap-3 shadow-xl active:scale-95"
             >
@@ -124,16 +124,16 @@ export default function EmailLogsPage() {
             </div>
           </div>
           <div className="flex items-center gap-6">
-             <div className="flex flex-col items-end">
-                <p className="text-[9px] font-black text-navy-300 uppercase tracking-widest mb-1">Packet Status</p>
-                <div className={`px-6 py-2 rounded-full border flex items-center gap-3 ${selectedLog.status === 'sent' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-600'}`}>
-                    <div className={`w-2.5 h-2.5 rounded-full ${selectedLog.status === 'sent' ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
-                    <span className="text-[10px] font-black uppercase tracking-widest">{selectedLog.status}</span>
-                </div>
-             </div>
-             <button onClick={() => window.print()} className="w-14 h-14 bg-white border-2 border-navy-50 text-navy-950 rounded-2xl flex items-center justify-center hover:bg-navy-50 transition-all shadow-sm">
-                <Mail className="w-6 h-6" />
-             </button>
+            <div className="flex flex-col items-end">
+              <p className="text-[9px] font-black text-navy-300 uppercase tracking-widest mb-1">Packet Status</p>
+              <div className={`px-6 py-2 rounded-full border flex items-center gap-3 ${selectedLog.status === 'sent' ? 'bg-emerald-50 border-emerald-100 text-emerald-600' : 'bg-rose-50 border-rose-100 text-rose-600'}`}>
+                <div className={`w-2.5 h-2.5 rounded-full ${selectedLog.status === 'sent' ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                <span className="text-[10px] font-black uppercase tracking-widest">{selectedLog.status}</span>
+              </div>
+            </div>
+            <button onClick={() => window.print()} className="w-14 h-14 bg-white border-2 border-navy-50 text-navy-950 rounded-2xl flex items-center justify-center hover:bg-navy-50 transition-all shadow-sm">
+              <Mail className="w-6 h-6" />
+            </button>
           </div>
         </div>
 
@@ -144,18 +144,18 @@ export default function EmailLogsPage() {
               <div className="w-10 h-1 h-1 bg-gold-600 rounded-full"></div>
               <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Metadata Analysis</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-12">
               <div className="space-y-4">
-                <p className="text-[10px] font-black text-navy-400 uppercase tracking-widest">Recipient Node</p>
+                <p className="text-[10px] font-black text-navy-700 uppercase tracking-widest">Recipient Node</p>
                 <div className="space-y-1">
                   <p className="text-xl font-black text-navy-950 tracking-tight leading-none">{selectedLog.recipientName || 'Unlabeled Entity'}</p>
-                  <p className="text-[11px] text-navy-400 font-medium lowercase italic">{selectedLog.recipientEmail}</p>
+                  <p className="text-[11px] text-navy-700 font-medium lowercase italic">{selectedLog.recipientEmail}</p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <p className="text-[10px] font-black text-navy-400 uppercase tracking-widest">Protocol Stats</p>
+                <p className="text-[10px] font-black text-navy-700 uppercase tracking-widest">Protocol Stats</p>
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-black text-navy-950 uppercase tracking-widest">Template:</span>
@@ -169,7 +169,7 @@ export default function EmailLogsPage() {
               </div>
 
               <div className="md:col-span-2 space-y-4">
-                <p className="text-[10px] font-black text-navy-400 uppercase tracking-widest">Encrypted Trace Key</p>
+                <p className="text-[10px] font-black text-navy-700 uppercase tracking-widest">Encrypted Trace Key</p>
                 <code className="text-[11px] font-mono p-5 bg-navy-50/50 rounded-2xl block break-all border border-navy-100/30 text-navy-950 selection:bg-navy-950 selection:text-gold-500">
                   {selectedLog.messageId || 'CRYPTO_UNAVAILABLE'}
                 </code>
@@ -179,13 +179,13 @@ export default function EmailLogsPage() {
             {selectedLog.errorMessage && (
               <div className="mt-10 pt-10 border-t border-navy-50">
                 <div className="flex items-center gap-4 bg-rose-50 p-6 rounded-3xl border border-rose-100/50">
-                   <div className="w-12 h-12 bg-rose-500 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-rose-200">
-                      <XCircle className="w-6 h-6" />
-                   </div>
-                   <div className="flex-1">
-                      <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Failure Signature Detected</p>
-                      <p className="text-xs text-rose-700 font-mono font-bold leading-relaxed">{selectedLog.errorMessage}</p>
-                   </div>
+                  <div className="w-12 h-12 bg-rose-500 rounded-2xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-rose-200">
+                    <XCircle className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest mb-1">Failure Signature Detected</p>
+                    <p className="text-xs text-rose-700 font-mono font-bold leading-relaxed">{selectedLog.errorMessage}</p>
+                  </div>
                 </div>
               </div>
             )}
@@ -198,9 +198,9 @@ export default function EmailLogsPage() {
                 <div className="w-3 h-3 rounded-full bg-gold-500 animate-pulse shadow-[0_0_15px_#B88721]"></div>
                 <span className="text-[11px] font-black uppercase tracking-[0.5em] italic">Decrypted Transmission Payload</span>
               </div>
-              
+
               <div className="bg-white p-10 sm:p-24 rounded-[3rem] border border-navy-50 overflow-visible min-h-[600px] selection:bg-navy-950 selection:text-gold-500">
-                <div 
+                <div
                   className="prose prose-navy max-w-none prose-p:leading-relaxed prose-strong:text-navy-950"
                   dangerouslySetInnerHTML={{ __html: selectedLog.body }}
                 />
@@ -208,12 +208,12 @@ export default function EmailLogsPage() {
             </div>
 
             <div className="flex justify-center py-20">
-                <button 
-                  onClick={() => setSelectedLog(null)}
-                  className="px-24 py-10 bg-white border-2 border-navy-100 rounded-[3rem] text-[14px] font-black uppercase tracking-[0.3em] text-navy-950 hover:bg-navy-950 hover:text-gold-500 hover:border-navy-950 transition-all active:scale-95 shadow-[0_40px_80px_-20px_rgba(0,0,128,0.15)] mb-32"
-                >
-                  Terminate Analysis & Close Report
-                </button>
+              <button
+                onClick={() => setSelectedLog(null)}
+                className="px-24 py-10 bg-white border-2 border-navy-100 rounded-[3rem] text-[14px] font-black uppercase tracking-[0.3em] text-navy-950 hover:bg-navy-950 hover:text-gold-500 hover:border-navy-950 transition-all active:scale-95 shadow-[0_40px_80px_-20px_rgba(0,0,128,0.15)] mb-32"
+              >
+                Terminate Analysis & Close Report
+              </button>
             </div>
           </div>
         </div>
@@ -223,12 +223,12 @@ export default function EmailLogsPage() {
 
   return (
     <div className="space-y-10 pb-20 animate-in fade-in duration-700">
-      <PageHeader 
-        title="Communication Logs" 
+      <PageHeader
+        title="Communication Logs"
         description="Encrypted history of all SMTP outgoing transmissions and delivery integrity reports."
         icon={<Mail className="w-7 h-7" />}
       >
-        <ActionButton 
+        <ActionButton
           onClick={fetchLogs}
           variant="secondary"
           icon={<RefreshCw className="w-3.5 h-3.5" />}
@@ -239,14 +239,14 @@ export default function EmailLogsPage() {
 
       {error && <Alert type="error" message={error} />}
 
-      <DataTable 
-        columns={columns} 
-        data={logs} 
-        loading={loading} 
+      <DataTable
+        columns={columns}
+        data={logs}
+        loading={loading}
         emptyMessage="No email transmissions recorded in terminal history."
         pagination={{
-            currentPage: currentPage,
-            totalPages: totalPages
+          currentPage: currentPage,
+          totalPages: totalPages
         }}
         onPageChange={setCurrentPage}
       />

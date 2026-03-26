@@ -73,7 +73,7 @@ const nextConfig = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'SAMEORIGIN',
           },
           {
             key: 'X-Content-Type-Options',
@@ -85,7 +85,7 @@ const nextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: `default-src 'self'; frame-src 'self' https://www.youtube.com https://youtube.com; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' ${backendHost} ${wsHost} https://*.ngrok-free.dev https://www.google-analytics.com https://vitals.vercel-analytics.com;`,
+            value: `default-src 'self'; frame-src 'self' https://www.youtube.com https://youtube.com; frame-ancestors 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' ${backendHost} ${wsHost} https://*.ngrok-free.dev https://www.google-analytics.com https://vitals.vercel-analytics.com;`,
           },
         ],
       },

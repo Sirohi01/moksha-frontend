@@ -12,8 +12,8 @@ interface PageHeaderProps {
 }
 export function PageHeader({ title, description, icon, children }: PageHeaderProps) {
   return (
-    <div className="bg-transparent mb-12 animate-fadeIn px-4 sm:px-0">
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+    <div className="bg-transparent mb-12 animate-fadeIn px-2 sm:px-0 overflow-hidden">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 sm:gap-8">
         <div className="flex items-center space-x-6">
           {icon && (
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-navy-950 rounded-[1.5rem] sm:rounded-[2rem] flex items-center justify-center shadow-2xl border border-white/10 text-gold-500 transform -rotate-3 hover:rotate-0 transition-all duration-500 flex-shrink-0">
@@ -25,9 +25,9 @@ export function PageHeader({ title, description, icon, children }: PageHeaderPro
               <span className="w-4 h-0.5 bg-gold-600 rounded-full"></span>
               <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tight leading-[0.9] py-1 px-4 !overflow-visible whitespace-nowrap">{title}</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tight leading-[0.9] py-2 flex-wrap break-words">{title}</h1>
             {description && (
-              <p className="text-navy-400 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mt-3 max-w-xl opacity-60 leading-relaxed italic">{description}</p>
+              <p className="text-navy-700 text-xs sm:text-sm font-bold uppercase tracking-[0.1em] mt-3 max-w-xl leading-relaxed italic">{description}</p>
             )}
           </div>
         </div>
@@ -53,17 +53,17 @@ interface StatsCardProps {
 
 export function StatsCard({ title, value, icon, gradient, change, changeType = 'positive' }: StatsCardProps) {
   return (
-    <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50 hover:border-gold-500/40 hover:shadow-2xl hover:shadow-gold-500/5 transition-all duration-700 group relative overflow-hidden">
+    <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_15px_45px_rgba(0,0,0,0.03)] border border-navy-50 hover:border-gold-500/40 hover:shadow-2xl hover:shadow-gold-500/5 transition-all duration-700 group relative overflow-hidden">
       <div className="absolute top-0 right-0 w-40 h-40 bg-navy-50/50 rounded-full -mr-20 -mt-20 group-hover:scale-125 transition-transform duration-700"></div>
 
-      <div className="flex items-start justify-between mb-10 relative z-10">
-        <div className={`w-14 h-14 sm:w-16 sm:h-16 bg-navy-950 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-xl border border-white/10 text-gold-500 group-hover:bg-gold-600 group-hover:text-navy-950 transition-colors duration-500`}>
+      <div className="flex items-start justify-between mb-6 relative z-10">
+        <div className={`w-12 h-12 sm:w-14 sm:h-14 bg-navy-950 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xl border border-white/10 text-gold-500 group-hover:bg-gold-600 group-hover:text-navy-950 transition-colors duration-500`}>
           {typeof icon === 'string' ? <span className="text-xl sm:text-2xl">{icon}</span> : icon}
         </div>
         {change && (
           <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm ${changeType === 'positive' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-              changeType === 'negative' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
-                'bg-navy-50 text-navy-600'
+            changeType === 'negative' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
+              'bg-navy-50 text-navy-600'
             }`}>
             {change}
           </div>
@@ -71,8 +71,8 @@ export function StatsCard({ title, value, icon, gradient, change, changeType = '
       </div>
 
       <div className="relative z-10">
-        <p className="text-navy-400 text-[10px] font-black uppercase tracking-[0.3em] mb-3 opacity-60 italic">{title}</p>
-        <p className="text-4xl sm:text-5xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors py-1">
+        <p className="text-navy-900 text-[10px] font-black uppercase tracking-[0.2em] mb-2 italic">{title}</p>
+        <p className="text-3xl sm:text-4xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors py-1">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </p>
       </div>
@@ -174,10 +174,10 @@ interface DataTableProps {
 }
 
 // Data Table Component
-export function DataTable({ 
-  columns, 
-  data, 
-  loading = false, 
+export function DataTable({
+  columns,
+  data,
+  loading = false,
   emptyMessage = "No data available",
   pagination,
   onPageChange
@@ -189,7 +189,7 @@ export function DataTable({
           <div className="w-16 h-16 bg-navy-50 rounded-2xl flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin"></div>
           </div>
-          <p className="text-[10px] font-black text-navy-400 uppercase tracking-[0.3em]">Decrypting Data Streams...</p>
+          <p className="text-[10px] font-black text-navy-700 uppercase tracking-[0.3em]">Decrypting Data Streams...</p>
         </div>
       </div>
     );
@@ -244,22 +244,22 @@ export function DataTable({
       {pagination && pagination.totalPages > 1 && onPageChange && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-6 bg-white border border-navy-50 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
           <div className="flex items-center gap-4">
-               <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
-                  <BarChart3 className="w-5 h-5" />
-               </div>
-               <div className="flex flex-col">
-                  <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
-                     Node Status: Deployment <span className="text-gold-600">{pagination.currentPage}</span> / {pagination.totalPages}
-                  </p>
-                  {pagination.total && <p className="text-[8px] text-navy-300 font-bold uppercase tracking-widest mt-0.5">Packet Inventory: {pagination.total} Units</p>}
-               </div>
+            <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <div className="flex flex-col">
+              <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
+                Node Status: Deployment <span className="text-gold-600">{pagination.currentPage}</span> / {pagination.totalPages}
+              </p>
+              {pagination.total && <p className="text-[8px] text-navy-300 font-bold uppercase tracking-widest mt-0.5">Packet Inventory: {pagination.total} Units</p>}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={() => onPageChange(pagination.currentPage - 1)}
               disabled={pagination.currentPage === 1}
-              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-400 text-navy-950 transition-all duration-300 group active:scale-90"
+              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -270,7 +270,7 @@ export function DataTable({
                 const current = pagination.currentPage;
                 const range = [];
                 const delta = 2; // Show 2 pages before and after current
-                
+
                 for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
                   range.push(i);
                 }
@@ -279,20 +279,19 @@ export function DataTable({
                   <>
                     {range[0] > 1 && (
                       <>
-                        <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-400">1</button>
+                        <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">1</button>
                         {range[0] > 2 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
                       </>
                     )}
-                    
+
                     {range.map(pageNum => (
-                      <button 
+                      <button
                         key={pageNum}
                         onClick={() => onPageChange(pageNum)}
-                        className={`w-10 h-10 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${
-                          current === pageNum 
-                          ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10' 
-                          : 'hover:bg-navy-50 text-navy-400 hover:text-navy-950'
-                        }`}
+                        className={`w-10 h-10 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${current === pageNum
+                            ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10'
+                            : 'hover:bg-navy-50 text-navy-700 hover:text-navy-950'
+                          }`}
                       >
                         {pageNum}
                       </button>
@@ -301,7 +300,7 @@ export function DataTable({
                     {range[range.length - 1] < total && (
                       <>
                         {range[range.length - 1] < total - 1 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
-                        <button onClick={() => onPageChange(total)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-400">{total}</button>
+                        <button onClick={() => onPageChange(total)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">{total}</button>
                       </>
                     )}
                   </>
@@ -309,10 +308,10 @@ export function DataTable({
               })()}
             </div>
 
-            <button 
+            <button
               onClick={() => onPageChange(pagination.currentPage + 1)}
               disabled={pagination.currentPage === pagination.totalPages}
-              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-400 text-navy-950 transition-all duration-300 group active:scale-90"
+              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
             >
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -334,7 +333,7 @@ export function LoadingSpinner({ message }: { size?: 'sm' | 'md' | 'lg', message
         </div>
       </div>
       {message && (
-        <p className="text-[10px] font-black text-navy-400 uppercase tracking-[0.4em] animate-pulse italic">{message}</p>
+        <p className="text-[10px] font-black text-navy-700 uppercase tracking-[0.4em] animate-pulse italic">{message}</p>
       )}
     </div>
   );
@@ -411,8 +410,8 @@ export function FormInput({
         placeholder={placeholder}
         disabled={disabled}
         className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${error
-            ? 'border-red-300 bg-red-50'
-            : 'border-gray-300 bg-white hover:border-gray-400'
+          ? 'border-red-300 bg-red-50'
+          : 'border-gray-300 bg-white hover:border-gray-400'
           } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
       />
       {error && (

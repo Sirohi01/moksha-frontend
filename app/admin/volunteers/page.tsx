@@ -269,12 +269,12 @@ export default function VolunteersManagement() {
   return (
     <div className="space-y-12 animate-in fade-in duration-700 max-w-[1700px] mx-auto">
       {/* Page Header */}
-      <PageHeader 
-        title="Volunteer Network" 
+      <PageHeader
+        title="Volunteer Network"
         description="Monitor recruitment, operational availability, and deployment of regional service units."
         icon={<UserCheck className="w-8 h-8" />}
       >
-        <ActionButton 
+        <ActionButton
           onClick={fetchVolunteers}
           icon={<RotateCcw className="w-4 h-4" />}
         >
@@ -285,13 +285,13 @@ export default function VolunteersManagement() {
       {/* Operations Filter Deck */}
       <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50">
         <div className="flex items-center gap-3 mb-8">
-            <div className="w-1.5 h-6 bg-gold-600 rounded-full"></div>
-            <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-navy-950 italic">Telemetry Filters</h3>
+          <div className="w-1.5 h-6 bg-gold-600 rounded-full"></div>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-navy-950 italic">Telemetry Filters</h3>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="space-y-3">
-            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">Operation Status</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-700 ml-2">Operation Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -305,9 +305,9 @@ export default function VolunteersManagement() {
               <option value="rejected">REJECTED</option>
             </select>
           </div>
-          
+
           <div className="space-y-3">
-            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">Unit Classification</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-700 ml-2">Unit Classification</label>
             <select
               value={filters.registrationType}
               onChange={(e) => setFilters({ ...filters, registrationType: e.target.value })}
@@ -320,7 +320,7 @@ export default function VolunteersManagement() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">City Node</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-700 ml-2">City Node</label>
             <input
               type="text"
               value={filters.city}
@@ -331,7 +331,7 @@ export default function VolunteersManagement() {
           </div>
 
           <div className="space-y-3">
-            <label className="text-[9px] font-black uppercase tracking-widest text-navy-400 ml-2">Regional Sector</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-navy-700 ml-2">Regional Sector</label>
             <input
               type="text"
               value={filters.state}
@@ -344,14 +344,14 @@ export default function VolunteersManagement() {
       </div>
 
       {/* Network Inventory Table */}
-      <DataTable 
+      <DataTable
         columns={columns}
         data={volunteers}
         loading={loading}
         emptyMessage="NO ASSETS DETECTED IN CURRENT SECTOR"
         pagination={{
-            currentPage: currentPage,
-            totalPages: totalPages
+          currentPage: currentPage,
+          totalPages: totalPages
         }}
         onPageChange={setCurrentPage}
       />
@@ -398,7 +398,7 @@ export default function VolunteersManagement() {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Location & Availability</h3>
                 <div className="space-y-3">
@@ -435,7 +435,7 @@ export default function VolunteersManagement() {
               >
                 Send Email
               </ActionButton>
-              
+
               {selectedVolunteer.status === 'pending' && (
                 <>
                   <ActionButton
@@ -458,7 +458,7 @@ export default function VolunteersManagement() {
                   </ActionButton>
                 </>
               )}
-              
+
               {selectedVolunteer.status === 'approved' && (
                 <ActionButton
                   onClick={() => {
@@ -470,7 +470,7 @@ export default function VolunteersManagement() {
                   Activate
                 </ActionButton>
               )}
-              
+
               {selectedVolunteer.status === 'active' && (
                 <ActionButton
                   onClick={() => {
@@ -482,7 +482,7 @@ export default function VolunteersManagement() {
                   Deactivate
                 </ActionButton>
               )}
-              
+
               {selectedVolunteer.status === 'inactive' && (
                 <ActionButton
                   onClick={() => {

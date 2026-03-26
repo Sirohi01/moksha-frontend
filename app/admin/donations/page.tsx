@@ -131,7 +131,7 @@ export default function DonationsManagement() {
       render: (_value: any, donation: Donation) => (
         <div>
           <div className="text-xs font-black text-navy-950 uppercase tracking-tight">{donation.donationId}</div>
-          <div className="text-[9px] text-navy-400 font-black uppercase tracking-widest mt-1 italic">RCPT: {donation.receiptNumber}</div>
+          <div className="text-[9px] text-navy-700 font-black uppercase tracking-widest mt-1 italic">RCPT: {donation.receiptNumber}</div>
         </div>
       )
     },
@@ -141,7 +141,7 @@ export default function DonationsManagement() {
       render: (_value: any, donation: Donation) => (
         <div>
           <div className="text-xs font-black text-navy-950 uppercase tracking-tight">{donation.name}</div>
-          <div className="text-[9px] text-navy-400 font-black uppercase tracking-widest mt-1">{donation.email}</div>
+          <div className="text-[9px] text-navy-700 font-black uppercase tracking-widest mt-1">{donation.email}</div>
         </div>
       )
     },
@@ -161,7 +161,7 @@ export default function DonationsManagement() {
       render: (_value: any, donation: Donation) => (
         <div>
           <div className="text-[9px] font-black text-navy-950 uppercase tracking-widest">{donation.purpose.replace('_', ' ')}</div>
-          <div className="text-[8px] text-navy-400 font-black uppercase mt-1 italic">{donation.donationType.replace('_', ' ')}</div>
+          <div className="text-[8px] text-navy-700 font-black uppercase mt-1 italic">{donation.donationType.replace('_', ' ')}</div>
         </div>
       )
     },
@@ -198,12 +198,12 @@ export default function DonationsManagement() {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 max-w-[1700px] mx-auto">
-      <PageHeader 
-        title="Financial Ledger" 
+      <PageHeader
+        title="Financial Ledger"
         description="Monitor global contributions, benefactor transactions, and resource allocations."
         icon={<Wallet className="w-8 h-8" />}
       >
-        <ActionButton 
+        <ActionButton
           onClick={fetchDonations}
           icon={<RotateCcw className="w-4 h-4" />}
         >
@@ -240,7 +240,7 @@ export default function DonationsManagement() {
       <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Audit Status</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-700 ml-2">Audit Status</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -254,7 +254,7 @@ export default function DonationsManagement() {
             </select>
           </div>
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Contribution Type</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-700 ml-2">Contribution Type</label>
             <select
               value={filters.type}
               onChange={(e) => setFilters({ ...filters, type: e.target.value })}
@@ -267,7 +267,7 @@ export default function DonationsManagement() {
             </select>
           </div>
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Resource Endpoint</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-700 ml-2">Resource Endpoint</label>
             <select
               value={filters.purpose}
               onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
@@ -284,14 +284,14 @@ export default function DonationsManagement() {
         </div>
       </div>
 
-      <DataTable 
+      <DataTable
         columns={columns}
         data={donations}
         loading={loading}
         emptyMessage="NO FINANCIAL DATA DETECTED IN CURRENT SECTOR"
         pagination={{
-            currentPage: currentPage,
-            totalPages: totalPages
+          currentPage: currentPage,
+          totalPages: totalPages
         }}
         onPageChange={setCurrentPage}
       />

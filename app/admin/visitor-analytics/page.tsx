@@ -21,7 +21,7 @@ export default function VisitorAnalyticsPage() {
             <h1 className="text-5xl md:text-6xl font-black text-navy-950 dark:text-white tracking-tighter selection:bg-gold-500 leading-tight">
               Visitor <span className="text-transparent bg-clip-text bg-gradient-to-br from-gold-500 to-gold-700 italic pr-2 inline-block">Analysis</span>
             </h1>
-            <p className="text-navy-400 dark:text-navy-300 mt-4 text-lg font-medium max-w-2xl leading-relaxed italic opacity-80">
+            <p className="text-navy-700 dark:text-navy-300 mt-4 text-lg font-medium max-w-2xl leading-relaxed italic opacity-80">
               Aggregated behavioral data, session flows, and multi-node engagement tracking for the <span className="text-gold-600 font-bold border-b-2 border-gold-500/20 px-1">Moksha Sewa</span> ecosystem.
             </p>
           </div>

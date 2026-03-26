@@ -1,4 +1,3 @@
-// API configuration and utilities
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
 export const API_ENDPOINTS = {
@@ -12,6 +11,9 @@ export const API_ENDPOINTS = {
   VERIFY_OTP: `${API_BASE_URL}/api/auth/verify-otp`,
   SEND_MOBILE_OTP: `${API_BASE_URL}/api/auth/send-mobile-otp`,
   VERIFY_MOBILE_OTP: `${API_BASE_URL}/api/auth/verify-mobile-otp`,
+  SEND_LOGIN_OTP: `${API_BASE_URL}/api/auth/send-login-otp`,
+  LOGIN_WITH_OTP: `${API_BASE_URL}/api/auth/login-with-otp`,
+  VERIFY_2FA: `${API_BASE_URL}/api/auth/verify-2fa`,
 
   // Admin endpoints
   ADMIN_USERS: `${API_BASE_URL}/api/admin/users`,
@@ -166,6 +168,27 @@ export const authAPI = {
       body: JSON.stringify({ mobile, otp }),
     });
   },
+
+  sendLoginOTP: async (mobile: string) => {
+    return apiRequest(API_ENDPOINTS.SEND_LOGIN_OTP, {
+      method: 'POST',
+      body: JSON.stringify({ mobile }),
+    });
+  },
+
+  loginWithOTP: async (mobile: string, otp: string) => {
+    return apiRequest(API_ENDPOINTS.LOGIN_WITH_OTP, {
+      method: 'POST',
+      body: JSON.stringify({ mobile, otp }),
+    });
+  },
+
+  verify2FA: async (email: string, otp: string) => {
+    return apiRequest(API_ENDPOINTS.VERIFY_2FA, {
+      method: 'POST',
+      body: JSON.stringify({ email, otp }),
+    });
+  },
 };
 
 export const adminAPI = {
@@ -183,6 +206,10 @@ export const adminAPI = {
 
   getEmailLogs: async (page = 1, limit = 20) => {
     return apiRequest(`${API_ENDPOINTS.ADMIN_EMAIL_LOGS}?page=${page}&limit=${limit}`);
+  },
+
+  getUser: async (id: string) => {
+    return apiRequest(`${API_ENDPOINTS.ADMIN_USERS}/${id}`);
   },
 };
 

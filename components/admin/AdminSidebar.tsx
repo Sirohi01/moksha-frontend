@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { checkUserPermission } from '@/lib/permissions';
 import {
   LayoutDashboard,
   Users,
@@ -22,6 +23,7 @@ import {
   X,
   TrendingUp,
   CreditCard,
+  UserPlus
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -35,11 +37,12 @@ interface NavigationItem {
   }[];
 }
 
-const getNavigationItems = (role: string): NavigationItem[] => {
-  const baseItems: NavigationItem[] = [
+const getNavigationItems = (user: AdminUser): NavigationItem[] => {
+  const allPossibleItems: NavigationItem[] = [
     { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { title: 'Live Support', href: '/admin/support', icon: MessageSquare },
     { title: 'Tasks', href: '/admin/tasks', icon: Calendar },
+    { title: 'User Management', href: '/admin/users', icon: UserPlus },
     { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
     { title: 'Board Applications', href: '/admin/board', icon: Users },
     { title: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
@@ -56,29 +59,40 @@ const getNavigationItems = (role: string): NavigationItem[] => {
     { title: 'Compliance', href: '/admin/compliance', icon: Shield },
   ];
 
-  if (role === 'super_admin' || role === 'manager') {
-    baseItems.push({
-      title: 'Intelligence', items: [
-        { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
-        { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
-        { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
-        { title: 'Communication Alerts', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
-      ]
+  // Filter top-level items
+  const filteredItems = allPossibleItems.filter(item => {
+    if (!item.href) return true;
+    return checkUserPermission(user, item.href);
+  });
+
+  // Specialized Intelligence Group
+  const intelligenceItems = [
+    { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
+    { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
+    { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
+    { title: 'Communication Alerts', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (intelligenceItems.length > 0) {
+    filteredItems.push({
+      title: 'Intelligence',
+      items: intelligenceItems
     });
   }
 
-  return baseItems;
+  return filteredItems;
 };
 
 interface AdminUser {
   id: string;
   name: string;
   role: string;
+  permissions: string[];
 }
 
 export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user: AdminUser, onLogout: () => void, isOpen: boolean, onClose: () => void }) {
   const pathname = usePathname();
-  const sidebarItems = getNavigationItems(user.role);
+  const sidebarItems = getNavigationItems(user);
 
   return (
     <>
@@ -92,13 +106,13 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
       />
 
       <aside className={cn(
-        "fixed left-0 top-0 h-screen w-72 bg-white border-r border-navy-50 shadow-2xl overflow-hidden flex flex-col z-[50] transition-transform duration-500 ease-in-out lg:translate-x-0 hidden lg:flex",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        "fixed left-0 top-0 h-screen w-72 bg-white border-r border-navy-50 shadow-2xl overflow-hidden flex flex-col z-[50] transition-transform duration-500 ease-in-out",
+        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}>
         {/* Mobile Close Button */}
         <button
           onClick={onClose}
-          className="lg:hidden absolute top-6 right-6 p-2 text-navy-400 hover:text-navy-950 transition-colors"
+          className="lg:hidden absolute top-6 right-6 p-2 text-navy-700 hover:text-navy-950 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
@@ -113,7 +127,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               <h2 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic">Command Deck</h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-600 animate-pulse"></span>
-                <span className="text-[9px] text-navy-400 font-black uppercase tracking-widest">Live System</span>
+                <span className="text-[9px] text-navy-700 font-black uppercase tracking-widest">Live System</span>
               </div>
             </div>
           </div>
@@ -131,7 +145,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                     'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
                     pathname === item.href
                       ? 'bg-navy-950 text-gold-500 shadow-2xl shadow-navy-200'
-                      : 'text-navy-400 hover:text-navy-950 hover:bg-navy-50'
+                      : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
                   )}
                 >
                   <div className={cn(

@@ -39,15 +39,15 @@ export default function ContentManagement() {
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
       const configRoutes = [
-        'homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach', 
-        'board', 'services', 'report', 'impact', 'stories', 'remembrance', 
-        'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate', 
-        'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact', 
+        'homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach',
+        'board', 'services', 'report', 'impact', 'stories', 'remembrance',
+        'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate',
+        'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact',
         'press', 'documentaries', 'layout', 'blog', 'compliance'
       ];
 
       const responses = await Promise.all(
-        configRoutes.map(route => 
+        configRoutes.map(route =>
           fetch(`${API_BASE_URL}/api/page-config/${route}`)
             .then(res => res.json())
             .catch(() => ({ success: false }))
@@ -114,7 +114,7 @@ export default function ContentManagement() {
       label: 'PROTOCOL ASSET',
       render: (_value: any, item: ContentItem) => (
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-navy-50 rounded-xl flex items-center justify-center text-navy-400 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
+          <div className="w-10 h-10 bg-navy-50 rounded-xl flex items-center justify-center text-navy-700 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
             {getTypeIcon(item.type)}
           </div>
           <div className="text-xs font-black text-navy-950 uppercase tracking-tight">{item.title}</div>
@@ -125,7 +125,7 @@ export default function ContentManagement() {
       key: 'type',
       label: 'CLASSIFICATION',
       render: (_value: any, item: ContentItem) => (
-        <span className="text-[10px] font-black text-navy-400 uppercase tracking-widest italic">{item.type}</span>
+        <span className="text-[10px] font-black text-navy-700 uppercase tracking-widest italic">{item.type}</span>
       )
     },
     {
@@ -148,7 +148,7 @@ export default function ContentManagement() {
       key: 'modified',
       label: 'LAST SYNC',
       render: (_value: any, item: ContentItem) => (
-        <div className="text-[9px] font-black text-navy-400 uppercase tracking-widest italic">{new Date(item.updatedAt).toLocaleDateString()}</div>
+        <div className="text-[9px] font-black text-navy-700 uppercase tracking-widest italic">{new Date(item.updatedAt).toLocaleDateString()}</div>
       )
     },
     {
@@ -156,8 +156,8 @@ export default function ContentManagement() {
       label: 'CMD',
       render: (_value: any, item: ContentItem) => (
         <ActionButton onClick={() => {
-           const route = item._id.replace('-config', '');
-           window.location.href = `/admin/content-editor?page=${route}`;
+          const route = item._id.replace('-config', '');
+          window.location.href = `/admin/content-editor?page=${route}`;
         }} size="sm">
           EDIT
         </ActionButton>
@@ -171,12 +171,12 @@ export default function ContentManagement() {
     return (
       <div className="max-w-[1700px] mx-auto p-12">
         <div className="bg-rose-50 border border-rose-100 rounded-[2.5rem] p-12 text-center">
-            <Activity className="w-16 h-16 text-rose-500 mx-auto mb-6 opacity-20" />
-            <h3 className="text-2xl font-black text-navy-950 uppercase tracking-tight mb-4">Node Synchronization Failed</h3>
-            <p className="text-navy-400 font-medium mb-10 max-w-md mx-auto">{error}</p>
-            <ActionButton onClick={fetchContent} icon={<RotateCcw className="w-4 h-4" />}>
-                Attempt Re-Sync
-            </ActionButton>
+          <Activity className="w-16 h-16 text-rose-500 mx-auto mb-6 opacity-20" />
+          <h3 className="text-2xl font-black text-navy-950 uppercase tracking-tight mb-4">Node Synchronization Failed</h3>
+          <p className="text-navy-700 font-medium mb-10 max-w-md mx-auto">{error}</p>
+          <ActionButton onClick={fetchContent} icon={<RotateCcw className="w-4 h-4" />}>
+            Attempt Re-Sync
+          </ActionButton>
         </div>
       </div>
     );
@@ -184,8 +184,8 @@ export default function ContentManagement() {
 
   return (
     <div className="space-y-12 animate-in fade-in duration-700 max-w-[1700px] mx-auto">
-      <PageHeader 
-        title="Content Management" 
+      <PageHeader
+        title="Content Management"
         description="Deploy and optimize operational content across the Moksha network."
         icon={<Database className="w-8 h-8" />}
       >
@@ -198,7 +198,7 @@ export default function ContentManagement() {
       <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Audit Class</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-700 ml-2">Audit Class</label>
             <select
               value={filters.type}
               onChange={(e) => setFilters({ ...filters, type: e.target.value })}
@@ -211,7 +211,7 @@ export default function ContentManagement() {
             </select>
           </div>
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Asset State</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-700 ml-2">Asset State</label>
             <select
               value={filters.status}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
@@ -224,7 +224,7 @@ export default function ContentManagement() {
             </select>
           </div>
           <div className="space-y-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-navy-400 ml-2">Node Search</label>
+            <label className="text-[10px] font-black uppercase tracking-widest text-navy-700 ml-2">Node Search</label>
             <div className="relative group">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-300 group-focus-within:text-gold-600 transition-colors" />
               <input
@@ -239,7 +239,7 @@ export default function ContentManagement() {
         </div>
       </div>
 
-      <DataTable 
+      <DataTable
         columns={columns}
         data={filteredContent}
         emptyMessage="NO ASSETS DETECTED IN CURRENT SECTOR"

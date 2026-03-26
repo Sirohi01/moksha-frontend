@@ -44,5 +44,31 @@ export function usePageConfig<T>(pageName: string, fallbackConfig: T): UsePageCo
     fetchConfig();
   }, [pageName, fallbackConfig]);
 
+  // Handle Real-time Preview Messages from Admin Editor
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleMessage = (event: MessageEvent) => {
+        if (event.data?.type === 'UPDATE_PREVIEW_DATA') {
+          const payload = event.data.payload;
+          if (!payload) return;
+          
+          setConfig((prev: any) => {
+            if (!prev) return prev;
+            const newConfig = { ...prev };
+            Object.keys(payload).forEach(sectionId => {
+              if (newConfig[sectionId]) {
+                newConfig[sectionId] = { ...newConfig[sectionId], ...payload[sectionId] };
+              }
+            });
+            return newConfig;
+          });
+        }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   return { config, loading, error };
 }

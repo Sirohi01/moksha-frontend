@@ -22,7 +22,7 @@ export default function VisitorDetailsPage({ params }: { params: { ip: string } 
             <h1 className="text-5xl md:text-6xl font-black text-navy-950 dark:text-white tracking-tighter selection:bg-gold-500 leading-tight">
               Behavioral <span className="text-transparent bg-clip-text bg-gradient-to-br from-gold-500 to-gold-700 italic pr-2 inline-block">Replay</span>
             </h1>
-            <p className="text-navy-400 dark:text-navy-300 mt-4 text-lg font-medium max-w-2xl leading-relaxed italic opacity-80">
+            <p className="text-navy-700 dark:text-navy-300 mt-4 text-lg font-medium max-w-2xl leading-relaxed italic opacity-80">
               Analyzing historical interactions, navigation sequences, and engagement patterns for node <span className="font-mono text-gold-600 font-bold underline decoration-wavy underline-offset-4">{decodedIp}</span>.
             </p>
           </div>
