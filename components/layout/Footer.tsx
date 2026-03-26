@@ -104,11 +104,11 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Newsletter Dispatch Portal: Wide Footer Integration */}
-        <div className="mt-20 py-16 border-t border-white/5 relative overflow-hidden group/news">
+        {/* Newsletter Dispatch Portal: Ultra-Compact Footer Integration */}
+        <div className="mt-6 py-4 border-t border-white/5 relative overflow-hidden group/news">
           <div className="absolute inset-0 bg-[#7ab800]/5 opacity-0 group-hover/news:opacity-100 transition-opacity duration-1000"></div>
           <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
-            <div className="flex-1 space-y-4 text-center lg:text-left">
+            <div className="flex-1 space-y-1 text-center lg:text-left">
               <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
                 <div className="w-2 h-2 bg-[#7ab800] rounded-full shadow-[0_0_15px_rgba(122,184,0,0.6)] animate-pulse"></div>
                 <h4 className="text-[11px] font-black text-white uppercase tracking-[0.5em]">The Sacred Digest</h4>
