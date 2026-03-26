@@ -26,7 +26,7 @@ export function PageHeader({ title, description, icon, children }: PageHeaderPro
                 <span className="w-4 h-0.5 bg-gold-600 rounded-full"></span>
                 <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
             </div>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tighter leading-[0.9] truncate py-1">{title}</h1>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tight leading-[0.9] py-1 px-4 !overflow-visible whitespace-nowrap">{title}</h1>
             {description && (
               <p className="text-navy-400 text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] mt-3 max-w-xl opacity-60 leading-relaxed italic">{description}</p>
             )}
