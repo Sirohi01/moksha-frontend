@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { BarChart3, ArrowLeft, ArrowRight } from 'lucide-react';
 
 // Page Header Component
 interface PageHeaderProps {
@@ -164,10 +165,23 @@ interface DataTableProps {
   data: any[];
   loading?: boolean;
   emptyMessage?: string;
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    total?: number;
+  };
+  onPageChange?: (page: number) => void;
 }
 
 // Data Table Component
-export function DataTable({ columns, data, loading = false, emptyMessage = "No data available" }: DataTableProps) {
+export function DataTable({ 
+  columns, 
+  data, 
+  loading = false, 
+  emptyMessage = "No data available",
+  pagination,
+  onPageChange
+}: DataTableProps) {
   if (loading) {
     return (
       <div className="bg-white rounded-[2rem] border border-navy-50 p-12 shadow-sm">
@@ -182,47 +196,129 @@ export function DataTable({ columns, data, loading = false, emptyMessage = "No d
   }
 
   return (
-    <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-navy-50 overflow-hidden">
-      <div className="overflow-x-auto custom-scrollbar">
-        <table className="min-w-full border-collapse">
-          <thead>
-            <tr className="bg-navy-950">
-              {columns.map((column) => (
-                <th
-                  key={column.key}
-                  className="px-8 py-6 text-left text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] border-b border-white/5"
-                >
-                  {column.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-navy-50">
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={columns.length} className="px-8 py-24 text-center">
-                  <div className="flex flex-col items-center gap-6 opacity-30">
-                    <div className="w-20 h-20 bg-navy-50 rounded-[2rem] flex items-center justify-center">
-                      <span className="text-4xl text-navy-950 font-black italic">!</span>
-                    </div>
-                    <p className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] italic">{emptyMessage}</p>
-                  </div>
-                </td>
+    <div className="space-y-6">
+      <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.03)] border border-navy-50 overflow-hidden">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="min-w-full border-collapse">
+            <thead>
+              <tr className="bg-navy-950">
+                {columns.map((column) => (
+                  <th
+                    key={column.key}
+                    className="px-8 py-6 text-left text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] border-b border-white/5"
+                  >
+                    {column.label}
+                  </th>
+                ))}
               </tr>
-            ) : (
-              data.map((row, index) => (
-                <tr key={index} className="hover:bg-navy-50/50 transition-all duration-300 group">
-                  {columns.map((column) => (
-                    <td key={column.key} className="px-8 py-6 whitespace-nowrap text-[11px] font-bold text-navy-950 uppercase tracking-tight group-hover:text-navy-950 transition-colors">
-                      {column.render ? column.render(row[column.key], row) : row[column.key]}
-                    </td>
-                  ))}
+            </thead>
+            <tbody className="divide-y divide-navy-50">
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={columns.length} className="px-8 py-24 text-center">
+                    <div className="flex flex-col items-center gap-6 opacity-30">
+                      <div className="w-20 h-20 bg-navy-50 rounded-[2rem] flex items-center justify-center">
+                        <span className="text-4xl text-navy-950 font-black italic">!</span>
+                      </div>
+                      <p className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] italic">{emptyMessage}</p>
+                    </div>
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                data.map((row, index) => (
+                  <tr key={index} className="hover:bg-navy-50/50 transition-all duration-300 group">
+                    {columns.map((column) => (
+                      <td key={column.key} className="px-8 py-6 whitespace-nowrap text-[11px] font-bold text-navy-950 uppercase tracking-tight group-hover:text-navy-950 transition-colors">
+                        {column.render ? column.render(row[column.key], row) : row[column.key]}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Pagination Footer */}
+      {pagination && pagination.totalPages > 1 && onPageChange && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-6 bg-white border border-navy-50 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
+          <div className="flex items-center gap-4">
+               <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
+                  <BarChart3 className="w-5 h-5" />
+               </div>
+               <div className="flex flex-col">
+                  <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
+                     Node Status: Deployment <span className="text-gold-600">{pagination.currentPage}</span> / {pagination.totalPages}
+                  </p>
+                  {pagination.total && <p className="text-[8px] text-navy-300 font-bold uppercase tracking-widest mt-0.5">Packet Inventory: {pagination.total} Units</p>}
+               </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => onPageChange(pagination.currentPage - 1)}
+              disabled={pagination.currentPage === 1}
+              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-400 text-navy-950 transition-all duration-300 group active:scale-90"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+
+            <div className="flex items-center gap-1.5 p-1.5 bg-navy-50/30 rounded-2xl border border-navy-50/50">
+              {(() => {
+                const total = pagination.totalPages;
+                const current = pagination.currentPage;
+                const range = [];
+                const delta = 2; // Show 2 pages before and after current
+                
+                for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
+                  range.push(i);
+                }
+
+                return (
+                  <>
+                    {range[0] > 1 && (
+                      <>
+                        <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-400">1</button>
+                        {range[0] > 2 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
+                      </>
+                    )}
+                    
+                    {range.map(pageNum => (
+                      <button 
+                        key={pageNum}
+                        onClick={() => onPageChange(pageNum)}
+                        className={`w-10 h-10 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${
+                          current === pageNum 
+                          ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10' 
+                          : 'hover:bg-navy-50 text-navy-400 hover:text-navy-950'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    ))}
+
+                    {range[range.length - 1] < total && (
+                      <>
+                        {range[range.length - 1] < total - 1 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
+                        <button onClick={() => onPageChange(total)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-400">{total}</button>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+
+            <button 
+              onClick={() => onPageChange(pagination.currentPage + 1)}
+              disabled={pagination.currentPage === pagination.totalPages}
+              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-400 text-navy-950 transition-all duration-300 group active:scale-90"
+            >
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

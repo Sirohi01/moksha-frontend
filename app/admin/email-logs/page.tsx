@@ -239,38 +239,17 @@ export default function EmailLogsPage() {
 
       {error && <Alert type="error" message={error} />}
 
-      <div className="bg-white rounded-[2.5rem] shadow-xl border border-navy-50 overflow-hidden">
-        <DataTable 
-          columns={columns} 
-          data={logs} 
-          loading={loading} 
-          emptyMessage="No email transmissions recorded in terminal history."
-        />
-      </div>
-
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-4 mt-8">
-            <button 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-8 py-4 bg-white border-2 border-navy-50 rounded-2xl text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:border-gold-500 hover:text-gold-600 transition-all shadow-sm active:scale-95"
-            >
-                Previous Deck
-            </button>
-            <div className="bg-navy-50 px-6 py-3 rounded-xl">
-                <span className="text-[10px] font-black text-navy-950 uppercase tracking-widest">
-                    Page <span className="text-gold-600">{currentPage}</span> / {totalPages}
-                </span>
-            </div>
-            <button 
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-                className="px-8 py-4 bg-white border-2 border-navy-50 rounded-2xl text-[10px] font-black uppercase tracking-widest disabled:opacity-30 hover:border-gold-500 hover:text-gold-600 transition-all shadow-sm active:scale-95"
-            >
-                Next Deck
-            </button>
-        </div>
-      )}
+      <DataTable 
+        columns={columns} 
+        data={logs} 
+        loading={loading} 
+        emptyMessage="No email transmissions recorded in terminal history."
+        pagination={{
+            currentPage: currentPage,
+            totalPages: totalPages
+        }}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

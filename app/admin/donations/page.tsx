@@ -289,33 +289,12 @@ export default function DonationsManagement() {
         data={donations}
         loading={loading}
         emptyMessage="NO FINANCIAL DATA DETECTED IN CURRENT SECTOR"
+        pagination={{
+            currentPage: currentPage,
+            totalPages: totalPages
+        }}
+        onPageChange={setCurrentPage}
       />
-
-      {totalPages > 1 && (
-        <div className="bg-white rounded-[2rem] shadow-sm border border-navy-50 px-8 py-5">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-            <div className="text-[10px] font-black uppercase tracking-[0.2em] text-navy-400 italic">
-              Ledger Page <span className="text-navy-950">{currentPage}</span> of <span className="text-navy-950">{totalPages}</span>
-            </div>
-            <div className="flex gap-4">
-              <ActionButton
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                size="sm"
-              >
-                Previous Page
-              </ActionButton>
-              <ActionButton
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                size="sm"
-              >
-                Next Page
-              </ActionButton>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Receipt Modal */}
       {selectedDonation && (

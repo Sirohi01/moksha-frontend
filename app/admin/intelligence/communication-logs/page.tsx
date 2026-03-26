@@ -10,12 +10,14 @@ export default function CommunicationLogsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ pages: 1, total: 0 });
   const [filters, setFilters] = useState({ type: 'whatsapp', status: '' });
   const [mode, setMode] = useState<'alerts' | 'interactions'>('alerts');
 
   // Adjust filters when mode changes
   const handleModeChange = (newMode: 'alerts' | 'interactions') => {
     setMode(newMode);
+    setPage(1); // Reset to first page
     if (newMode === 'interactions') {
       setFilters({ type: '', status: '' });
     } else {
@@ -28,6 +30,10 @@ export default function CommunicationLogsPage() {
       setLoading(true);
       const res = await intelligenceAPI.getCommunicationLogs(page, 20, filters.type, filters.status, mode);
       setLogs(res.data);
+      setPagination({
+        pages: res.pagination?.pages || 1,
+        total: res.pagination?.total || 0
+      });
     } catch (err: any) {
       setError(err.message || 'Failed to fetch communication logs');
     } finally {
@@ -225,7 +231,17 @@ export default function CommunicationLogsPage() {
       {error && <Alert type="error" message={error} />}
 
       <div className="space-y-6">
-          <DataTable columns={columns} data={logs} loading={loading && page !== 1} />
+          <DataTable 
+            columns={columns} 
+            data={logs} 
+            loading={loading && page !== 1}
+            pagination={{
+                currentPage: page,
+                totalPages: pagination.pages,
+                total: pagination.total
+            }}
+            onPageChange={setPage}
+          />
       </div>
     </div>
   );

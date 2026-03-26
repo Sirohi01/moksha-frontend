@@ -494,37 +494,12 @@ export default function TasksManagement() {
         data={tasks}
         loading={loading}
         emptyMessage="No tasks found"
+        pagination={{
+            currentPage: currentPage,
+            totalPages: totalPages
+        }}
+        onPageChange={setCurrentPage}
       />
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 px-6 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
-            <div className="text-sm text-gray-700">
-              Page <span className="font-medium">{currentPage}</span> of{' '}
-              <span className="font-medium">{totalPages}</span>
-            </div>
-            <div className="flex space-x-2">
-              <ActionButton
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                variant="secondary"
-                size="sm"
-              >
-                Previous
-              </ActionButton>
-              <ActionButton
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                variant="secondary"
-                size="sm"
-              >
-                Next
-              </ActionButton>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Create Task Modal */}
       {showCreateModal && (

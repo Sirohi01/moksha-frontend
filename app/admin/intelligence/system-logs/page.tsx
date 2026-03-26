@@ -11,6 +11,7 @@ export default function SystemLogsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ pages: 1, total: 0 });
 
   const fetchData = async () => {
     try {
@@ -21,6 +22,10 @@ export default function SystemLogsPage() {
       ]);
       setLogs(logsRes.data);
       setSummary(summaryRes.data);
+      setPagination({
+        pages: logsRes.pagination?.pages || 1,
+        total: logsRes.pagination?.total || 0
+      });
     } catch (err: any) {
       setError(err.message || 'Failed to fetch logs');
     } finally {
@@ -141,6 +146,12 @@ export default function SystemLogsPage() {
             data={logs} 
             loading={loading && page !== 1}
             emptyMessage="System parameters within normal range. No bugs detected."
+            pagination={{
+                currentPage: page,
+                totalPages: pagination.pages,
+                total: pagination.total
+            }}
+            onPageChange={setPage}
           />
       </div>
     </div>
