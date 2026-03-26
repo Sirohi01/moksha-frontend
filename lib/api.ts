@@ -70,9 +70,11 @@ export const removeToken = () => {
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
   const token = getToken();
 
+  const isFormData = options.body instanceof FormData;
+
   const defaultOptions: RequestInit = {
     headers: {
-      'Content-Type': 'application/json',
+      ...(!isFormData && { 'Content-Type': 'application/json' }),
       ...(token && { Authorization: `Bearer ${token}` }),
     },
   };
@@ -664,6 +666,9 @@ export const marketingAPI = {
   },
   getSegments: async () => {
     return apiRequest(`${API_ENDPOINTS.MARKETING}/segments`);
+  },
+  getActiveContent: async () => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/active`);
   },
   createSegment: async (data: any) => {
     return apiRequest(`${API_ENDPOINTS.MARKETING}/segments`, {

@@ -6,6 +6,7 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import SocialFloating from './SocialFloating';
 import EmergencyFloating from './EmergencyFloating';
+import MarketingPopup from './MarketingPopup';
 import ChatBot from './ChatBot';
 import ChatWidget from '../ChatWidget';
 import VisitorTracker from '../VisitorTracker';
@@ -42,6 +43,7 @@ export default function RootLayoutContent({ children }: { children: React.ReactN
         </main>
         <SocialFloating />
         <EmergencyFloating />
+        <MarketingPopup />
         <ChatBot />
         <ChatWidget />
         <Footer />

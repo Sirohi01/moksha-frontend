@@ -23,7 +23,14 @@ import {
   X,
   TrendingUp,
   CreditCard,
-  UserPlus
+  UserPlus,
+  PlayCircle,
+  Video,
+  Globe,
+  Star,
+  Zap,
+  Layout,
+  Layers
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -58,19 +65,49 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'Content Management', href: '/admin/content', icon: Database },
     { title: 'Compliance', href: '/admin/compliance', icon: Shield },
   ];
-
-  // Filter top-level items
   const filteredItems = allPossibleItems.filter(item => {
     if (!item.href) return true;
     return checkUserPermission(user, item.href);
   });
 
+  // Marketing Group
+  const marketingItems = [
+    // { title: 'Campaigns', href: '/admin/marketing/campaigns', icon: Zap },
+    { title: 'Banners', href: '/admin/marketing/banners', icon: Layout },
+    { title: 'Newsletter Engine', href: '/admin/marketing/newsletter', icon: Mail },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (marketingItems.length > 0) {
+    filteredItems.push({
+      title: 'Marketing Strategy',
+      items: marketingItems
+    });
+  }
+
+  /* 
+  // Media Group
+  const mediaItems = [
+    { title: 'Press Releases', href: '/admin/press', icon: FileText },
+    { title: 'Gallery', href: '/admin/gallery', icon: Image },
+    { title: 'Documentaries', href: '/admin/documentaries', icon: PlayCircle },
+    { title: 'Video Testimonials', href: '/admin/video-testimonials', icon: Video },
+    { title: 'Media Vault', href: '/admin/media', icon: Layers },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (mediaItems.length > 0) {
+    filteredItems.push({
+      title: 'Multimedia Assets',
+      items: mediaItems
+    });
+  }
+  */
+
   // Specialized Intelligence Group
   const intelligenceItems = [
-    { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
     { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
+    { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
     { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
-    { title: 'Communication Alerts', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
+    { title: 'Interaction Logic', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
   ].filter(sub => checkUserPermission(user, sub.href));
 
   if (intelligenceItems.length > 0) {
@@ -79,6 +116,22 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
       items: intelligenceItems
     });
   }
+
+  /* 
+  // System Settings Group
+  const systemItems = [
+    { title: 'Global Settings', href: '/admin/settings', icon: Settings },
+    { title: 'SEO Engine', href: '/admin/seo', icon: Globe },
+    { title: 'Infrastructure', href: '/admin/system', icon: Database },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (systemItems.length > 0) {
+    filteredItems.push({
+      title: 'System & Control',
+      items: systemItems
+    });
+  }
+  */
 
   return filteredItems;
 };
