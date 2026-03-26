@@ -60,7 +60,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
     { title: 'Donations', href: '/admin/donations', icon: CreditCard },
     { title: 'Newsletter', href: '/admin/newsletter', icon: Mail },
-    { title: 'Blog', href: '/admin/content-editor?page=blog', icon: FileText },
+    // { title: 'Blog', href: '/admin/content-editor?page=blog', icon: FileText },
     { title: 'Page Config', href: '/admin/page-config', icon: Image },
     { title: 'Content Management', href: '/admin/content', icon: Database },
     { title: 'Compliance', href: '/admin/compliance', icon: Shield },
