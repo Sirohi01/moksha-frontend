@@ -89,6 +89,7 @@ interface ActionButtonProps {
   disabled?: boolean;
   loading?: boolean;
   icon?: ReactNode;
+  className?: string;
 }
 
 export function ActionButton({
@@ -99,7 +100,8 @@ export function ActionButton({
   children,
   disabled = false,
   loading = false,
-  icon
+  icon,
+  className = ""
 }: ActionButtonProps) {
   const baseClasses = "inline-flex items-center justify-center font-black uppercase tracking-widest rounded-2xl transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative group";
 
@@ -117,7 +119,7 @@ export function ActionButton({
     lg: "px-10 py-5 text-[11px]"
   };
 
-  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
+  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`;
 
   const content = (
     <>

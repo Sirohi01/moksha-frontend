@@ -4,11 +4,17 @@ import Link from "next/link";
 import { layoutConfig } from "@/config/layout.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import { intelligenceAPI } from "@/lib/api";
 
 export default function SocialFloating() {
     const { config, loading, error } = usePageConfig('layout', layoutConfig);
     const activeConfig = config || layoutConfig;
     const socialLinks = activeConfig.socialFloating.socialLinks;
+
+    const handleTrack = (platform: string) => {
+        intelligenceAPI.trackInteraction(platform, window.location.pathname).catch(() => {});
+    };
+
     return (
         <>
             {/* --- Right Side: Social Media Sidebar --- */}
@@ -16,6 +22,7 @@ export default function SocialFloating() {
             {/* Gallery Button */}
                 <Link
                     href={activeConfig.socialFloating.gallery.href}
+                    onClick={() => handleTrack('gallery')}
                     className="group relative flex items-center justify-center w-11 h-11 bg-[#f4c430] text-white rounded-xl shadow-lg border border-[#f4c430] transition-all duration-300 hover:-translate-x-1.5 hover:bg-[#eab308] hover:shadow-[#f4c430]/20"
                     aria-label={activeConfig.socialFloating.gallery.label}
                 >
@@ -39,6 +46,7 @@ export default function SocialFloating() {
                         href={social.url}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => handleTrack(social.name.toLowerCase())}
                         className={cn(
                             "group relative flex items-center justify-center w-11 h-11 bg-white/80 backdrop-blur-md border border-stone-200 text-stone-600 rounded-xl shadow-sm transition-all duration-300 hover:-translate-x-1.5 hover:text-white",
                             social.color

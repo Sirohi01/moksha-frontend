@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { layoutConfig } from "@/config/layout.config";
 import { LayoutConfig } from "@/config/layout.types";
+import { intelligenceAPI } from "@/lib/api";
 
 interface Message {
     id: string;
@@ -16,6 +17,11 @@ interface Message {
 export default function ChatBot() {
     const { config } = usePageConfig<LayoutConfig>('layout', layoutConfig);
     const [isOpen, setIsOpen] = useState(false);
+
+    const handleTrack = (platform: string) => {
+        intelligenceAPI.trackInteraction(platform, window.location.pathname).catch(() => {});
+    };
+
     const [isMinimized, setIsMinimized] = useState(false);
     const [messages, setMessages] = useState<Message[]>([
         {
@@ -217,6 +223,7 @@ export default function ChatBot() {
                     href={`https://wa.me/${(config?.socialFloating?.whatsapp || "919773992516").replace(/\D/g, "")}?text=Namaste%20Moksha%20Sewa!%20I%20need%20assistance%20with%20your%20services.`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => handleTrack('whatsapp')}
                     className="group relative flex items-center justify-center w-12 h-12 bg-[#25D366] text-white rounded-full shadow-lg hover:shadow-green-500/40 transition-all duration-300 hover:scale-110 active:scale-95"
                     aria-label="Contact us on WhatsApp"
                 >

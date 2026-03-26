@@ -59,11 +59,12 @@ const getNavigationItems = (role: string): NavigationItem[] => {
   if (role === 'super_admin' || role === 'manager') {
     baseItems.push({
       title: 'Intelligence', items: [
+        { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
         { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
         { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
+        { title: 'Communication Alerts', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
       ]
     });
-
   }
 
   return baseItems;

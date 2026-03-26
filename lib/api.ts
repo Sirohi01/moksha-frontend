@@ -40,6 +40,8 @@ export const API_ENDPOINTS = {
   SETTINGS: `${API_BASE_URL}/api/settings`,
   ANALYTICS: `${API_BASE_URL}/api/analytics`,
   CHAT: `${API_BASE_URL}/api/chat`,
+  INTELLIGENCE: `${API_BASE_URL}/api/intelligence`,
+  MARKETING: `${API_BASE_URL}/api/marketing`,
 };
 
 // Token management
@@ -572,6 +574,74 @@ export const chatAPI = {
   closeChat: async (chatId: string) => {
     return apiRequest(`${API_ENDPOINTS.CHAT}/close/${chatId}`, {
       method: 'PUT',
+    });
+  },
+};
+
+export const intelligenceAPI = {
+  getErrorLogs: async (page = 1, limit = 20) => {
+    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/error-logs?page=${page}&limit=${limit}`);
+  },
+  getCommunicationLogs: async (page = 1, limit = 20, type?: string, status?: string, mode?: 'alerts' | 'interactions') => {
+    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+    if (type) params.append('type', type);
+    if (status) params.append('status', status);
+    if (mode) params.append('mode', mode);
+    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/communication-logs?${params}`);
+  },
+  trackInteraction: async (platform: string, pageUrl: string) => {
+    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/track-interaction`, {
+      method: 'POST',
+      body: JSON.stringify({ platform, pageUrl }),
+    });
+  },
+  getPerformanceSummary: async () => {
+    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/performance-summary`);
+  },
+};
+
+export const marketingAPI = {
+  getCampaigns: async () => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/campaigns`);
+  },
+  createCampaign: async (data: any) => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/campaigns`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  getContent: async () => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/content`);
+  },
+  createContent: async (data: any) => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/content`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  updateContent: async (id: string, data: any) => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/content/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+  toggleContentStatus: async (id: string) => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/content/${id}/toggle`, {
+      method: 'PATCH',
+    });
+  },
+  deleteContent: async (id: string) => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/content/${id}`, {
+      method: 'DELETE',
+    });
+  },
+  getSegments: async () => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/segments`);
+  },
+  createSegment: async (data: any) => {
+    return apiRequest(`${API_ENDPOINTS.MARKETING}/segments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   },
 };

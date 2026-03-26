@@ -5,11 +5,17 @@ import { Container } from "@/components/ui/Elements";
 import { layoutConfig } from "@/config/layout.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import { intelligenceAPI } from "@/lib/api";
 
 export default function Footer() {
   const { config } = usePageConfig('layout', layoutConfig);
   const activeConfig = config || layoutConfig;
   const footerLinks = activeConfig.footer.links;
+
+  const handleTrack = (platform: string) => {
+    intelligenceAPI.trackInteraction(platform, window.location.pathname).catch(() => {});
+  };
+
   return (
     <footer className="bg-gray-800 text-white border-t border-white/5">
       {/* 24/7 Response Bar - Tightened */}
@@ -20,7 +26,11 @@ export default function Footer() {
               <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse shadow-[0_0_8px_rgba(220,38,38,0.4)]" />
               <p className="text-white font-black text-[9px] uppercase tracking-[0.3em] leading-none">{activeConfig.footer.emergency.status}</p>
             </div>
-            <Link href={activeConfig.footer.emergency.reportLink.href} className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2">
+            <Link 
+              href={activeConfig.footer.emergency.reportLink.href} 
+              onClick={() => handleTrack('report')}
+              className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2"
+            >
               {activeConfig.footer.emergency.reportLink.text} <ArrowUpRight size={12} />
             </Link>
           </div>
@@ -52,11 +62,19 @@ export default function Footer() {
               {activeConfig.footer.brand.description}
             </p>
             <div className="space-y-4">
-              <a href={activeConfig.footer.contact.phone.number} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/call">
+              <a 
+                href={activeConfig.footer.contact.phone.number} 
+                onClick={() => handleTrack('call')}
+                className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/call"
+              >
                 <Phone size={14} className="text-[#7ab800]" />
                 <span className="text-xs font-black tracking-[0.2em] font-mono">{activeConfig.footer.contact.phone.display}</span>
               </a>
-              <a href={activeConfig.footer.contact.email.address} className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/mail">
+              <a 
+                href={activeConfig.footer.contact.email.address} 
+                onClick={() => handleTrack('support')}
+                className="flex items-center gap-4 text-white hover:text-[#7ab800] transition-all group/mail"
+              >
                 <Mail size={14} className="text-[#7ab800]" />
                 <span className="text-xs font-black tracking-[0.2em] lowercase font-mono">{activeConfig.footer.contact.email.display}</span>
               </a>
@@ -116,6 +134,7 @@ export default function Footer() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => handleTrack(platform.toLowerCase())}
                     aria-label={`Visit our ${platform} page`}
                     className="text-white hover:text-[#7ab800] transition-all transform hover:-translate-y-1"
                   >
