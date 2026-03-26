@@ -214,8 +214,8 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                 </Link>
               ) : (
                 <div className="pt-4 space-y-1">
-                  <div className="px-5 mb-2">
-                    <span className="text-[8px] font-black text-navy-300 uppercase tracking-[0.3em]">{item.title}</span>
+                  <div className="px-5 mb-2 mt-4 first:mt-0">
+                    <span className="text-[10px] font-black text-navy-950 uppercase tracking-[0.4em] opacity-80">{item.title}</span>
                   </div>
                   <div className="space-y-1">
                     {item.items?.map((subItem) => (
@@ -226,13 +226,13 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                         className={cn(
                           'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300',
                           pathname === subItem.href
-                            ? 'bg-gold-600/10 text-gold-600'
-                            : 'text-navy-300 hover:text-navy-950 hover:bg-navy-50'
+                            ? 'bg-navy-950 text-gold-500 shadow-xl shadow-navy-200/50'
+                            : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
                         )}
                       >
                         <div className={cn(
                           "p-1.5 rounded-lg transition-all",
-                          pathname === subItem.href ? "bg-gold-600 text-white" : "bg-navy-50 group-hover/sub:bg-navy-950 group-hover/sub:text-gold-500"
+                          pathname === subItem.href ? "bg-white/10" : "bg-navy-50 group-hover/sub:bg-gold-600/10 group-hover/sub:text-gold-600"
                         )}>
                           <subItem.icon className="w-3.5 h-3.5" />
                         </div>
