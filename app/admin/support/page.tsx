@@ -13,7 +13,7 @@ export default function SupportPage() {
         description="Real-time communication with users who need assistance."
         icon={<MessageSquare className="w-6 h-6" />}
       />
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full h-full">
         <SupportInbox />
       </div>
     </div>
