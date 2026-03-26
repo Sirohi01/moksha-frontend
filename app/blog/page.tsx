@@ -367,7 +367,7 @@ function NewsletterForm() {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="ENTER YOUR EMAIL ADDRESS" 
           disabled={status === 'loading' || status === 'success'}
-          className="flex-1 h-14 bg-transparent px-8 text-stone-950 text-[11px] font-black uppercase tracking-widest outline-none border-none placeholder:text-stone-400 disabled:opacity-50"
+          className="flex-1 h-14 bg-transparent px-8 text-stone-950 text-sm font-medium tracking-widest outline-none border-none placeholder:text-stone-400 placeholder:font-black placeholder:uppercase placeholder:tracking-[0.1em] disabled:opacity-50"
           required
         />
         <button 

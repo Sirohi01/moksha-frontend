@@ -123,7 +123,7 @@ export const layoutConfig: LayoutConfig = {
     contact: {
       phone: {
         number: "tel:1800123456",
-        display: "1800-123-456"
+        display: "9220147229"
       },
       email: {
         address: "mailto:info@mokshasewa.org",

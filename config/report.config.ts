@@ -22,8 +22,8 @@ export const reportConfig: ReportPageConfig = {
     description: "Your report has been received. Our team will contact you within 24 hours.",
     referencePrefix: "MS-2024-",
     urgentAssistanceText: "For urgent assistance, call:",
-    phoneNumber: "+911800123456",
-    phoneLabel: "1800-123-456 (24/7)",
+    phoneNumber: "+919220147229",
+    phoneLabel: "9220147229 (24/7)",
     submitAnotherText: "Submit another report"
   },
 
@@ -261,7 +261,7 @@ export const reportConfig: ReportPageConfig = {
   // Emergency Contact
   emergency: {
     title: "For immediate assistance:",
-    phoneNumber: "1800-123-456",
+    phoneNumber: "9220147229",
     phoneLabel: "Toll Free · 24/7 · All India",
     description: "For immediate assistance:"
   }

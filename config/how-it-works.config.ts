@@ -107,8 +107,8 @@ export const howItWorksConfig: HowItWorksPageConfig = {
         href: "/report"
       },
       callButton: {
-        text: "Call 1800-123-456",
-        phoneNumber: "+911800123456"
+        text: "Call 9220147229",
+        phoneNumber: "+919220147229"
       }
     }
   }

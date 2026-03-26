@@ -678,4 +678,13 @@ export const marketingAPI = {
   },
 };
 
+export const newsletterAPI = {
+  subscribe: async (email: string, source: string) => {
+    return apiRequest(`${API_BASE_URL}/api/newsletter/subscribe`, {
+      method: 'POST',
+      body: JSON.stringify({ email, source }),
+    });
+  },
+};
+
 export default API_BASE_URL;

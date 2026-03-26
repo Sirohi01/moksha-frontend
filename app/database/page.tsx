@@ -45,7 +45,7 @@ export default function DatabasePage() {
             <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
             <p className="text-amber-800 text-sm">
               If you recognize anyone in this database, please contact us immediately at{" "}
-              <a href="tel:+911800123456" className="font-semibold underline">1800-123-456</a>{" "}
+              <a href="tel:+919220147229" className="font-semibold underline">9220147229</a>{" "}
               or your nearest police station.
             </p>
           </div>

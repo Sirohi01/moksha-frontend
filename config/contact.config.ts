@@ -21,9 +21,9 @@ export const contactConfig: ContactPageConfig = {
     {
       icon: "Phone",
       title: "Helpline (24/7)",
-      info: "1800-123-456",
+      info: "9220147229",
       sub: "Toll Free · All India",
-      href: "tel:+911800123456"
+      href: "tel:+919220147229"
     },
     {
       icon: "Mail",

@@ -19,7 +19,7 @@ export default function ChatBot() {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleTrack = (platform: string) => {
-        intelligenceAPI.trackInteraction(platform, window.location.pathname).catch(() => {});
+        intelligenceAPI.trackInteraction(platform, window.location.pathname).catch(() => { });
     };
 
     const [isMinimized, setIsMinimized] = useState(false);
@@ -59,7 +59,7 @@ export default function ChatBot() {
         setTimeout(() => {
             const botMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                text: "Thank you for your message. Our team will assist you shortly. For immediate help, please call our 24/7 helpline: 1800-123-456",
+                text: "Thank you for your message. Our team will assist you shortly. For immediate help, please call our 24/7 helpline: 9220147229",
                 sender: "bot",
                 timestamp: new Date(),
             };

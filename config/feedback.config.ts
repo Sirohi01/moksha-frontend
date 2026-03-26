@@ -137,8 +137,8 @@ export const feedbackConfig: FeedbackPageConfig = {
   contact: {
     title: "Have questions? Contact us:",
     phone: {
-      number: "+911800123456",
-      display: "📞 1800-123-456"
+      number: "+919220147229",
+      display: "📞 9220147229"
     },
     email: {
       address: "feedback@MokshaSewa.org",

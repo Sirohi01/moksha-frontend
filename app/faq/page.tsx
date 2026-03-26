@@ -36,8 +36,8 @@ export default function FAQPage() {
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${activeCategory === cat
-                    ? "bg-saffron-600 text-white"
-                    : "bg-white text-stone-600 border border-stone-200 hover:border-saffron-400"
+                  ? "bg-saffron-600 text-white"
+                  : "bg-white text-stone-600 border border-stone-200 hover:border-saffron-400"
                   }`}
               >
                 {cat}
@@ -81,9 +81,9 @@ export default function FAQPage() {
               Our team is available 24/7 to help you.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <a href="tel:+911800123456">
+              <a href="tel:+919220147229">
                 <button className="bg-saffron-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-saffron-700 transition-colors">
-                  Call 1800-123-456
+                  Call 9220147229
                 </button>
               </a>
               <Link href="/contact">

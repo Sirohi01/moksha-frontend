@@ -324,7 +324,7 @@ export const schemesConfig: SchemesPageConfig = {
     title: "NEED HELP",
     subtitle: "FOR APPLYING?",
     description: "Dealing with government paperwork can be overwhelming during a crisis. Our trained volunteers will help you navigate the entire process, 100% free.",
-    phone: "1800-123-456",
+    phone: "9220147229",
     email: "schemes@MokshaSewa.org",
     callLabel: "CALL US",
     emailLabel: "EMAIL SUPPORT"

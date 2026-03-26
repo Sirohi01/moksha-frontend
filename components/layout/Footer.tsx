@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, Mail, ArrowUpRight } from "lucide-react";
+import { Phone, Mail, ArrowUpRight, Send } from "lucide-react";
 import { Container } from "@/components/ui/Elements";
 import { layoutConfig } from "@/config/layout.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { intelligenceAPI } from "@/lib/api";
+import { intelligenceAPI, newsletterAPI } from "@/lib/api";
 
 export default function Footer() {
   const { config } = usePageConfig('layout', layoutConfig);
@@ -104,8 +104,73 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Deep Bottom Bar - Tightened margin */}
-        <div className="mt-16 pt-8 border-t border-white/5 flex flex-col lg:flex-row items-center justify-between gap-8">
+        {/* Newsletter Dispatch Portal: Wide Footer Integration */}
+        <div className="mt-20 py-16 border-t border-white/5 relative overflow-hidden group/news">
+          <div className="absolute inset-0 bg-[#7ab800]/5 opacity-0 group-hover/news:opacity-100 transition-opacity duration-1000"></div>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
+            <div className="flex-1 space-y-4 text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
+                <div className="w-2 h-2 bg-[#7ab800] rounded-full shadow-[0_0_15px_rgba(122,184,0,0.6)] animate-pulse"></div>
+                <h4 className="text-[11px] font-black text-white uppercase tracking-[0.5em]">The Sacred Digest</h4>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter leading-none italic">
+                Deploys weekly to <span className="text-[#7ab800]">your inbox.</span>
+              </h3>
+              <p className="text-white/40 text-[12px] font-medium leading-relaxed max-w-xl mx-auto lg:ml-0">
+                Join a global network of souls dedicated to the restoration of dignity. Mission reports, breakthroughs, and stories of service.
+              </p>
+            </div>
+
+            <div className="w-full lg:w-auto">
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.target as HTMLFormElement;
+                  const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+                  const btn = form.querySelector('button');
+                  const span = btn?.querySelector('span');
+                  if (!email || !btn) return;
+                  
+                  try {
+                    btn.disabled = true;
+                    if (span) span.innerText = 'SYNCING...';
+                    await newsletterAPI.subscribe(email, 'footer_portal');
+                    form.reset();
+                    if (span) span.innerText = 'SUBSCRIBED';
+                    btn.classList.replace('bg-[#7ab800]', 'bg-teal-600');
+                    setTimeout(() => { 
+                      if (span) span.innerText = 'SUBSCRIBE'; 
+                      btn.disabled = false;
+                      btn.classList.replace('bg-teal-600', 'bg-[#7ab800]');
+                    }, 5000);
+                  } catch (err: any) {
+                    if (span) span.innerText = 'FAILED';
+                    btn.disabled = false;
+                    setTimeout(() => { if (span) span.innerText = 'SUBSCRIBE'; }, 3000);
+                  }
+                }}
+                className="flex flex-col sm:flex-row gap-3 p-2 bg-white/5 rounded-[2.5rem] border border-white/10 focus-within:border-[#7ab800]/40 focus-within:ring-8 focus-within:ring-[#7ab800]/5 transition-all max-w-md mx-auto shadow-3xl"
+              >
+                <input 
+                  type="email" 
+                  name="email"
+                  placeholder="DEPLOY EMAIL ADDRESS"
+                  className="bg-transparent border-none outline-none text-[12px] font-medium tracking-widest text-white px-8 py-4 w-full placeholder:text-white/20 placeholder:font-black placeholder:uppercase placeholder:tracking-[0.3em]"
+                  required
+                />
+                <button 
+                  type="submit"
+                  className="bg-[#7ab800] text-black px-10 py-4 rounded-[2rem] text-[11px] font-black uppercase tracking-widest hover:bg-[#8cd100] transition-all flex items-center justify-center gap-3 group/btn shadow-xl shadow-[#7ab800]/20"
+                >
+                  <span>SUBSCRIBE</span> <Send size={16} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        {/* Deep Bottom Bar */}
+        <div className="mt-8 pt-8 border-t border-white/5 flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex items-center gap-3 px-4 py-1.5 bg-white/5 rounded-full border border-white/10">
               <div className="w-1.5 h-1.5 rounded-full bg-[#7ab800] animate-pulse" />
