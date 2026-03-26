@@ -17,6 +17,8 @@ export const API_ENDPOINTS = {
   ADMIN_USERS: `${API_BASE_URL}/api/admin/users`,
   ADMIN_ACTIVITIES: `${API_BASE_URL}/api/admin/activities`,
   ADMIN_STATS: `${API_BASE_URL}/api/admin/stats`,
+  ADMIN_EMAIL_LOGS: `${API_BASE_URL}/api/admin/email-logs`,
+
 
   // Form endpoints
   REPORTS: `${API_BASE_URL}/api/reports`,
@@ -175,6 +177,10 @@ export const adminAPI = {
 
   getActivities: async (page = 1, limit = 10) => {
     return apiRequest(`${API_ENDPOINTS.ADMIN_ACTIVITIES}?page=${page}&limit=${limit}`);
+  },
+
+  getEmailLogs: async (page = 1, limit = 20) => {
+    return apiRequest(`${API_ENDPOINTS.ADMIN_EMAIL_LOGS}?page=${page}&limit=${limit}`);
   },
 };
 

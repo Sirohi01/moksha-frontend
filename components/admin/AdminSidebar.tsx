@@ -60,8 +60,10 @@ const getNavigationItems = (role: string): NavigationItem[] => {
     baseItems.push({
       title: 'Intelligence', items: [
         { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
+        { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
       ]
     });
+
   }
 
   return baseItems;

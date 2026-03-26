@@ -94,10 +94,10 @@ export default function AdminLayout({
       <div className="hidden lg:block w-72 shrink-0 h-screen" aria-hidden="true" />
 
       {/* Main Administrative Deck */}
-      <div className="flex-1 flex flex-col transition-all duration-500 min-w-0">
+      <div className="flex-1 h-screen overflow-hidden flex flex-col transition-all duration-500 min-w-0">
         
         {/* Sleek Top Deck (Navbar) */}
-        <header className="sticky top-0 z-40 bg-white/70 backdrop-blur-xl border-b border-navy-50 px-4 sm:px-8 py-5 h-20 flex items-center justify-between">
+        <header className="flex-shrink-0 bg-white/70 backdrop-blur-xl border-b border-navy-50 px-4 sm:px-8 py-5 h-20 flex items-center justify-between">
             <div className="flex items-center gap-4 sm:gap-6">
                 <button onClick={() => setSidebarOpen(prev => !prev)} className="lg:hidden p-2.5 text-navy-950 bg-navy-50 rounded-xl hover:bg-navy-100 transition-all active:scale-90">
                     <Menu className="w-6 h-6" />
@@ -105,7 +105,7 @@ export default function AdminLayout({
                 <div className="flex flex-col">
                     <h1 className="text-[10px] font-black uppercase tracking-widest text-navy-400 italic hidden xs:block">Moksha Admin Platform</h1>
                     <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-lg sm:text-xl font-black text-navy-950 uppercase italic tracking-tighter truncate max-w-[120px] sm:max-w-none py-1 px-2 inline-block">
+                        <span className="text-lg sm:text-xl font-black text-navy-950 uppercase italic tracking-tighter truncate max-w-[120px] sm:max-w-none py-1 px-2 mb-2 inline-block leading-none">
                             {pathname.split('/').pop()?.replace('-', ' ') || 'Dashboard'}
                         </span>
                         <div className="w-1.5 h-1.5 rounded-full bg-gold-600 shadow-[0_0_8px_rgba(184,135,33,0.5)]"></div>
@@ -169,9 +169,11 @@ export default function AdminLayout({
             </div>
         </header>
 
-        {/* Tactical View (Page Content) */}
-        <main className="p-4 sm:p-8 pb-20 w-full animate-fadeIn overflow-x-hidden">
-            {children}
+        {/* Tactical View (Page Content) - Scroll Area Fix */}
+        <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8 custom-scrollbar">
+            <div className="max-w-screen-2xl mx-auto w-full animate-fadeIn pb-24">
+                {children}
+            </div>
         </main>
       </div>
 
@@ -188,7 +190,9 @@ export default function AdminLayout({
             { name: 'Donations', href: '/admin/donations', icon: '💰', gradient: 'from-green-500 to-emerald-600' },
             { name: 'Compliance', href: '/admin/compliance', icon: '🛡️', gradient: 'from-slate-700 to-slate-900' },
             { name: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: '👁️', gradient: 'from-navy-800 to-navy-950' },
+            { name: 'Email Logs', href: '/admin/email-logs', icon: '✉️', gradient: 'from-blue-600 to-indigo-700' },
             { name: 'Content Management', href: '/admin/content', icon: '📂', gradient: 'from-gold-600 to-gold-700' },
+
         ]}
       />
 

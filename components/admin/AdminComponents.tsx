@@ -9,8 +9,6 @@ interface PageHeaderProps {
   icon?: ReactNode;
   children?: ReactNode;
 }
-
-// Page Header Component
 export function PageHeader({ title, description, icon, children }: PageHeaderProps) {
   return (
     <div className="bg-transparent mb-12 animate-fadeIn px-4 sm:px-0">
@@ -23,8 +21,8 @@ export function PageHeader({ title, description, icon, children }: PageHeaderPro
           )}
           <div className="min-w-0">
             <div className="flex items-center gap-2 mb-2">
-                <span className="w-4 h-0.5 bg-gold-600 rounded-full"></span>
-                <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
+              <span className="w-4 h-0.5 bg-gold-600 rounded-full"></span>
+              <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tight leading-[0.9] py-1 px-4 !overflow-visible whitespace-nowrap">{title}</h1>
             {description && (
@@ -56,26 +54,25 @@ export function StatsCard({ title, value, icon, gradient, change, changeType = '
   return (
     <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50 hover:border-gold-500/40 hover:shadow-2xl hover:shadow-gold-500/5 transition-all duration-700 group relative overflow-hidden">
       <div className="absolute top-0 right-0 w-40 h-40 bg-navy-50/50 rounded-full -mr-20 -mt-20 group-hover:scale-125 transition-transform duration-700"></div>
-      
+
       <div className="flex items-start justify-between mb-10 relative z-10">
         <div className={`w-14 h-14 sm:w-16 sm:h-16 bg-navy-950 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-xl border border-white/10 text-gold-500 group-hover:bg-gold-600 group-hover:text-navy-950 transition-colors duration-500`}>
           {typeof icon === 'string' ? <span className="text-xl sm:text-2xl">{icon}</span> : icon}
         </div>
         {change && (
-          <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm ${
-            changeType === 'positive' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
-            changeType === 'negative' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
-            'bg-navy-50 text-navy-600'
-          }`}>
+          <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm ${changeType === 'positive' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+              changeType === 'negative' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
+                'bg-navy-50 text-navy-600'
+            }`}>
             {change}
           </div>
         )}
       </div>
-      
+
       <div className="relative z-10">
         <p className="text-navy-400 text-[10px] font-black uppercase tracking-[0.3em] mb-3 opacity-60 italic">{title}</p>
         <p className="text-4xl sm:text-5xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors py-1">
-            {typeof value === 'number' ? value.toLocaleString() : value}
+          {typeof value === 'number' ? value.toLocaleString() : value}
         </p>
       </div>
     </div>
@@ -94,18 +91,18 @@ interface ActionButtonProps {
   icon?: ReactNode;
 }
 
-export function ActionButton({ 
-  onClick, 
-  href, 
-  variant = 'primary', 
-  size = 'md', 
-  children, 
-  disabled = false, 
+export function ActionButton({
+  onClick,
+  href,
+  variant = 'primary',
+  size = 'md',
+  children,
+  disabled = false,
   loading = false,
-  icon 
+  icon
 }: ActionButtonProps) {
   const baseClasses = "inline-flex items-center justify-center font-black uppercase tracking-widest rounded-2xl transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative group";
-  
+
   const variants = {
     primary: "bg-navy-950 text-gold-500 hover:bg-gold-600 hover:text-navy-950 shadow-navy-200",
     secondary: "bg-white text-navy-950 border-2 border-navy-50 hover:border-gold-600 hover:text-gold-600",
@@ -143,8 +140,8 @@ export function ActionButton({
   }
 
   return (
-    <button 
-      onClick={onClick} 
+    <button
+      onClick={onClick}
       disabled={disabled || loading}
       className={classes}
     >
@@ -174,7 +171,7 @@ export function DataTable({ columns, data, loading = false, emptyMessage = "No d
       <div className="bg-white rounded-[2rem] border border-navy-50 p-12 shadow-sm">
         <div className="flex flex-col items-center justify-center gap-6 animate-pulse">
           <div className="w-16 h-16 bg-navy-50 rounded-2xl flex items-center justify-center">
-             <div className="w-8 h-8 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin"></div>
           </div>
           <p className="text-[10px] font-black text-navy-400 uppercase tracking-[0.3em]">Decrypting Data Streams...</p>
         </div>
@@ -204,7 +201,7 @@ export function DataTable({ columns, data, loading = false, emptyMessage = "No d
                 <td colSpan={columns.length} className="px-8 py-24 text-center">
                   <div className="flex flex-col items-center gap-6 opacity-30">
                     <div className="w-20 h-20 bg-navy-50 rounded-[2rem] flex items-center justify-center">
-                        <span className="text-4xl text-navy-950 font-black italic">!</span>
+                      <span className="text-4xl text-navy-950 font-black italic">!</span>
                     </div>
                     <p className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] italic">{emptyMessage}</p>
                   </div>
@@ -235,7 +232,7 @@ export function LoadingSpinner({ message }: { size?: 'sm' | 'md' | 'lg', message
       <div className="relative">
         <div className="w-20 h-20 border-4 border-gold-600/10 border-t-gold-600 rounded-full animate-spin shadow-[0_0_20px_rgba(184,135,33,0.1)]"></div>
         <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-2 h-2 bg-navy-950 rounded-full animate-ping"></div>
+          <div className="w-2 h-2 bg-navy-950 rounded-full animate-ping"></div>
         </div>
       </div>
       {message && (
@@ -264,9 +261,9 @@ export function Alert({ type, title, message, onClose }: AlertProps) {
   return (
     <div className={`rounded-2xl border-2 p-6 transition-all duration-500 animate-fadeIn ${styles[type]} shadow-sm mb-8 relative group overflow-hidden`}>
       <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-100 transition-opacity">
-          {onClose && (
-            <button onClick={onClose} className="text-current hover:rotate-90 transition-transform">✕</button>
-          )}
+        {onClose && (
+          <button onClick={onClose} className="text-current hover:rotate-90 transition-transform">✕</button>
+        )}
       </div>
       <div className="flex items-center gap-5">
         <div className="w-10 h-10 bg-current/10 rounded-xl flex items-center justify-center font-black">
@@ -293,15 +290,15 @@ interface FormInputProps {
   disabled?: boolean;
 }
 
-export function FormInput({ 
-  label, 
-  type = 'text', 
-  value, 
-  onChange, 
-  placeholder, 
-  required = false, 
-  error, 
-  disabled = false 
+export function FormInput({
+  label,
+  type = 'text',
+  value,
+  onChange,
+  placeholder,
+  required = false,
+  error,
+  disabled = false
 }: FormInputProps) {
   return (
     <div className="mb-4">
@@ -315,11 +312,10 @@ export function FormInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${
-          error 
-            ? 'border-red-300 bg-red-50' 
+        className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${error
+            ? 'border-red-300 bg-red-50'
             : 'border-gray-300 bg-white hover:border-gray-400'
-        } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
       />
       {error && (
         <p className="mt-2 text-sm text-red-600">{error}</p>
@@ -351,7 +347,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
         <div className="fixed inset-0 transition-opacity bg-black bg-opacity-50" onClick={onClose}></div>
-        
+
         <div className={`inline-block w-full ${sizes[size]} p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-2xl`}>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-900">{title}</h3>
