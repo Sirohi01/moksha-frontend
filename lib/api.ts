@@ -255,6 +255,12 @@ export const formsAPI = {
     if (status) params.append('status', status);
     return apiRequest(`${API_ENDPOINTS.DONATIONS}?${params}`);
   },
+  getPublicReports: async (page = 1, limit = 100) => {
+    return apiRequest(`${API_ENDPOINTS.REPORTS}/public/list?page=${page}&limit=${limit}`);
+  },
+  getPublicStats: async () => {
+    return apiRequest(`${API_ENDPOINTS.REPORTS}/public/stats`);
+  },
   updateDonationStatus: async (id: string, status: string) => {
     return apiRequest(`${API_ENDPOINTS.DONATIONS}/${id}/status`, {
       method: 'PUT',

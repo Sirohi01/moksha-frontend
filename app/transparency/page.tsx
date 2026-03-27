@@ -1,25 +1,64 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import type { Metadata } from "next";
 import { SectionHeader, Container, Badge } from "@/components/ui/Elements";
-import { mockCremationRecords, mockStats } from "@/lib/mockData";
-import { Download, ExternalLink } from "lucide-react";
+import { Download, ExternalLink, Shield } from "lucide-react";
 import Button from "@/components/ui/Button";
 import { transparencyConfig } from "@/config/transparency.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
+import { formsAPI, adminAPI } from "@/lib/api";
 
-function statusBadge(record: { certificateNumber: string }, activeConfig: any) {
-  return <Badge variant="green">{activeConfig.records.certificateIssuedBadge}</Badge>;
+interface Report {
+  _id: string;
+  caseNumber: string;
+  exactLocation: string;
+  dateFound: string;
+  resolvedAt?: string;
+  area: string;
+  city: string;
+  state: string;
+  hospitalName?: string;
+  policeStationName?: string;
+  status: string;
 }
 
 export default function TransparencyPage() {
-  const { config, loading, error } = usePageConfig('transparency', transparencyConfig);
+  const { config, loading: configLoading, error: configError } = usePageConfig('transparency', transparencyConfig);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [loadingData, setLoadingData] = useState(true);
   
   // Use fallback config if dynamic config is null
   const activeConfig = config || transparencyConfig;
 
-  // Handle loading and error states after all hooks
-  if (loading) {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoadingData(true);
+        // Fetch only resolved reports using public-safe endpoint
+        const reportsRes = await formsAPI.getPublicReports(1, 100);
+        if (reportsRes.success) {
+          setReports(reportsRes.data);
+        }
+
+        // Fetch specialized public stats for transparency
+        const statsRes = await formsAPI.getPublicStats();
+        if (statsRes.success) {
+          setStats(statsRes.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch transparency data:', err);
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Handle loading state
+  if (configLoading || loadingData) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
@@ -27,12 +66,8 @@ export default function TransparencyPage() {
     );
   }
 
-  if (error) {
-    console.error('Failed to load Transparency page config:', error);
-    // Fallback to static config
-  }
+  const HeroIcon = Shield; // Fallback to Shield icon
 
-  const HeroIcon = getIcon(activeConfig.hero.icon);
   return (
     <>
       <section className="bg-gradient-to-br from-stone-900 to-stone-800 text-white py-12 md:py-16 lg:py-20">
@@ -42,7 +77,7 @@ export default function TransparencyPage() {
               <HeroIcon className="w-7 h-7 text-green-400" />
             </div>
             <div>
-              <span className="text-saffron-400 text-sm font-medium tracking-widest uppercase">{activeConfig.hero.badge}</span>
+              <span className="text-amber-500 text-sm font-medium tracking-widest uppercase">{activeConfig.hero.badge}</span>
               <h1 className="font-serif text-4xl md:text-5xl font-bold mt-2 mb-3">
                 {activeConfig.hero.title}
               </h1>
@@ -55,17 +90,17 @@ export default function TransparencyPage() {
       </section>
 
       {/* Summary stats */}
-      <section className="py-10 bg-saffron-50 border-b border-saffron-100">
+      <section className="py-10 bg-amber-50 border-b border-amber-100">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { label: activeConfig.stats.labels.totalCremations, value: mockStats.totalCremations.toLocaleString() },
-              { label: activeConfig.stats.labels.certificatesIssued, value: (mockStats.totalCremations - 12).toLocaleString() },
-              { label: activeConfig.stats.labels.activeCases, value: mockStats.activeCases.toString() },
-              { label: activeConfig.stats.labels.citiesCovered, value: mockStats.citiesCovered.toString() },
+              { label: activeConfig.stats.labels.totalCremations, value: (stats?.resolved || 0).toLocaleString() },
+              { label: activeConfig.stats.labels.certificatesIssued, value: (stats?.resolved || 0).toLocaleString() },
+              { label: activeConfig.stats.labels.activeCases, value: (stats?.pending || 0).toString() },
+              { label: activeConfig.stats.labels.citiesCovered, value: "12+" }, // Dynamic cities if available
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <p className="font-serif text-3xl font-bold text-saffron-600">{s.value}</p>
+                <p className="font-serif text-3xl font-bold text-amber-600">{s.value}</p>
                 <p className="text-stone-600 text-sm mt-1">{s.label}</p>
               </div>
             ))}
@@ -78,9 +113,9 @@ export default function TransparencyPage() {
         <Container>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
             <h2 className="font-serif text-2xl font-bold text-stone-800">{activeConfig.records.title}</h2>
-            <Button variant="outline" size="sm">
+            {/* <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" /> {activeConfig.records.downloadButton}
-            </Button>
+            </Button> */}
           </div>
 
           <div className="overflow-x-auto rounded-xl border border-stone-200 shadow-sm">
@@ -95,44 +130,50 @@ export default function TransparencyPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
-                {mockCremationRecords.map((rec, idx) => (
-                  <tr key={rec.id} className={`hover:bg-saffron-50 transition-colors ${idx % 2 === 0 ? "" : "bg-stone-50/50"}`}>
+                {reports.length > 0 ? reports.map((rec, idx) => (
+                  <tr key={rec._id} className={`hover:bg-amber-50 transition-colors ${idx % 2 === 0 ? "" : "bg-stone-50/50"}`}>
                     <td className="px-4 py-3">
-                      <span className="font-mono text-xs font-bold text-saffron-700 bg-saffron-50 px-2 py-1 rounded">
-                        {rec.bodyId}
+                      <span className="font-mono text-xs font-bold text-amber-700 bg-amber-50 px-2 py-1 rounded">
+                        {rec.caseNumber}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-stone-700 max-w-[180px]">{rec.locationFound}</td>
-                    <td className="px-4 py-3 text-stone-600 whitespace-nowrap">{rec.dateFound}</td>
-                    <td className="px-4 py-3 text-stone-600 whitespace-nowrap">{rec.cremationDate}</td>
-                    <td className="px-4 py-3 text-stone-600 max-w-[160px]">{rec.cremationGround}</td>
-                    <td className="px-4 py-3 text-stone-600 whitespace-nowrap">{rec.officerInCharge}</td>
-                    <td className="px-4 py-3 font-mono text-xs text-stone-600">{rec.certificateNumber}</td>
+                    <td className="px-4 py-3 text-stone-700 max-w-[180px]">{rec.exactLocation}</td>
+                    <td className="px-4 py-3 text-stone-600 whitespace-nowrap">{new Date(rec.dateFound).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-stone-600 whitespace-nowrap">{rec.resolvedAt ? new Date(rec.resolvedAt).toLocaleDateString() : 'Pending'}</td>
+                    <td className="px-4 py-3 text-stone-600 max-w-[160px]">{rec.city}, {rec.state}</td>
+                    <td className="px-4 py-3 text-stone-600 whitespace-nowrap">{rec.policeStationName || 'In Search'}</td>
+                    <td className="px-4 py-3 font-mono text-xs text-stone-600">{rec._id.substring(0, 8).toUpperCase()}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <Badge variant="green">{activeConfig.records.statusBadge}</Badge>
                         <button
-                          aria-label={`${activeConfig.records.viewCertificateLabel} ${rec.bodyId}`}
-                          className="text-saffron-600 hover:text-saffron-800"
+                          aria-label={`${activeConfig.records.viewCertificateLabel} ${rec.caseNumber}`}
+                          className="text-amber-600 hover:text-amber-800"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))}
+                )) : (
+                  <tr>
+                    <td colSpan={activeConfig.records.tableHeaders.length} className="px-4 py-10 text-center text-stone-500">
+                      No resolved records found yet.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
 
           <p className="text-stone-500 text-xs mt-4 text-center">
-            {activeConfig.records.showingRecordsText} {mockCremationRecords.length} records · {activeConfig.records.footerText}
+            {activeConfig.records.showingRecordsText} {reports.length} records · {activeConfig.records.footerText}
           </p>
         </Container>
       </section>
 
       {/* Monthly report note */}
-      <section className="py-10 bg-green-50 border-t border-green-100">
+      {/* <section className="py-10 bg-green-50 border-t border-green-100">
         <Container size="md">
           <div className="text-center">
             <h3 className="font-serif text-xl font-bold text-stone-800 mb-2">
@@ -146,7 +187,7 @@ export default function TransparencyPage() {
             </Button>
           </div>
         </Container>
-      </section>
+      </section> */}
     </>
   );
 }
