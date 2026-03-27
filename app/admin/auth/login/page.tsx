@@ -22,6 +22,13 @@ export default function AdminLogin() {
   const router = useRouter();
 
   useEffect(() => {
+    const token = localStorage.getItem('adminToken');
+    if (token) {
+      router.push('/admin/dashboard');
+    }
+  }, [router]);
+
+  useEffect(() => {
     let timer: NodeJS.Timeout;
     if (countdown > 0) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
