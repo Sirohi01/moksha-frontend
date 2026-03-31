@@ -174,9 +174,9 @@ export default function PublicReceiptPage() {
               Thank you for your generous donation. Your contribution helps us provide dignified services to those in need.
             </p>
             <div className="flex items-center justify-center space-x-6 text-sm text-gray-500">
-              <span>📧 info@moksha-seva.org</span>
-              <span>🌐 www.moksha-seva.org</span>
-              <span>📞 [Your Phone Number]</span>
+              <span>📧 info@mokshasewa.org</span>
+              <span>🌐 www.mokshasewa.org</span>
+              <span>📞 9220147229</span>
             </div>
           </div>
         </div>
