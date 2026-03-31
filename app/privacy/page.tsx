@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
                                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#7ab800]/10 blur-3xl rounded-full" />
                                     <h3 className="text-sm font-black uppercase tracking-widest text-[#7ab800] mb-4">Grievance Officer</h3>
                                     <p className="text-stone-400 text-xs leading-relaxed mb-6">If you have any concerns regarding your data, contact our Nodal Officer.</p>
-                                    <p className="font-mono text-[11px] text-white">trust@MokshaSewa.org</p>
+                                    <p className="font-mono text-[11px] text-white">help@mokshasewa.org</p>
                                 </div>
                             </div>
                         </div>

@@ -192,7 +192,7 @@ export default function RefundPolicyPage() {
                     {
                       step: "1",
                       title: "Submit Refund Request",
-                      description: "Send an email to refunds@MokshaSewa.org with the subject line 'Refund Request - [Transaction ID]'",
+                      description: "Send an email to info@mokshasewa.org with the subject line 'Refund Request - [Transaction ID]'",
                       details: [
                         "Include your full name as per donation",
                         "Transaction ID / Receipt number",
@@ -404,8 +404,8 @@ export default function RefundPolicyPage() {
                   <div>
                     <h3 className="font-semibold text-stone-800 mb-1">Email Support</h3>
                     <p className="text-sm text-stone-600 mb-2">For refund requests and queries</p>
-                    <a href="mailto:refunds@MokshaSewa.org" className="text-saffron-600 font-medium hover:underline">
-                      refunds@MokshaSewa.org
+                    <a href="mailto:info@mokshasewa.org" className="text-saffron-600 font-medium hover:underline">
+                      info@mokshasewa.org
                     </a>
                     <p className="text-xs text-stone-500 mt-1">Response within 24-48 hours</p>
                   </div>
@@ -419,7 +419,7 @@ export default function RefundPolicyPage() {
                     <h3 className="font-semibold text-stone-800 mb-1">Phone Support</h3>
                     <p className="text-sm text-stone-600 mb-2">Speak to our support team</p>
                     <a href="tel:+911234567890" className="text-saffron-600 font-medium hover:underline">
-                      +91 123 456 7890
+                      9220147229
                     </a>
                     <p className="text-xs text-stone-500 mt-1">Mon-Sat, 9 AM - 6 PM IST</p>
                   </div>

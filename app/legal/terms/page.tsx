@@ -223,7 +223,7 @@ export default function TermsPage() {
               </p>
               <div className="space-y-2 text-stone-600">
                 <p><strong>Email:</strong> <a href="mailto:legal@MokshaSewa.org" className="text-saffron-600 underline">legal@MokshaSewa.org</a></p>
-                <p><strong>Phone:</strong> <a href="tel:+911234567890" className="text-saffron-600 underline">+91 123 456 7890</a></p>
+                <p><strong>Phone:</strong> <a href="tel:+911234567890" className="text-saffron-600 underline">9220147229</a></p>
                 <p><strong>Address:</strong> Moksha Sewa, [Address], India</p>
               </div>
             </div>
