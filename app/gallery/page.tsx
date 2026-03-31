@@ -207,12 +207,7 @@ export default function GalleryPage() {
                     className="fixed inset-0 z-[9999] bg-navy-950/98 backdrop-blur-3xl flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-500"
                     onClick={() => setSelectedImg(null)}
                 >
-                    <button
-                        onClick={() => setSelectedImg(null)}
-                        className="fixed top-8 right-8 w-14 h-14 bg-white/5 text-white rounded-full flex items-center justify-center hover:bg-white hover:text-navy-950 transition-all shadow-2xl z-[10000] border border-white/10 backdrop-blur-xl group"
-                    >
-                        <X className="w-7 h-7 group-hover:rotate-90 transition-transform duration-500" />
-                    </button>
+
 
                     <div
                         className="relative max-w-[95vw] max-h-[90vh] w-full flex flex-col md:flex-row bg-white rounded-[3rem] overflow-hidden shadow-[0_100px_200px_-50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-500"
