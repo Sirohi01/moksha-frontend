@@ -200,7 +200,7 @@ export default function AdminLogin() {
                 href="tel:+919773992516"
                 className="text-saffron-600 hover:text-saffron-700 font-medium hover:underline transition-colors"
               >
-                +91 97739 92516
+                9220147229
               </a>
             </div>
           </div>
