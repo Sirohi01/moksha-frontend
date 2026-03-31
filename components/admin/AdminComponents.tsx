@@ -91,7 +91,9 @@ interface ActionButtonProps {
   loading?: boolean;
   icon?: ReactNode;
   className?: string;
+  type?: 'button' | 'submit' | 'reset';
 }
+
 
 export function ActionButton({
   onClick,
@@ -102,8 +104,10 @@ export function ActionButton({
   disabled = false,
   loading = false,
   icon,
-  className = ""
+  className = "",
+  type = 'button'
 }: ActionButtonProps) {
+
   const baseClasses = "inline-flex items-center justify-center font-black uppercase tracking-widest rounded-2xl transition-all duration-300 active:scale-95 shadow-lg overflow-hidden relative group";
 
   const variants = {
@@ -147,9 +151,11 @@ export function ActionButton({
       onClick={onClick}
       disabled={disabled || loading}
       className={classes}
+      type={type}
     >
       {content}
     </button>
+
   );
 }
 
