@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { getSafeSrc } from '@/lib/utils';
 
 interface Video {
   _id: string;
@@ -217,7 +218,7 @@ export default function VideoManager({ onVideoSelect }: VideoManagerProps) {
               <div className="aspect-video bg-gray-100 relative group cursor-pointer"
                    onClick={() => onVideoSelect ? onVideoSelect(video) : setSelectedVideo(video)}>
                 <Image
-                  src={video.thumbnailUrl}
+                  src={getSafeSrc(video.thumbnailUrl)}
                   alt={video.title}
                   className="w-full h-full object-cover"
                   width={400}

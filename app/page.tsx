@@ -16,6 +16,18 @@ export default function HomePage() {
   const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
   const config = dynamicConfig || homepageConfig;
 
+  // Robust Image Source Resolver for safe landing page previews
+  const getSafeSrc = (imgSource: any) => {
+    if (!imgSource) return '';
+    if (typeof imgSource === 'string') return imgSource;
+    if (typeof imgSource === 'object') {
+      if (typeof imgSource.src === 'string') return imgSource.src;
+      // Handle deeper nesting if it occurs during recursive mapping
+      if (typeof imgSource.src === 'object') return getSafeSrc(imgSource.src);
+    }
+    return '';
+  };
+
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentLocationSlide, setCurrentLocationSlide] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -100,7 +112,7 @@ export default function HomePage() {
             )}
           >
             <Image
-              src={src}
+              src={getSafeSrc(src)}
               alt={config.labels?.heroAltText || "Moksha Sewa - Dignified Final Journey"}
               fill
               className="object-cover"
@@ -236,7 +248,7 @@ export default function HomePage() {
                   {/* Main image */}
                   <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 backdrop-blur-sm">
                     <Image
-                      src={config.about.image}
+                      src={getSafeSrc(config.about.image)}
                       alt="Moksha Sewa - Dignified Final Journey"
                       fill
                       className="object-cover"
@@ -328,7 +340,7 @@ export default function HomePage() {
                     {/* Service image */}
                     <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-md">
                       <Image
-                        src={p.image}
+                        src={getSafeSrc(p.image)}
                         alt={p.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -387,7 +399,7 @@ export default function HomePage() {
                           )}
                         >
                           <Image
-                            src={slide.src}
+                            src={getSafeSrc(slide.src)}
                             alt={slide.title}
                             fill
                             className="object-cover"
@@ -573,7 +585,7 @@ export default function HomePage() {
               <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4">
                 {config.storiesInMotion.stories.map((story, i) => (
                   <div key={i} className="relative min-w-[280px] md:min-w-[400px] aspect-[16/10] rounded-[2rem] overflow-hidden group shadow-lg">
-                    <Image src={story.image} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <Image src={getSafeSrc(story.image)} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                     <div className="absolute bottom-5 left-6">
                       <p className="text-white font-black uppercase text-[10px] tracking-widest">{story.title}</p>
                     </div>
@@ -593,7 +605,7 @@ export default function HomePage() {
       <section className="relative py-24 md:py-32 overflow-hidden bg-stone-950">
         <div className="absolute inset-0 z-0">
           <Image
-            src={config.joinMission.backgroundImage}
+            src={getSafeSrc(config.joinMission.backgroundImage)}
             alt={config.labels?.joinMissionAltText || "Join Our Mission"}
             fill
             className="object-cover"
@@ -729,7 +741,7 @@ export default function HomePage() {
                     )}>
                       <div className="relative aspect-[4/3] overflow-hidden">
                         <Image
-                          src={c.image}
+                          src={getSafeSrc(c.image)}
                           alt={c.title}
                           fill
                           className={cn(

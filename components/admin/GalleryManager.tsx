@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Upload, Search, Grid, List, Edit, Trash2, Eye, Download } from 'lucide-react';
+import { Upload, Search, Grid, List, Trash2, Download, ArrowRight, X, Maximize2, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 import LazyImage from '@/components/ui/LazyImage';
 import { cn } from '@/lib/utils';
 import { galleryAPI } from '@/lib/api';
@@ -36,7 +37,7 @@ export default function GalleryManager() {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [uploading, setUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<GalleryImage | null>(null);
 
   useEffect(() => {
     fetchImages();
@@ -46,14 +47,15 @@ export default function GalleryManager() {
     try {
       setLoading(true);
       setError('');
-      
+
       const data = await galleryAPI.getImages(
-        currentPage, 
-        20, 
+        currentPage,
+        20,
         selectedCategory === 'all' ? undefined : selectedCategory,
-        searchTerm || undefined
+        searchTerm || undefined,
+        true // isAdmin = true
       );
-      
+
       setImages(data.data.images || []);
       setTotalPages(data.data.pages || 1);
     } catch (error: any) {
@@ -65,71 +67,22 @@ export default function GalleryManager() {
   };
 
   const handleSelectImage = (imageId: string) => {
-    setSelectedImages(prev => 
-      prev.includes(imageId) 
+    setSelectedImages(prev =>
+      prev.includes(imageId)
         ? prev.filter(id => id !== imageId)
         : [...prev, imageId]
     );
   };
 
   const handleDeleteImage = async (imageId: string) => {
-    if (!confirm('Are you sure you want to delete this image?')) return;
-
     try {
-      await galleryAPI.deleteImage(imageId);
+      // Optimistic update
       setImages(prev => prev.filter(img => img.id !== imageId));
       setSelectedImages(prev => prev.filter(id => id !== imageId));
-      alert('Image deleted successfully');
+      await galleryAPI.deleteImage(imageId);
     } catch (error: any) {
       console.error('Failed to delete image:', error);
-      alert('Failed to delete image: ' + error.message);
-    }
-  };
-
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Basic validation
-    if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size must be less than 10MB');
-      return;
-    }
-
-    const title = prompt('Enter image title:');
-    if (!title) return;
-
-    const description = prompt('Enter image description:') || '';
-    const category = prompt('Enter category (services, community, events, volunteers):') || 'services';
-
-    try {
-      setUploading(true);
-      
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('title', title);
-      formData.append('description', description);
-      formData.append('category', category);
-      formData.append('alt', title);
-
-      const result = await galleryAPI.uploadImage(formData);
-      
-      // Add new image to the beginning of the list
-      setImages(prev => [result.data, ...prev]);
-      alert('Image uploaded successfully');
-      
-      // Reset file input
-      event.target.value = '';
-    } catch (error: any) {
-      console.error('Failed to upload image:', error);
-      alert('Failed to upload image: ' + error.message);
-    } finally {
-      setUploading(false);
+      fetchImages(); // Revert on failure
     }
   };
 
@@ -138,71 +91,57 @@ export default function GalleryManager() {
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading gallery...</p>
+          <p className="text-navy-400 font-bold uppercase tracking-[0.2em] italic">Fetching Gallery Data...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Gallery Management</h2>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage your gallery images and media content
+    <div className="space-y-10 py-6 relative">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-l-4 border-gold-500 pl-8">
+        <div className="space-y-1">
+          <h2 className="text-4xl font-black text-navy-950 uppercase italic tracking-tighter">Project Gallery</h2>
+          <p className="text-navy-500 font-bold text-xs uppercase tracking-[0.2em] italic">
+            Manage and curate the visual assets for the project.
           </p>
         </div>
-        
-        <div className="relative">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleUpload}
-            className="hidden"
-            id="upload-input"
-            disabled={uploading}
-          />
-          <label
-            htmlFor="upload-input"
-            className={cn(
-              "flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer",
-              uploading && "opacity-50 cursor-not-allowed"
-            )}
-          >
-            <Upload className="w-4 h-4" />
-            {uploading ? 'Uploading...' : 'Upload Images'}
-          </label>
-        </div>
+
+        <Link
+          href="/admin/gallery/upload"
+          className="flex items-center gap-3 px-10 py-5 bg-navy-950 text-gold-500 rounded-[2rem] hover:bg-gold-600 hover:text-navy-950 transition-all font-black uppercase tracking-widest shadow-2xl active:scale-95 group"
+        >
+          <Upload className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+          Upload Asset
+          <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+        </Link>
       </div>
 
-      {/* Filters and Controls */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between">
-        <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search */}
+      {/* Control Bar */}
+      <div className="flex flex-col lg:flex-row gap-6 justify-between items-center bg-white p-8 rounded-[3rem] border border-navy-50 shadow-sm">
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-200" />
             <input
               type="text"
-              placeholder="Search images..."
+              placeholder="SEARCH BY TITLE..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="pl-12 pr-6 py-4 bg-navy-50/30 border-2 border-transparent focus:border-gold-500 rounded-2xl text-navy-950 placeholder:text-navy-200 font-bold text-xs uppercase tracking-widest focus:outline-none transition-all w-full sm:w-72"
             />
           </div>
 
-          {/* Category Filter */}
           <select
             value={selectedCategory}
             onChange={(e) => {
               setSelectedCategory(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-8 py-4 bg-navy-50/30 border-2 border-transparent focus:border-gold-500 rounded-2xl font-black text-[10px] text-navy-950 uppercase tracking-[0.2em] focus:outline-none transition-all appearance-none cursor-pointer pr-12 min-w-[200px]"
           >
             {categories.map((category) => (
               <option key={category.value} value={category.value}>
@@ -212,16 +151,16 @@ export default function GalleryManager() {
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* View Mode Toggle */}
-          <div className="flex border border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden">
+        <div className="flex items-center gap-6">
+          <p className="text-[10px] font-black text-navy-300 uppercase tracking-widest italic">{images.length} Assets Found</p>
+          <div className="flex bg-navy-50 p-1.5 rounded-2xl">
             <button
               onClick={() => setViewMode('grid')}
               className={cn(
-                'p-2 transition-colors',
+                'p-3 rounded-xl transition-all duration-300',
                 viewMode === 'grid'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  ? 'bg-navy-950 text-gold-500 shadow-lg'
+                  : 'text-navy-300 hover:text-navy-950'
               )}
             >
               <Grid className="w-4 h-4" />
@@ -229,10 +168,10 @@ export default function GalleryManager() {
             <button
               onClick={() => setViewMode('list')}
               className={cn(
-                'p-2 transition-colors',
+                'p-3 rounded-xl transition-all duration-300',
                 viewMode === 'list'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  ? 'bg-navy-950 text-gold-500 shadow-lg'
+                  : 'text-navy-300 hover:text-navy-950'
               )}
             >
               <List className="w-4 h-4" />
@@ -241,121 +180,90 @@ export default function GalleryManager() {
         </div>
       </div>
 
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center">
-            <span className="text-red-500 text-xl mr-3">⚠️</span>
-            <div>
-              <h3 className="text-red-800 font-medium">Error Loading Images</h3>
-              <p className="text-red-600 text-sm mt-1">{error}</p>
-            </div>
-          </div>
-          <button
-            onClick={fetchImages}
-            className="mt-3 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      )}
-
-      {/* Stats */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {images.length} images
-            </span>
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            {selectedImages.length > 0 && `${selectedImages.length} selected`}
-          </div>
-        </div>
-      </div>
-
-      {/* Images Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      {/* Image Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         {images.map((image) => (
           <div
             key={image.id}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden group"
+            className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(20,20,35,0.02)] border border-navy-50 overflow-hidden group hover:border-gold-500 transition-all duration-500 flex flex-col"
           >
-            {/* Image */}
-            <div className="relative aspect-video">
+            {/* Uniform Aspect Ratio Container */}
+            <div className="relative aspect-[4/3] sm:aspect-square overflow-hidden bg-navy-50">
               <LazyImage
                 src={image.src}
                 alt={image.alt}
-                width={400}
-                height={225}
-                className="w-full h-full object-cover"
+                width={800}
+                height={800}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
-              
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button className="p-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors">
-                  <Eye className="w-4 h-4" />
-                </button>
-                <button className="p-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors">
-                  <Edit className="w-4 h-4" />
-                </button>
-                <button className="p-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-colors">
-                  <Download className="w-4 h-4" />
-                </button>
-                <button 
+
+              {/* Actions Overlay */}
+              <div className="absolute inset-0 bg-navy-950/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
+
+                <button
                   onClick={() => handleDeleteImage(image.id)}
-                  className="p-2 bg-red-500/80 backdrop-blur-sm rounded-lg text-white hover:bg-red-600/80 transition-colors"
+                  className="w-14 h-14 bg-white shadow-2xl rounded-2xl text-rose-600 hover:bg-rose-600 hover:text-white hover:scale-110 active:scale-95 transition-all flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 duration-500 delay-100"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-6 h-6" />
                 </button>
               </div>
 
               {/* Selection Checkbox */}
-              <div className="absolute top-2 left-2">
+              <div className="absolute top-6 left-6">
                 <input
                   type="checkbox"
                   checked={selectedImages.includes(image.id)}
                   onChange={() => handleSelectImage(image.id)}
-                  className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500"
+                  className="w-6 h-6 text-gold-600 bg-white/80 border-none rounded-lg focus:ring-gold-500 cursor-pointer shadow-lg backdrop-blur-sm"
                 />
+              </div>
+
+              {/* Category Badge */}
+              <div className="absolute top-6 right-6">
+                <span className="px-3 py-1 bg-gold-500 text-navy-950 text-[9px] font-black uppercase tracking-widest rounded-lg shadow-lg">
+                  {image.category}
+                </span>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="p-4">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-1 truncate">
+            <div className="p-8 space-y-4 flex-grow">
+              <div className="flex items-center gap-2 text-gold-600 mb-1">
+                <div className="w-1 h-1 bg-gold-600 rounded-full"></div>
+                <p className="text-[9px] font-bold uppercase tracking-widest">Moksha Sewa Project</p>
+              </div>
+              <h3 className="font-black text-navy-950 text-sm uppercase tracking-tight truncate group-hover:text-gold-600 transition-colors leading-none">
                 {image.title}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 line-clamp-2">
-                {image.description}
+              <p className="text-[10px] font-bold text-navy-600/60 leading-relaxed line-clamp-2 uppercase tracking-wide">
+                {image.description || 'No detailed context available for this project asset.'}
               </p>
-              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-                <span className="capitalize">{image.category}</span>
-                <span>{image.size}</span>
+              <div className="pt-4 flex items-center justify-between border-t border-navy-50">
+                <span className="text-[9px] font-black text-navy-300 uppercase tracking-widest italic">{image.uploadDate ? new Date(image.uploadDate).toLocaleDateString() : 'N/A'}</span>
+                <span className="text-[9px] font-black text-gold-600 uppercase tracking-widest">Archive Asset</span>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Pagination */}
+      {/* Pagination Bar */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-700">
-            Page {currentPage} of {totalPages}
-          </div>
-          <div className="flex space-x-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-8 bg-white border border-navy-50 rounded-[2.5rem] shadow-sm mt-10">
+          <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
+            Displaying Page <span className="text-gold-600 text-lg mx-1">{currentPage}</span> of {totalPages}
+          </p>
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-8 py-4 border border-navy-100 rounded-2xl font-black text-[10px] uppercase tracking-widest text-navy-950 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 transition-all shadow-sm"
             >
               Previous
             </button>
             <button
               onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
-              className="px-3 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              className="px-8 py-4 bg-navy-950 text-gold-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gold-600 hover:text-navy-950 shadow-xl disabled:opacity-20 transition-all shadow-navy-100/20"
             >
               Next
             </button>
@@ -363,10 +271,76 @@ export default function GalleryManager() {
         </div>
       )}
 
+      {/* Empty State */}
       {images.length === 0 && !loading && (
-        <div className="text-center py-12">
-          <span className="text-gray-400 text-4xl">🖼️</span>
-          <p className="text-gray-500 mt-2">No images found</p>
+        <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-navy-50 border-dashed">
+          <p className="text-xs font-black text-navy-300 uppercase tracking-[0.4em] italic mb-6">No assets captured in this sector yet.</p>
+          <Link href="/admin/gallery/upload" className="inline-flex items-center gap-3 text-gold-600 font-black uppercase text-[10px] tracking-widest hover:text-navy-950 transition-all py-3 px-8 bg-gold-50 rounded-2xl border border-gold-100">
+            Initiate First Capture <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      )}
+
+      {/* High-Z-Index Image Preview Modal */}
+      {previewImage && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-navy-950/95 backdrop-blur-2xl animate-in fade-in duration-500 p-4 md:p-12">
+          {/* Close Button - Placed well away from navbar corners */}
+          <button
+            onClick={() => setPreviewImage(null)}
+            className="absolute top-10 right-10 z-[10000] w-14 h-14 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95 border border-white/20 backdrop-blur-md"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div className="relative w-full max-w-6xl aspect-video md:aspect-auto md:h-[80vh] flex flex-col md:flex-row bg-white rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] border border-white/20 animate-in zoom-in-95 duration-500">
+            {/* Image Side */}
+            <div className="flex-grow bg-black relative flex items-center justify-center overflow-hidden">
+              <img
+                src={previewImage.src}
+                alt={previewImage.alt}
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            {/* Info Side */}
+            <div className="w-full md:w-96 p-10 flex flex-col justify-between bg-white border-l border-navy-50">
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <span className="px-3 py-1 bg-gold-100 text-gold-600 text-[9px] font-black uppercase tracking-widest rounded-lg">
+                    {previewImage.category}
+                  </span>
+                  <h3 className="text-2xl font-black text-navy-950 uppercase italic tracking-tighter leading-tight">
+                    {previewImage.title}
+                  </h3>
+                </div>
+
+                <p className="text-xs font-bold text-navy-600/80 leading-relaxed uppercase tracking-wide">
+                  {previewImage.description || 'No detailed context provided for this archive asset.'}
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 pt-6 border-t border-navy-50">
+                  <div>
+                    <p className="text-[8px] font-black text-navy-300 uppercase tracking-widest mb-1">Dimensions</p>
+                    <p className="text-[10px] font-black text-navy-950 uppercase">{previewImage.dimensions || 'Fixed Ratio'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[8px] font-black text-navy-300 uppercase tracking-widest mb-1">File Size</p>
+                    <p className="text-[10px] font-black text-navy-950 uppercase">{previewImage.size}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-8 border-t border-navy-50 flex items-center justify-between">
+                <div>
+                  <p className="text-[8px] font-black text-navy-300 uppercase tracking-widest mb-1">Sync Date</p>
+                  <p className="text-[10px] font-black text-navy-950 uppercase italic">{previewImage.uploadDate ? new Date(previewImage.uploadDate).toLocaleDateString() : 'N/A'}</p>
+                </div>
+                <div className="w-10 h-10 bg-navy-950 rounded-xl flex items-center justify-center text-gold-500 shadow-xl">
+                  <CheckCircle2 className="w-5 h-5" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

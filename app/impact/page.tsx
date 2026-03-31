@@ -1,6 +1,7 @@
 "use client";
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
+import { getSafeSrc } from '@/lib/utils';
 import { impactConfig } from "@/config/impact.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -93,7 +94,7 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src={config.hero.image}
+                  src={getSafeSrc(config.hero.image)}
                   alt={config.hero.imageAlt}
                   className="w-full h-full object-cover"
                   width={400}
@@ -228,7 +229,7 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src={config.growthTimeline.image}
+                  src={getSafeSrc(config.growthTimeline.image)}
                   alt={config.growthTimeline.imageAlt}
                   className="w-full h-full object-cover"
                   width={500}
@@ -257,7 +258,7 @@ export default function Impact() {
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden">
                     <Image 
-                      src={testimonial.image}
+                      src={getSafeSrc(testimonial.image)}
                       alt={testimonial.author}
                       className="w-full h-full object-cover"
                       width={48}
@@ -313,7 +314,7 @@ export default function Impact() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
                 <Image 
-                  src={config.callToAction.image}
+                  src={getSafeSrc(config.callToAction.image)}
                   alt={config.callToAction.imageAlt}
                   className="w-full h-full object-cover"
                   width={500}

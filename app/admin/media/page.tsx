@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { getSafeSrc } from '@/lib/utils';
 import VideoManager from '@/components/admin/VideoManager';
 import SocialMediaScheduler from '@/components/admin/SocialMediaScheduler';
 import SocialMediaAnalytics from '@/components/admin/SocialMediaAnalytics';
@@ -408,7 +409,7 @@ export default function MediaDashboard() {
                 <div className="aspect-video bg-gray-100 relative">
                   {asset.type === 'image' ? (
                     <Image
-                      src={asset.thumbnailUrl || asset.url}
+                      src={getSafeSrc(asset.thumbnailUrl || asset.url)}
                       alt={asset.altText || asset.title}
                       className="w-full h-full object-cover"
                       width={400}

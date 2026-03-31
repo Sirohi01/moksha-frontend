@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { getSafeSrc } from '@/lib/utils';
 
 interface LazyImageProps {
   src: string;
@@ -37,7 +38,7 @@ export default function LazyImage({ src, alt, width, height, className, sizes }:
         </div>
       )}
       <Image
-        src={src}
+        src={getSafeSrc(src)}
         alt={alt}
         width={width}
         height={height}

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { aboutConfig } from "@/config/about.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { cn } from "@/lib/utils";
+import { cn, getSafeSrc } from "@/lib/utils";
 
 export default function AboutPage() {
   // Use dynamic config with fallback to static config
@@ -66,7 +66,7 @@ export default function AboutPage() {
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
                   <Image
-                    src={config.hero?.image || "/gallery/image007.png"}
+                    src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
                     alt={config.hero?.cardTitle || "About Moksha Sewa"}
                     className="w-full h-full object-cover"
                     width={400}
@@ -146,7 +146,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
                 <Image
-                  src={config.story?.image || "/gallery/image009.png"}
+                  src={getSafeSrc(config.story?.image) || "/gallery/image009.png"}
                   alt={config.story?.imageAlt || "Our Journey"}
                   className="w-full h-full object-cover"
                   width={400}

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
+import { getSafeSrc } from "@/lib/utils";
 import { testimonialsConfig } from "@/config/testimonials.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -138,7 +139,7 @@ export default function Testimonials() {
                 onClick={() => video.youtubeId && setSelectedVideo({ id: video.youtubeId, title: video.title })}
               >
                 <Image 
-                  src={video.thumbnail}
+                  src={getSafeSrc(video.thumbnail)}
                   alt={video.alt}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"

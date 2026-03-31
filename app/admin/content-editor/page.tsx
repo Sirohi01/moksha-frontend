@@ -133,6 +133,18 @@ export default function ContentEditor() {
   const searchParams = useSearchParams();
   const pageName = searchParams.get('page') || 'homepage';
 
+  // Robust Image Source Resolver for safe previews
+  const getSafeSrc = (imgSource: any) => {
+    if (!imgSource) return '';
+    if (typeof imgSource === 'string') return imgSource;
+    if (typeof imgSource === 'object') {
+      if (typeof imgSource.src === 'string') return imgSource.src;
+      // Handle deeper nesting if it occurs during recursive mapping
+      if (typeof imgSource.src === 'object') return getSafeSrc(imgSource.src);
+    }
+    return '';
+  };
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [pageData, setPageData] = useState<any>({});
@@ -593,7 +605,7 @@ export default function ContentEditor() {
                       <div className="relative overflow-hidden rounded-lg border-2 border-gray-200 bg-white shadow-sm">
                         <div className="aspect-video relative">
                           <Image
-                            src={value}
+                            src={getSafeSrc(value)}
                             alt={`Preview of ${fieldSchema.label}`}
                             fill
                             className="object-cover transition-transform duration-200 group-hover/image:scale-105"
@@ -910,7 +922,7 @@ export default function ContentEditor() {
                     <div key={index} className="relative group">
                       <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 bg-white shadow-sm">
                         <Image
-                          src={imageUrl}
+                          src={getSafeSrc(imageUrl)}
                           alt={`${fieldSchema.label} ${index + 1}`}
                           fill
                           className="object-cover transition-transform duration-200 group-hover:scale-105"
@@ -1756,7 +1768,7 @@ export default function ContentEditor() {
                       >
                         <div className="aspect-video relative overflow-hidden rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
                           <Image
-                            src={image.url}
+                            src={getSafeSrc(image.url)}
                             alt={image.title || `Gallery image ${index + 1}`}
                             fill
                             className="object-cover transition-transform duration-200 group-hover:scale-105"

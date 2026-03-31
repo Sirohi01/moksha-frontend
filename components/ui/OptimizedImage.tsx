@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { cn } from '@/lib/utils';
+import { cn, getSafeSrc } from '@/lib/utils';
 
 interface OptimizedImageProps {
   src: string;
@@ -72,7 +72,7 @@ export default function OptimizedImage({
         />
       )}
       <Image
-        src={src}
+        src={getSafeSrc(src)}
         alt={alt}
         width={fill ? undefined : width}
         height={fill ? undefined : height}

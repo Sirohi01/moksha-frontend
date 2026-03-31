@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { getSafeSrc } from '@/lib/utils';
 
 interface MediaKit {
   _id: string;
@@ -380,7 +381,7 @@ function MediaKitModal({ isOpen, onClose, onSave, editingKit }: any) {
                     />
                     {asset.thumbnailUrl && (
                       <Image
-                        src={asset.thumbnailUrl}
+                        src={getSafeSrc(asset.thumbnailUrl)}
                         alt={asset.title}
                         className="w-12 h-12 object-cover rounded"
                         width={48}

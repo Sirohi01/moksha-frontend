@@ -6,6 +6,7 @@ import { layoutConfig } from "@/config/layout.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { intelligenceAPI, newsletterAPI } from "@/lib/api";
+import { getSafeSrc } from "@/lib/utils";
 
 export default function Footer() {
   const { config } = usePageConfig('layout', layoutConfig);
@@ -46,7 +47,7 @@ export default function Footer() {
               <div className="flex items-center gap-3 mb-4">
                 <div className="relative w-16 h-16">
                   <Image
-                    src={activeConfig.footer.brand.logo.src}
+                    src={getSafeSrc(activeConfig.footer.brand.logo.src)}
                     alt={activeConfig.footer.brand.logo.alt}
                     fill
                     className="object-contain"

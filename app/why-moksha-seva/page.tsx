@@ -2,6 +2,7 @@
 
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
+import { getSafeSrc } from "@/lib/utils";
 import { whyMokshaSewaConfig } from "@/config/why-moksha-seva.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -50,7 +51,7 @@ export default function WhyMokshaSewa() {
             <div className="relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
                 <Image
-                  src={config.hero.image}
+                  src={getSafeSrc(config.hero.image)}
                   alt={config.hero.imageAlt}
                   className="w-full h-full object-cover"
                   width={400}

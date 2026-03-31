@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { marketingAPI } from '@/lib/api';
 import { X, ExternalLink, Zap } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getSafeSrc } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function MarketingPopup() {
@@ -73,7 +73,7 @@ export default function MarketingPopup() {
                 {/* Visual Content Block */}
                 <div className="relative aspect-video w-full overflow-hidden">
                     <img 
-                        src={popup.imageUrl} 
+                        src={getSafeSrc(popup.imageUrl)} 
                         className="w-full h-full object-cover" 
                         alt="Campaign Visual" 
                     />

@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Elements";
 import { Heart, Globe, Anchor, Tent, ChevronRight, Share2, Play } from "lucide-react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
+import { getSafeSrc } from "@/lib/utils";
 
 export default function CampaignsPage() {
     const campaigns = [
@@ -91,7 +92,7 @@ export default function CampaignsPage() {
                                 <div className="lg:w-1/2 w-full">
                                     <div className="relative aspect-[16/10] rounded-[3rem] overflow-hidden shadow-2xl group">
                                         <Image 
-                                            src={campaign.image} 
+                                            src={getSafeSrc(campaign.image)} 
                                             alt={campaign.title} 
                                             fill 
                                             sizes="(max-width: 1024px) 100vw, 50vw"

@@ -17,6 +17,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+import { getSafeSrc } from '@/lib/utils';
 
 interface EditorProps {
   section: any;
@@ -89,7 +90,7 @@ export const HeroEditor = ({ section, onUpdate }: EditorProps) => {
                 <div className="space-y-2">
                   <div className="relative w-full h-32">
                     <Image 
-                      src={section.image} 
+                      src={getSafeSrc(section.image) || '/gallery/hero_moksha_1.png'} 
                       alt="Hero preview" 
                       fill
                       className="object-cover rounded"

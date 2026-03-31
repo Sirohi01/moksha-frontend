@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
 import { Video, Mail, Phone, ChevronRight, Play, Clock, Heart, Award } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { getSafeSrc } from "@/lib/utils";
 import { documentariesConfig } from "@/config/documentaries.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import VideoModal from "@/components/ui/VideoModal";
@@ -56,7 +57,7 @@ export default function DocumentariesPage() {
                         {activeConfig.films.items.map((film, i) => (
                             <div key={i} className="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-lg hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden relative text-left flex flex-col">
                                 <div className="aspect-[4/5] relative">
-                                    <Image src={film.image} alt={film.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                                    <Image src={getSafeSrc(film.image)} alt={film.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                                     <div className="absolute inset-0 bg-stone-900/30 group-hover:bg-stone-900/10 transition-colors" />
                                     <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5">
                                         <Clock size={10} /> {film.duration}

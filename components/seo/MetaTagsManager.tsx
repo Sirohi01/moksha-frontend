@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Search, Globe, Twitter, Facebook, Eye, AlertCircle } from 'lucide-react';
+import { getSafeSrc } from '@/lib/utils';
 
 interface MetaTagsData {
   metaTitle: string;
@@ -393,7 +394,7 @@ export default function MetaTagsManager({ data, onChange, onSave }: MetaTagsMana
                 {formData.ogImage && (
                   <div className="h-32 bg-gray-200 flex items-center justify-center">
                     <Image 
-                      src={formData.ogImage} 
+                      src={getSafeSrc(formData.ogImage)} 
                       alt="Preview" 
                       className="max-h-full max-w-full object-cover"
                       width={200}

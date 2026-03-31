@@ -84,14 +84,9 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     });
   }
 
-  /* 
   // Media Group
   const mediaItems = [
-    { title: 'Press Releases', href: '/admin/press', icon: FileText },
     { title: 'Gallery', href: '/admin/gallery', icon: Image },
-    { title: 'Documentaries', href: '/admin/documentaries', icon: PlayCircle },
-    { title: 'Video Testimonials', href: '/admin/video-testimonials', icon: Video },
-    { title: 'Media Vault', href: '/admin/media', icon: Layers },
   ].filter(sub => checkUserPermission(user, sub.href));
 
   if (mediaItems.length > 0) {
@@ -100,7 +95,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
       items: mediaItems
     });
   }
-  */
+
 
   // Specialized Intelligence Group
   const intelligenceItems = [

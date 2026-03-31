@@ -317,6 +317,12 @@ export default function AdvancedDashboard() {
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <h3 className="text-lg font-medium text-gray-900 mb-4">⚡ Quick Actions</h3>
             <div className="space-y-2">
+              <button 
+                onClick={() => window.location.href = '/admin/gallery'}
+                className="w-full text-left px-3 py-2 text-sm text-gray-900 hover:bg-gold-50 hover:text-gold-900 rounded-md transition-colors font-bold"
+              >
+                🖼️ Gallery Management
+              </button>
               <button className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
                 📝 Create New Report
               </button>

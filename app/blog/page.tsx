@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Elements";
 import { blogConfig } from "@/config/blog.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { cn } from "@/lib/utils";
+import { cn, getSafeSrc } from "@/lib/utils";
 import { Search, MapPin, ArrowUpRight, TrendingUp, Sparkles, Send } from "lucide-react";
 
 export default function BlogPage() {
@@ -88,7 +88,7 @@ export default function BlogPage() {
               <div className="bg-white/80 backdrop-blur-3xl rounded-[4rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-white/20 flex flex-col lg:flex-row min-h-[440px] transition-all duration-700 hover:shadow-[0_48px_80px_-16px_rgba(180,120,0,0.15)] ring-1 ring-black/[0.03]">
                 <div className="lg:w-[48%] relative min-h-[300px] lg:min-h-full overflow-hidden">
                   <Image 
-                    src={featuredBlog.image} 
+                    src={getSafeSrc(featuredBlog.image)} 
                     alt={featuredBlog.imageAlt} 
                     fill 
                     className="object-cover group-hover:scale-105 transition-transform duration-1000"
@@ -191,7 +191,7 @@ export default function BlogPage() {
               >
                 <div className="aspect-[4/3] relative overflow-hidden rounded-[2.8rem] m-2">
                   <Image 
-                    src={blog.image} 
+                    src={getSafeSrc(blog.image)} 
                     alt={blog.imageAlt} 
                     fill 
                     className="object-cover group-hover:scale-105 transition-transform duration-1000"

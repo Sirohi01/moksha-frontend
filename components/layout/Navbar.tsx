@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronDown, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getSafeSrc } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
 import SearchModal from "@/components/ui/SearchModal";
@@ -47,7 +47,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-4 group shrink-0 relative z-50">
               <div className="relative w-24 h-24 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-lg transform translate-y-6">
                 <Image
-                  src={activeConfig.navbar.logo.src}
+                  src={getSafeSrc(activeConfig.navbar.logo.src)}
                   alt={activeConfig.navbar.logo.alt}
                   fill
                   className="object-contain p-4 relative z-10 group-hover:scale-110 transition-transform duration-300"
