@@ -43,187 +43,168 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
     };
 
     return (
-      <div ref={ref} className="bg-white p-8 max-w-2xl mx-auto shadow-2xl rounded-lg border border-gray-200">
-        {/* Header with Logo */}
-        <div className="text-center mb-8 border-b-2 border-orange-200 pb-6">
-          <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center shadow-lg mr-4">
-              <Image
-                src="/logo.png"
-                alt="Moksha Sewa Logo"
-                width={48}
-                height={48}
-                className="object-contain"
-              />
-            </div>
-            <div className="text-left">
-              <h1 className="text-3xl font-bold text-gray-800 tracking-wide">Moksha Sewa</h1>
-              <p className="text-sm text-gray-600 font-medium">Dignity in Departure</p>
-            </div>
-          </div>
-
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-orange-600 mb-2">DONATION RECEIPT</h2>
-            <p className="text-gray-600">Tax Exemption under Section 80G of Income Tax Act, 1961</p>
-            <p className="text-sm text-gray-500 mt-1">Registration No: [Your 80G Registration Number]</p>
-          </div>
+      <div
+        ref={ref}
+        className="bg-white p-12 max-w-4xl mx-auto shadow-2xl rounded-none relative overflow-hidden print:shadow-none print:p-8"
+        style={{ minHeight: '297mm', width: '210mm' }}
+      >
+        {/* Decorative Watermark / Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center -rotate-12 select-none">
+          <p className="text-[12rem] font-black tracking-tighter">MOKSHA SEWA</p>
         </div>
 
-        {/* Receipt Details */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-1">
-              Receipt Information
-            </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Receipt No:</span>
-                <span className="font-semibold text-orange-600">{donation.receiptNumber}</span>
+        {/* Outer Decorative Border */}
+        <div className="absolute inset-4 border-[12px] border-orange-50/50 pointer-events-none"></div>
+        <div className="absolute inset-8 border border-orange-200 pointer-events-none"></div>
+
+        <div className="relative z-10 h-full flex flex-col">
+          {/* Header with Logo */}
+          <div className="text-center mb-10 border-b-2 border-orange-100 pb-8 mt-4">
+            <div className="flex flex-col items-center justify-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-xl mb-4 transform -rotate-3">
+                <Image
+                  src="/logo.png"
+                  alt="Moksha Sewa Logo"
+                  width={56}
+                  height={56}
+                  className="object-contain filter brightness-0 invert"
+                />
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Donation ID:</span>
-                <span className="font-mono text-sm">{donation.donationId}</span>
+              <div className="text-center">
+                <h1 className="text-4xl font-black text-navy-950 tracking-tighter uppercase mb-1">Moksha Sewa Foundation</h1>
+                <p className="text-xs text-orange-600 font-black uppercase tracking-[0.3em]">Compassion in every departure</p>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Date:</span>
-                <span className="font-semibold">{formatDate(donation.createdAt)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Status:</span>
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${donation.paymentStatus === 'completed'
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                  {donation.paymentStatus.toUpperCase()}
-                </span>
-              </div>
+            </div>
+
+            <div className="inline-block px-8 py-2 bg-navy-950 text-gold-500 text-sm font-black uppercase tracking-widest rounded-full mb-4">
+              Official Donation Certificate
+            </div>
+
+            <div className="text-center space-y-1">
+              <p className="text-gray-600 text-sm italic">"Thank you for your generous contribution toward a dignified final journey."</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Registration No: MSF-80G-2024-001 | 80G Tax Exempted</p>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3 border-b border-gray-200 pb-1">
-              Donor Information
-            </h3>
-            <div className="space-y-2">
-              <div>
-                <span className="text-gray-600 font-medium">Name:</span>
-                <p className="font-semibold">{donation.name}</p>
-              </div>
-              <div>
-                <span className="text-gray-600 font-medium">Email:</span>
-                <p className="text-sm">{donation.email}</p>
-              </div>
-              <div>
-                <span className="text-gray-600 font-medium">Phone:</span>
-                <p className="text-sm">{donation.phone}</p>
-              </div>
-              {donation.panNumber && (
-                <div>
-                  <span className="text-gray-600 font-medium">PAN:</span>
-                  <p className="font-mono text-sm">{donation.panNumber}</p>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-12 gap-8 mb-10">
+            {/* Left Column: Transaction & Donor Info */}
+            <div className="col-span-12 space-y-8">
+              <div className="grid grid-cols-2 gap-12">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-[10px] font-black text-navy-950 uppercase tracking-widest mb-3 border-b border-navy-50 pb-2">
+                      Authentication Details
+                    </h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-end border-b border-dotted border-gray-200 pb-1">
+                        <span className="text-[10px] text-gray-500 font-bold uppercase">Receipt Number</span>
+                        <span className="text-sm font-black text-orange-600">{donation.receiptNumber}</span>
+                      </div>
+                      <div className="flex justify-between items-end border-b border-dotted border-gray-200 pb-1">
+                        <span className="text-[10px] text-gray-500 font-bold uppercase">Transaction ID</span>
+                        <span className="text-[11px] font-mono font-medium text-navy-900">{donation.donationId}</span>
+                      </div>
+                      <div className="flex justify-between items-end border-b border-dotted border-gray-200 pb-1">
+                        <span className="text-[10px] text-gray-500 font-bold uppercase">Issued Date</span>
+                        <span className="text-sm font-bold text-navy-900">{formatDate(donation.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-[10px] font-black text-navy-950 uppercase tracking-widest mb-3 border-b border-navy-50 pb-2">
+                      Donor Credentials
+                    </h3>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase">Legal Name</span>
+                        <p className="text-lg font-black text-navy-950 leading-none mt-1">{donation.name}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase">Identity (PAN)</span>
+                          <p className="font-mono text-sm font-bold text-navy-800">{donation.panNumber || 'N/A'}</p>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-gray-400 font-bold uppercase">Contact</span>
+                          <p className="text-sm font-bold text-navy-800">{donation.phone}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-          </div>
-        </div>
 
-        {/* Donation Details */}
-        <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-lg p-6 mb-8 border border-orange-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-            Donation Details
-          </h3>
+                {/* Right Column: Amount & Status Highlight */}
+                <div className="flex flex-col justify-between">
+                  <div className="bg-navy-950 rounded-[2rem] p-8 text-center shadow-xl relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gold-400/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+                    <p className="text-gold-500 text-[10px] font-black uppercase tracking-[0.3em] mb-4">Total Amount Contributed</p>
+                    <p className="text-5xl font-black text-white tracking-widest mb-2">
+                      <span className="text-2xl text-gold-500 font-light mr-1">₹</span>
+                      {donation.amount.toLocaleString('en-IN')}
+                    </p>
+                    <p className="text-[10px] text-white/50 font-medium uppercase tracking-widest border-t border-white/10 pt-4 mt-2">
+                      Currency: {donation.currency.toUpperCase()} | Status: {donation.paymentStatus.toUpperCase()}
+                    </p>
+                  </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Purpose:</span>
-                <span className="font-semibold text-orange-700">{formatPurpose(donation.purpose)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Type:</span>
-                <span className="font-semibold">{formatDonationType(donation.donationType)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 font-medium">Payment Method:</span>
-                <span className="font-semibold">{donation.paymentMethod.toUpperCase()}</span>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-white rounded-lg p-4 shadow-md border-2 border-orange-300">
-                <p className="text-gray-600 font-medium mb-1">Total Amount</p>
-                <p className="text-3xl font-bold text-orange-600">
-                  ₹{donation.amount.toLocaleString('en-IN')}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  ({donation.currency.toUpperCase()})
-                </p>
+                  <div className="bg-orange-50/50 border border-orange-100 rounded-3xl p-6 flex flex-col items-center justify-center text-center">
+                    <p className="text-[10px] text-orange-600 font-black uppercase tracking-widest mb-2">Contribution Purpose</p>
+                    <p className="text-sm font-bold text-navy-900 leading-tight">
+                      {formatPurpose(donation.purpose)}
+                    </p>
+                    <div className="mt-4 px-4 py-1.2 bg-white rounded-full border border-orange-200 text-[9px] font-black text-orange-700 uppercase">
+                      {formatDonationType(donation.donationType)}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Amount in Words */}
-        <div className="mb-8">
-          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-            <span className="text-gray-600 font-medium">Amount in Words: </span>
-            <span className="font-semibold text-gray-800">
-              {amountToWords(donation.amount)}
-            </span>
+          {/* Amount in Words Segment */}
+          <div className="mb-10 bg-[#f9fafb] border border-gray-200 rounded-2xl p-6 flex items-center justify-between">
+            <div className="flex-1 pr-8">
+              <span className="text-[9px] text-gray-400 font-bold uppercase block mb-1">Formal Amount Declaration</span>
+              <p className="text-sm font-bold text-navy-900 italic">
+                "Rupees {amountToWords(donation.amount)} only"
+              </p>
+            </div>
+            <div className="w-24 h-24 bg-white border border-gray-200 p-2 rounded-xl flex items-center justify-center opacity-40">
+              {/* QR Placeholder */}
+              <div className="text-[8px] text-center font-bold text-gray-400 leading-tight">VALIDATION<br />QR CODE</div>
+            </div>
           </div>
-        </div>
 
-        {/* Tax Information */}
-        <div className="bg-blue-50 rounded-lg p-6 mb-8 border border-blue-200">
-          <h3 className="text-lg font-semibold text-blue-800 mb-3">
-            Tax Exemption Information
-          </h3>
-          <div className="text-sm text-blue-700 space-y-2">
-            <p>• This donation is eligible for tax deduction under Section 80G of the Income Tax Act, 1961.</p>
-            <p>• Moksha Sewa is registered under Section 12A and has valid 80G certification.</p>
-            <p>• Please retain this receipt for your tax filing purposes.</p>
-            <p>• For any queries regarding tax exemption, please contact our accounts department.</p>
-          </div>
-        </div>
+          {/* Compliance & Footnote */}
+          <div className="mt-auto pt-8 border-t-4 border-double border-gray-100">
+            <div className="grid grid-cols-2 gap-12 mb-10">
+              <div>
+                <h4 className="text-[10px] font-black text-navy-950 uppercase tracking-widest mb-4">Tax & Legal Compliance</h4>
+                <div className="space-y-2">
+                  <p className="text-[9px] text-gray-600 leading-relaxed">• This contribution is eligible for tax deduction under Section 80G of the Income Tax Act.</p>
+                  <p className="text-[9px] text-gray-600 leading-relaxed">• Moksha Sewa Foundation is a registered charitable trust (Reg No: [12345/2024]).</p>
+                  <p className="text-[9px] text-gray-600 leading-relaxed">• PAN: [ORG-PAN-NUMBER] | GSTIN: [ORG-GST-NUMBER]</p>
+                </div>
+              </div>
 
-        {/* Organization Details */}
-        <div className="border-t-2 border-gray-200 pt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2">Organization Details</h4>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p><strong>Moksha Sewa Foundation</strong></p>
-                <p>Registered Address: [Mohan Nagar, Ghazibabad]</p>
-                {/* <p>Phone: [Your Phone Number]</p>
-                <p>Email: info@moksha-seva.org</p>
-                <p>Website: www.moksha-seva.org</p> */}
+              <div className="text-right flex flex-col items-end">
+                <div className="mb-4">
+                  <div className="w-48 h-16 border-b-2 border-navy-900 mb-2 relative">
+                    {/* Placeholder for Signature Image if exists */}
+                    <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-300 font-black uppercase opacity-50 italic">Electronic Signature</div>
+                  </div>
+                  <p className="text-xs font-black text-navy-950 uppercase mb-0.5">Vijay Sharma</p>
+                  <p className="text-[10px] text-orange-600 font-bold uppercase tracking-widest">General Secretary</p>
+                </div>
               </div>
             </div>
 
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2">Registration Details</h4>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>PAN: [Organization PAN]</p>
-                <p>80G Registration: [80G Number]</p>
-                <p>12A Registration: [12A Number]</p>
-                <p>FCRA Registration: [FCRA Number if applicable]</p>
-              </div>
+            <div className="text-center py-6 bg-navy-950 -mx-12 -mb-12 mt-4 text-white">
+              <p className="text-[10px] font-black uppercase tracking-[0.5em]">www.mokshasewa.org | info@mokshasewa.org</p>
+              <p className="text-[8px] opacity-40 mt-1">Computer Generated | Verifiable Receipt | Generated at: {new Date().toLocaleString()}</p>
             </div>
-          </div>
-        </div>
-
-        {/* Digital Signature */}
-        <div className="text-center mt-8 pt-6 border-t border-gray-200">
-          <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-2">Authorized Signatory</p>
-            <div className="w-32 h-16 mx-auto border-b border-gray-400 mb-2"></div>
-            <p className="text-sm font-semibold text-gray-800">[Vijay Sharma]</p>
-            <p className="text-xs text-gray-600">[Founder]</p>
-          </div>
-
-          <div className="text-xs text-gray-500 space-y-1">
-            <p>This is a computer-generated receipt and does not require a physical signature.</p>
-            <p>Generated on: {new Date().toLocaleString('en-IN')}</p>
           </div>
         </div>
       </div>

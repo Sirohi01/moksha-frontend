@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { PageHeader, DataTable, LoadingSpinner, ActionButton, StatsCard } from '@/components/admin/AdminComponents';
-import ReceiptModal from '@/components/ReceiptModal';
 
 interface Donation {
   _id: string;
@@ -23,12 +23,11 @@ interface Donation {
 import { CreditCard, RotateCcw, TrendingUp, BarChart3, Wallet } from 'lucide-react';
 
 export default function DonationsManagement() {
+  const router = useRouter();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
-  const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [stats, setStats] = useState({
     totalAmount: 0,
     totalDonations: 0,
@@ -88,8 +87,7 @@ export default function DonationsManagement() {
   };
 
   const viewReceipt = (donation: Donation) => {
-    setSelectedDonation(donation);
-    setShowReceiptModal(true);
+    router.push(`/admin/donations/receipt/${donation._id}`);
   };
 
   const refundDonation = async (donationId: string) => {
@@ -295,18 +293,6 @@ export default function DonationsManagement() {
         }}
         onPageChange={setCurrentPage}
       />
-
-      {/* Receipt Modal */}
-      {selectedDonation && (
-        <ReceiptModal
-          isOpen={showReceiptModal}
-          onClose={() => {
-            setShowReceiptModal(false);
-            setSelectedDonation(null);
-          }}
-          donation={selectedDonation}
-        />
-      )}
     </div>
   );
 }
