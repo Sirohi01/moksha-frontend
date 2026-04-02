@@ -5,8 +5,11 @@ export const adminService = {
     return apiRequest(`${API_ENDPOINTS.ADMIN}/dashboard`);
   },
 
-  getUsers: async (page = 1, limit = 10) => {
-    return apiRequest(`${API_ENDPOINTS.ADMIN_USERS}?page=${page}&limit=${limit}`);
+  getUsers: async (page = 1, limit = 10, role?: string, isActive?: string) => {
+    let url = `${API_ENDPOINTS.ADMIN_USERS}?page=${page}&limit=${limit}`;
+    if (role) url += `&role=${role}`;
+    if (isActive) url += `&isActive=${isActive}`;
+    return apiRequest(url);
   },
 
   getActivities: async (page = 1, limit = 10) => {
