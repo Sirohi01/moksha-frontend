@@ -5,22 +5,22 @@ import { Container } from "@/components/ui/Elements";
 import { cn } from "@/lib/utils";
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  Plus, 
-  Search, 
-  Edit3, 
-  Trash2, 
-  Play, 
-  Eye, 
-  CheckCircle, 
-  Clock, 
-  ImageIcon,
-  FileText,
-  Loader2,
-  Calendar,
-  Sparkles,
-  ArrowRight,
-  Film
+import {
+    Plus,
+    Search,
+    Edit3,
+    Trash2,
+    Play,
+    Eye,
+    CheckCircle,
+    Clock,
+    ImageIcon,
+    FileText,
+    Loader2,
+    Calendar,
+    Sparkles,
+    ArrowRight,
+    Film
 } from 'lucide-react';
 import { Pagination } from '@/components/admin/AdminComponents';
 
@@ -64,8 +64,6 @@ export default function AdminDocumentaryHub() {
                 setTotalPages(result.data.pages);
                 setTotalItems(result.data.total);
             }
-
-            // Fetch type-specific stats for accurate telemetry
             const statsResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content/stats?type=documentary`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -126,7 +124,7 @@ export default function AdminDocumentaryHub() {
                         </h1>
                     </div>
 
-                    <Link 
+                    <Link
                         href="/admin/documentaries/create"
                         className="flex items-center justify-center gap-3 bg-stone-950 text-white px-6 md:px-10 py-5 rounded-[1.5rem] md:rounded-[2rem] font-black uppercase tracking-widest text-[11px] hover:bg-amber-600 hover:text-white transition-all shadow-2xl shadow-stone-950/20 active:scale-95 group"
                     >
@@ -159,8 +157,8 @@ export default function AdminDocumentaryHub() {
                 <div className="bg-white p-3 md:p-4 rounded-[2rem] md:rounded-[2.5rem] border border-stone-100 shadow-sm mb-8 flex flex-col md:flex-row gap-4">
                     <div className="relative flex-1 group">
                         <Search className="absolute left-6 md:left-7 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-amber-600 transition-colors" size={20} />
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             placeholder="SEARCH PRODUCTIONS..."
                             value={searchTerm}
                             onChange={(e) => handleSearchChange(e.target.value)}
@@ -174,8 +172,8 @@ export default function AdminDocumentaryHub() {
                                 onClick={() => handleFilterChange(f)}
                                 className={cn(
                                     "px-6 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
-                                    activeFilter === f 
-                                        ? "bg-stone-950 text-white shadow-xl scale-[1.03]" 
+                                    activeFilter === f
+                                        ? "bg-stone-950 text-white shadow-xl scale-[1.03]"
                                         : "bg-white text-stone-400 hover:text-stone-950 border border-stone-100"
                                 )}
                             >
@@ -226,21 +224,21 @@ export default function AdminDocumentaryHub() {
                                 </div>
 
                                 <div className="flex items-center justify-center gap-3 md:gap-4 w-full md:w-auto mt-2 md:mt-0 pt-4 md:pt-0 border-t md:border-t-0 border-stone-50">
-                                    <Link 
+                                    <Link
                                         href={`/admin/documentaries/edit/${doc._id}`}
                                         className="w-14 h-14 md:w-16 md:h-16 bg-stone-50 rounded-[1.25rem] md:rounded-[1.8rem] flex items-center justify-center text-navy-950 hover:bg-amber-500 hover:text-white transition-all shadow-sm border border-stone-100 group/edit"
                                     >
                                         <Edit3 size={20} className="md:w-6 md:h-6" />
                                     </Link>
-                                    <button 
+                                    <button
                                         onClick={() => handleDelete(doc._id)}
                                         className="w-14 h-14 md:w-16 md:h-16 bg-stone-50 rounded-[1.25rem] md:rounded-[1.8rem] flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-sm border border-stone-100 group/del"
                                     >
                                         <Trash2 size={20} className="md:w-6 md:h-6" />
                                     </button>
-                                    <a 
-                                        href={`/documentaries/${doc.slug}`} 
-                                        target="_blank" 
+                                    <a
+                                        href={`/documentaries/${doc.slug}`}
+                                        target="_blank"
                                         className="w-16 h-16 md:w-20 md:h-20 bg-stone-950 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center text-amber-500 hover:bg-amber-600 hover:text-white transition-all shadow-2xl group/view ml-auto md:ml-0"
                                     >
                                         <ArrowRight size={28} className="md:w-8 md:h-8" />
@@ -253,7 +251,7 @@ export default function AdminDocumentaryHub() {
 
                 {/* Pagination Section */}
                 <div className="mt-12 pb-12">
-                    <Pagination 
+                    <Pagination
                         currentPage={currentPage}
                         totalPages={totalPages}
                         total={totalItems}
