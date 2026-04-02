@@ -154,8 +154,8 @@ export default function MasterVisualHub() {
     };
 
     const handleImageUpload = async (file: File, path: string) => {
-        if (file.size > 200 * 1024) { // Increased to 200KB for Master Hub High-Res
-            alert(`Image Protocol Rejected: ${file.name} is ${(file.size / 1024).toFixed(1)}KB. Max limit is 200KB for High-Res assets.`);
+        if (file.size > 10 * 1024 * 1024) { // Increased to 10MB for Master Hub High-Res
+            alert(`Image Protocol Rejected: ${file.name} is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Max limit is 10MB for High-Res assets.`);
             return;
         }
 
@@ -188,17 +188,17 @@ export default function MasterVisualHub() {
     if (loading) return <div className="min-h-screen bg-stone-50 flex items-center justify-center p-24 text-center font-black animate-pulse opacity-40 uppercase tracking-widest italic text-navy-950 text-xs">Syncing Visual Network Infrastructure...</div>;
 
     return (
-        <div className="min-h-screen bg-[#fafafa] p-8 md:p-16 select-none font-sans text-navy-950">
+        <div className="min-h-screen bg-[#fafafa] select-none font-sans text-navy-950">
             <div className="max-w-[1600px] mx-auto">
 
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 border-l-4 border-gold-500 pl-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12 md:mb-16 border-l-4 border-gold-500 pl-4 md:pl-8">
                     <div>
                         <div className="flex items-center gap-4 mb-2">
-                            <Camera className="w-8 h-8 text-navy-950" />
-                            <h1 className="text-5xl font-black uppercase tracking-tighter italic">Master Visual Hub</h1>
+                            <Camera className="w-6 h-6 md:w-8 md:h-8 text-navy-950" />
+                            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic">Master Visual Hub</h1>
                         </div>
-                        <p className="text-navy-500 font-bold text-xs uppercase tracking-[0.4em] italic ml-1">Centralized Image Archive & Deployment Engine</p>
+                        <p className="text-navy-500 font-bold text-[9px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] italic leading-tight">Centralized Image Archive & Deployment Engine</p>
                     </div>
 
                     <div className="w-full md:w-[400px]">
@@ -230,17 +230,18 @@ export default function MasterVisualHub() {
                                     <h2 className="text-xl font-black uppercase tracking-widest italic text-navy-950/80">{sectionName}</h2>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 w-full">
                                     {images.map((img, idx) => (
-                                        <VisualAssetCard
-                                            key={idx}
-                                            title={img.path.split('.').pop()?.replace(/\[|\]/g, ' ')}
-                                            path={img.path}
-                                            url={img.url}
-                                            onSwap={(newUrl: string) => handleUpdateImage(img.path, newUrl)}
-                                            onUpload={(file: File) => handleImageUpload(file, img.path)}
-                                            saving={saving}
-                                        />
+                                        <div key={idx} className="w-full min-w-0">
+                                            <VisualAssetCard
+                                                title={img.path.split('.').pop()?.replace(/\[|\]/g, ' ')}
+                                                path={img.path}
+                                                url={img.url}
+                                                onSwap={(newUrl: string) => handleUpdateImage(img.path, newUrl)}
+                                                onUpload={(file: File) => handleImageUpload(file, img.path)}
+                                                saving={saving}
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             </section>
@@ -272,21 +273,21 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
     const getRequirement = (path: string) => {
         const lowerPath = path.toLowerCase();
         // SEO Team Mission Directives
-        if (lowerPath.includes('hero') || lowerPath.includes('slide')) return "SEO TASK: 1620x700px (Cinematic)";
-        if (lowerPath.includes('about')) return "SEO TASK: 1000x1000px (1:1 High Res)";
-        if (lowerPath.includes('service') || lowerPath.includes('impact')) return "SEO TASK: 800x600px (Standard Card)";
-        if (lowerPath.includes('logo')) return "SEO TASK: 400x200px (Vector Opt)";
-        if (lowerPath.includes('banner') || lowerPath.includes('bg')) return "SEO TASK: 1920x800px (Atmospheric)";
-        if (lowerPath.includes('campaign')) return "SEO TASK: 800x540px (Campaign Focus)";
-        if (lowerPath.includes('story') || lowerPath.includes('motion')) return "SEO TASK: 1280x800px (Cinematic Story)";
-        return "SEO TASK: 1200x800px (General Content)";
+        if (lowerPath.includes('hero') || lowerPath.includes('slide')) return "1620x700px (Cinematic)";
+        if (lowerPath.includes('about')) return "1000x1000px (1:1 High Res)";
+        if (lowerPath.includes('service') || lowerPath.includes('impact')) return "800x600px (Standard Card)";
+        if (lowerPath.includes('logo')) return "400x200px (Vector Opt)";
+        if (lowerPath.includes('banner') || lowerPath.includes('bg')) return "1920x800px (Atmospheric)";
+        if (lowerPath.includes('campaign')) return "800x540px (Campaign)";
+        if (lowerPath.includes('story') || lowerPath.includes('motion')) return "1280x800px (Cinematic)";
+        return "1200x800px (General)";
     };
 
     return (
         <>
-            <Card className="group relative bg-white border-2 border-navy-50 rounded-[3rem] p-8 space-y-8 hover:border-gold-500 transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col">
+            <Card className="group relative bg-white border-2 border-navy-50 rounded-[1.5rem] md:rounded-[3rem] p-4 md:p-10 space-y-4 md:space-y-8 hover:border-gold-500 transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col h-full w-full min-w-[280px]">
                 {/* Visual Canvas */}
-                <div className="aspect-[16/10] relative rounded-[2rem] overflow-hidden bg-navy-50 shadow-inner">
+                <div className="aspect-[16/10] relative rounded-[1rem] md:rounded-[2rem] overflow-hidden bg-navy-50 shadow-inner">
                     <img
                         src={tempUrl}
                         alt={title}
@@ -294,28 +295,28 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
                     />
 
                     {/* Protocol Overlay */}
-                    <div className="absolute top-6 left-6 px-4 py-2 bg-navy-950/95 backdrop-blur-xl rounded-xl border border-gold-500/30 flex items-center gap-2 shadow-2xl scale-100 animate-in fade-in zoom-in duration-700">
-                        <div className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gold-500">{getRequirement(path)}</p>
+                    <div className="absolute top-2 md:top-6 left-2 md:left-6 px-2 md:px-4 py-1 md:py-2 bg-navy-950/95 backdrop-blur-xl rounded-lg md:rounded-xl border border-gold-500/30 flex items-center gap-1 md:gap-2 shadow-2xl">
+                        <div className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-pulse" />
+                        <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gold-500">{getRequirement(path)}</p>
                     </div>
 
                     {/* Quick Action Overlay */}
-                    <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center gap-4 backdrop-blur-[4px]">
+                    <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center gap-2 md:gap-4 backdrop-blur-[4px]">
                         <button
                             onClick={() => setIsPickerOpen(true)}
-                            className="bg-gold-500 text-black px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-2xl hover:bg-white transition-all transform hover:-translate-y-1"
+                            className="bg-gold-500 text-black px-4 md:px-8 py-2 md:py-3 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-2xl hover:bg-white transition-all transform hover:-translate-y-1"
                         >
-                            <Layers className="w-4 h-4" />
-                            Archive Picker
+                            <Layers className="w-3 md:w-4 h-3 md:h-4" />
+                            Archive
                         </button>
                         
-                        <div className="flex items-center gap-2 text-white/40 text-[8px] font-black uppercase tracking-widest">
-                           <div className="w-8 h-px bg-white/20" /> OR <div className="w-8 h-px bg-white/20" />
+                        <div className="flex items-center gap-2 text-white/40 text-[7px] md:text-[8px] font-black uppercase tracking-widest">
+                           <div className="w-4 md:w-8 h-px bg-white/20" /> OR <div className="w-4 md:w-8 h-px bg-white/20" />
                         </div>
 
-                        <label className="cursor-pointer bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 transition-all backdrop-blur-md transform hover:-translate-y-1">
-                            <Upload className="w-4 h-4" />
-                            Device Upload
+                        <label className="cursor-pointer bg-white/10 hover:bg-white/20 text-white px-4 md:px-8 py-2 md:py-3 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 transition-all backdrop-blur-md transform hover:-translate-y-1">
+                            <Upload className="w-3 md:w-4 h-3 md:h-4" />
+                            Upload
                             <input 
                               type="file" 
                               className="hidden" 
@@ -329,29 +330,29 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
                     </div>
                 </div>
 
-                <div className="space-y-6 flex-grow flex flex-col justify-between">
-                    <div className="space-y-5">
-                        <div className="flex justify-between items-start">
+                <div className="space-y-4 md:space-y-6 flex-grow flex flex-col justify-between">
+                    <div className="space-y-4 md:space-y-5">
+                        <div className="flex justify-between items-start gap-2">
                             <div>
-                                <h3 className="text-navy-950 font-black text-xs uppercase tracking-widest">{title}</h3>
-                                <p className="text-[9px] font-bold text-navy-300 italic truncate max-w-[200px]">Node: {path}</p>
+                                <h3 className="text-navy-950 font-black text-[10px] md:text-sm uppercase tracking-widest leading-none">{title}</h3>
+                                <p className="text-[8px] md:text-[10px] font-bold text-navy-400 italic truncate max-w-[120px] md:max-w-[200px] mt-1">Node: {path}</p>
                             </div>
                             <button
                                 onClick={() => setIsPickerOpen(true)}
-                                className="w-8 h-8 rounded-full bg-navy-50 hover:bg-gold-500 flex items-center justify-center transition-colors group/btn"
+                                className="w-8 h-8 rounded-full bg-navy-50 hover:bg-gold-500 flex items-center justify-center transition-colors group/btn shrink-0"
                             >
                                 <Layout className="w-3 h-3 text-navy-400 group-hover/btn:text-black" />
                             </button>
                         </div>
 
                         <div className="relative">
-                            <div className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-navy-950"></div>
+                            <div className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-navy-950"></div>
                             <input
                                 type="text"
+                                shadow-inner
                                 value={tempUrl}
                                 onChange={(e) => setTempUrl(e.target.value)}
-                                className="w-full h-14 bg-stone-50 rounded-2xl pl-12 pr-6 text-[11px] font-extrabold text-navy-900 outline-none border-2 border-transparent focus:border-gold-500/50 transition-all font-mono"
-                                placeholder="/old-slug &gt; /new-slug&#10;/about-us &gt; /about"
+                                className="w-full h-12 md:h-14 bg-stone-50 rounded-xl md:rounded-2xl pl-10 md:pl-12 pr-4 md:pr-6 text-[10px] md:text-[11px] font-extrabold text-navy-900 outline-none border-2 border-transparent focus:border-gold-500/50 transition-all font-mono truncate"
                             />
                         </div>
                     </div>
@@ -360,14 +361,14 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
                         onClick={() => onSwap(tempUrl)}
                         disabled={saving || tempUrl === url}
                         className={cn(
-                            "w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3",
+                            "w-full h-12 md:h-16 rounded-xl md:rounded-2xl text-[9px] md:text-[11px] font-black uppercase tracking-widest md:tracking-[0.3em] transition-all flex items-center justify-center gap-2 md:gap-3",
                             tempUrl === url
-                                ? "bg-stone-100 text-navy-400 border-2 border-navy-50/50 cursor-default opacity-80"
-                                : "bg-gold-500 text-black shadow-[0_15px_40px_rgba(245,158,11,0.25)] hover:bg-navy-950 hover:text-gold-500 hover:-translate-y-1 active:translate-y-0"
+                                ? "bg-stone-50 text-navy-400 border-2 border-navy-50/50 cursor-default opacity-80"
+                                : "bg-gold-500 text-black shadow-[0_10px_20px_rgba(245,158,11,0.2)] hover:bg-navy-950 hover:text-gold-500 hover:-translate-y-1 active:translate-y-0"
                         )}
                     >
-                        {saving ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        {saving ? 'SYNCHRONIZING...' : 'SWAP VISUAL'}
+                        {saving ? <RefreshCcw className="w-4 md:w-5 h-4 md:h-5 animate-spin" /> : <Save className="w-4 md:w-5 h-4 md:h-5" />}
+                        {saving ? 'SYNCING...' : 'SWAP VISUAL'}
                     </Button>
                 </div>
             </Card>

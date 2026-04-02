@@ -87,7 +87,7 @@ export default function TributePage() {
                 <Container>
                     <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-16">
                         <div className="md:w-1/2">
-                            <div className="relative aspect-[3/4] rounded-[3rem] overflow-hidden grayscale group hover:grayscale-0 transition-all duration-700 shadow-2xl">
+                            <div className="relative aspect-square rounded-[3rem] overflow-hidden grayscale group hover:grayscale-0 transition-all duration-700 shadow-2xl">
                                 <Image src={getSafeSrc(activeConfig.quote.imageUrl)} alt={activeConfig.quote.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent" />
                             </div>
