@@ -306,11 +306,12 @@ export const formsAPI = {
 };
 
 export const galleryAPI = {
-  getImages: async (page = 1, limit = 20, category?: string, search?: string, isAdmin = false) => {
+  getImages: async (page = 1, limit = 20, category?: string, search?: string, isAdmin = false, isPublic?: boolean) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (category) params.append('category', category);
     if (search) params.append('search', search);
     if (isAdmin) params.append('isAdmin', 'true');
+    if (isPublic !== undefined) params.append('isPublic', isPublic.toString());
     return apiRequest(`${API_ENDPOINTS.GALLERY}?${params}`);
   },
 
