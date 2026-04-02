@@ -32,7 +32,8 @@ import {
   Layout,
   Layers,
   Film,
-  ShieldCheck
+  ShieldCheck,
+  Activity
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -131,6 +132,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
 
   // Specialized Intelligence Group
   const intelligenceItems = [
+    { title: 'Operation Logs', href: '/admin/activity-logs', icon: Activity },
     { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
     { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
     { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },

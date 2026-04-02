@@ -31,6 +31,7 @@ export const ROUTE_PERMISSIONS: Record<string, string> = {
   '/admin/compliance': 'page_compliance',
 
   // Intelligence Sub-sector
+  '/admin/activity-logs': 'page_logs',
   '/admin/visitor-analytics': 'page_analytics',
   '/admin/intelligence/system-logs': 'page_logs',
   '/admin/intelligence/communication-logs': 'page_logs',
