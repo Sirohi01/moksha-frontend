@@ -1,155 +1,262 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Container } from "@/components/ui/Elements";
-import { Video, Mail, Phone, ChevronRight, Play, Clock, Heart, Award } from "lucide-react";
-import Button from "@/components/ui/Button";
-import { getSafeSrc } from "@/lib/utils";
-import { documentariesConfig } from "@/config/documentaries.config";
-import { usePageConfig } from "@/hooks/usePageConfig";
-import VideoModal from "@/components/ui/VideoModal";
+import { cn, getSafeSrc } from "@/lib/utils";
+import { 
+  Search, 
+  Play, 
+  ArrowUpRight, 
+  Calendar,
+  Film,
+  Sparkles,
+  Award,
+  Video
+} from "lucide-react";
 
 export default function DocumentariesPage() {
-    const { config, loading: configLoading, error: configError } = usePageConfig('documentaries', documentariesConfig);
-    const activeConfig = config || documentariesConfig;
+  const [docs, setDocs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
-    const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
+  useEffect(() => {
+    fetchDocs();
+  }, []);
 
+  const fetchDocs = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?type=documentary&status=published`);
+      const result = await res.json();
+      if (result.success) {
+        setDocs(result.data.content);
+      }
+    } catch (error) {
+      console.error('Failed to fetch documentaries:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categories = useMemo(() => {
+    const cats = docs.map(d => d.category);
+    return ["All", ...Array.from(new Set(cats.filter(Boolean)))];
+  }, [docs]);
+
+  const filteredDocs = useMemo(() => {
+    return docs.filter((doc) => {
+      const matchesCategory = activeCategory === "All" || doc.category === activeCategory;
+      const matchesSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          doc.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    });
+  }, [docs, activeCategory, searchQuery]);
+
+  if (loading) {
     return (
-        <main className="min-h-screen bg-stone-50">
-            {/* Loading State */}
-            {configLoading && (
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
-                </div>
-            )}
-
-            {/* Error State */}
-            {configError && (
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="text-center">
-                        <p className="text-red-600 mb-4">Failed to load page configuration</p>
-                        <p className="text-gray-600">Using default configuration</p>
-                    </div>
-                </div>
-            )}
-
-            {/* Hero Section */}
-            <section className="bg-stone-50 text-gray-900 py-24 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")` }} />
-                <Container>
-                    <div className="max-w-3xl text-left">
-                        <div className="inline-block px-4 py-1.5 rounded-full bg-amber-100 border border-amber-200 mb-6">
-                            <p className="text-amber-700 font-black text-[10px] uppercase tracking-[0.4em] leading-none">{activeConfig.hero.badge}</p>
-                        </div>
-                        <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.85] mb-8 text-gray-900">{activeConfig.hero.title} <br /><span className="text-amber-700">{activeConfig.hero.subtitle}</span></h1>
-                        <p className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed">
-                            {activeConfig.hero.description}
-                        </p>
-                    </div>
-                </Container>
-            </section>
-
-            {/* Main Films Grid */}
-            <section className="py-16 bg-stone-100">
-                <Container>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {activeConfig.films.items.map((film, i) => (
-                            <div key={i} className="bg-white rounded-2xl border border-stone-200 shadow-sm hover:shadow-lg hover:translate-y-[-2px] transition-all duration-300 group overflow-hidden relative text-left flex flex-col">
-                                <div className="aspect-[4/5] relative">
-                                    <Image src={getSafeSrc(film.image)} alt={film.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                                    <div className="absolute inset-0 bg-stone-900/30 group-hover:bg-stone-900/10 transition-colors" />
-                                    <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-white text-[8px] font-black uppercase tracking-widest flex items-center gap-1.5">
-                                        <Clock size={10} /> {film.duration}
-                                    </div>
-                                    <button 
-                                        onClick={() => film.youtubeId && setSelectedVideo({ id: film.youtubeId, title: film.title })}
-                                        className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-amber-700 flex items-center justify-center text-white shadow-lg hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
-                                    >
-                                        <Play className="fill-white ml-0.5" size={18} />
-                                    </button>
-                                    <div className="absolute top-4 left-4">
-                                        <div className="bg-amber-800 text-white px-2 py-1 rounded text-[7px] font-black uppercase tracking-widest shadow-sm">{activeConfig.films.newBadge}</div>
-                                    </div>
-                                </div>
-
-                                <div className="p-6">
-                                    <div className="flex items-center justify-between mb-3">
-                                        <p className="text-amber-700 font-black text-[9px] uppercase tracking-[0.3em]">✦ {film.type}</p>
-                                        <p className="text-gray-400 font-black text-[9px] uppercase tracking-widest">{film.year}</p>
-                                    </div>
-                                    <h3 className="text-xl font-black uppercase tracking-tighter mb-3 text-gray-800 leading-tight">{film.title}</h3>
-                                    <p className="text-gray-500 font-medium text-sm leading-relaxed mb-6">
-                                        {film.desc}
-                                    </p>
-                                    <button 
-                                        onClick={() => film.youtubeId && setSelectedVideo({ id: film.youtubeId, title: film.title })}
-                                        className="w-full py-3 border border-stone-200 rounded-xl text-[9px] font-black uppercase tracking-widest text-amber-700 hover:bg-amber-700 hover:text-white transition-all"
-                                    >
-                                        {activeConfig.films.watchButton}
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </Container>
-            </section>
-
-            {/* Video Player Modal */}
-            {selectedVideo && (
-                <VideoModal
-                    isOpen={!!selectedVideo}
-                    onClose={() => setSelectedVideo(null)}
-                    youtubeId={selectedVideo.id}
-                    title={selectedVideo.title}
-                />
-            )}
-
-            {/* Festival Selections */}
-            <section className="py-16 bg-amber-800">
-                <Container>
-                    <div className="text-center mb-12">
-                        <Award className="text-amber-100 mx-auto mb-6" size={48} />
-                        <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter leading-[0.85] mb-4 text-white">
-                            {activeConfig.festivalSelections.title} <span className="text-amber-100">{activeConfig.festivalSelections.subtitle}</span>
-                        </h2>
-                        <p className="text-white/80 text-base max-w-2xl mx-auto font-medium">
-                            {activeConfig.festivalSelections.description}
-                        </p>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {activeConfig.festivalSelections.festivals.map((festival, idx) => (
-                            <div key={idx} className="group text-center">
-                                <div className="w-20 h-20 mx-auto rounded-full border-2 border-white/30 flex items-center justify-center mb-3 group-hover:border-amber-100 group-hover:bg-amber-100/10 transition-all duration-300 backdrop-blur-sm">
-                                    <Award className="w-6 h-6 text-white/60 group-hover:text-amber-100 transition-colors" />
-                                </div>
-                                <h3 className="text-white font-black text-sm uppercase tracking-widest mb-1 group-hover:text-amber-100 transition-colors">
-                                    {festival.name}
-                                </h3>
-                                <p className="text-white/60 text-xs font-medium mb-0.5">{festival.subtitle}</p>
-                                <p className="text-white/40 text-xs font-bold">{festival.year}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="mt-12 text-center">
-                        <p className="text-white/60 text-sm font-medium mb-4">
-                            {activeConfig.festivalSelections.recognitionText}
-                        </p>
-                        <div className="flex justify-center gap-3">
-                            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                                <span className="text-amber-100 font-black text-base">{activeConfig.festivalSelections.stats.awards}</span>
-                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{activeConfig.festivalSelections.statsLabels.awards}</span>
-                            </div>
-                            <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                                <span className="text-amber-100 font-black text-base">{activeConfig.festivalSelections.stats.selections}</span>
-                                <span className="text-white/80 text-xs font-medium ml-2 uppercase tracking-widest">{activeConfig.festivalSelections.statsLabels.selections}</span>
-                            </div>
-                        </div>
-                    </div>
-                </Container>
-            </section>
-        </main>
+      <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center p-6 text-center">
+        <Film className="animate-bounce text-amber-600 mb-6" size={48} />
+        <p className="text-[11px] font-black uppercase tracking-[0.5em] text-amber-900/40 italic">Syncing Visual Archives...</p>
+      </div>
     );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#fafaf9] text-stone-900 font-sans selection:bg-amber-600 selection:text-white">
+      {/* 🎬 Majestic Hero - REFINED AMBER PALETTE */}
+      <section className="relative pt-24 pb-32 md:pt-40 md:pb-52 bg-white overflow-hidden border-b border-amber-100/50">
+        <div className="absolute inset-0 z-0 opacity-[0.03] md:opacity-[0.07] pointer-events-none">
+            <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(#d97706 1.5px, transparent 1.5px)', backgroundSize: '48px 48px' }} />
+        </div>
+
+        <div className="absolute -top-40 -left-20 w-full h-[600px] md:h-[1000px] bg-gradient-to-br from-amber-100/40 via-amber-50/10 to-transparent rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-l from-stone-50/50 to-transparent pointer-events-none" />
+
+        <Container className="relative z-10">
+          <div className="max-w-6xl">
+            <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white border border-amber-100 mb-8 md:mb-14 animate-fade-in shadow-[0_10px_30px_rgba(217,119,6,0.05)]">
+              <Sparkles className="w-4 h-4 text-amber-600" />
+              <p className="text-amber-800 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.4em] leading-none text-center">Theatrical Collection . Prime</p>
+            </div>
+            
+            <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-[7.8rem] font-black uppercase tracking-tighter leading-[0.88] mb-12 md:mb-16 animate-fade-in italic text-stone-950 break-words drop-shadow-sm">
+              CINEMA <br />
+              <span className="text-amber-600 drop-shadow-[0_10px_20px_rgba(217,119,6,0.15)]">MANIFESTO</span>
+            </h1>
+            
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 pt-12 md:pt-16 border-t-[4px] md:border-t-[6px] border-stone-950 max-w-5xl">
+                <div className="w-full">
+                   <p className="text-stone-700 text-xl md:text-3xl font-medium tracking-tight leading-snug md:leading-snug max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                    Documenting high-integrity narratives of <span className="text-amber-600 font-black italic underline decoration-amber-200 underline-offset-8">human dignity</span> and institutional impact across the globe.
+                   </p>
+                </div>
+                <div className="flex items-center gap-10 opacity-30 grayscale saturate-0 self-start md:self-auto border-l-2 border-amber-100 pl-10 hidden md:flex">
+                   <div className="flex flex-col gap-2.5">
+                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-900">Archives</span>
+                       <Award className="w-8 h-8 md:w-10 md:h-10 text-amber-700" />
+                   </div>
+                   <div className="flex flex-col gap-2.5">
+                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-amber-900">Protocol</span>
+                       <Video className="w-8 h-8 md:w-10 md:h-10 text-amber-700" />
+                   </div>
+                </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 🧭 Control Deck - REFINED AMBER/STONE CONTRAST */}
+      <section className="sticky top-16 z-[100] py-6 md:py-10 bg-white/95 backdrop-blur-3xl border-y border-amber-50 shadow-[0_20px_40px_rgba(217,119,6,0.03)]">
+        <Container>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-10">
+            <div className="w-full lg:w-auto overflow-x-auto scrollbar-none -mx-6 lg:mx-0 px-6 lg:px-0">
+              <div className="flex items-center gap-4">
+                {categories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={cn(
+                      "px-10 py-4 md:py-5 rounded-[1.5rem] md:rounded-[2rem] text-[10px] md:text-[11px] font-black uppercase tracking-[0.25em] transition-all duration-700 whitespace-nowrap border-2",
+                      activeCategory === cat 
+                        ? "bg-amber-600 border-amber-600 text-white shadow-[0_15px_40px_rgba(217,119,6,0.2)] scale-105" 
+                        : "bg-white border-amber-50 text-stone-400 hover:border-amber-600 hover:text-amber-600"
+                    )}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative w-full lg:w-[450px] group shadow-2xl shadow-amber-900/5 rounded-[2.2rem]">
+              <Search className="absolute left-6 md:left-9 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-amber-600 transition-colors w-5 h-5 md:w-6 md:h-6" />
+              <input 
+                type="text" 
+                placeholder="SEARCH PRODUCTIONS..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-14 md:h-20 pl-16 md:pl-24 pr-10 bg-white rounded-[2.2rem] border-2 border-amber-50 text-[11px] md:text-[13px] font-black uppercase tracking-widest focus:ring-8 focus:ring-amber-500/5 focus:border-amber-600 transition-all outline-none placeholder:text-stone-200 shadow-sm"
+              />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* 🎞️ Collection - THEATRICAL GRID */}
+      <section className="py-20 md:py-32 relative bg-[#fafafa]">
+        <Container>
+          {filteredDocs.length === 0 ? (
+            <div className="py-40 md:py-72 text-center bg-white rounded-[3rem] md:rounded-[5rem] border-2 border-dashed border-amber-100 px-6 shadow-sm">
+              <Film className="mx-auto text-amber-50 mb-10 w-24 h-24 md:w-32 md:h-32" strokeWidth={1} />
+              <h2 className="text-3xl md:text-6xl font-black uppercase italic tracking-tighter text-amber-100 mb-6">Archive Synchronized</h2>
+              <p className="text-amber-900/30 font-bold uppercase tracking-widest text-xs md:text-sm italic">No entries for this visual frequency.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-14">
+              {filteredDocs.map((doc) => (
+                <Link key={doc._id} href={`/documentaries/${doc.slug}`} className="group relative block w-full h-full">
+                  <div className="bg-white rounded-[3rem] p-6 border border-amber-50 shadow-[0_20px_60px_rgba(0,0,0,0.02)] hover:shadow-[0_45px_100px_rgba(217,119,6,0.08)] transition-all duration-700 translate-y-0 hover:translate-y-[-12px] flex flex-col h-full overflow-hidden">
+                    
+                    <div className="aspect-[16/10] relative overflow-hidden rounded-[2.2rem] bg-stone-100 shadow-inner mb-8">
+                      <Image 
+                        src={getSafeSrc(doc.featuredImage?.url)} 
+                        alt={doc.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-[6000ms]"
+                      />
+                      <div className="absolute inset-0 bg-stone-950/15 group-hover:bg-transparent transition-colors duration-1000" />
+                      
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-700 scale-75 group-hover:scale-100">
+                        <div className="w-20 h-20 rounded-full bg-amber-600 text-white flex items-center justify-center shadow-[0_0_40px_rgba(217,119,6,0.4)]">
+                          <Play className="fill-white translate-x-1 w-9 h-9" />
+                        </div>
+                      </div>
+
+                      <div className="absolute top-6 left-6">
+                         <div className="px-6 py-2 bg-white/95 backdrop-blur-3xl rounded-full text-[10px] font-black uppercase tracking-widest text-amber-700 shadow-2xl border border-amber-50/50">
+                             {doc.category || 'CINEMA_DEPT'}
+                         </div>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 flex flex-col">
+                      <div className="flex items-center gap-4 mb-6">
+                         <span className="text-[11px] font-black text-amber-600 uppercase tracking-[0.15em] flex items-center gap-2">
+                            <Award className="w-5 h-5" /> GRAND_CINEMA
+                         </span>
+                         <div className="w-1.5 h-1.5 rounded-full bg-amber-100" />
+                         <span className="text-[11px] font-black text-stone-400 uppercase tracking-widest font-sans italic">
+                            ARCHIVE_{new Date(doc.publishedAt || doc.createdAt).getFullYear()}
+                         </span>
+                      </div>
+
+                      <h3 className="text-2xl md:text-3xl font-black text-stone-900 uppercase italic tracking-tighter leading-tight group-hover:text-amber-600 transition-colors duration-700 mb-6 line-clamp-3">
+                        {doc.title}
+                      </h3>
+                      
+                      <p className="text-stone-500 text-lg font-medium leading-relaxed line-clamp-3 italic mb-10 border-l-4 border-amber-50 pl-6 group-hover:border-amber-400 transition-all duration-700">
+                        "{doc.excerpt}"
+                      </p>
+
+                      <div className="mt-auto pt-8 border-t border-stone-50 flex items-center justify-between">
+                         <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-[1.2rem] bg-stone-50 border border-stone-100 flex items-center justify-center text-amber-600 text-sm font-black shadow-inner group-hover:bg-amber-50 group-hover:border-amber-100 transition-colors">
+                               {doc.author?.name?.charAt(0) || 'M'}
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-[11px] font-black uppercase tracking-widest text-stone-950 line-clamp-1">{doc.author?.name || 'Moksha Editorial'}</span>
+                                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-amber-600/40">OFFICIAL CREW</span>
+                            </div>
+                         </div>
+                         
+                         <div className="w-14 h-14 bg-stone-950 rounded-2xl flex items-center justify-center text-amber-500 hover:bg-amber-600 hover:text-white transition-all duration-700 shadow-xl group-hover:scale-105">
+                             <ArrowUpRight className="w-7 h-7" strokeWidth={3} />
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </Container>
+      </section>
+
+      {/* 🏛️ Cinema Footer - REFINED CONTRAST */}
+      <section className="py-24 md:py-32 bg-white border-t-2 border-stone-100">
+          <Container className="text-center">
+              <Film className="text-amber-600/10 mx-auto mb-14 w-16 h-16 md:w-20 md:h-20" />
+              <h2 className="text-5xl md:text-[10rem] font-black uppercase italic tracking-tighter text-stone-100 mb-20 md:mb-24 overflow-hidden drop-shadow-sm">THEATER_OF_DIGNITY</h2>
+              <div className="flex flex-wrap justify-center gap-10 md:gap-16 pt-16 md:pt-20 border-t border-amber-50 px-6">
+                  {['VARANASI', 'NEW DELHI', 'NEW YORK', 'GENEVA'].map(city => (
+                      <div key={city} className="flex flex-col gap-2">
+                          <span className="text-[9px] font-black text-amber-600/30 uppercase tracking-[0.2em]">HUB</span>
+                          <span className="text-[11px] md:text-[12px] font-black text-stone-400 uppercase tracking-[0.5em] hover:text-amber-600 transition-colors cursor-default">{city}</span>
+                      </div>
+                  ))}
+              </div>
+          </Container>
+      </section>
+
+      <style jsx global>{`
+        .animate-fade-in {
+            animation: fadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </main>
+  );
 }

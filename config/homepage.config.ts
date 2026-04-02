@@ -15,6 +15,8 @@ export const homepageConfig: HomepageConfig = {
       "/gallery/image6.png",
     ],
     autoSlideInterval: 5000,
+    mobileAspectRatio: "aspect-[1620/700]",
+    aspectRatio: "md:aspect-[1620/700]"
   },
 
   // Action Banner
@@ -59,6 +61,9 @@ export const homepageConfig: HomepageConfig = {
       }
     ],
     image: "/gallery/image001.png",
+    alt: "Moksha Sewa About Image",
+    mobileAspectRatio: "aspect-[4/3]",
+    aspectRatio: "lg:aspect-square",
     floatingBadge: {
       text: "Serving with Dignity",
       subtext: "Since 2026"
@@ -76,6 +81,7 @@ export const homepageConfig: HomepageConfig = {
         icon: "Heart",
         description: "Providing dignified transportation and sacred final rites for unclaimed souls with complete respect and traditional ceremonies.",
         image: "/gallery/image001.png",
+        alt: "Final Journey Service Image",
         href: "/services"
       },
       {
@@ -83,6 +89,7 @@ export const homepageConfig: HomepageConfig = {
         icon: "Heart",
         description: "Supporting families in need with emotional, logistical and financial assistance during their most difficult times.",
         image: "/gallery/image002.png",
+        alt: "Compassionate Care Service Image",
         href: "/services"
       },
       {
@@ -90,6 +97,7 @@ export const homepageConfig: HomepageConfig = {
         icon: "Users",
         description: "Educating communities about dignity in death and building awareness for those who have no one to care.",
         image: "/gallery/image003.png",
+        alt: "Community Outreach - Building Awareness",
         href: "/services"
       },
       {
@@ -97,6 +105,7 @@ export const homepageConfig: HomepageConfig = {
         icon: "FileText",
         description: "Maintaining proper records and ensuring legal compliance while honoring the memory of every soul we serve.",
         image: "/gallery/image004.png",
+        alt: "Sacred Documentation - Record Keeping",
         href: "/services"
       }
     ]
@@ -111,12 +120,14 @@ export const homepageConfig: HomepageConfig = {
       slides: [
         {
           src: "/gallery/image001.png",
+          alt: "Sacred Kashi Ghats",
           title: "Sacred Kashi",
           description: "Where eternal souls find liberation",
           location: "Primary Hub"
         },
         {
           src: "/gallery/image002.png",
+          alt: "Holy Haridwar River",
           title: "Holy Haridwar",
           description: "Gateway to divine blessings",
           location: "Regional Center"
@@ -188,6 +199,7 @@ export const homepageConfig: HomepageConfig = {
     titleHighlight: "IN THE FINAL JOURNEY",
     description: "Whether you have an hour a week or a lifetime to give, your presence can bring dignity to a soul forgotten by the world. Join our specialized hubs in 38+ cities.",
     backgroundImage: "/gallery/image4.png",
+    alt: "Stand with Us - Background Image",
     buttons: [
       {
         text: "JOIN OUR FORCE",
@@ -218,7 +230,8 @@ export const homepageConfig: HomepageConfig = {
         targeted: "₹5,00,000",
         raised: "₹3,20,000",
         percentage: "64%",
-        image: "/gallery/image1.png"
+        image: "/gallery/image1.png",
+        alt: "Kashi Ghat Mission Campaign"
       },
       {
         title: "NEW ANTIM YATRA VAN",
@@ -226,7 +239,8 @@ export const homepageConfig: HomepageConfig = {
         targeted: "₹12,00,000",
         raised: "₹7,80,000",
         percentage: "65%",
-        image: "/gallery/hero_moksha_1.png"
+        image: "/gallery/hero_moksha_1.png",
+        alt: "Antim Yatra Van Project"
       },
       {
         title: "SACRED OIL FUND",
@@ -234,7 +248,8 @@ export const homepageConfig: HomepageConfig = {
         targeted: "₹1,00,000",
         raised: "₹85,000",
         percentage: "85%",
-        image: "/gallery/gallery_peaceful_departure_1772861335733.png"
+        image: "/gallery/gallery_peaceful_departure_1772861335733.png",
+        alt: "Sacred Oil Fund Materials"
       }
     ],
     autoSlideInterval: 6000,

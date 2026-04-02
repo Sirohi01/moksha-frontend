@@ -49,13 +49,12 @@ export default function WhyMokshaSewa() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                 <Image
                   src={getSafeSrc(config.hero.image)}
                   alt={config.hero.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={400}
-                  height={400}
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-100 rounded-full opacity-20"></div>

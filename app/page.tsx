@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { homepageConfig } from "@/config/homepage.config";
 import { getIcon } from "@/config/icons.config";
+import { getRatioClass } from "@/lib/ratios";
 
 export default function HomePage() {
   const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
@@ -101,26 +102,41 @@ export default function HomePage() {
 
   return (
     <div className="bg-stone-50 min-h-screen font-sans">
+      {/* ── SEO DYNAMIC H1 ── */}
+      {config.seo?.h1Tag && (
+        <h1 className="sr-only">{config.seo.h1Tag}</h1>
+      )}
+      {!config.seo?.h1Tag && config.about?.title && (
+        <h1 className="sr-only">{config.about.title} {config.about.titleHighlight}</h1>
+      )}
       {/* ── HERO (HINDU RITUALS & SACRED DEPARTURE) ── */}
-      <section className="relative h-[60vh] md:h-[75vh] lg:h-[85vh] w-full overflow-hidden bg-black border-b-[8px] border-[#f4c430]">
-        {config.hero?.slides?.map((src, idx) => (
-          <div
-            key={src}
-            className={cn(
-              "absolute inset-0 transition-all duration-[2000ms] ease-in-out",
-              idx === currentSlide ? "opacity-100 scale-100 z-10" : "opacity-0 scale-105 z-0"
-            )}
-          >
-            <Image
-              src={getSafeSrc(src)}
-              alt={config.labels?.heroAltText || "Moksha Sewa - Dignified Final Journey"}
-              fill
-              className="object-cover"
-              style={{ imageRendering: 'auto', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}
-              priority={idx === 0}
-            />
-          </div>
-        ))}
+      <section className={cn(
+        "relative w-full overflow-hidden bg-white border-b-4 border-stone-100 transition-all duration-700",
+        getRatioClass(config.hero.aspectRatio || (config.hero as any).protocol, "aspect-[1620/700]"),
+        config.hero.mobileAspectRatio
+      )}>
+        {config.hero?.slides?.map((slide, idx) => {
+          const src = typeof slide === 'string' ? slide : slide.src;
+          const alt = typeof slide === 'string' ? (config.hero.altText || config.labels?.heroAltText || "Moksha Sewa") : slide.alt;
+          return (
+            <div
+              key={src}
+              className={cn(
+                "absolute inset-0 transition-all duration-[2000ms] ease-in-out",
+                idx === currentSlide ? "opacity-100 scale-100 z-10" : "opacity-0 scale-105 z-0"
+              )}
+            >
+              <Image
+                src={getSafeSrc(src)}
+                alt={alt}
+                fill
+                className="object-contain"
+                style={{ imageRendering: 'auto', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}
+                priority={idx === 0}
+              />
+            </div>
+          );
+        })}
 
         {/* Dynamic Progress Indicator (Smile Style) */}
         <div className="absolute bottom-0 left-0 right-0 z-20 h-2 flex bg-black/10">
@@ -164,7 +180,7 @@ export default function HomePage() {
           </h2>
           <div className="flex gap-4">
             {config.actionBanner?.buttons?.map((button, index) => (
-              <Link key={index} href={button.href}>
+              <Link key={index} href={button.href || '#'}>
                 <Button className={cn(
                   "px-6 py-2 font-medium",
                   button.variant === "primary"
@@ -223,7 +239,7 @@ export default function HomePage() {
 
               <div className="flex flex-wrap gap-4">
                 {config.about.buttons.map((button, index) => (
-                  <Link key={index} href={button.href}>
+                  <Link key={index} href={button.href || '#'}>
                     <Button className={cn(
                       "px-8 py-3 transition-colors shadow-lg",
                       button.variant === "primary"
@@ -246,10 +262,13 @@ export default function HomePage() {
                   <div className="absolute -top-6 -right-6 w-full h-full bg-gradient-to-br from-gray-200/30 to-gray-300/30 rounded-3xl blur-sm"></div>
 
                   {/* Main image */}
-                  <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 backdrop-blur-sm">
+                  <div className={cn(
+                    "relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 backdrop-blur-sm transition-all duration-700",
+                    "aspect-square lg:aspect-square"
+                  )}>
                     <Image
                       src={getSafeSrc(config.about.image)}
-                      alt="Moksha Sewa - Dignified Final Journey"
+                      alt={config.about.alt || "Moksha Sewa - Dignified Final Journey"}
                       fill
                       className="object-cover"
                     />
@@ -338,12 +357,12 @@ export default function HomePage() {
                     </p>
 
                     {/* Service image */}
-                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden mb-4 shadow-md">
+                    <div className="relative aspect-[3/2] rounded-2xl overflow-hidden mb-4 shadow-md bg-stone-50">
                       <Image
                         src={getSafeSrc(p.image)}
-                        alt={p.title}
+                        alt={p.alt || p.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="object-contain group-hover:scale-105 transition-transform duration-700 bg-stone-50"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                     </div>
@@ -351,7 +370,7 @@ export default function HomePage() {
                     {/* Learn more link */}
                     <div className="text-center">
                       <Link
-                        href={p.href}
+                        href={p.href || '#'}
                         className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium text-sm transition-colors group/link"
                       >
                         {config.labels?.learnMore || "Learn More"}
@@ -400,12 +419,12 @@ export default function HomePage() {
                         >
                           <Image
                             src={getSafeSrc(slide.src)}
-                            alt={slide.title}
+                            alt={slide.alt || slide.title}
                             fill
-                            className="object-cover"
+                            className="object-contain"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                          <div className="absolute bottom-8 left-8 text-white">
+                          <div className="absolute bottom-8 left-8 text-white z-10">
                             <div className="flex items-center gap-2 mb-3">
                               <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
                               <span className="text-sm font-medium">{slide.location}</span>
@@ -585,10 +604,11 @@ export default function HomePage() {
               <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4">
                 {config.storiesInMotion.stories.map((story, i) => (
                   <div key={i} className="relative min-w-[280px] md:min-w-[400px] aspect-[16/10] rounded-[2rem] overflow-hidden group shadow-lg">
-                    <Image src={getSafeSrc(story.image)} alt={story.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute bottom-5 left-6">
-                      <p className="text-white font-black uppercase text-[10px] tracking-widest">{story.title}</p>
+                    <Image src={getSafeSrc(story.image)} alt={story.title} fill className="object-contain group-hover:scale-105 transition-transform duration-700 bg-stone-50" />
+                    <div className="absolute bottom-5 left-6 z-10">
+                      <p className="text-white font-black uppercase text-[10px] tracking-widest drop-shadow-md">{story.title}</p>
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 ))}
               </div>
@@ -601,25 +621,25 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Join The Mission */}
-      <section className="relative py-24 md:py-32 overflow-hidden bg-stone-950">
+      {/* Join The Mission - Reverted to Full Background per user request */}
+      <section className="relative py-16 md:py-32 overflow-hidden bg-stone-950">
         <div className="absolute inset-0 z-0">
           <Image
             src={getSafeSrc(config.joinMission.backgroundImage)}
             alt={config.labels?.joinMissionAltText || "Join Our Mission"}
             fill
-            className="object-cover"
+            className="object-cover opacity-60"
           />
-          {/* Simple curved gradient - dark on left for text, clear on right for image */}
+          {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
         </div>
 
         <Container className="relative z-10">
           <div className="max-w-xl">
-            <div className="inline-block px-4 py-1.5 rounded-full bg-[#20b2aa]/10 border border-[#20b2aa]/20 mb-6 backdrop-blur-md">
+            <div className="inline-block px-4 py-1.5 rounded-full bg-navy-50/10 border border-navy-50/20 mb-6 backdrop-blur-md">
               <p className="text-[#20b2aa] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.joinMission.badge}</p>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter text-white leading-[0.85] mb-8">
+            <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white leading-none md:leading-[0.85] mb-8">
               {config.joinMission.title} <br />
               <span className="text-[#f4c430]">{config.joinMission.titleHighlight}</span>
             </h2>
@@ -629,7 +649,7 @@ export default function HomePage() {
 
             <div className="flex flex-wrap gap-4">
               {config.joinMission.buttons.map((button, index) => (
-                <Link key={index} href={button.href}>
+                <Link key={index} href={button.href || '#'}>
                   <Button variant="ghost" className={cn(
                     "px-8 py-3 transition-colors",
                     button.variant === "primary"
@@ -642,7 +662,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-12 flex gap-10 border-t border-white/10 pt-10">
+            <div className="mt-12 flex flex-wrap gap-6 md:gap-10 border-t border-white/10 pt-10">
               {config.joinMission.stats.map((stat, index) => (
                 <div key={index} className="flex flex-col">
                   <p className="text-white font-black text-2xl tracking-tighter leading-none mb-1">{stat.number}</p>
@@ -739,13 +759,13 @@ export default function HomePage() {
                         ? "shadow-2xl shadow-gray-900/20 ring-1 ring-gray-200"
                         : "shadow-lg shadow-gray-500/20 hover:shadow-xl"
                     )}>
-                      <div className="relative aspect-[4/3] overflow-hidden">
+                      <div className="relative aspect-[3/2] overflow-hidden bg-stone-50">
                         <Image
                           src={getSafeSrc(c.image)}
-                          alt={c.title}
+                          alt={c.alt || c.title}
                           fill
                           className={cn(
-                            "object-cover transition-transform duration-700",
+                            "object-contain transition-transform duration-700 bg-stone-50",
                             position === 0 ? "scale-100" : "scale-105 group-hover:scale-100"
                           )}
                         />

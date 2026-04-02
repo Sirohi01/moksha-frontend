@@ -59,6 +59,34 @@ h1, h2, h3, h4, h5, h6 {
   .text-accent-navy {
     color: var(--accent-navy);
   }
+
+  /* Image & Aspect Ratio Utilities for Consistency */
+  .aspect-wide {
+    aspect-ratio: 21 / 9;
+  }
+  .aspect-classic {
+    aspect-ratio: 4 / 3;
+  }
+  .aspect-poster {
+    aspect-ratio: 3 / 4;
+  }
+  .aspect-marketing {
+    aspect-ratio: 16 / 10;
+  }
+
+  .image-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Prevent layout shift during loading */
+  .image-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #f3f4f6; /* stone-100 placeholder */
+  }
 }
 
 /* Custom scrollbar for a cleaner look */

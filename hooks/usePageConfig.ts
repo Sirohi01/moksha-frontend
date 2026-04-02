@@ -18,7 +18,9 @@ export function usePageConfig<T>(pageName: string, fallbackConfig: T): UsePageCo
         setError(null);
         
         const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-        const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`);
+        const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`, {
+          cache: 'no-store'
+        });
         
         if (response.ok) {
           const data = await response.json();

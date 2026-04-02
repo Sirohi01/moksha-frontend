@@ -38,6 +38,7 @@ export default function BannersPage() {
         title: '',
         content: '',
         imageUrl: '',
+        altText: '',
         targetUrl: '',
         isActive: true,
         displayRules: {
@@ -70,6 +71,8 @@ export default function BannersPage() {
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        // Size restriction lifted as per mission protocol
 
         try {
             setIsUploading(true);
@@ -110,6 +113,7 @@ export default function BannersPage() {
                 title: '',
                 content: '',
                 imageUrl: '',
+                altText: '',
                 targetUrl: '',
                 isActive: true,
                 displayRules: { page: 'all', priority: 0 },
@@ -245,6 +249,17 @@ export default function BannersPage() {
                                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-navy-300 uppercase tracking-widest ml-4 flex items-center gap-2 italic">
+                                    <ImageIcon className="w-3 h-3" /> SEO Alt Text
+                                </label>
+                                <input
+                                    placeholder="SEARCH ENGINE CONTEXT..."
+                                    className="w-full p-4 bg-navy-50/50 border-2 border-transparent focus:border-gold-500 rounded-2xl outline-none font-black text-navy-950 transition-all uppercase tracking-widest text-[10px]"
+                                    value={formData.altText || ''}
+                                    onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         {/* Visual Config */}
@@ -300,10 +315,11 @@ export default function BannersPage() {
                                 <div className="flex items-center justify-between px-2">
                                     <label className="text-[9px] font-black text-navy-300 uppercase tracking-[0.3em]">Asset Payload</label>
                                     <label htmlFor="asset-upload" className="flex items-center gap-2 text-[9px] font-black text-gold-600 uppercase tracking-widest cursor-pointer hover:underline bg-gold-50 px-3 py-1 rounded-lg">
-                                        <Upload className="w-3 h-3" /> {isUploading ? 'SYNCING...' : 'UPLOAD'}
+                                    <Upload className="w-3 h-3" /> {isUploading ? 'SYNCING...' : 'UPLOAD ASSET'}
                                     </label>
                                     <input type="file" id="asset-upload" className="hidden" onChange={handleFileUpload} accept="image/*" />
                                 </div>
+                                <p className="text-[8px] text-gold-600 font-bold uppercase tracking-widest pl-2">Recommended: 1200x750px (Popup) | 1920x200px (Banner)</p>
                                 <input
                                     placeholder="ASSET URL..."
                                     className="w-full p-4 bg-navy-50/10 border-2 border-dashed border-navy-100 rounded-xl outline-none font-bold text-navy-400 transition-all text-[9px] select-all truncate"

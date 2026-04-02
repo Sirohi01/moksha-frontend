@@ -118,13 +118,12 @@ export default function ServicesPage() {
             <div className="space-y-6">
               {/* Main image */}
               <div className="relative">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                   <Image
                     src={getSafeSrc(config.eligibility.mainImage)}
                     alt={config.eligibility.mainImageAlt}
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-amber-100 rounded-full opacity-30"></div>

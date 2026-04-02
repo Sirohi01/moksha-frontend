@@ -60,7 +60,8 @@ export default function AdminLogin() {
         setError(data.message || 'Credentials Mismatch');
       }
     } catch (error: any) {
-      setError('System Relay Error. Try again.');
+      console.error("Login Handshake Failure:", error);
+      setError(error.message || 'Network Relay Error: Server Unreachable');
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,8 @@ export default function AdminLogin() {
         setError(data.message || 'Invalid Secure Key');
       }
     } catch (error: any) {
-      setError('Protocol Error during Handshake');
+      console.error("2FA Handshake Failure:", error);
+      setError(error.message || 'Protocol Error during Secure Handshake');
     } finally {
       setLoading(false);
     }

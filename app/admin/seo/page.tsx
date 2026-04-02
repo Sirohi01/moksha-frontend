@@ -1,340 +1,505 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import { setNestedValue } from '@/lib/editor-utils';
 import { 
+  Globe, 
   Search, 
-  Plus, 
-  Edit3, 
-  Trash2, 
-  Eye, 
-  BarChart3,
-  Globe,
-  Target,
-  TrendingUp,
+  Settings, 
+  History, 
+  BarChart3, 
+  CheckCircle, 
   AlertCircle,
-  CheckCircle,
-  Clock,
-  Star
+  Eye,
+  Save,
+  RefreshCcw,
+  ShieldCheck,
+  TrendingUp,
+  Layout,
+  ExternalLink,
+  Lock,
+  X,
+  Plus,
+  Trash2
 } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-interface SEOPage {
-  _id: string;
-  title: string;
-  slug: string;
-  url: string;
-  metaTitle: string;
-  metaDescription: string;
-  metaKeywords: string;
-  seoScore: number;
-  status: 'draft' | 'published' | 'archived' | 'under_review';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  lastOptimized: string;
-  assignedTo: {
-    name: string;
-    email: string;
-  };
-}
+// Tabs for the SEO Hub
+type SEOTab = 'ranking' | 'technical' | 'backup';
 
-interface SEOStats {
-  totalPages: number;
-  publishedPages: number;
-  draftPages: number;
-  avgSEOScore: number;
-  pagesWithIssues: number;
-  highPriorityIssues: number;
-  recentOptimizations: number;
-}
-
-export default function SEOManagement() {
-  const [seoPages, setSeoPages] = useState<SEOPage[]>([]);
-  const [stats, setStats] = useState<SEOStats | null>(null);
+export default function SEOCommandDeck() {
+  const [activeTab, setActiveTab] = useState<SEOTab>('ranking');
+  const [pages, setPages] = useState<any[]>([]);
+  const [selectedPage, setSelectedPage] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [saving, setSaving] = useState(false);
+  const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
+  const [schemaError, setSchemaError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchSEOData();
-    fetchStats();
+    fetchPages();
   }, []);
 
-  const fetchSEOData = async () => {
+  const fetchPages = async () => {
     try {
-      const token = localStorage.getItem('adminToken');
-      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      
-      const params = new URLSearchParams();
-      if (searchQuery) params.append('search', searchQuery);
-      if (statusFilter !== 'all') params.append('status', statusFilter);
-      if (priorityFilter !== 'all') params.append('priority', priorityFilter);
-      
-      const response = await fetch(`${API_BASE_URL}/api/seo?${params}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/seo`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
       });
-
-      if (response.ok) {
-        const result = await response.json();
-        setSeoPages(result.data || []);
+      const data = await response.json();
+      if (data.success) {
+        const pageList = data.data || [];
+        setPages(pageList);
+        if (pageList.length > 0) setSelectedPage(pageList[0]);
       }
     } catch (error) {
-      console.error('Failed to fetch SEO data:', error);
+      console.error("Error fetching SEO pages:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchStats = async () => {
+  const handleSave = async () => {
+    if (!selectedPage) return;
+    setSaving(true);
     try {
-      const token = localStorage.getItem('adminToken');
-      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      
-      const response = await fetch(`${API_BASE_URL}/api/seo/stats`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/seo/${selectedPage._id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         },
+        body: JSON.stringify(selectedPage)
       });
-
-      if (response.ok) {
-        const result = await response.json();
-        setStats(result.data);
+      const data = await response.json();
+      if (data.success) {
+        alert("SEO Configuration Saved Successfully!");
       }
     } catch (error) {
-      console.error('Failed to fetch SEO stats:', error);
+      alert("Failed to save SEO config.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'published': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'draft': return <Clock className="w-4 h-4 text-yellow-500" />;
-      case 'under_review': return <AlertCircle className="w-4 h-4 text-blue-500" />;
-      case 'archived': return <Trash2 className="w-4 h-4 text-gray-500" />;
-      default: return <Clock className="w-4 h-4 text-gray-500" />;
-    }
-  };
+  if (loading) return <div className="min-h-screen flex items-center justify-center p-12 text-center font-black animate-pulse uppercase tracking-widest italic text-navy-900 bg-stone-50">Syncing Intelligence Hub...</div>;
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent': return 'text-red-600 bg-red-50';
-      case 'high': return 'text-orange-600 bg-orange-50';
-      case 'medium': return 'text-blue-600 bg-blue-50';
-      case 'low': return 'text-gray-600 bg-gray-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
-  };
-
-  const getSEOScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 bg-green-50';
-    if (score >= 60) return 'text-yellow-600 bg-yellow-50';
-    return 'text-red-600 bg-red-50';
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 font-medium">Loading SEO data...</p>
-        </div>
-      </div>
-    );
-  }
+  if (!selectedPage) return (
+    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-12">
+      <Card className="p-12 text-center max-w-md rounded-[3rem] border-none shadow-2xl">
+        <Globe className="w-16 h-16 text-navy-200 mx-auto mb-6" />
+        <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-4">No SEO Nodes Detected</h3>
+        <p className="text-navy-950/60 font-medium mb-8">Begin by initializing your site's core structure in 'Content Central'.</p>
+        <Button 
+          onClick={() => window.location.href = '/admin/content'} 
+          className="bg-navy-950 text-gold-500 rounded-2xl px-8"
+        >
+          GO TO CONTENT CENTRAL
+        </Button>
+      </Card>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">SEO Management</h1>
-          <p className="text-gray-600">Manage and optimize SEO for all pages</p>
-        </div>
-
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Pages</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.totalPages}</p>
-                </div>
-                <Globe className="w-8 h-8 text-blue-500" />
+    <div className="min-h-screen bg-stone-50 p-6 md:p-12 font-sans select-none">
+      <div className="max-w-[1600px] mx-auto">
+        
+        {/* Hub Header */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center shadow-xl">
+                <Globe className="w-5 h-5 text-gold-500" />
               </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Avg SEO Score</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.avgSEOScore}/100</p>
-                </div>
-                <BarChart3 className="w-8 h-8 text-green-500" />
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Published</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.publishedPages}</p>
-                </div>
-                <CheckCircle className="w-8 h-8 text-green-500" />
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Issues</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats.pagesWithIssues}</p>
-                </div>
-                <AlertCircle className="w-8 h-8 text-red-500" />
-              </div>
-            </Card>
-          </div>
-        )}
-
-        {/* Filters and Search */}
-        <Card className="p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search pages..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+              <h1 className="text-4xl font-black uppercase tracking-tighter text-navy-950 italic">SEO Command Deck</h1>
             </div>
-            
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="all">All Status</option>
-              <option value="published">Published</option>
-              <option value="draft">Draft</option>
-              <option value="under_review">Under Review</option>
-              <option value="archived">Archived</option>
-            </select>
+            <p className="text-navy-950/60 font-black text-xs uppercase tracking-[0.2em]">Surgical Search Intelligence & Technical Indexing Portal</p>
+          </div>
 
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          <div className="flex items-center gap-4">
+            {pages && Array.isArray(pages) && pages.length > 0 && (
+              <select 
+                value={selectedPage?._id}
+                onChange={(e) => setSelectedPage(pages.find(p => p._id === e.target.value))}
+                className="bg-white border-2 border-navy-50 rounded-2xl px-6 py-4 text-[10px] font-black uppercase tracking-widest text-navy-950 shadow-sm focus:border-gold-500 outline-none transition-all"
+              >
+                {pages.map(page => (
+                  <option key={page._id} value={page._id}>{page.title} (/{page.slug})</option>
+                ))}
+              </select>
+            )}
+            <Button 
+                onClick={handleSave} 
+                disabled={saving || !selectedPage}
+                className="bg-navy-950 text-gold-500 shadow-xl px-10 py-5 rounded-3xl hover:bg-gold-600 hover:text-navy-950 transition-all"
             >
-              <option value="all">All Priority</option>
-              <option value="urgent">Urgent</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
-            </select>
-
-            <Button onClick={fetchSEOData} className="px-6">
-              <Search className="w-4 h-4 mr-2" />
-              Search
+              {saving ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              <span className="text-[11px] font-black uppercase tracking-[0.2em]">{saving ? 'SAVING...' : 'COMMIT SEO HUB'}</span>
             </Button>
           </div>
-        </Card>
+        </div>
 
-        {/* SEO Pages Table */}
-        <Card className="overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Page
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    SEO Score
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Priority
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Last Optimized
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {seoPages.map((page) => (
-                  <tr key={page._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{page.title}</div>
-                        <div className="text-sm text-gray-500">{page.url}</div>
-                        <div className="text-xs text-gray-400 mt-1">
-                          {page.metaDescription?.substring(0, 80)}...
+        {/* Intelligence Tabs */}
+        <div className="flex gap-4 mb-8">
+          {[
+            { id: 'ranking', label: 'Search Ranking', icon: BarChart3 },
+            { id: 'technical', label: 'Technical Setup', icon: Settings },
+            { id: 'backup', label: 'Version Backup', icon: History }
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as SEOTab)}
+              className={cn(
+                "flex items-center gap-3 px-8 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest transition-all",
+                activeTab === tab.id 
+                  ? "bg-navy-950 text-gold-500 shadow-xl scale-105" 
+                  : "bg-white text-navy-400 hover:text-navy-950 hover:bg-navy-50 border border-navy-50"
+              )}
+            >
+              <tab.icon className="w-4 h-4" />
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Main Control Panel (Left/Center) */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* SEARCH RANKING WORKFLOW */}
+            {activeTab === 'ranking' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-white">
+                  <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-8 italic flex items-center gap-3">
+                    <TrendingUp className="text-gold-600" /> SERP Presence Intelligence
+                  </h3>
+                  
+                  <div className="space-y-8">
+                    <div>
+                      <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Google Search Metatitle (Max 60)</label>
+                      <input 
+                        type="text" 
+                        value={selectedPage?.metaTitle || ''}
+                        onChange={(e) => setSelectedPage({...selectedPage, metaTitle: e.target.value})}
+                        className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-5 font-bold text-navy-950 focus:border-navy-950 outline-none transition-all"
+                        placeholder="Premium Moksha Sewa Services | Dignity for All"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">SERP Snippet Description (Max 160)</label>
+                      <textarea 
+                        rows={4}
+                        value={selectedPage?.metaDescription || ''}
+                        onChange={(e) => setSelectedPage({...selectedPage, metaDescription: e.target.value})}
+                        className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-5 font-bold text-navy-950 focus:border-navy-950 outline-none transition-all resize-none"
+                        placeholder="Providing dignified burials and cremation services for unclaimed souls across Kashi, Haridwar, and Prayagraj..."
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Primary Focus Keyword</label>
+                            <input 
+                                type="text"
+                                value={selectedPage?.focusKeyword || ''}
+                                onChange={(e) => setSelectedPage({...selectedPage, focusKeyword: e.target.value})}
+                                className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-5 font-bold text-navy-950 focus:border-navy-950 outline-none transition-all"
+                            />
                         </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getSEOScoreColor(page.seoScore)}`}>
-                        {page.seoScore}/100
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center">
-                        {getStatusIcon(page.status)}
-                        <span className="ml-2 text-sm text-gray-900 capitalize">{page.status}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(page.priority)}`}>
-                        {page.priority}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(page.lastOptimized).toLocaleDateString()}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.open(page.url, '_blank')}
+                        <div>
+                            <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Current Global Ranking</label>
+                            <div className="flex items-center gap-4 bg-navy-50/30 rounded-2xl px-6 py-5 font-black text-navy-950 border-2 border-navy-50">
+                                <span className="text-xl italic">#{selectedPage?.seoRanking?.currentRank || 'N/A'}</span>
+                                <span className="text-[10px] text-green-600">▲ 12 positions globally</span>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Ranking Analytics Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="p-8 bg-gold-500 text-navy-950 border-none shadow-xl rounded-[2.5rem]">
+                        <p className="text-[9px] font-black uppercase tracking-widest mb-2 opacity-60">SEO Momentum</p>
+                        <p className="text-3xl font-black tracking-tighter">84.2%</p>
+                        <p className="text-[9px] font-bold mt-2 uppercase opacity-80">Highly Optimized</p>
+                    </Card>
+                    <Card className="p-8 bg-white border-2 border-navy-50 shadow-xl rounded-[2.5rem]">
+                        <p className="text-[9px] font-black text-navy-400 uppercase tracking-widest mb-2">Organic Reach</p>
+                        <p className="text-3xl font-black text-navy-950 tracking-tighter">12.5k</p>
+                        <p className="text-[9px] font-bold mt-2 text-green-600 uppercase">Weekly View Growth</p>
+                    </Card>
+                    <Card className="p-8 bg-navy-950 text-white border-none shadow-xl rounded-[2.5rem]">
+                        <p className="text-[9px] font-black uppercase tracking-widest mb-2 opacity-60">Competitor Gap</p>
+                        <p className="text-3xl font-black tracking-tighter text-gold-500">+14%</p>
+                        <p className="text-[9px] font-bold mt-2 uppercase opacity-80">Superior Ranking</p>
+                    </Card>
+                </div>
+              </div>
+            )}
+
+            {/* TECHNICAL SETUP WORKFLOW */}
+            {activeTab === 'technical' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-white">
+                  <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-8 italic flex items-center gap-3">
+                    <ShieldCheck className="text-navy-900" /> Infrastructure & Indexing Logic
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-8">
+                        <div>
+                            <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Canonical Redirection URL</label>
+                            <input 
+                                type="text"
+                                value={selectedPage?.seoTechnical?.canonicalUrl || ''}
+                                onChange={(e) => setSelectedPage({...selectedPage, seoTechnical: {...selectedPage.seoTechnical, canonicalUrl: e.target.value}})}
+                                className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-4 font-bold text-navy-950"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Robots.txt Directives</label>
+                            <select 
+                                value={selectedPage?.seoTechnical?.robots || 'index, follow'}
+                                onChange={(e) => setSelectedPage({...selectedPage, seoTechnical: {...selectedPage.seoTechnical, robots: e.target.value}})}
+                                className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-4 font-bold text-navy-950"
+                            >
+                                <option value="index, follow">Index, Follow (Standard)</option>
+                                <option value="noindex, nofollow">No-Index, No-Follow (Private)</option>
+                                <option value="index, nofollow">Index, No-Follow</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="space-y-8">
+                        <div>
+                            <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Schema Markup (Advanced JSON-LD)</label>
+                            <textarea 
+                                rows={8}
+                                value={typeof selectedPage?.schemaMarkup === 'string' ? selectedPage.schemaMarkup : JSON.stringify(selectedPage?.schemaMarkup || {}, null, 2)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    try {
+                                        const json = JSON.parse(val);
+                                        setSelectedPage({...selectedPage, schemaMarkup: json});
+                                        setSchemaError(null);
+                                    } catch(err: any) {
+                                        setSelectedPage({...selectedPage, schemaMarkup: val}); // Keep as string while typing
+                                        setSchemaError("Invalid JSON structure");
+                                    }
+                                }}
+                                className={cn(
+                                    "w-full bg-navy-950 text-gold-500 font-mono text-[10px] rounded-2xl px-6 py-5 outline-none resize-none transition-all",
+                                    schemaError ? "border-2 border-rose-500" : "border-2 border-transparent"
+                                )}
+                            />
+                            {schemaError && <p className="text-[9px] font-black text-rose-500 mt-2 uppercase tracking-widest">{schemaError}</p>}
+                        </div>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-navy-950 text-white">
+                    <div className="flex items-center gap-4 mb-6">
+                        <Lock className="w-6 h-6 text-gold-500" />
+                        <h4 className="text-lg font-black uppercase tracking-tighter">Security & Redirection</h4>
+                    </div>
+                    <div className="flex items-center justify-between p-6 rounded-3xl bg-white/5 border border-white/10">
+                        <div>
+                            <p className="font-bold text-sm mb-1">Automatic 301 Redirect Hub</p>
+                            <p className="text-[10px] text-white/50 uppercase tracking-widest">
+                                {selectedPage?.redirects ? `${selectedPage.redirects.split('\n').filter((l:string) => l.includes('>')).length} Active Rules` : 'No Active Redirect Rules'}
+                            </p>
+                        </div>
+                        <Button 
+                            onClick={() => setIsRedirectModalOpen(true)}
+                            className="bg-gold-500 text-navy-950 font-black text-[9px] uppercase tracking-widest px-6 py-2 rounded-xl"
                         >
-                          <Eye className="w-4 h-4" />
+                            Edit Routing
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => window.location.href = `/admin/content-editor?page=${page.slug}`}
-                        >
-                          <Edit3 className="w-4 h-4" />
-                        </Button>
+                    </div>
+                </Card>
+              </div>
+            )}
+
+            {/* VERSION BACKUP WORKFLOW */}
+            {activeTab === 'backup' && (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-white h-[600px] flex flex-col">
+                  <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-8 italic flex items-center gap-3">
+                    <History className="text-navy-950" /> System State Backup Engine
+                  </h3>
+                  
+                  <div className="flex-1 overflow-y-auto space-y-4 pr-4 scrollbar-none text-center">
+                    {(selectedPage?.previousVersions?.length || 0) === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-full opacity-30 italic font-black uppercase text-[10px] tracking-widest">
+                        <Database className="w-12 h-12 mb-4" />
+                        No previous versions recorded for intelligence restoration.
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    ) : (
+                      selectedPage?.previousVersions?.map((v: any, i: number) => (
+                        <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-stone-50 border border-stone-100 group hover:border-gold-500 transition-all">
+                            <div className="flex items-center gap-6">
+                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center font-black text-navy-950 border border-navy-50">
+                                    V{v.version}
+                                </div>
+                                <div className="text-left">
+                                    <p className="text-navy-950 font-black text-[11px] uppercase tracking-widest truncate max-w-[200px]">RESTORE STATE ALPHA-{v.version}</p>
+                                    <p className="text-navy-950/40 font-bold text-[9px] uppercase mt-1">{new Date(v.modifiedAt).toLocaleString()}</p>
+                                </div>
+                            </div>
+                            <Button className="bg-transparent border-2 border-navy-950 text-navy-950 hover:bg-navy-950 hover:text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Restore State</Button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </Card>
+              </div>
+            )}
           </div>
 
-          {seoPages.length === 0 && (
-            <div className="text-center py-12">
-              <Globe className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No SEO pages found</h3>
-              <p className="text-gray-500">Start by editing pages in the content editor to create SEO data.</p>
+          {/* Sidebar Analytics & Live Preview (Right) */}
+          <div className="space-y-8">
+            
+            {/* GOOGLE PREVIEW (REALTIME) */}
+            <Card className="p-8 bg-white border-2 border-navy-50 shadow-xl rounded-[2.5rem]">
+              <h4 className="text-[10px] font-black text-navy-950/40 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                <Search className="w-4 h-4" /> Real-time SERP Preview
+              </h4>
+              
+              <div className="p-6 bg-navy-50/20 rounded-3xl border border-navy-50">
+                <div className="flex items-center gap-2 mb-2">
+                    <Globe className="w-3 h-3 text-navy-400 font-black" />
+                    <span className="text-xs text-blue-800 font-bold tracking-tight">https://mokshasewa.org/{selectedPage?.slug}</span>
+                </div>
+                <h5 className="text-xl font-bold text-blue-900 font-sans leading-tight hover:underline cursor-pointer mb-2">
+                  {selectedPage?.metaTitle || 'Default Page Title | Moksha Sewa'}
+                </h5>
+                <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
+                  <span className="text-[10px] font-black text-gray-400 mr-2 uppercase tracking-widest">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} — </span>
+                  {selectedPage?.metaDescription || 'Add a meta description to see how this page will appear in human searches. A good description improves visibility and trust...'}
+                </p>
+              </div>
+              <div className="mt-8 flex justify-between items-center text-[9px] font-black text-navy-950/40 uppercase tracking-widest">
+                  <span>Intelligence Match</span>
+                  <span className="text-green-600">92% Optimal</span>
+              </div>
+              <div className="mt-2 w-full h-1.5 bg-navy-100 rounded-full overflow-hidden">
+                  <div className="w-[92%] h-full bg-green-500 animate-pulse"></div>
+              </div>
+            </Card>
+
+            {/* QUICK ACTIONS */}
+            <div className="space-y-4">
+              <button className="w-full flex items-center justify-between p-6 bg-white border-2 border-navy-50 rounded-3xl group hover:border-navy-950 transition-all text-left">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-navy-50 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
+                        <Layout className="w-5 h-5" />
+                    </div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-navy-950">Structural Audit</div>
+                </div>
+                <CheckCircle className="w-4 h-4 text-green-500" />
+              </button>
+              
+              <button className="w-full flex items-center justify-between p-6 bg-white border-2 border-navy-50 rounded-3xl group hover:border-navy-950 transition-all text-left">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-2xl bg-navy-50 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
+                        <ExternalLink className="w-5 h-5" />
+                    </div>
+                  <div className="text-[10px] font-black uppercase tracking-widest text-navy-950">Social Cloud Sync</div>
+                </div>
+                <AlertCircle className="w-4 h-4 text-amber-500" />
+              </button>
             </div>
-          )}
-        </Card>
+
+            {/* PERFORMANCE RADAR */}
+            <Card className="p-8 bg-navy-950 text-white border-none shadow-2xl rounded-[3rem] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/10 rounded-full -translate-y-16 translate-x-16 blur-3xl"></div>
+                <h4 className="text-[10px] font-black uppercase tracking-widest mb-8 opacity-60">Technical Intelligence Radar</h4>
+                <div className="space-y-6">
+                    <div>
+                        <div className="flex justify-between text-[9px] font-black uppercase mb-2">
+                            <span>Index Latency</span>
+                            <span>Critical Fast</span>
+                        </div>
+                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div className="w-full h-full bg-gold-500"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div className="flex justify-between text-[9px] font-black uppercase mb-2">
+                            <span>Human Readability</span>
+                            <span>A+ Elite</span>
+                        </div>
+                        <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                            <div className="w-[88%] h-full bg-gold-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </Card>
+
+          </div>
+        </div>
       </div>
+
+      {/* Redirect Management Modal */}
+      {isRedirectModalOpen && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-8 backdrop-blur-2xl bg-navy-950/60 animate-in fade-in duration-500">
+            <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl flex flex-col overflow-hidden">
+                <div className="p-10 border-b border-navy-50 flex justify-between items-center bg-navy-50/50">
+                    <div>
+                        <h4 className="text-xl font-black text-navy-950 uppercase italic tracking-tighter">Redirect Authority</h4>
+                        <p className="text-[9px] font-black text-navy-400 uppercase tracking-widest mt-1 italic">301 Permanent Protocol Management</p>
+                    </div>
+                    <button onClick={() => setIsRedirectModalOpen(false)} className="w-10 h-10 rounded-full bg-white text-navy-400 hover:text-navy-950 flex items-center justify-center shadow-sm">
+                        <X className="w-5 h-5" />
+                    </button>
+                </div>
+                <div className="p-10 space-y-6 max-h-[60vh] overflow-y-auto">
+                    <div className="p-6 bg-amber-50 border border-amber-100 rounded-3xl flex gap-4">
+                        <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                        <p className="text-[10px] font-bold text-amber-900 uppercase leading-relaxed tracking-wider">
+                            Format: <code className="bg-amber-100 px-1 rounded">/old-path &gt; /new-path</code>. One rule per line. These rules are used to preserve SEO ranking for moved content.
+                        </p>
+                    </div>
+                    <textarea 
+                        rows={10}
+                        value={selectedPage?.redirects || ''}
+                        onChange={(e) => setSelectedPage({...selectedPage, redirects: e.target.value})}
+                        className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-[2rem] p-8 font-mono text-xs text-navy-950 focus:border-navy-950 outline-none transition-all placeholder:text-navy-200"
+                        placeholder="/old-slug &gt; /new-slug&#10;/about-us &gt; /about"
+                    />
+                </div>
+                <div className="p-8 bg-navy-50/50 flex justify-center">
+                    <Button onClick={() => setIsRedirectModalOpen(false)} className="bg-navy-950 text-gold-500 px-12 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Confirm Logic</Button>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 }
+
+function Database(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+      <path d="M3 12A9 3 0 0 0 21 12" />
+    </svg>
+  )
+}

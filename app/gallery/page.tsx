@@ -8,6 +8,7 @@ import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import { cn } from "@/lib/utils";
 import { galleryAPI } from '@/lib/api';
+import { getRatioClass } from '@/lib/ratios';
 
 export default function GalleryPage() {
     const { config, loading: configLoading } = usePageConfig('gallery', galleryConfig);
@@ -153,7 +154,10 @@ export default function GalleryPage() {
                                 className="group cursor-pointer flex flex-col animate-in fade-in slide-in-from-bottom-8 duration-700 h-full"
                                 onClick={() => setSelectedImg(image)}
                             >
-                                <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-stone-200 shadow-sm group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-700 border-[6px] border-white">
+                                <div className={cn(
+                                    "relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/80 backdrop-blur-sm transition-all duration-700",
+                                    getRatioClass((image as any).aspectRatio, "aspect-square")
+                                )}>
                                     <Image
                                         src={getSafeSrc(image.src)}
                                         alt={image.title}
@@ -210,60 +214,69 @@ export default function GalleryPage() {
 
 
                     <div
-                        className="relative max-w-[95vw] max-h-[90vh] w-full flex flex-col md:flex-row bg-white rounded-[3rem] overflow-hidden shadow-[0_100px_200px_-50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-500"
+                        className="relative max-w-5xl max-h-[90vh] w-full flex flex-col md:flex-row bg-white rounded-[3.5rem] overflow-hidden shadow-[0_100px_200px_-50px_rgba(0,0,0,0.4)] animate-in zoom-in-95 duration-500 border border-stone-100"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* Image Viewer - Ensuring full scaling */}
-                        <div className="flex-grow bg-[#050505] relative flex items-center justify-center p-6 md:p-12 min-h-[40vh] md:min-h-[75vh]">
-                            <img
+                        {/* 50% Visual Narrative Side - Fixed Aspect-Square for 800x800 assets */}
+                        <div className="w-full md:w-1/2 aspect-square bg-[#0a0a0a] relative flex items-center justify-center overflow-hidden border-r border-stone-50">
+                            <Image
                                 src={getSafeSrc(selectedImg.src)}
                                 alt={selectedImg.title}
-                                className="w-full h-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] select-none pointer-events-none"
+                                fill
+                                className="object-cover transition-transform duration-1000 select-none animate-in fade-in duration-1000"
+                                priority
                             />
+                            {/* Subtle Overlays */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                         </div>
-
-                        {/* Sidebar */}
-                        <div className="w-full md:w-[400px] p-10 lg:p-14 flex flex-col justify-between bg-white border-l border-stone-50">
+ 
+                        {/* 50% Mission Data Sidebar - High-End Typography & Spacing */}
+                        <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-between bg-white relative overflow-y-auto">
                             <div className="space-y-10">
                                 <div className="space-y-6">
-                                    <span className="inline-block bg-gold-50 text-gold-600 px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-[0.3em] leading-none border border-gold-100">
-                                        {selectedImg.category}
-                                    </span>
-                                    <h3 className="text-4xl lg:text-5xl font-black text-navy-950 uppercase tracking-tighter leading-[0.9] italic">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-gold-600 rounded-full animate-pulse shadow-[0_0_10px_rgba(212,163,47,0.5)]"></div>
+                                        <span className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em] leading-none">Verified Mission Data_</span>
+                                    </div>
+                                    <h3 className="text-4xl lg:text-5xl font-black text-navy-950 uppercase tracking-tighter leading-none italic group">
                                         {selectedImg.title}
                                     </h3>
+                                    <div className="w-16 h-1 bg-gold-600/20 group-hover:w-full transition-all duration-700"></div>
                                 </div>
-                                <blockquote className="text-lg font-bold text-navy-600/70 leading-relaxed italic border-l-4 border-gold-400 pl-6 uppercase tracking-tight">
+
+                                <blockquote className="text-lg font-bold text-navy-700/60 leading-relaxed italic border-l-4 border-gold-500/40 pl-6 uppercase tracking-tight">
                                     {selectedImg.description || "Mission documentation from the Moksha Sewa Archive."}
                                 </blockquote>
-                                <div className="space-y-6 pt-4">
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-12 h-12 bg-stone-50 rounded-2xl flex items-center justify-center text-gold-600 shadow-sm">
+
+                                <div className="grid grid-cols-1 gap-6 pt-4 border-t border-stone-50">
+                                    <div className="flex items-center gap-5 p-4 rounded-3xl bg-stone-50 border border-stone-100 hover:border-gold-500/20 transition-all group/node">
+                                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-gold-600 shadow-sm border border-stone-50 group-hover/node:scale-110 transition-transform">
                                             <MapPin className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <p className="text-[8px] font-black text-stone-400 uppercase tracking-[0.4em] mb-0.5">Deployment Zone</p>
-                                            <p className="text-navy-950 font-black uppercase italic tracking-tight">{selectedImg.location || "Project Zone Alpha"}</p>
+                                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] mb-1">Operational Zone</p>
+                                            <p className="text-navy-950 font-black uppercase italic tracking-tight text-sm">{selectedImg.location || "Central Hub"}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-5">
-                                        <div className="w-12 h-12 bg-stone-50 rounded-2xl flex items-center justify-center text-navy-300 shadow-sm">
+                                    <div className="flex items-center gap-5 p-4 rounded-3xl bg-stone-50 border border-stone-100 hover:border-navy-500/20 transition-all group/node">
+                                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-navy-200 shadow-sm border border-stone-50 group-hover/node:scale-110 transition-transform">
                                             <Calendar className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <p className="text-[8px] font-black text-stone-400 uppercase tracking-[0.4em] mb-0.5">Historical Date</p>
-                                            <p className="text-navy-950 font-black uppercase italic tracking-tight">{selectedImg.date}</p>
+                                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] mb-1">Deployment Date</p>
+                                            <p className="text-navy-950 font-black uppercase italic tracking-tight text-sm">{selectedImg.date}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="pt-10">
+
+                            <div className="pt-12">
                                 <button
                                     onClick={() => setSelectedImg(null)}
-                                    className="w-full bg-navy-950 text-gold-500 py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] hover:bg-gold-600 hover:text-navy-950 transition-all shadow-xl group relative overflow-hidden"
+                                    className="w-full bg-navy-950 text-gold-500 py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] hover:bg-gold-600 hover:text-navy-950 transition-all shadow-2xl group/exit relative overflow-hidden"
                                 >
-                                    <span className="relative z-10">Exit Archive View</span>
-                                    <div className="absolute inset-0 bg-gold-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                                    <span className="relative z-10 font-black italic">Return to Archive Hub</span>
+                                    <div className="absolute inset-0 bg-gold-600 translate-y-full group-hover/exit:translate-y-0 transition-transform duration-500" />
                                 </button>
                             </div>
                         </div>

@@ -90,7 +90,7 @@ export default function CampaignsPage() {
                             )}>
                                 {/* Visual Side */}
                                 <div className="lg:w-1/2 w-full">
-                                    <div className="relative aspect-[16/10] rounded-[3rem] overflow-hidden shadow-2xl group">
+                                    <div className="relative aspect-[16/9] rounded-[3rem] overflow-hidden shadow-2xl group">
                                         <Image 
                                             src={getSafeSrc(campaign.image)} 
                                             alt={campaign.title} 

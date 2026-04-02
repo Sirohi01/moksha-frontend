@@ -1,0 +1,512 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
+import { Card } from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import {
+    Image as ImageIcon,
+    Upload,
+    RefreshCcw,
+    CheckCircle,
+    Layout,
+    Layers,
+    ChevronDown,
+    Save,
+    Globe,
+    Settings,
+    Eye,
+    Camera,
+    Search,
+    Box,
+    Monitor,
+    Smartphone,
+    Sparkles,
+    ArrowRight,
+    X
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { setNestedValue } from '@/lib/editor-utils';
+
+export default function MasterVisualHub() {
+    const [pages, setPages] = useState<any[]>([]);
+    const [selectedSlug, setSelectedSlug] = useState<string>('');
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    useEffect(() => {
+        fetchGalleryData();
+    }, []);
+
+    const fetchGalleryData = async () => {
+        try {
+            setLoading(true);
+            const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const response = await fetch(`${API_BASE_URL}/api/page-config?hydrate=true&limit=100`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+            });
+            const data = await response.json();
+
+            if (data.success && data.data?.configs) {
+                const validPages = data.data.configs;
+                setPages(validPages);
+                if (validPages.length > 0) setSelectedSlug(validPages[0].slug);
+            }
+        } catch (error) {
+            console.error("Gallery fetch error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const currentPageData = pages.find(p => p.slug === selectedSlug);
+    const harvestImages = (obj: any, path: string = '', section: string = ''): any[] => {
+        let images: any[] = [];
+        if (!obj || typeof obj !== 'object') return images;
+
+        for (let key in obj) {
+            const val = obj[key];
+            const currentPath = path ? `${path}.${key}` : key;
+            const currentSection = section || key;
+
+            if (typeof val === 'string' && val.length > 3) {
+                // Check by extension/protocol
+                const hasImageExtension = /\.(jpg|jpeg|png|webp|gif|svg|avif|bmp|tiff)($|\?)/i.test(val);
+                const isUrl = val.startsWith('http') || val.startsWith('/') || val.startsWith('data:image/');
+
+                // Check by context (if key name sounds like an image)
+                const isImageContext = ['image', 'img', 'src', 'url', 'slides', 'banner', 'logo', 'background', 'thumb', 'icon', 'visual'].some(k =>
+                    key.toLowerCase().includes(k)
+                );
+
+                if ((hasImageExtension || isImageContext) && isUrl) {
+                    images.push({
+                        url: val,
+                        path: currentPath,
+                        section: currentSection,
+                        key: key
+                    });
+                }
+            } else if (Array.isArray(val)) {
+                val.forEach((item, idx) => {
+                    if (typeof item === 'string') {
+                        // Direct string in array (like hero.slides)
+                        const isImg = /\.(jpg|jpeg|png|webp|gif|svg|avif)($|\?)/i.test(item) ||
+                            item.startsWith('/') || item.startsWith('http');
+                        if (isImg) {
+                            images.push({
+                                url: item,
+                                path: `${currentPath}[${idx}]`,
+                                section: currentSection,
+                                key: `${key}[${idx}]`
+                            });
+                        }
+                    } else {
+                        images = images.concat(harvestImages(item, `${currentPath}[${idx}]`, currentSection));
+                    }
+                });
+            } else if (typeof val === 'object' && val !== null) {
+                images = images.concat(harvestImages(val, currentPath, currentSection));
+            }
+        }
+        return images;
+    };
+
+    const allFoundImages = currentPageData?.config ? harvestImages(currentPageData.config) : [];
+
+    const groupedImages: Record<string, any[]> = {};
+    allFoundImages.forEach(img => {
+        const sectionName = img.section.toUpperCase();
+        if (!groupedImages[sectionName]) groupedImages[sectionName] = [];
+        groupedImages[sectionName].push(img);
+    });
+
+    const handleUpdateImage = async (path: string, value: any) => {
+        if (!currentPageData) return;
+
+        const newConfig = setNestedValue(currentPageData.config, path, value);
+
+        setSaving(true);
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const response = await fetch(`${API_BASE_URL}/api/page-config/${selectedSlug}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                },
+                body: JSON.stringify({
+                    config: newConfig,
+                    changeLog: `Master Hub Sync: ${path}`
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                setPages(prev => prev.map(p => p.slug === selectedSlug ? { ...p, config: newConfig } : p));
+            } else {
+                alert(data.message || "Sync Protocol Rejected.");
+            }
+        } catch (error) {
+            alert("Sync Failed.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleImageUpload = async (file: File, path: string) => {
+        if (file.size > 200 * 1024) { // Increased to 200KB for Master Hub High-Res
+            alert(`Image Protocol Rejected: ${file.name} is ${(file.size / 1024).toFixed(1)}KB. Max limit is 200KB for High-Res assets.`);
+            return;
+        }
+
+        setSaving(true);
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const res = await fetch(`${API_BASE_URL}/api/media`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` },
+                body: formData
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                await handleUpdateImage(path, data.data.url);
+                alert("Direct Upload Success!");
+            } else {
+                alert(data.message || 'Upload protocol failed');
+            }
+        } catch (err) {
+            alert('Upload connection failed');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    if (loading) return <div className="min-h-screen bg-stone-50 flex items-center justify-center p-24 text-center font-black animate-pulse opacity-40 uppercase tracking-widest italic text-navy-950 text-xs">Syncing Visual Network Infrastructure...</div>;
+
+    return (
+        <div className="min-h-screen bg-[#fafafa] p-8 md:p-16 select-none font-sans text-navy-950">
+            <div className="max-w-[1600px] mx-auto">
+
+                {/* Header Section */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16 border-l-4 border-gold-500 pl-8">
+                    <div>
+                        <div className="flex items-center gap-4 mb-2">
+                            <Camera className="w-8 h-8 text-navy-950" />
+                            <h1 className="text-5xl font-black uppercase tracking-tighter italic">Master Visual Hub</h1>
+                        </div>
+                        <p className="text-navy-500 font-bold text-xs uppercase tracking-[0.4em] italic ml-1">Centralized Image Archive & Deployment Engine</p>
+                    </div>
+
+                    <div className="w-full md:w-[400px]">
+                        <p className="text-[9px] font-black text-navy-400 uppercase tracking-widest mb-3 ml-2 italic">Select Target Sector</p>
+                        <div className="relative group">
+                            <select
+                                value={selectedSlug}
+                                onChange={(e) => setSelectedSlug(e.target.value)}
+                                className="w-full h-14 bg-white border-2 border-navy-50 rounded-2xl px-6 text-[10px] font-black uppercase tracking-widest text-navy-950 shadow-sm focus:border-gold-500 outline-none transition-all appearance-none cursor-pointer"
+                            >
+                                {pages.map(page => (
+                                    <option key={page.slug} value={page.slug}>{page.title.toUpperCase()} (/{page.slug})</option>
+                                ))}
+                            </select>
+                            <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-navy-300 pointer-events-none" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dynamic Mapping Grid */}
+                {Object.entries(groupedImages).length > 0 ? (
+                    <div className="space-y-24">
+                        {Object.entries(groupedImages).map(([sectionName, images]) => (
+                            <section key={sectionName}>
+                                <div className="flex items-center gap-4 mb-10 pb-4 border-b border-navy-50">
+                                    <div className="w-8 h-8 rounded-lg bg-navy-50 flex items-center justify-center">
+                                        <ImageIcon className="w-4 h-4 text-navy-950" />
+                                    </div>
+                                    <h2 className="text-xl font-black uppercase tracking-widest italic text-navy-950/80">{sectionName}</h2>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                                    {images.map((img, idx) => (
+                                        <VisualAssetCard
+                                            key={idx}
+                                            title={img.path.split('.').pop()?.replace(/\[|\]/g, ' ')}
+                                            path={img.path}
+                                            url={img.url}
+                                            onSwap={(newUrl: string) => handleUpdateImage(img.path, newUrl)}
+                                            onUpload={(file: File) => handleImageUpload(file, img.path)}
+                                            saving={saving}
+                                        />
+                                    ))}
+                                </div>
+                            </section>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="py-32 text-center space-y-6 bg-white rounded-[3rem] border-2 border-dashed border-navy-50">
+                        <div className="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center mx-auto">
+                            <Search className="w-6 h-6 text-navy-200" />
+                        </div>
+                        <div className="space-y-1">
+                            <p className="text-xs font-black uppercase tracking-widest text-navy-300 italic">No Visual Sensors Detected In This Sector</p>
+                            <p className="text-[9px] font-bold text-navy-200 uppercase tracking-widest">Verify page configuration integrity in Content Central.</p>
+                        </div>
+                    </div>
+                )}
+
+            </div>
+        </div>
+    );
+}
+
+function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
+    const [tempUrl, setTempUrl] = useState(url);
+    const [isPickerOpen, setIsPickerOpen] = useState(false);
+    const fileInputRef = Object.assign(useState<any>(null)[0] || {}, { current: null }); // Static-safe ref
+
+    // Determine Requirement protocol based on path
+    const getRequirement = (path: string) => {
+        const lowerPath = path.toLowerCase();
+        // SEO Team Mission Directives
+        if (lowerPath.includes('hero') || lowerPath.includes('slide')) return "SEO TASK: 1620x700px (Cinematic)";
+        if (lowerPath.includes('about')) return "SEO TASK: 1000x1000px (1:1 High Res)";
+        if (lowerPath.includes('service') || lowerPath.includes('impact')) return "SEO TASK: 800x600px (Standard Card)";
+        if (lowerPath.includes('logo')) return "SEO TASK: 400x200px (Vector Opt)";
+        if (lowerPath.includes('banner') || lowerPath.includes('bg')) return "SEO TASK: 1920x800px (Atmospheric)";
+        if (lowerPath.includes('campaign')) return "SEO TASK: 800x540px (Campaign Focus)";
+        if (lowerPath.includes('story') || lowerPath.includes('motion')) return "SEO TASK: 1280x800px (Cinematic Story)";
+        return "SEO TASK: 1200x800px (General Content)";
+    };
+
+    return (
+        <>
+            <Card className="group relative bg-white border-2 border-navy-50 rounded-[3rem] p-8 space-y-8 hover:border-gold-500 transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col">
+                {/* Visual Canvas */}
+                <div className="aspect-[16/10] relative rounded-[2rem] overflow-hidden bg-navy-50 shadow-inner">
+                    <img
+                        src={tempUrl}
+                        alt={title}
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
+
+                    {/* Protocol Overlay */}
+                    <div className="absolute top-6 left-6 px-4 py-2 bg-navy-950/95 backdrop-blur-xl rounded-xl border border-gold-500/30 flex items-center gap-2 shadow-2xl scale-100 animate-in fade-in zoom-in duration-700">
+                        <div className="w-2 h-2 rounded-full bg-gold-500 animate-pulse" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gold-500">{getRequirement(path)}</p>
+                    </div>
+
+                    {/* Quick Action Overlay */}
+                    <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center justify-center gap-4 backdrop-blur-[4px]">
+                        <button
+                            onClick={() => setIsPickerOpen(true)}
+                            className="bg-gold-500 text-black px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-2xl hover:bg-white transition-all transform hover:-translate-y-1"
+                        >
+                            <Layers className="w-4 h-4" />
+                            Archive Picker
+                        </button>
+                        
+                        <div className="flex items-center gap-2 text-white/40 text-[8px] font-black uppercase tracking-widest">
+                           <div className="w-8 h-px bg-white/20" /> OR <div className="w-8 h-px bg-white/20" />
+                        </div>
+
+                        <label className="cursor-pointer bg-white/10 hover:bg-white/20 text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 transition-all backdrop-blur-md transform hover:-translate-y-1">
+                            <Upload className="w-4 h-4" />
+                            Device Upload
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              accept="image/*"
+                              onChange={(e) => {
+                                 const file = e.target.files?.[0];
+                                 if (file) onUpload(file);
+                              }}
+                            />
+                        </label>
+                    </div>
+                </div>
+
+                <div className="space-y-6 flex-grow flex flex-col justify-between">
+                    <div className="space-y-5">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h3 className="text-navy-950 font-black text-xs uppercase tracking-widest">{title}</h3>
+                                <p className="text-[9px] font-bold text-navy-300 italic truncate max-w-[200px]">Node: {path}</p>
+                            </div>
+                            <button
+                                onClick={() => setIsPickerOpen(true)}
+                                className="w-8 h-8 rounded-full bg-navy-50 hover:bg-gold-500 flex items-center justify-center transition-colors group/btn"
+                            >
+                                <Layout className="w-3 h-3 text-navy-400 group-hover/btn:text-black" />
+                            </button>
+                        </div>
+
+                        <div className="relative">
+                            <div className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-navy-950"></div>
+                            <input
+                                type="text"
+                                value={tempUrl}
+                                onChange={(e) => setTempUrl(e.target.value)}
+                                className="w-full h-14 bg-stone-50 rounded-2xl pl-12 pr-6 text-[11px] font-extrabold text-navy-900 outline-none border-2 border-transparent focus:border-gold-500/50 transition-all font-mono"
+                                placeholder="/old-slug &gt; /new-slug&#10;/about-us &gt; /about"
+                            />
+                        </div>
+                    </div>
+
+                    <Button
+                        onClick={() => onSwap(tempUrl)}
+                        disabled={saving || tempUrl === url}
+                        className={cn(
+                            "w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3",
+                            tempUrl === url
+                                ? "bg-stone-100 text-navy-400 border-2 border-navy-50/50 cursor-default opacity-80"
+                                : "bg-gold-500 text-black shadow-[0_15px_40px_rgba(245,158,11,0.25)] hover:bg-navy-950 hover:text-gold-500 hover:-translate-y-1 active:translate-y-0"
+                        )}
+                    >
+                        {saving ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {saving ? 'SYNCHRONIZING...' : 'SWAP VISUAL'}
+                    </Button>
+                </div>
+            </Card>
+
+            {/* Asset Picker Modal */}
+            {isPickerOpen && (
+                <AssetPickerModal
+                    onClose={() => setIsPickerOpen(false)}
+                    onSelect={(selectedUrl) => {
+                        setTempUrl(selectedUrl);
+                        setIsPickerOpen(false);
+                    }}
+                />
+            )}
+        </>
+    );
+}
+
+function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect: (url: string) => void }) {
+    const [images, setImages] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [category, setCategory] = useState('all');
+
+    useEffect(() => {
+        // LOCK BODY SCROLL
+        document.body.style.overflow = 'hidden';
+        
+        const fetchGallery = async () => {
+            try {
+                setLoading(true);
+                const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+                const response = await fetch(`${API_BASE_URL}/api/media?limit=100`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    setImages(Array.isArray(data.data) ? data.data : (data.data.images || []));
+                }
+            } catch (error) {
+                console.error("Picker fetch error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchGallery();
+
+        return () => { document.body.style.overflow = 'auto'; };
+    }, []);
+
+    const filteredImages = category === 'all' ? images : images.filter(img => img.category === category);
+    
+    const availableCategories = useMemo(() => {
+        const cats = new Set(images.map(img => img.category).filter(Boolean));
+        return ['all', ...Array.from(cats)].sort();
+    }, [images]);
+
+    return (
+        <div className="fixed inset-0 z-[9999] bg-stone-50 flex flex-col animate-in slide-in-from-bottom duration-500">
+            {/* Elite Archive Header */}
+            <div className="bg-white border-b border-stone-200 px-12 py-8 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+                <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 bg-navy-950 rounded-2xl flex items-center justify-center shadow-xl shadow-navy-950/20">
+                        <Layers className="w-6 h-6 text-gold-500" />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black uppercase tracking-tighter italic text-navy-950">Visual Archive Protocol</h2>
+                        <p className="text-[10px] font-black text-navy-300 uppercase tracking-[0.4em] italic mt-1 font-mono">Selecting Dynamic Asset for Deployment</p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                    <div className="flex flex-wrap bg-stone-100 p-1.5 rounded-2xl border border-stone-200">
+                        {availableCategories.map((cat: any) => (
+                            <button
+                                key={cat}
+                                onClick={() => setCategory(cat)}
+                                className={cn(
+                                    "px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                                    category === cat ? "bg-white text-navy-950 shadow-lg scale-105" : "text-navy-400 hover:text-navy-950"
+                                )}
+                            >
+                                {cat}
+                            </button>
+                        ))}
+                    </div>
+
+                    <button 
+                        onClick={onClose}
+                        className="w-14 h-14 rounded-2xl bg-white border-2 border-stone-100 text-navy-950 hover:bg-navy-950 hover:text-white transition-all flex items-center justify-center shadow-sm group"
+                    >
+                        <X className="w-6 h-6 transition-transform group-hover:rotate-90" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Expansive Grid Surface */}
+            <div className="flex-grow overflow-y-auto p-12 bg-stone-50/50">
+                {loading ? (
+                    <div className="h-full flex flex-col items-center justify-center space-y-6">
+                        <RefreshCcw className="w-12 h-12 text-navy-200 animate-spin" />
+                        <p className="text-xs font-black uppercase tracking-[0.3em] text-navy-300 animate-pulse">Scanning Cloud Storage Nodes...</p>
+                    </div>
+                ) : (
+                    <div className="max-w-[1700px] mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-10 pb-24">
+                        {filteredImages.map((img) => (
+                            <div
+                                key={img._id || img.id}
+                                onClick={() => onSelect(img.url)}
+                                className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white cursor-pointer ring-offset-4 ring-gold-500 hover:ring-4 transition-all shadow-xl hover:-translate-y-2 duration-500 border-4 border-white"
+                            >
+                                <img
+                                    src={img.url}
+                                    alt={img.title}
+                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8">
+                                    <p className="text-[10px] font-black text-gold-500 uppercase tracking-widest mb-1 truncate">{img.title || 'UNNAMED_ASSET'}</p>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                        <p className="text-[8px] font-bold text-white/70 uppercase tracking-widest">{img.category}</p>
+                                    </div>
+                                </div>
+                                <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg text-[8px] font-black text-navy-950 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    CLOUD_ID: {img._id?.slice(-6).toUpperCase()}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+
+            {/* Semantic Footer */}
+            <div className="bg-white border-t border-stone-200 px-12 py-6 flex justify-between items-center text-[10px] font-black text-navy-300 uppercase tracking-widest italic">
+                <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-2">• Select asset to initialize hot-swap protocol</span>
+                    <span className="flex items-center gap-2">• Only verified high-res assets listed</span>
+                </div>
+                <p>Global Detected Assets: {filteredImages.length}</p>
+            </div>
+        </div>
+    );
+}

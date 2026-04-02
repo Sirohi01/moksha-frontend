@@ -92,13 +92,12 @@ export default function Impact() {
             </div>
             
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                 <Image 
                   src={getSafeSrc(config.hero.image)}
                   alt={config.hero.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={400}
-                  height={400}
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-amber-100 rounded-full opacity-30"></div>
@@ -227,13 +226,12 @@ export default function Impact() {
             </div>
             
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                 <Image 
                   src={getSafeSrc(config.growthTimeline.image)}
                   alt={config.growthTimeline.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={500}
-                  height={375}
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-100 rounded-full opacity-20"></div>
@@ -260,7 +258,7 @@ export default function Impact() {
                     <Image 
                       src={getSafeSrc(testimonial.image)}
                       alt={testimonial.author}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain bg-stone-50"
                       width={48}
                       height={48}
                     />
@@ -312,13 +310,12 @@ export default function Impact() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                 <Image 
                   src={getSafeSrc(config.callToAction.image)}
                   alt={config.callToAction.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={500}
-                  height={375}
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/20 rounded-full"></div>

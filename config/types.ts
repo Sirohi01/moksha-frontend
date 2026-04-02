@@ -16,11 +16,13 @@ export interface ProgrammeConfig {
   icon: string;
   description: string;
   image: string;
+  alt?: string;
   href: string;
 }
 
 export interface CarouselSlideConfig {
   src: string;
+  alt?: string;
   title: string;
   description: string;
   location: string;
@@ -39,6 +41,7 @@ export interface PillarConfig {
 
 export interface StoryConfig {
   image: string;
+  alt?: string;
   title: string;
 }
 
@@ -49,6 +52,7 @@ export interface CampaignConfig {
   raised: string;
   percentage: string;
   image: string;
+  alt?: string;
 }
 
 export interface TimelineItemConfig {
@@ -86,8 +90,11 @@ export interface FAQConfig {
 
 export interface HomepageConfig {
   hero: {
-    slides: string[];
+    slides: (string | { src: string; alt: string })[];
     autoSlideInterval: number;
+    altText?: string;
+    aspectRatio?: string;
+    mobileAspectRatio?: string;
   };
   actionBanner: {
     title: string;
@@ -102,6 +109,9 @@ export interface HomepageConfig {
     stats: StatConfig[];
     buttons: ButtonConfig[];
     image: string;
+    alt?: string;
+    aspectRatio?: string;
+    mobileAspectRatio?: string;
     floatingBadge: {
       text: string;
       subtext: string;
@@ -148,6 +158,7 @@ export interface HomepageConfig {
     titleHighlight: string;
     description: string;
     backgroundImage: string;
+    alt?: string;
     buttons: ButtonConfig[];
     stats: StatConfig[];
   };
@@ -201,5 +212,8 @@ export interface HomepageConfig {
     heroAltText: string;
     joinMissionAltText: string;
     learnMore: string;
+  };
+  seo?: {
+    h1Tag?: string;
   };
 }

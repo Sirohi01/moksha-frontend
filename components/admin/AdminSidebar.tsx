@@ -30,7 +30,9 @@ import {
   Star,
   Zap,
   Layout,
-  Layers
+  Layers,
+  Film,
+  ShieldCheck
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -50,25 +52,42 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'Live Support', href: '/admin/support', icon: MessageSquare },
     { title: 'Tasks', href: '/admin/tasks', icon: Calendar },
     { title: 'User Management', href: '/admin/users', icon: UserPlus },
-    { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
     { title: 'Board Applications', href: '/admin/board', icon: Users },
-    { title: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
-    { title: 'Government Schemes', href: '/admin/schemes', icon: FileText },
-    { title: 'Contacts', href: '/admin/contacts', icon: Mail },
-    { title: 'Legacy Giving', href: '/admin/legacy', icon: Heart },
-    { title: 'Expansion Requests', href: '/admin/expansion', icon: TrendingUp },
     { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
     { title: 'Donations', href: '/admin/donations', icon: CreditCard },
-    { title: 'Newsletter', href: '/admin/newsletter', icon: Mail },
-    // { title: 'Blog', href: '/admin/content-editor?page=blog', icon: FileText },
-    { title: 'Page Config', href: '/admin/page-config', icon: Image },
-    { title: 'Content Management', href: '/admin/content', icon: Database },
-    { title: 'Compliance', href: '/admin/compliance', icon: Shield },
   ];
   const filteredItems = allPossibleItems.filter(item => {
     if (!item.href) return true;
     return checkUserPermission(user, item.href);
   });
+
+  // Strategic Evolution Hub
+  const strategicItems = [
+    { title: 'Blog Commander', href: '/admin/blogs', icon: FileText },
+    { title: 'Editorial Hub', href: '/admin/editorial-hub', icon: FileText },
+    { title: 'Master Visual Hub', href: '/admin/gallery-hub', icon: Image },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (strategicItems.length > 0) {
+    filteredItems.push({
+        title: 'Strategic Control',
+        items: strategicItems
+    });
+  }
+
+  // Operational Infrastructure
+  const infraItems = [
+    { title: 'Content Central', href: '/admin/content', icon: Layout },
+    { title: 'Page Configuration', href: '/admin/page-config', icon: Database },
+    { title: 'SEO Command Deck', href: '/admin/seo', icon: Globe },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (infraItems.length > 0) {
+    filteredItems.push({
+      title: 'Infrastructure Node',
+      items: infraItems
+    });
+  }
 
   // Marketing Group
   const marketingItems = [
@@ -86,13 +105,26 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
 
   // Media Group
   const mediaItems = [
-    { title: 'Gallery', href: '/admin/gallery', icon: Image },
+    { title: 'Gallery Management', href: '/admin/gallery', icon: Image },
   ].filter(sub => checkUserPermission(user, sub.href));
 
   if (mediaItems.length > 0) {
     filteredItems.push({
       title: 'Multimedia Assets',
       items: mediaItems
+    });
+  }
+
+  // Visual & Official Logs
+  const visualOfficialItems = [
+    { title: 'Cinema Manifesto', href: '/admin/documentaries', icon: Film },
+    { title: 'Press Archives', href: '/admin/press', icon: ShieldCheck },
+  ].filter(sub => checkUserPermission(user, sub.href));
+
+  if (visualOfficialItems.length > 0) {
+    filteredItems.push({
+      title: 'Visual & Official Logs',
+      items: visualOfficialItems
     });
   }
 
@@ -107,7 +139,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
 
   if (intelligenceItems.length > 0) {
     filteredItems.push({
-      title: 'Intelligence',
+      title: 'Site Intelligence',
       items: intelligenceItems
     });
   }

@@ -64,14 +64,13 @@ export default function AboutPage() {
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-full h-full bg-amber-100 rounded-2xl"></div>
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
-                <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4">
-                  <Image
-                    src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
-                    alt={config.hero?.cardTitle || "About Moksha Sewa"}
-                    className="w-full h-full object-cover"
-                    width={400}
-                    height={300}
-                  />
+                <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 relative">
+                    <Image
+                      src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
+                      alt={config.hero?.cardTitle || "About Moksha Sewa"}
+                      fill
+                      className="object-cover"
+                    />
                 </div>
                 <div className="text-center">
                   <h3 className="font-semibold text-gray-900 mb-2">{config.hero?.cardTitle}</h3>
@@ -144,13 +143,12 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-4 relative">
                 <Image
                   src={getSafeSrc(config.story?.image) || "/gallery/image009.png"}
                   alt={config.story?.imageAlt || "Our Journey"}
-                  className="w-full h-full object-cover"
-                  width={400}
-                  height={300}
+                  fill
+                  className="object-cover"
                 />
               </div>
             </div>

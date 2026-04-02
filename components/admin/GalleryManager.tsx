@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Upload, Search, Grid, List, Trash2, Download, ArrowRight, X, Maximize2, CheckCircle2 } from 'lucide-react';
+import { Upload, Search, Grid, List, Trash2, Download, ArrowRight, X, Maximize2, CheckCircle2, Eye } from 'lucide-react';
 import Link from 'next/link';
 import LazyImage from '@/components/ui/LazyImage';
 import { cn } from '@/lib/utils';
@@ -17,6 +17,8 @@ interface GalleryImage {
   uploadDate: string;
   size: string;
   dimensions: string;
+  isPublic: boolean;
+  status: string;
 }
 
 const categories = [
@@ -72,6 +74,21 @@ export default function GalleryManager() {
         ? prev.filter(id => id !== imageId)
         : [...prev, imageId]
     );
+  };
+
+  const handleToggleVisibility = async (image: GalleryImage) => {
+    try {
+      const newStatus = !image.isPublic;
+      // Optimistic update
+      setImages(prev => prev.map(img => 
+        img.id === image.id ? { ...img, isPublic: newStatus } : img
+      ));
+      
+      await galleryAPI.updateImage(image.id, { isPublic: newStatus });
+    } catch (error: any) {
+      console.error('Failed to update visibility:', error);
+      fetchImages(); // Revert on failure
+    }
   };
 
   const handleDeleteImage = async (imageId: string) => {
@@ -201,6 +218,17 @@ export default function GalleryManager() {
               <div className="absolute inset-0 bg-navy-950/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-4 backdrop-blur-sm">
 
                 <button
+                  onClick={() => handleToggleVisibility(image)}
+                  className={cn(
+                    "w-14 h-14 shadow-2xl rounded-2xl flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 duration-500 transition-all active:scale-95",
+                    image.isPublic ? "bg-emerald-500 text-white" : "bg-white text-navy-400"
+                  )}
+                  title={image.isPublic ? "Hide from Public" : "Make Public"}
+                >
+                  <Eye className="w-6 h-6" />
+                </button>
+
+                <button
                   onClick={() => handleDeleteImage(image.id)}
                   className="w-14 h-14 bg-white shadow-2xl rounded-2xl text-rose-600 hover:bg-rose-600 hover:text-white hover:scale-110 active:scale-95 transition-all flex items-center justify-center transform translate-y-4 group-hover:translate-y-0 duration-500 delay-100"
                 >
@@ -219,7 +247,13 @@ export default function GalleryManager() {
               </div>
 
               {/* Category Badge */}
-              <div className="absolute top-6 right-6">
+              <div className="absolute top-6 right-6 flex gap-2">
+                <span className={cn(
+                  "px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg shadow-lg",
+                  image.isPublic ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+                )}>
+                  {image.isPublic ? 'Live' : 'Hidden'}
+                </span>
                 <span className="px-3 py-1 bg-gold-500 text-navy-950 text-[9px] font-black uppercase tracking-widest rounded-lg shadow-lg">
                   {image.category}
                 </span>
