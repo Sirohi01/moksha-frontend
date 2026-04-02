@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Mail, Trash2, Search, Download, Users, TrendingUp } from 'lucide-react';
+import { Mail, Trash2, Search, Download, Users, TrendingUp, Loader2 } from 'lucide-react';
+import { Pagination } from '@/components/admin/AdminComponents';
 
 interface Subscriber {
   _id: string;
@@ -15,15 +16,28 @@ export default function NewsletterAdminPage() {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   useEffect(() => {
-    fetchSubscribers();
-  }, []);
+    const timer = setTimeout(() => {
+        fetchSubscribers();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [currentPage, searchQuery]);
 
   const fetchSubscribers = async () => {
     try {
+      setLoading(true);
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_BASE_URL}/api/newsletter/subscribers`, {
+      const query = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: '10',
+        search: searchQuery
+      });
+
+      const response = await fetch(`${API_BASE_URL}/api/newsletter/subscribers?${query.toString()}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
@@ -31,6 +45,8 @@ export default function NewsletterAdminPage() {
       const data = await response.json();
       if (data.success) {
         setSubscribers(data.data);
+        setTotalPages(data.pagination.pages);
+        setTotalItems(data.pagination.total);
       }
     } catch (error) {
       console.error('Failed to fetch subscribers:', error);
@@ -39,18 +55,19 @@ export default function NewsletterAdminPage() {
     }
   };
 
-  const filteredSubscribers = subscribers.filter(s => 
-    s.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleSearchChange = (val: string) => {
+    setSearchQuery(val);
+    setCurrentPage(1);
+  };
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-12">
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-stone-100 flex items-center justify-between">
           <div>
             <p className="text-stone-400 text-xs font-black uppercase tracking-widest mb-2">Total Subscribers</p>
-            <h3 className="text-3xl font-black text-stone-900">{subscribers.length}</h3>
+            <h3 className="text-3xl font-black text-stone-900">{totalItems}</h3>
           </div>
           <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
             <Users size={28} />
@@ -59,14 +76,8 @@ export default function NewsletterAdminPage() {
         
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-stone-100 flex items-center justify-between">
           <div>
-            <p className="text-stone-400 text-xs font-black uppercase tracking-widest mb-2">New This Month</p>
-            <h3 className="text-3xl font-black text-stone-900">
-              {subscribers.filter(s => {
-                const date = new Date(s.subscribedAt);
-                const now = new Date();
-                return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-              }).length}
-            </h3>
+            <p className="text-stone-400 text-xs font-black uppercase tracking-widest mb-2">Registry Coverage</p>
+            <h3 className="text-3xl font-black text-stone-900">Standard</h3>
           </div>
           <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shadow-inner">
             <TrendingUp size={28} />
@@ -98,7 +109,7 @@ export default function NewsletterAdminPage() {
                 type="text" 
                 placeholder="Search emails..." 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full h-12 pl-12 pr-4 bg-white rounded-2xl border border-stone-200 text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all shadow-inner"
               />
             </div>
@@ -130,8 +141,8 @@ export default function NewsletterAdminPage() {
                     <td className="px-8 py-6"><div className="h-8 bg-stone-100 rounded-lg w-8 ml-auto"></div></td>
                   </tr>
                 ))
-              ) : filteredSubscribers.length > 0 ? (
-                filteredSubscribers.map((subscriber) => (
+              ) : subscribers.length > 0 ? (
+                subscribers.map((subscriber) => (
                   <tr key={subscriber._id} className="hover:bg-stone-50/50 transition-colors group">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
@@ -190,6 +201,17 @@ export default function NewsletterAdminPage() {
           </table>
         </div>
       </div>
+
+      {subscribers.length > 0 && (
+        <div className="mt-8">
+          <Pagination 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            total={totalItems}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      )}
     </div>
   );
 }

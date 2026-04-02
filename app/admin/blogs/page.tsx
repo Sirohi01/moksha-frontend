@@ -21,22 +21,38 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
+import { Pagination, LoadingSpinner } from '@/components/admin/AdminComponents';
 
 export default function AdminBlogHub() {
     const [blogs, setBlogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [stats, setStats] = useState({ total: 0, published: 0, drafts: 0, views: 0 });
 
     useEffect(() => {
-        fetchBlogs();
-    }, []);
+        const timer = setTimeout(() => {
+            fetchBlogs();
+        }, 500); // Debounce search
+        return () => clearTimeout(timer);
+    }, [currentPage, activeFilter, searchTerm]);
 
     const fetchBlogs = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?type=blog`, {
+            const query = new URLSearchParams({
+                type: 'blog',
+                page: currentPage.toString(),
+                limit: '10',
+                status: activeFilter,
+                search: searchTerm
+            });
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?${query.toString()}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -44,6 +60,22 @@ export default function AdminBlogHub() {
             const result = await response.json();
             if (result.success) {
                 setBlogs(result.data.content);
+                setTotalPages(result.data.pages);
+                setTotalItems(result.data.total);
+            }
+
+            // Fetch stats separately
+            const statsResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content/stats`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const statsResult = await statsResponse.json();
+            if (statsResult.success) {
+                setStats({
+                    total: statsResult.data.byType.blog || 0,
+                    published: statsResult.data.published || 0,
+                    drafts: statsResult.data.draft || 0,
+                    views: statsResult.data.totalViews || 0
+                });
             }
         } catch (error) {
             console.error('Failed to fetch blogs:', error);
@@ -68,11 +100,15 @@ export default function AdminBlogHub() {
         }
     };
 
-    const filteredBlogs = blogs.filter(blog => {
-        const matchesSearch = blog.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = activeFilter === 'all' || blog.status === activeFilter;
-        return matchesSearch && matchesFilter;
-    });
+    const handleFilterChange = (filter: string) => {
+        setActiveFilter(filter);
+        setCurrentPage(1);
+    };
+
+    const handleSearchChange = (val: string) => {
+        setSearchTerm(val);
+        setCurrentPage(1);
+    };
 
     return (
         <div className="min-h-screen bg-[#fcfcfc] text-navy-950 font-sans p-6 md:p-12">
@@ -101,10 +137,10 @@ export default function AdminBlogHub() {
                 {/* Dashboard Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     {[
-                        { label: 'Total Logs', value: blogs.length, icon: FileText, color: 'text-navy-950', bg: 'bg-navy-50' },
-                        { label: 'Published', value: blogs.filter(b => b.status === 'published').length, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                        { label: 'Drafts', value: blogs.filter(b => b.status === 'draft').length, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-                        { label: 'Views', value: blogs.reduce((acc, b) => acc + (b.views || 0), 0), icon: Eye, color: 'text-gold-600', bg: 'bg-gold-50' },
+                        { label: 'Total Logs', value: stats.total, icon: FileText, color: 'text-navy-950', bg: 'bg-navy-50' },
+                        { label: 'Published', value: stats.published, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                        { label: 'Drafts', value: stats.drafts, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
+                        { label: 'Global Views', value: stats.views, icon: Eye, color: 'text-gold-600', bg: 'bg-gold-50' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white p-8 rounded-[3rem] border border-stone-100 shadow-sm flex items-center justify-between group hover:border-gold-500/30 transition-all">
                             <div>
@@ -126,7 +162,7 @@ export default function AdminBlogHub() {
                             type="text" 
                             placeholder="SEARCH BY TITLE OR AUTHOR..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => handleSearchChange(e.target.value)}
                             className="w-full h-16 pl-20 pr-8 bg-stone-50 rounded-[2rem] border-none text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-gold-500/10 focus:bg-white transition-all outline-none shadow-inner"
                         />
                     </div>
@@ -134,7 +170,7 @@ export default function AdminBlogHub() {
                         {['all', 'published', 'draft', 'archived'].map((f) => (
                             <button
                                 key={f}
-                                onClick={() => setActiveFilter(f)}
+                                onClick={() => handleFilterChange(f)}
                                 className={cn(
                                     "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
                                     activeFilter === f 
@@ -156,7 +192,7 @@ export default function AdminBlogHub() {
                             <p className="font-black uppercase tracking-[0.5em] text-xs">Accessing Sacred Archives...</p>
                         </div>
                     ) : (
-                        filteredBlogs.map((blog) => (
+                        blogs.map((blog) => (
                             <div key={blog._id} className="group bg-white p-8 rounded-[3.5rem] border border-stone-100 shadow-sm hover:border-gold-500/20 hover:shadow-[0_40px_80px_rgba(0,0,0,0.03)] transition-all flex flex-col md:flex-row items-center gap-10">
                                 {/* Image Preview */}
                                 <div className="w-full md:w-64 aspect-[16/10] relative rounded-[2.5rem] overflow-hidden bg-stone-50 shadow-inner">
@@ -218,6 +254,16 @@ export default function AdminBlogHub() {
                             </div>
                         ))
                     )}
+                </div>
+
+                {/* Pagination Section */}
+                <div className="mt-12 pb-12">
+                    <Pagination 
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        total={totalItems}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             </Container>
         </div>

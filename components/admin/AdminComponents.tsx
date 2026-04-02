@@ -158,6 +158,92 @@ export function ActionButton({
 
   );
 }
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  total?: number;
+  onPageChange: (page: number) => void;
+}
+
+export function Pagination({ currentPage, totalPages, total, onPageChange }: PaginationProps) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-4 sm:px-10 py-6 bg-white border border-navy-50 rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
+          <BarChart3 className="w-5 h-5" />
+        </div>
+        <div className="flex flex-col">
+          <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
+            Node Status: Deployment <span className="text-gold-600">{currentPage}</span> / {totalPages}
+          </p>
+          {total && <p className="text-[8px] text-navy-300 font-bold uppercase tracking-widest mt-0.5">Packet Inventory: {total} Units</p>}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </button>
+
+        <div className="flex items-center gap-1.5 p-1.5 bg-navy-50/30 rounded-2xl border border-navy-50/50 overflow-x-auto max-w-[200px] sm:max-w-none scrollbar-hide">
+          {(() => {
+            const range = [];
+            const delta = 2;
+
+            for (let i = Math.max(1, currentPage - delta); i <= Math.min(totalPages, currentPage + delta); i++) {
+              range.push(i);
+            }
+
+            return (
+              <>
+                {range[0] > 1 && (
+                  <>
+                    <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">1</button>
+                    {range[0] > 2 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
+                  </>
+                )}
+
+                {range.map(pageNum => (
+                  <button
+                    key={pageNum}
+                    onClick={() => onPageChange(pageNum)}
+                    className={`w-10 h-10 flex-shrink-0 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${currentPage === pageNum
+                      ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10'
+                      : 'hover:bg-navy-50 text-navy-700 hover:text-navy-950'
+                      }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+
+                {range[range.length - 1] < totalPages && (
+                  <>
+                    {range[range.length - 1] < totalPages - 1 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
+                    <button onClick={() => onPageChange(totalPages)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">{totalPages}</button>
+                  </>
+                )}
+              </>
+            );
+          })()}
+        </div>
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
+        >
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // Data Table Component
 interface Column {
@@ -247,82 +333,13 @@ export function DataTable({
       </div>
 
       {/* Pagination Footer */}
-      {pagination && pagination.totalPages > 1 && onPageChange && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-6 bg-white border border-navy-50 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
-              <BarChart3 className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col">
-              <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
-                Node Status: Deployment <span className="text-gold-600">{pagination.currentPage}</span> / {pagination.totalPages}
-              </p>
-              {pagination.total && <p className="text-[8px] text-navy-300 font-bold uppercase tracking-widest mt-0.5">Packet Inventory: {pagination.total} Units</p>}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onPageChange(pagination.currentPage - 1)}
-              disabled={pagination.currentPage === 1}
-              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-
-            <div className="flex items-center gap-1.5 p-1.5 bg-navy-50/30 rounded-2xl border border-navy-50/50">
-              {(() => {
-                const total = pagination.totalPages;
-                const current = pagination.currentPage;
-                const range = [];
-                const delta = 2; // Show 2 pages before and after current
-
-                for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
-                  range.push(i);
-                }
-
-                return (
-                  <>
-                    {range[0] > 1 && (
-                      <>
-                        <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">1</button>
-                        {range[0] > 2 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
-                      </>
-                    )}
-
-                    {range.map(pageNum => (
-                      <button
-                        key={pageNum}
-                        onClick={() => onPageChange(pageNum)}
-                        className={`w-10 h-10 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${current === pageNum
-                            ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10'
-                            : 'hover:bg-navy-50 text-navy-700 hover:text-navy-950'
-                          }`}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-
-                    {range[range.length - 1] < total && (
-                      <>
-                        {range[range.length - 1] < total - 1 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
-                        <button onClick={() => onPageChange(total)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">{total}</button>
-                      </>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-
-            <button
-              onClick={() => onPageChange(pagination.currentPage + 1)}
-              disabled={pagination.currentPage === pagination.totalPages}
-              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+      {pagination && onPageChange && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+          onPageChange={onPageChange}
+        />
       )}
     </div>
   );

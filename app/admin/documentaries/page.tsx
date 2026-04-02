@@ -22,22 +22,38 @@ import {
   ArrowRight,
   Film
 } from 'lucide-react';
+import { Pagination } from '@/components/admin/AdminComponents';
 
 export default function AdminDocumentaryHub() {
     const [docs, setDocs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [stats, setStats] = useState({ total: 0, published: 0, drafts: 0, views: 0 });
 
     useEffect(() => {
-        fetchDocs();
-    }, []);
+        const timer = setTimeout(() => {
+            fetchDocs();
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [currentPage, activeFilter, searchTerm]);
 
     const fetchDocs = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?type=documentary`, {
+            const query = new URLSearchParams({
+                type: 'documentary',
+                page: currentPage.toString(),
+                limit: '10',
+                status: activeFilter,
+                search: searchTerm
+            });
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?${query.toString()}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -45,6 +61,22 @@ export default function AdminDocumentaryHub() {
             const result = await response.json();
             if (result.success) {
                 setDocs(result.data.content);
+                setTotalPages(result.data.pages);
+                setTotalItems(result.data.total);
+            }
+
+            // Fetch stats
+            const statsResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content/stats`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const statsResult = await statsResponse.json();
+            if (statsResult.success) {
+                setStats({
+                    total: statsResult.data.byType.documentary || 0,
+                    published: statsResult.data.published || 0,
+                    drafts: statsResult.data.draft || 0,
+                    views: statsResult.data.totalViews || 0
+                });
             }
         } catch (error) {
             console.error('Failed to fetch documentaries:', error);
@@ -69,11 +101,15 @@ export default function AdminDocumentaryHub() {
         }
     };
 
-    const filteredDocs = docs.filter(doc => {
-        const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = activeFilter === 'all' || doc.status === activeFilter;
-        return matchesSearch && matchesFilter;
-    });
+    const handleFilterChange = (filter: string) => {
+        setActiveFilter(filter);
+        setCurrentPage(1);
+    };
+
+    const handleSearchChange = (val: string) => {
+        setSearchTerm(val);
+        setCurrentPage(1);
+    };
 
     return (
         <div className="min-h-screen bg-[#fcfcfc] text-navy-950 font-sans p-6 md:p-12">
@@ -102,10 +138,10 @@ export default function AdminDocumentaryHub() {
                 {/* Dashboard Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     {[
-                        { label: 'Total Productions', value: docs.length, icon: Film, color: 'text-stone-950', bg: 'bg-stone-50' },
-                        { label: 'Released', value: docs.filter(b => b.status === 'published').length, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                        { label: 'In Production', value: docs.filter(b => b.status === 'draft').length, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-                        { label: 'Box Office (Views)', value: docs.reduce((acc, b) => acc + (b.views || 0), 0), icon: Eye, color: 'text-amber-500', bg: 'bg-amber-50' },
+                        { label: 'Total Productions', value: stats.total, icon: Film, color: 'text-stone-950', bg: 'bg-stone-50' },
+                        { label: 'Released', value: stats.published, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                        { label: 'In Production', value: stats.drafts, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
+                        { label: 'Box Office (Views)', value: stats.views, icon: Eye, color: 'text-amber-50', bg: 'bg-amber-50/10' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white p-8 rounded-[3rem] border border-stone-100 shadow-sm flex items-center justify-between group hover:border-amber-500/30 transition-all">
                             <div>
@@ -127,15 +163,15 @@ export default function AdminDocumentaryHub() {
                             type="text" 
                             placeholder="SEARCH BY FILM TITLE OR DIRECTOR..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => handleSearchChange(e.target.value)}
                             className="w-full h-16 pl-20 pr-8 bg-stone-50 rounded-[2rem] border-none text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-amber-500/10 focus:bg-white transition-all outline-none shadow-inner"
                         />
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
                         {['all', 'published', 'draft'].map((f) => (
                             <button
                                 key={f}
-                                onClick={() => setActiveFilter(f)}
+                                onClick={() => handleFilterChange(f)}
                                 className={cn(
                                     "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
                                     activeFilter === f 
@@ -157,9 +193,9 @@ export default function AdminDocumentaryHub() {
                             <p className="font-black uppercase tracking-[0.5em] text-xs italic">Loading Cinema Archives...</p>
                         </div>
                     ) : (
-                        filteredDocs.map((doc) => (
+                        docs.map((doc) => (
                             <div key={doc._id} className="group bg-white p-8 rounded-[3.5rem] border border-stone-100 shadow-sm hover:border-amber-500/20 hover:shadow-[0_40px_80px_rgba(0,0,0,0.03)] transition-all flex flex-col md:flex-row items-center gap-10">
-                                <div className="w-full md:w-64 aspect-[16/10] relative rounded-[2.5rem] overflow-hidden bg-stone-50 shadow-inner">
+                                <div className="w-full md:w-64 aspect-[16/10] relative rounded-[2.5rem] overflow-hidden bg-stone-50 shadow-inner text-amber-50">
                                     {doc.featuredImage?.url ? (
                                         <Image src={doc.featuredImage.url} alt={doc.title} fill className="object-cover group-hover:scale-110 transition-transform duration-[2000ms]" />
                                     ) : (
@@ -213,6 +249,16 @@ export default function AdminDocumentaryHub() {
                             </div>
                         ))
                     )}
+                </div>
+
+                {/* Pagination Section */}
+                <div className="mt-12 pb-12">
+                    <Pagination 
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        total={totalItems}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             </Container>
         </div>

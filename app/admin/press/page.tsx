@@ -21,22 +21,38 @@ import {
   Newspaper,
   BookOpen
 } from 'lucide-react';
+import { Pagination } from '@/components/admin/AdminComponents';
 
 export default function AdminPressHub() {
     const [releases, setReleases] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+    const [stats, setStats] = useState({ total: 0, published: 0, drafts: 0, views: 0 });
 
     useEffect(() => {
-        fetchReleases();
-    }, []);
+        const timer = setTimeout(() => {
+            fetchReleases();
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [currentPage, activeFilter, searchTerm]);
 
     const fetchReleases = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem('adminToken');
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?type=press`, {
+            const query = new URLSearchParams({
+                type: 'press',
+                page: currentPage.toString(),
+                limit: '10',
+                status: activeFilter,
+                search: searchTerm
+            });
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content?${query.toString()}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -44,6 +60,22 @@ export default function AdminPressHub() {
             const result = await response.json();
             if (result.success) {
                 setReleases(result.data.content);
+                setTotalPages(result.data.pages);
+                setTotalItems(result.data.total);
+            }
+
+            // Fetch stats
+            const statsResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/content/stats`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const statsResult = await statsResponse.json();
+            if (statsResult.success) {
+                setStats({
+                    total: statsResult.data.byType.press || 0,
+                    published: statsResult.data.published || 0,
+                    drafts: statsResult.data.draft || 0,
+                    views: statsResult.data.totalViews || 0
+                });
             }
         } catch (error) {
             console.error('Failed to fetch press releases:', error);
@@ -68,11 +100,15 @@ export default function AdminPressHub() {
         }
     };
 
-    const filteredReleases = releases.filter(pr => {
-        const matchesSearch = pr.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesFilter = activeFilter === 'all' || pr.status === activeFilter;
-        return matchesSearch && matchesFilter;
-    });
+    const handleFilterChange = (filter: string) => {
+        setActiveFilter(filter);
+        setCurrentPage(1);
+    };
+
+    const handleSearchChange = (val: string) => {
+        setSearchTerm(val);
+        setCurrentPage(1);
+    };
 
     return (
         <div className="min-h-screen bg-[#fcfcfc] text-navy-950 font-sans p-6 md:p-12">
@@ -101,10 +137,10 @@ export default function AdminPressHub() {
                 {/* Dashboard Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     {[
-                        { label: 'Total Archives', value: releases.length, icon: BookOpen, color: 'text-navy-950', bg: 'bg-navy-50' },
-                        { label: 'Broadcasted', value: releases.filter(b => b.status === 'published').length, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-                        { label: 'In Drafting', value: releases.filter(b => b.status === 'draft').length, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-                        { label: 'Public Reach', value: releases.reduce((acc, b) => acc + (b.views || 0), 0), icon: Newspaper, color: 'text-gold-600', bg: 'bg-gold-50' },
+                        { label: 'Total Archives', value: stats.total, icon: BookOpen, color: 'text-navy-950', bg: 'bg-navy-50' },
+                        { label: 'Broadcasted', value: stats.published, icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+                        { label: 'In Drafting', value: stats.drafts, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
+                        { label: 'Public Reach', value: stats.views, icon: Newspaper, color: 'text-gold-600', bg: 'bg-gold-50' },
                     ].map((stat, i) => (
                         <div key={i} className="bg-white p-8 rounded-[3rem] border border-stone-100 shadow-sm flex items-center justify-between group hover:border-navy-500/30 transition-all">
                             <div>
@@ -126,15 +162,15 @@ export default function AdminPressHub() {
                             type="text" 
                             placeholder="SEARCH BY RELEASE TITLE OR ISSUING OFFICER..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => handleSearchChange(e.target.value)}
                             className="w-full h-16 pl-20 pr-8 bg-stone-50 rounded-[2rem] border-none text-[11px] font-black uppercase tracking-widest focus:ring-4 focus:ring-navy-500/10 focus:bg-white transition-all outline-none shadow-inner"
                         />
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
                         {['all', 'published', 'draft'].map((f) => (
                             <button
                                 key={f}
-                                onClick={() => setActiveFilter(f)}
+                                onClick={() => handleFilterChange(f)}
                                 className={cn(
                                     "px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all",
                                     activeFilter === f 
@@ -156,7 +192,7 @@ export default function AdminPressHub() {
                             <p className="font-black uppercase tracking-[0.5em] text-xs">Syncing Official Archives...</p>
                         </div>
                     ) : (
-                        filteredReleases.map((pr) => (
+                        releases.map((pr) => (
                             <div key={pr._id} className="group bg-white p-8 rounded-[3.5rem] border border-stone-100 shadow-sm hover:border-navy-500/20 transition-all flex flex-col md:flex-row items-center gap-10">
                                 <div className="w-full md:w-64 aspect-[16/10] relative rounded-[2.5rem] overflow-hidden bg-navy-50 shadow-inner">
                                     {pr.featuredImage?.url ? (
@@ -212,6 +248,16 @@ export default function AdminPressHub() {
                             </div>
                         ))
                     )}
+                </div>
+
+                {/* Pagination Section */}
+                <div className="mt-12 pb-12">
+                    <Pagination 
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        total={totalItems}
+                        onPageChange={setCurrentPage}
+                    />
                 </div>
             </Container>
         </div>
