@@ -60,9 +60,15 @@ export default function FieldRenderer(props: FieldRendererProps) {
     const isValidImagePath = (val: any) => {
       if (!val || typeof val !== 'string') return false;
       const lowerVal = val.toLowerCase();
-      return val.startsWith('/') || val.startsWith('http') || val.includes('cloudinary') || 
-             lowerVal.endsWith('.png') || lowerVal.endsWith('.jpg') || 
-             lowerVal.endsWith('.jpeg') || lowerVal.endsWith('.svg') || lowerVal.endsWith('.webp');
+      
+      const isProtocolMatch = val.startsWith('/') || val.startsWith('http');
+      const isExtensionMatch = lowerVal.endsWith('.png') || lowerVal.endsWith('.jpg') || 
+                               lowerVal.endsWith('.jpeg') || lowerVal.endsWith('.svg') || 
+                               lowerVal.endsWith('.webp') || lowerVal.endsWith('.gif');
+      const isCloudinary = val.includes('cloudinary');
+
+      // Must have protocol AND (must have image extension OR be a cloudinary link)
+      return isProtocolMatch && (isExtensionMatch || isCloudinary);
     };
 
     if (nameMatches) {

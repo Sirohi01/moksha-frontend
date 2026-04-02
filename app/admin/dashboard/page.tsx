@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { formsAPI } from '@/lib/api';
+import { formsAPI, adminAPI } from '@/lib/api';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
@@ -67,72 +67,39 @@ export default function AdminDashboard() {
       setLoading(true);
       setError('');
 
-      const fetchWithFallback = async (fetchFn: () => Promise<any>, fallback = 0) => {
-        try {
-          const result = await fetchFn();
-          return result?.data?.total || result?.total || result?.pagination?.total || fallback;
-        } catch (err) {
-          console.warn('Failed to fetch data:', err);
-          return fallback;
-        }
-      };
-
-      const [
-        totalReports,
-        totalVolunteers,
-        totalDonations,
-        totalContacts,
-        totalFeedback,
-        totalBoardApplications,
-        totalLegacyGiving,
-        totalSchemes,
-        totalExpansionRequests
-      ] = await Promise.all([
-        fetchWithFallback(() => formsAPI.getReports(1, 1)),
-        fetchWithFallback(() => formsAPI.getVolunteers(1, 1)),
-        fetchWithFallback(() => formsAPI.getDonations(1, 1)),
-        fetchWithFallback(() => formsAPI.getContacts(1, 1)),
-        fetchWithFallback(() => formsAPI.getFeedback(1, 1)),
-        fetchWithFallback(() => formsAPI.getBoardApplications(1, 1)),
-        fetchWithFallback(() => formsAPI.getLegacyGiving(1, 1)),
-        fetchWithFallback(() => formsAPI.getSchemes(1, 1)),
-        fetchWithFallback(() => formsAPI.getExpansionRequests(1, 1))
-      ]);
-
-      setStats({
-        totalReports,
-        totalVolunteers,
-        totalDonations,
-        totalContacts,
-        totalFeedback,
-        totalBoardApplications,
-        totalLegacyGiving,
-        totalSchemes,
-        totalExpansionRequests
-      });
-
-      const generateTrendData = () => {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        const trends: TrendData[] = [];
-
-        months.forEach((month) => {
-          trends.push({
-            month,
-            reports: Math.max(1, Math.floor((totalReports / 6) * (0.7 + Math.random() * 0.6))),
-            volunteers: Math.max(1, Math.floor((totalVolunteers / 6) * (0.7 + Math.random() * 0.6))),
-            donations: Math.max(1, Math.floor((totalDonations / 6) * (0.7 + Math.random() * 0.6))),
-            contacts: Math.max(1, Math.floor((totalContacts / 6) * (0.7 + Math.random() * 0.6))),
-            feedback: Math.max(1, Math.floor((totalFeedback / 6) * (0.7 + Math.random() * 0.6)))
-          });
+      const response = await adminAPI.getStats();
+      if (response && response.success && response.data) {
+        const { overview } = response.data;
+        
+        setStats({
+          totalReports: overview.totalReports || 0,
+          totalVolunteers: overview.totalVolunteers || 0,
+          totalDonations: overview.totalDonations || 0,
+          totalContacts: overview.totalContacts || 0,
+          totalFeedback: overview.totalFeedback || 0,
+          totalBoardApplications: overview.totalBoardApplications || 0,
+          totalLegacyGiving: overview.totalLegacyRequests || 0,
+          totalSchemes: overview.totalSchemeApplications || 0,
+          totalExpansionRequests: overview.totalExpansionRequests || 0,
         });
 
-        return trends;
-      };
+        const generateTrendData = () => {
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+          return months.map(month => ({
+            month,
+            reports: Math.max(1, Math.floor((overview.totalReports / 6) * (0.7 + Math.random() * 0.6))),
+            volunteers: Math.max(1, Math.floor((overview.totalVolunteers / 6) * (0.7 + Math.random() * 0.6))),
+            donations: Math.max(1, Math.floor((overview.totalDonations / 6) * (0.7 + Math.random() * 0.6))),
+            contacts: Math.max(1, Math.floor((overview.totalContacts / 6) * (0.7 + Math.random() * 0.6))),
+            feedback: Math.max(1, Math.floor((overview.totalFeedback / 6) * (0.7 + Math.random() * 0.6)))
+          }));
+        };
 
-      setTrendData(generateTrendData());
+        setTrendData(generateTrendData());
+      }
     } catch (err: any) {
-      console.error('Failed to fetch dashboard data:', err);
-      setError(err.message || 'Failed to load dashboard data');
+      console.error('Dashboard data sync failure:', err);
+      setError(err.message || 'Failed to initialize mission intelligence');
     } finally {
       setLoading(false);
     }

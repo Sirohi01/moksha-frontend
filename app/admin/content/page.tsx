@@ -7,6 +7,7 @@ import { PageHeader, DataTable, ActionButton, LoadingSpinner } from '@/component
 
 interface ContentItem {
   _id: string;
+  slug: string;
   title: string;
   type: 'page' | 'blog' | 'campaign' | 'press';
   status: 'draft' | 'published' | 'archived';
@@ -37,42 +38,25 @@ export default function ContentManagement() {
       setError('');
 
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_BASE_URL}/api/content?type=page_config&limit=100`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+      });
+      const data = await response.json();
 
-      const configRoutes = [
-        'homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach',
-        'board', 'services', 'report', 'impact', 'stories', 'remembrance',
-        'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate',
-        'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact',
-        'press', 'documentaries', 'layout', 'blog', 'compliance'
-      ];
-
-      const responses = await Promise.all(
-        configRoutes.map(route =>
-          fetch(`${API_BASE_URL}/api/page-config/${route}`)
-            .then(res => res.json())
-            .catch(() => ({ success: false }))
-        )
-      );
-
-      const allDataConfigs = configRoutes.map((route, i) => ({
-        id: `${route}-config`,
-        title: `${route.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} Configuration`,
-        data: responses[i]
-      }));
-
-      const validContent = allDataConfigs
-        .filter(item => item.data && item.data.success)
-        .map(item => ({
-          _id: item.id,
-          title: item.title,
+      if (data.success && data.data?.content) {
+        const validContent = data.data.content.map((item: any) => ({
+          _id: item._id,
+          slug: item.slug,
+          title: item.title.replace(' Page Configuration', ''),
           type: 'page' as const,
           status: 'published' as const,
-          updatedAt: item.data.data.lastModified,
+          updatedAt: item.updatedAt,
           author: { name: 'Admin Core' },
-          views: Math.floor(Math.random() * 1000) + 100
+          views: item.views || 0
         }));
 
-      setContent(validContent);
+        setContent(validContent);
+      }
     } catch (error: any) {
       console.error('Failed to fetch content:', error);
       setError(error.message || 'Failed to initialize content nodes');
@@ -156,8 +140,7 @@ export default function ContentManagement() {
       label: 'CMD',
       render: (_value: any, item: ContentItem) => (
         <ActionButton onClick={() => {
-          const route = item._id.replace('-config', '');
-          window.location.href = `/admin/content-editor?page=${route}`;
+          window.location.href = `/admin/content-editor?page=${item.slug}`;
         }} size="sm">
           EDIT
         </ActionButton>
