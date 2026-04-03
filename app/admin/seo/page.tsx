@@ -47,6 +47,8 @@ export default function SEOCommandDeck() {
   const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
   const [schemaError, setSchemaError] = useState<string | null>(null);
   const [isPickerOpen, setIsPickerOpen] = useState<{ open: boolean; field: string }>({ open: false, field: '' });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [pageSearch, setPageSearch] = useState("");
 
   useEffect(() => {
     fetchPages();
@@ -130,18 +132,79 @@ export default function SEOCommandDeck() {
           </div>
 
           <div className="flex flex-col md:flex-row items-center gap-6 w-full xl:w-auto">
-            <div className="relative w-full md:w-80 h-16 bg-white border-2 border-stone-100 rounded-3xl overflow-hidden group">
-               <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-stone-300 uppercase italic">Select Node:</span>
-               <select
-                 value={selectedPage?._id}
-                 onChange={(e) => setSelectedPage(pages.find(p => p._id === e.target.value))}
-                 className="w-full h-full pl-32 pr-12 bg-transparent text-[11px] font-black uppercase tracking-widest text-navy-950 outline-none appearance-none cursor-pointer"
+            <div className="relative w-full md:w-96">
+               <div 
+                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                 className="w-full h-16 bg-white border-2 border-stone-100 rounded-3xl flex items-center justify-between px-6 cursor-pointer hover:border-navy-950 transition-all group shadow-sm"
                >
-                 {pages.map(page => (
-                   <option key={page._id} value={page._id}>{page.title.toUpperCase()} (/{page.slug})</option>
-                 ))}
-               </select>
-               <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-200 pointer-events-none" />
+                 <div className="flex flex-col">
+                   <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest italic">Target Node</span>
+                   <span className="text-[12px] font-black text-navy-950 uppercase tracking-tight truncate max-w-[200px]">
+                     {selectedPage?.title || "Select Page"}
+                   </span>
+                 </div>
+                 <div className="flex items-center gap-3">
+                    <span className={cn(
+                      "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest",
+                      selectedPage?.status === 'published' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
+                    )}>
+                      {selectedPage?.status || 'draft'}
+                    </span>
+                    <ChevronDown className={cn("w-4 h-4 text-stone-300 transition-transform duration-300", isDropdownOpen && "rotate-180")} />
+                 </div>
+               </div>
+
+               {isDropdownOpen && (
+                 <div className="absolute top-20 left-0 w-full bg-white border-2 border-stone-100 rounded-[2rem] shadow-2xl z-[100] p-4 animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden">
+                    <div className="relative mb-4">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-300" />
+                      <input 
+                        type="text"
+                        placeholder="SEARCH NODES..."
+                        value={pageSearch}
+                        onChange={(e) => setPageSearch(e.target.value)}
+                        className="w-full h-12 pl-12 pr-4 bg-stone-50 rounded-2xl text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none border-none placeholder:text-stone-300"
+                      />
+                    </div>
+                    
+                    <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-1">
+                      {pages
+                        .filter(p => p.title.toLowerCase().includes(pageSearch.toLowerCase()) || p.slug.toLowerCase().includes(pageSearch.toLowerCase()))
+                        .map(page => (
+                        <div 
+                          key={page._id}
+                          onClick={() => {
+                            setSelectedPage(page);
+                            setIsDropdownOpen(false);
+                            setPageSearch("");
+                          }}
+                          className={cn(
+                            "w-full p-4 rounded-2xl flex items-center justify-between cursor-pointer transition-all hover:bg-stone-50 group",
+                            selectedPage?._id === page._id ? "bg-navy-950 text-white" : "text-navy-950"
+                          )}
+                        >
+                          <div className="flex flex-col">
+                            <span className="text-[11px] font-black uppercase tracking-tight">{page.title}</span>
+                            <span className={cn(
+                              "text-[9px] font-medium opacity-40 italic",
+                              selectedPage?._id === page._id ? "text-stone-300" : "text-navy-950"
+                            )}>/{page.slug}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                             <div className={cn(
+                               "w-1.5 h-1.5 rounded-full",
+                               page.status === 'published' ? "bg-emerald-500" : "bg-amber-500"
+                             )} />
+                             <ChevronRight className={cn(
+                               "w-3 h-3 transition-all",
+                               selectedPage?._id === page._id ? "text-gold-500" : "text-stone-200 group-hover:translate-x-1"
+                             )} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                 </div>
+               )}
             </div>
             
             <Button
