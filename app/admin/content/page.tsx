@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { contentAPI } from '@/lib/api';
-import { Database, Plus, Search, FileText, Newspaper, Megaphone, Activity, RotateCcw } from 'lucide-react';
+import { Database, Search, FileText, Newspaper, Megaphone, Activity, RotateCcw } from 'lucide-react';
 import { PageHeader, DataTable, ActionButton, LoadingSpinner } from '@/components/admin/AdminComponents';
 
 interface ContentItem {
@@ -172,9 +172,6 @@ export default function ContentManagement() {
         description="Deploy and optimize operational content across the Moksha network."
         icon={<Database className="w-8 h-8" />}
       >
-        <ActionButton icon={<Plus className="w-4 h-4" />}>
-          Init New Asset
-        </ActionButton>
       </PageHeader>
 
       {/* Audit Filters */}
