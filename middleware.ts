@@ -33,7 +33,14 @@ export async function middleware(request: NextRequest) {
     console.error('Middleware redirect check failed:', error);
   }
 
-  return NextResponse.next();
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set('x-url', pathname);
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {

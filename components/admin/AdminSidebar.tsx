@@ -33,7 +33,8 @@ import {
   Layers,
   Film,
   ShieldCheck,
-  Activity
+  Activity,
+  Terminal
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -123,6 +124,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'Activity Logs', href: '/admin/activity-logs', icon: Activity },
     { title: 'Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
     { title: 'System Health', href: '/admin/intelligence/system-logs', icon: Shield },
+    { title: 'Maintenance', href: '/admin/system/maintenance', icon: Terminal },
     { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
     { title: 'Interaction Logs', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
   ]);

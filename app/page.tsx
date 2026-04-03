@@ -16,14 +16,11 @@ import { getRatioClass } from "@/lib/ratios";
 export default function HomePage() {
   const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
   const config = dynamicConfig || homepageConfig;
-
-  // Robust Image Source Resolver for safe landing page previews
   const getSafeSrc = (imgSource: any) => {
     if (!imgSource) return '';
     if (typeof imgSource === 'string') return imgSource;
     if (typeof imgSource === 'object') {
       if (typeof imgSource.src === 'string') return imgSource.src;
-      // Handle deeper nesting if it occurs during recursive mapping
       if (typeof imgSource.src === 'object') return getSafeSrc(imgSource.src);
     }
     return '';

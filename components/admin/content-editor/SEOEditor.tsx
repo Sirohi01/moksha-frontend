@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Card } from '@/components/ui/Card';
-import { 
-  Globe, Layout, Monitor, Hash, RefreshCw, 
+import {
+  Globe, Layout, Monitor, Hash, RefreshCw,
   Terminal, Twitter, Smartphone, Info, Search
 } from 'lucide-react';
 
@@ -123,7 +123,7 @@ export default function SEOEditor({ seoData, setSeoData }: SEOEditorProps) {
                       value={seoData.canonical}
                       onChange={(e) => updateField('canonical', e.target.value)}
                       className="w-full h-16 px-6 bg-gray-50/50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-gold-500/10 focus:bg-white focus:border-gold-500 text-xs font-bold transition-all font-mono"
-                      placeholder="https://moksha-seva.org/page-name"
+                      placeholder="https://mokshasewa.org/page-name"
                     />
                   </div>
                 </div>
@@ -299,16 +299,16 @@ export default function SEOEditor({ seoData, setSeoData }: SEOEditorProps) {
 
 function Code({ className }: { className?: string }) {
   return (
-    <svg 
+    <svg
       className={className}
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="3" 
-      strokeLinecap="round" 
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <polyline points="16 18 22 12 16 6"></polyline>

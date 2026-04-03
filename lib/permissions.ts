@@ -41,6 +41,7 @@ export const ROUTE_PERMISSIONS: Record<string, string> = {
   '/admin/intelligence/system-logs': 'page_system',
   '/admin/intelligence/communication-logs': 'page_comm_logs',
   '/admin/email-logs': 'page_email_logs',
+  '/admin/system/maintenance': 'page_maintenance',
 };
 export const checkUserPermission = (user: { role: string; permissions: string[] } | null, pathname: string): boolean => {
   if (!user) return false;

@@ -1,10 +1,10 @@
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://moksha-seva.org';
+  const baseUrl = 'https://mokshasewa.org';
   const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
   const currentDate = new Date();
-  
+
   // Static pages
   const staticPages = [
     '',

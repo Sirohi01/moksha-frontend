@@ -34,7 +34,8 @@ import {
   Layers,
   Bell,
   Activity,
-  Video
+  Video,
+  Terminal
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -83,6 +84,7 @@ const PAGE_PERMISSIONS = [
   { id: 'page_analytics', label: 'Visual Analytics', icon: BarChart3, group: 'System' },
   { id: 'page_logs', label: 'Security Audits', icon: Lock, group: 'System' },
   { id: 'page_system', label: 'System Health', icon: Activity, group: 'System' },
+  { id: 'page_maintenance', label: 'Infrastructure Terminal', icon: Terminal, group: 'System' },
   { id: 'page_email_logs', label: 'Email Traffic', icon: Mail, group: 'System' },
   { id: 'page_comm_logs', label: 'Interaction Logs', icon: MessageSquare, group: 'System' },
 ];

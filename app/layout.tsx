@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 import RootLayoutContent from "@/components/layout/RootLayoutContent";
 import { Toaster } from "sonner";
+import { headers } from "next/headers";
 
 async function getSEO(pageName: string = 'homepage') {
   try {
     const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
     const response = await fetch(`${API_BASE_URL}/api/seo/page/${pageName}`, {
-      next: { revalidate: 3600 }
+      cache: 'no-store'
     });
     if (response.ok) {
       const result = await response.json();
@@ -20,14 +21,25 @@ async function getSEO(pageName: string = 'homepage') {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await getSEO('homepage');
-  
+  const heads = headers();
+  const pathname = heads.get('x-url') || '/';
+  let slug = 'homepage';
+  if (pathname && pathname !== '/') {
+    const segments = pathname.split('/').filter(Boolean);
+    slug = segments[0] || 'homepage';
+    if (pathname.includes('/blog/') || pathname.includes('/documentaries/')) {
+      slug = pathname.replace(/^\//, '').replace(/\/$/, '');
+    }
+  }
+
+  const seo = await getSEO(slug);
+
   const siteName = "Moksha Sewa";
   const defaultTitle = "Moksha Sewa — Dignity in Departure";
   const defaultDesc = "Moksha Sewa provides dignified cremation services for unclaimed bodies and poor families across India.";
-  
+
   return {
-    metadataBase: new URL('https://moksha-seva.org'),
+    metadataBase: new URL('https://mokshasewa.org'),
     title: {
       default: seo?.metaTitle || defaultTitle,
       template: `%s | ${siteName}`,
@@ -35,7 +47,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description: seo?.metaDescription || defaultDesc,
     keywords: seo?.metaKeywords ? seo.metaKeywords.split(',').map((k: string) => k.trim()) : [],
     alternates: {
-      canonical: seo?.canonicalUrl || "https://moksha-seva.org",
+      canonical: seo?.canonicalUrl || "https://mokshasewa.org",
     },
     robots: seo?.robots || 'index, follow',
     openGraph: {
@@ -57,41 +69,51 @@ export async function generateMetadata(): Promise<Metadata> {
 async function getGlobalSEO() {
   try {
     const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-    const response = await fetch(`${API_BASE_URL}/api/seo/page/homepage`, {
-      next: { revalidate: 3600 }
+    const response = await fetch(`${API_BASE_URL}/api/seo/settings`, {
+      cache: 'no-store'
     });
     if (response.ok) {
       const result = await response.json();
       return result.data || null;
     }
   } catch (error) {
-    console.error('Failed to fetch global SEO scripts:', error);
+    console.error('Failed to fetch global SEO settings:', error);
   }
   return null;
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const seo = await getGlobalSEO();
+  const globalSeo = await getGlobalSEO();
+  const heads = headers();
+  const pathname = heads.get('x-url') || '/';
+  let slug = 'homepage';
+  if (pathname && pathname !== '/') {
+    const segments = pathname.split('/').filter(Boolean);
+    slug = segments[0] || 'homepage';
+    if (pathname.includes('/blog/') || pathname.includes('/documentaries/')) {
+      slug = pathname.replace(/^\//, '').replace(/\/$/, '');
+    }
+  }
+  const pageSeo = await getSEO(slug);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {seo?.gtmCode && (
+        {globalSeo?.headerScripts && (
+          <div dangerouslySetInnerHTML={{ __html: globalSeo.headerScripts }} />
+        )}
+        {pageSeo?.headCode && (
+          <div dangerouslySetInnerHTML={{ __html: pageSeo.headCode }} />
+        )}
+        {pageSeo?.schemaMarkup && (
           <script
+            type="application/ld+json"
             dangerouslySetInnerHTML={{
-              __html: seo.gtmCode.replace(/<\/?script>/g, '')
+              __html: typeof pageSeo.schemaMarkup === 'string'
+                ? pageSeo.schemaMarkup
+                : JSON.stringify(pageSeo.schemaMarkup)
             }}
           />
-        )}
-        {seo?.analyticsCode && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: seo.analyticsCode.replace(/<\/?script>/g, '')
-            }}
-          />
-        )}
-        {seo?.headCode && (
-          <div dangerouslySetInnerHTML={{ __html: seo.headCode }} />
         )}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -106,55 +128,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#8B4513" />
         <meta name="msapplication-tap-highlight" content="no" />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(seo?.schemaMarkup || {
-              "@context": "https://schema.org",
-              "@type": "NGO",
-              "name": "Moksha Sewa Foundation",
-              "alternateName": "Moksha Sewa",
-              "url": "https://moksha-seva.org",
-              "logo": "https://moksha-seva.org/logo.png",
-              "description": "Providing dignified cremation services for unclaimed bodies and poor families across India",
-              "foundingDate": "2020",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "IN",
-                "addressRegion": "India"
-              },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+91-XXXXXXXXXX",
-                "contactType": "customer service",
-                "availableLanguage": ["English", "Hindi"]
-              },
-              "sameAs": [
-                "https://facebook.com/moksha-seva",
-                "https://twitter.com/moksha_seva",
-                "https://instagram.com/moksha_seva",
-                "https://linkedin.com/company/moksha-seva"
-              ],
-              "areaServed": "India",
-              "knowsAbout": ["Cremation Services", "Humanitarian Aid", "Social Work"],
-              "memberOf": {
-                "@type": "Organization",
-                "name": "Indian NGO Network"
-              }
-            })
-          }}
-        />
       </head>
-       <body className="min-h-screen antialiased">
-         {/* Body Injection for Tag Managers */}
-         {seo?.bodyCode && (
-           <div dangerouslySetInnerHTML={{ __html: seo.bodyCode }} />
-         )}
-         <RootLayoutContent>{children}</RootLayoutContent>
-         <Toaster position="top-center" richColors />
-       </body>
+      <body className="min-h-screen antialiased">
+        {/* Global Footer Scripts */}
+        {globalSeo?.footerScripts && (
+          <div dangerouslySetInnerHTML={{ __html: globalSeo.footerScripts }} />
+        )}
+
+        {/* Page-Specific Body Code */}
+        {pageSeo?.bodyCode && (
+          <div dangerouslySetInnerHTML={{ __html: pageSeo.bodyCode }} />
+        )}
+
+        <RootLayoutContent>{children}</RootLayoutContent>
+        <Toaster position="top-center" richColors />
+      </body>
     </html>
   );
 }

@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import { setNestedValue } from '@/lib/editor-utils';
 import {
   Globe,
   Search,
@@ -22,12 +21,22 @@ import {
   Lock,
   X,
   Plus,
-  Trash2
+  Trash2,
+  Share2,
+  Twitter,
+  Image as ImageIcon,
+  Layers,
+  ChevronDown,
+  Upload,
+  Activity,
+  ChevronRight,
+  Code2,
+  Zap
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 // Tabs for the SEO Hub
-type SEOTab = 'ranking' | 'technical' | 'backup';
+type SEOTab = 'ranking' | 'social' | 'technical' | 'backup';
 
 export default function SEOCommandDeck() {
   const [activeTab, setActiveTab] = useState<SEOTab>('ranking');
@@ -37,6 +46,7 @@ export default function SEOCommandDeck() {
   const [saving, setSaving] = useState(false);
   const [isRedirectModalOpen, setIsRedirectModalOpen] = useState(false);
   const [schemaError, setSchemaError] = useState<string | null>(null);
+  const [isPickerOpen, setIsPickerOpen] = useState<{ open: boolean; field: string }>({ open: false, field: '' });
 
   useEffect(() => {
     fetchPages();
@@ -44,6 +54,7 @@ export default function SEOCommandDeck() {
 
   const fetchPages = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/seo`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
       });
@@ -61,444 +72,532 @@ export default function SEOCommandDeck() {
   };
 
   const handleSave = async () => {
-    if (!selectedPage) return;
+    if (!selectedPage || !selectedPage._id) return;
     setSaving(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/seo/${selectedPage._id}`, {
+      const { _id, ...updatedData } = selectedPage;
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/seo/${_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         },
-        body: JSON.stringify(selectedPage)
+        body: JSON.stringify(updatedData)
       });
       const data = await response.json();
       if (data.success) {
-        alert("SEO Configuration Saved Successfully!");
+        setPages(prev => prev.map(p => p._id === selectedPage._id ? data.data : p));
+        alert("SEO Evolution Synchronized.");
       }
     } catch (error) {
-      alert("Failed to save SEO config.");
+      alert("Encryption Error.");
     } finally {
       setSaving(false);
     }
   };
 
+  const updateField = (field: string, value: any) => {
+    setSelectedPage((prev: any) => ({ ...prev, [field]: value }));
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center p-12 text-center font-black animate-pulse uppercase tracking-widest italic text-navy-900 bg-stone-50">Syncing Intelligence Hub...</div>;
 
   if (!selectedPage) return (
-    <div className="min-h-screen bg-stone-50 flex items-center justify-center p-12">
-      <Card className="p-12 text-center max-w-md rounded-[3rem] border-none shadow-2xl">
-        <Globe className="w-16 h-16 text-navy-200 mx-auto mb-6" />
-        <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-4">No SEO Nodes Detected</h3>
-        <p className="text-navy-950/60 font-medium mb-8">Begin by initializing your site's core structure in 'Content Central'.</p>
-        <Button
-          onClick={() => window.location.href = '/admin/content'}
-          className="bg-navy-950 text-gold-500 rounded-2xl px-8"
-        >
-          GO TO CONTENT CENTRAL
-        </Button>
-      </Card>
+     <div className="min-h-screen bg-stone-50 flex items-center justify-center p-12 text-center">
+       <Card className="p-12 max-w-md rounded-[3rem] border-none shadow-2xl bg-white space-y-6">
+          <Globe className="w-16 h-16 text-stone-200 mx-auto" />
+          <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter italic">No Active SEO Nodes</h3>
+          <p className="text-stone-400 font-bold text-xs uppercase tracking-widest leading-loose italic">Verify site structure in Content Central.</p>
+          <Button onClick={() => window.location.href = '/admin/content'} className="bg-navy-950 text-gold-500 rounded-2xl w-full py-5">GOTO CONTENT CENTRAL</Button>
+       </Card>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-stone-50 p-6 md:p-12 font-sans select-none">
+    <div className="min-h-screen bg-stone-50 p-6 md:p-12 font-sans select-none overflow-x-hidden text-navy-950">
       <div className="max-w-[1600px] mx-auto">
 
-        {/* Hub Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center shadow-xl">
-                <Globe className="w-5 h-5 text-gold-500" />
-              </div>
-              <h1 className="text-4xl font-black uppercase tracking-tighter text-navy-950 italic">SEO Command Deck</h1>
+        {/* Global Toolbar */}
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10 mb-16">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-[1.5rem] bg-navy-950 flex items-center justify-center shadow-xl">
+              <Globe className="w-8 h-8 text-gold-500" />
             </div>
-            <p className="text-navy-950/60 font-black text-xs uppercase tracking-[0.2em]">Surgical Search Intelligence & Technical Indexing Portal</p>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic leading-none">SEO Command Deck</h1>
+              <p className="text-navy-950/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2 italic">Site Architecture Intelligence Center</p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {pages && Array.isArray(pages) && pages.length > 0 && (
-              <select
-                value={selectedPage?._id}
-                onChange={(e) => setSelectedPage(pages.find(p => p._id === e.target.value))}
-                className="bg-white border-2 border-navy-50 rounded-2xl px-6 py-4 text-[10px] font-black uppercase tracking-widest text-navy-950 shadow-sm focus:border-gold-500 outline-none transition-all"
-              >
-                {pages.map(page => (
-                  <option key={page._id} value={page._id}>{page.title} (/{page.slug})</option>
-                ))}
-              </select>
-            )}
+          <div className="flex flex-col md:flex-row items-center gap-6 w-full xl:w-auto">
+            <div className="relative w-full md:w-80 h-16 bg-white border-2 border-stone-100 rounded-3xl overflow-hidden group">
+               <span className="absolute left-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-stone-300 uppercase italic">Select Node:</span>
+               <select
+                 value={selectedPage?._id}
+                 onChange={(e) => setSelectedPage(pages.find(p => p._id === e.target.value))}
+                 className="w-full h-full pl-32 pr-12 bg-transparent text-[11px] font-black uppercase tracking-widest text-navy-950 outline-none appearance-none cursor-pointer"
+               >
+                 {pages.map(page => (
+                   <option key={page._id} value={page._id}>{page.title.toUpperCase()} (/{page.slug})</option>
+                 ))}
+               </select>
+               <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-200 pointer-events-none" />
+            </div>
+            
+            <Button
+              onClick={() => window.location.href = '/admin/seo/advanced'}
+              className="w-full md:w-64 h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4 bg-white text-navy-950 border-2 border-stone-100 hover:border-navy-950 shadow-sm"
+            >
+              <Settings size={20} />
+              GLOBAL PROTOCOLS
+            </Button>
+            
             <Button
               onClick={handleSave}
-              disabled={saving || !selectedPage}
-              className="bg-navy-950 text-gold-500 shadow-xl px-10 py-5 rounded-3xl hover:bg-gold-600 hover:text-navy-950 transition-all"
+              disabled={saving}
+              className={cn(
+                "w-full md:w-64 h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4",
+                saving ? "bg-stone-100 text-stone-400" : "bg-navy-950 text-gold-500 hover:bg-gold-500 hover:text-navy-950 shadow-2xl shadow-navy-950/20"
+              )}
             >
-              {saving ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              <span className="text-[11px] font-black uppercase tracking-[0.2em]">{saving ? 'SAVING...' : 'COMMIT SEO HUB'}</span>
+              {saving ? <RefreshCcw size={20} className="animate-spin" /> : <Save size={20} />}
+              {saving ? 'SAVING...' : 'COMMIT CHANGES'}
             </Button>
           </div>
         </div>
 
-        {/* Intelligence Tabs */}
-        <div className="flex gap-4 mb-8">
+        {/* Global Hub Navigation */}
+        <div className="flex flex-wrap items-center gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide">
           {[
-            { id: 'ranking', label: 'Search Ranking', icon: BarChart3 },
-            { id: 'technical', label: 'Technical Setup', icon: Settings },
-            { id: 'backup', label: 'Version Backup', icon: History }
+            { id: 'ranking', label: 'Primary Metatags', icon: BarChart3 },
+            { id: 'social', label: 'Social Engagement', icon: Share2 },
+            { id: 'technical', label: 'Technical SEO', icon: Code2 },
+            { id: 'backup', label: 'Audit History', icon: History }
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as SEOTab)}
               className={cn(
-                "flex items-center gap-3 px-8 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest transition-all",
+                "flex items-center gap-4 px-10 py-5 rounded-[2rem] text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
                 activeTab === tab.id
-                  ? "bg-navy-950 text-gold-500 shadow-xl scale-105"
-                  : "bg-white text-navy-400 hover:text-navy-950 hover:bg-navy-50 border border-navy-50"
+                  ? "bg-navy-950 text-gold-500 shadow-xl"
+                  : "bg-white text-stone-400 hover:text-navy-950 border border-stone-100"
               )}
             >
-              <tab.icon className="w-4 h-4" />
+              <tab.icon size={18} />
               {tab.label}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-          {/* Main Control Panel (Left/Center) */}
-          <div className="lg:col-span-2 space-y-8">
-
-            {/* SEARCH RANKING WORKFLOW */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
+          
+          {/* Main Editing Surface */}
+          <div className="xl:col-span-8 space-y-12">
+            
+            {/* PRIMARY METADATA */}
             {activeTab === 'ranking' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-white">
-                  <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-8 italic flex items-center gap-3">
-                    <TrendingUp className="text-gold-600" /> SERP Presence Intelligence
-                  </h3>
-
-                  <div className="space-y-8">
-                    <div>
-                      <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Google Search Metatitle (Max 60)</label>
-                      <input
-                        type="text"
-                        value={selectedPage?.metaTitle || ''}
-                        onChange={(e) => setSelectedPage({ ...selectedPage, metaTitle: e.target.value })}
-                        className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-5 font-bold text-navy-950 focus:border-navy-950 outline-none transition-all"
-                        placeholder="Premium Moksha Sewa Services | Dignity for All"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">SERP Snippet Description (Max 160)</label>
-                      <textarea
-                        rows={4}
-                        value={selectedPage?.metaDescription || ''}
-                        onChange={(e) => setSelectedPage({ ...selectedPage, metaDescription: e.target.value })}
-                        className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-5 font-bold text-navy-950 focus:border-navy-950 outline-none transition-all resize-none"
-                        placeholder="Providing dignified burials and cremation services for unclaimed souls across Kashi, Haridwar, and Prayagraj..."
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div>
-                        <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Primary Focus Keyword</label>
-                        <input
-                          type="text"
-                          value={selectedPage?.focusKeyword || ''}
-                          onChange={(e) => setSelectedPage({ ...selectedPage, focusKeyword: e.target.value })}
-                          className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-5 font-bold text-navy-950 focus:border-navy-950 outline-none transition-all"
-                        />
+              <div className="space-y-10 animate-in fade-in duration-500">
+                <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white space-y-12">
+                   <div className="flex items-center justify-between">
+                      <h3 className="text-2xl font-black uppercase tracking-tighter italic flex items-center gap-4">
+                        <TrendingUp className="text-gold-600" /> Primary Indexing Point
+                      </h3>
+                      <div className="flex items-center gap-6">
+                         <span className={cn(
+                             "text-[10px] font-black uppercase tracking-widest italic",
+                             selectedPage?.status === 'published' ? "text-emerald-500" : "text-stone-300"
+                         )}>
+                             Status: {selectedPage?.status?.toUpperCase() || 'DRAFT'}
+                         </span>
+                         <label className="relative inline-flex items-center cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              className="sr-only peer"
+                              checked={selectedPage?.status === 'published'}
+                              onChange={(e) => updateField('status', e.target.checked ? 'published' : 'draft')}
+                            />
+                            <div className="w-14 h-8 bg-stone-100 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 transition-colors shadow-inner"></div>
+                         </label>
                       </div>
-                      <div>
-                        <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Current Global Ranking</label>
-                        <div className="flex items-center gap-4 bg-navy-50/30 rounded-2xl px-6 py-5 font-black text-navy-950 border-2 border-navy-50">
-                          <span className="text-xl italic">#{selectedPage?.seoRanking?.currentRank || 'N/A'}</span>
-                        </div>
+                   </div>
+
+                   <div className="space-y-10">
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-4">Google Search Title (Meta-Title)</label>
+                         <input
+                           type="text"
+                           value={selectedPage?.metaTitle || ''}
+                           onChange={(e) => updateField('metaTitle', e.target.value)}
+                           className="w-full h-16 bg-stone-50 border border-stone-50 rounded-3xl px-8 font-bold text-navy-950 focus:bg-white focus:border-gold-500 transition-all outline-none"
+                         />
                       </div>
-                    </div>
-                  </div>
+
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-4">Primary Focal Keywords (Comma Separated)</label>
+                         <input
+                           type="text"
+                           value={selectedPage?.metaKeywords || ''}
+                           onChange={(e) => updateField('metaKeywords', e.target.value)}
+                           className="w-full h-16 bg-stone-50 border border-stone-50 rounded-3xl px-8 font-bold text-navy-950 focus:bg-white focus:border-gold-500 transition-all outline-none"
+                         />
+                      </div>
+
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-4">Search Snippet Intent (Meta-Description)</label>
+                         <textarea
+                           rows={6}
+                           value={selectedPage?.metaDescription || ''}
+                           onChange={(e) => updateField('metaDescription', e.target.value)}
+                           className="w-full bg-stone-50 border border-stone-50 rounded-[3rem] p-10 font-bold text-navy-950 focus:bg-white focus:border-gold-500 transition-all outline-none resize-none leading-relaxed"
+                         />
+                      </div>
+                   </div>
                 </Card>
-
-                {/* Ranking Analytics Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="p-8 bg-gold-500 text-navy-950 border-none shadow-xl rounded-[2.5rem]">
-                    <p className="text-[9px] font-black uppercase tracking-widest mb-2 opacity-60">SEO Momentum</p>
-                    <p className="text-3xl font-black tracking-tighter">84.2%</p>
-                    <p className="text-[9px] font-bold mt-2 uppercase opacity-80">Highly Optimized</p>
-                  </Card>
-                  <Card className="p-8 bg-white border-2 border-navy-50 shadow-xl rounded-[2.5rem]">
-                    <p className="text-[9px] font-black text-navy-400 uppercase tracking-widest mb-2">Organic Reach</p>
-                    <p className="text-3xl font-black text-navy-950 tracking-tighter">12.5k</p>
-                    <p className="text-[9px] font-bold mt-2 text-green-600 uppercase">Weekly View Growth</p>
-                  </Card>
-                  <Card className="p-8 bg-navy-950 text-white border-none shadow-xl rounded-[2.5rem]">
-                    <p className="text-[9px] font-black uppercase tracking-widest mb-2 opacity-60">Competitor Gap</p>
-                    <p className="text-3xl font-black tracking-tighter text-gold-500">+14%</p>
-                    <p className="text-[9px] font-bold mt-2 uppercase opacity-80">Superior Ranking</p>
-                  </Card>
-                </div>
               </div>
             )}
 
-            {/* TECHNICAL SETUP WORKFLOW */}
+            {/* SOCIAL PRESENCE */}
+            {activeTab === 'social' && (
+              <div className="space-y-10 animate-in fade-in duration-500">
+                <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white space-y-12">
+                   <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-500">
+                         <Share2 size={24} />
+                      </div>
+                      <h3 className="text-2xl font-black uppercase tracking-tighter italic">Social Graph Intelligence (OpenGraph)</h3>
+                   </div>
+
+                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                      <div className="space-y-10">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">OG Share Title</label>
+                            <input 
+                              type="text" 
+                              value={selectedPage?.ogTitle || ''}
+                              onChange={(e) => updateField('ogTitle', e.target.value)}
+                              className="w-full h-14 bg-stone-50 border border-stone-100 rounded-2xl px-6 text-xs font-bold text-navy-950 outline-none focus:border-blue-500"
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">OG Share Description</label>
+                            <textarea 
+                              rows={5}
+                              value={selectedPage?.ogDescription || ''}
+                              onChange={(e) => updateField('ogDescription', e.target.value)}
+                              className="w-full bg-stone-50 border border-stone-100 rounded-2xl p-6 text-xs font-bold text-navy-950 outline-none focus:border-blue-500 resize-none leading-relaxed font-medium"
+                            />
+                         </div>
+                      </div>
+
+                      <div className="space-y-6">
+                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">Social Thumbnail Payload (OG Image)</label>
+                         <div className="group relative aspect-video bg-stone-50 border-2 border-dashed border-stone-200 rounded-[3rem] overflow-hidden flex items-center justify-center p-2 transition-all hover:border-blue-500">
+                            {selectedPage?.ogImage ? (
+                               <>
+                                  <img src={selectedPage.ogImage} className="w-full h-full object-cover rounded-[2.5rem] shadow-xl" />
+                                  <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-6">
+                                     <button onClick={() => setIsPickerOpen({ open: true, field: 'ogImage' })} className="bg-white text-navy-950 p-5 rounded-2xl shadow-2xl hover:scale-110 transition-transform">
+                                        <Layers size={22} />
+                                     </button>
+                                     <button onClick={() => updateField('ogImage', '')} className="bg-rose-500 text-white p-5 rounded-2xl shadow-2xl hover:scale-110 transition-transform">
+                                        <Trash2 size={22} />
+                                     </button>
+                                  </div>
+                               </>
+                            ) : (
+                               <button 
+                                 onClick={() => setIsPickerOpen({ open: true, field: 'ogImage' })}
+                                 className="flex flex-col items-center gap-6 text-stone-300 hover:text-blue-500 transition-colors"
+                               >
+                                  <Plus size={52} className="stroke-[1px]" />
+                                  <span className="text-[10px] font-black uppercase tracking-widest">Select Visual Asset</span>
+                               </button>
+                            )}
+                         </div>
+                      </div>
+                   </div>
+                </Card>
+              </div>
+            )}
+
+            {/* TECHNICAL PANEL */}
             {activeTab === 'technical' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-white">
-                  <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-8 italic flex items-center gap-3">
-                    <ShieldCheck className="text-navy-900" /> Infrastructure & Indexing Logic
-                  </h3>
+              <div className="space-y-10 animate-in fade-in duration-500">
+                <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white space-y-12">
+                   <div className="flex items-center justify-between">
+                      <h3 className="text-2xl font-black uppercase tracking-tighter italic flex items-center gap-4">
+                        <Code2 className="text-navy-950" /> Technical Ranking Logic
+                      </h3>
+                      <button onClick={() => setIsRedirectModalOpen(true)} className="px-6 py-3 rounded-2xl bg-gold-50 text-gold-600 font-black text-[10px] uppercase tracking-widest hover:bg-gold-500 hover:text-navy-950 transition-all flex items-center gap-3">
+                         <RefreshCcw size={14} />
+                         Routing Overrides
+                      </button>
+                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-8">
-                      <div>
-                        <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Canonical Redirection URL</label>
-                        <input
-                          type="text"
-                          value={selectedPage?.seoTechnical?.canonicalUrl || ''}
-                          onChange={(e) => setSelectedPage({ ...selectedPage, seoTechnical: { ...selectedPage.seoTechnical, canonicalUrl: e.target.value } })}
-                          className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-4 font-bold text-navy-950"
-                        />
+                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
+                      <div className="space-y-10">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">Canonical Host Link</label>
+                            <input
+                              type="text"
+                              value={selectedPage?.canonicalUrl || ''}
+                              onChange={(e) => updateField('canonicalUrl', e.target.value)}
+                              className="w-full h-16 bg-stone-50 border border-stone-50 rounded-3xl px-8 font-bold text-navy-950 focus:border-gold-500 transition-all outline-none"
+                              placeholder="Original URL Protocol..."
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">Crawler Compliance (Robots)</label>
+                            <select
+                              value={selectedPage?.robots || 'index, follow'}
+                              onChange={(e) => updateField('robots', e.target.value)}
+                              className="w-full h-16 bg-stone-50 border border-stone-50 rounded-3xl px-8 font-black uppercase text-[11px] tracking-widest text-navy-950 outline-none cursor-pointer"
+                            >
+                               <option value="index, follow">Public & Indexable</option>
+                               <option value="noindex, follow">Private (No-Index)</option>
+                               <option value="noindex, nofollow">Exclusion Protocol</option>
+                            </select>
+                         </div>
                       </div>
-                      <div>
-                        <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Robots.txt Directives</label>
-                        <select
-                          value={selectedPage?.seoTechnical?.robots || 'index, follow'}
-                          onChange={(e) => setSelectedPage({ ...selectedPage, seoTechnical: { ...selectedPage.seoTechnical, robots: e.target.value } })}
-                          className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-2xl px-6 py-4 font-bold text-navy-950"
-                        >
-                          <option value="index, follow">Index, Follow (Standard)</option>
-                          <option value="noindex, nofollow">No-Index, No-Follow (Private)</option>
-                          <option value="index, nofollow">Index, No-Follow</option>
-                        </select>
-                      </div>
-                    </div>
 
-                    <div className="space-y-8">
-                      <div>
-                        <label className="text-[10px] font-black text-navy-950/40 uppercase tracking-widest block mb-3">Schema Markup (Advanced JSON-LD)</label>
-                        <textarea
+                      <div className="space-y-4">
+                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">JSON-LD Structured Markup</label>
+                         <textarea
                           rows={8}
                           value={typeof selectedPage?.schemaMarkup === 'string' ? selectedPage.schemaMarkup : JSON.stringify(selectedPage?.schemaMarkup || {}, null, 2)}
                           onChange={(e) => {
                             const val = e.target.value;
                             try {
                               const json = JSON.parse(val);
-                              setSelectedPage({ ...selectedPage, schemaMarkup: json });
+                              updateField('schemaMarkup', json);
                               setSchemaError(null);
                             } catch (err: any) {
-                              setSelectedPage({ ...selectedPage, schemaMarkup: val }); // Keep as string while typing
-                              setSchemaError("Invalid JSON structure");
+                              updateField('schemaMarkup', val);
+                              setSchemaError("JSON ERROR");
                             }
                           }}
                           className={cn(
-                            "w-full bg-navy-950 text-gold-500 font-mono text-[10px] rounded-2xl px-6 py-5 outline-none resize-none transition-all",
-                            schemaError ? "border-2 border-rose-500" : "border-2 border-transparent"
+                            "w-full bg-navy-950 text-gold-500 font-mono text-[11px] rounded-[3rem] p-10 outline-none resize-none transition-all shadow-xl leading-relaxed",
+                            schemaError ? "ring-2 ring-rose-500" : "border-transparent"
                           )}
                         />
-                        {schemaError && <p className="text-[9px] font-black text-rose-500 mt-2 uppercase tracking-widest">{schemaError}</p>}
                       </div>
-                    </div>
-                  </div>
-                </Card>
-
-                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-navy-950 text-white">
-                  <div className="flex items-center gap-4 mb-6">
-                    <Lock className="w-6 h-6 text-gold-500" />
-                    <h4 className="text-lg font-black uppercase tracking-tighter">Security & Redirection</h4>
-                  </div>
-                  <div className="flex items-center justify-between p-6 rounded-3xl bg-white/5 border border-white/10">
-                    <div>
-                      <p className="font-bold text-sm mb-1">Automatic 301 Redirect Hub</p>
-                      <p className="text-[10px] text-white/50 uppercase tracking-widest">
-                        {selectedPage?.redirects ? `${selectedPage.redirects.split('\n').filter((l: string) => l.includes('>')).length} Active Rules` : 'No Active Redirect Rules'}
-                      </p>
-                    </div>
-                    <Button
-                      onClick={() => setIsRedirectModalOpen(true)}
-                      className="bg-gold-500 text-navy-950 font-black text-[9px] uppercase tracking-widest px-6 py-2 rounded-xl"
-                    >
-                      Edit Routing
-                    </Button>
-                  </div>
+                   </div>
                 </Card>
               </div>
             )}
 
-            {/* VERSION BACKUP WORKFLOW */}
+            {/* AUDIT HISTORY */}
             {activeTab === 'backup' && (
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <Card className="p-10 border-none shadow-2xl rounded-[3rem] bg-white h-[600px] flex flex-col">
-                  <h3 className="text-xl font-black text-navy-950 uppercase tracking-tighter mb-8 italic flex items-center gap-3">
-                    <History className="text-navy-950" /> System State Backup Engine
-                  </h3>
-
-                  <div className="flex-1 overflow-y-auto space-y-4 pr-4 scrollbar-none text-center">
-                    {(selectedPage?.previousVersions?.length || 0) === 0 ? (
-                      <div className="flex flex-col items-center justify-center h-full opacity-30 italic font-black uppercase text-[10px] tracking-widest">
-                        <Database className="w-12 h-12 mb-4" />
-                        No previous versions recorded for intelligence restoration.
-                      </div>
-                    ) : (
-                      selectedPage?.previousVersions?.map((v: any, i: number) => (
-                        <div key={i} className="flex items-center justify-between p-6 rounded-3xl bg-stone-50 border border-stone-100 group hover:border-gold-500 transition-all">
-                          <div className="flex items-center gap-6">
-                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center font-black text-navy-950 border border-navy-50">
-                              V{v.version}
-                            </div>
-                            <div className="text-left">
-                              <p className="text-navy-950 font-black text-[11px] uppercase tracking-widest truncate max-w-[200px]">RESTORE STATE ALPHA-{v.version}</p>
-                              <p className="text-navy-950/40 font-bold text-[9px] uppercase mt-1">{new Date(v.modifiedAt).toLocaleString()}</p>
-                            </div>
-                          </div>
-                          <Button className="bg-transparent border-2 border-navy-950 text-navy-950 hover:bg-navy-950 hover:text-white px-6 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest">Restore State</Button>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </Card>
+              <div className="animate-in fade-in duration-500">
+                 <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white text-center flex flex-col items-center justify-center min-h-[400px] space-y-8">
+                    <History size={48} className="text-stone-200" />
+                    <div className="space-y-3">
+                       <h4 className="text-xl font-black uppercase italic tracking-tighter">Evolution Protocol Log</h4>
+                       <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest italic font-mono">Last Synchronized: {selectedPage?.updatedAt ? new Date(selectedPage.updatedAt).toLocaleString() : 'N/A'}</p>
+                    </div>
+                 </Card>
               </div>
             )}
           </div>
 
-          {/* Sidebar Analytics & Live Preview (Right) */}
-          <div className="space-y-8">
+          {/* Dynamic Radar Sidebar */}
+          <div className="xl:col-span-4 space-y-12">
+             
+             {/* SERP PREVIEW RADAR */}
+             <Card className="p-10 bg-white border border-stone-100 shadow-2xl rounded-[3.5rem] space-y-10 overflow-hidden group">
+                <div className="space-y-8">
+                   <h4 className="text-[10px] font-black text-stone-300 uppercase tracking-[0.4em] flex items-center gap-3 italic">
+                      <Search size={14} /> Global Intelligence Preview
+                   </h4>
 
-            {/* GOOGLE PREVIEW (REALTIME) */}
-            <Card className="p-8 bg-white border-2 border-navy-50 shadow-xl rounded-[2.5rem]">
-              <h4 className="text-[10px] font-black text-navy-950/40 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                <Search className="w-4 h-4" /> Real-time SERP Preview
-              </h4>
-
-              <div className="p-6 bg-navy-50/20 rounded-3xl border border-navy-50">
-                <div className="flex items-center gap-2 mb-2">
-                  <Globe className="w-3 h-3 text-navy-400 font-black" />
-                  <span className="text-xs text-blue-800 font-bold tracking-tight">https://mokshasewa.org/{selectedPage?.slug}</span>
+                   <div className="p-10 bg-stone-50 rounded-[3rem] border border-stone-100 shadow-inner group-hover:border-gold-500/30 transition-all duration-1000">
+                      <div className="flex items-center gap-3 mb-4 text-[12px] text-blue-800 font-bold tracking-tight overflow-hidden italic">
+                         <Globe size={13} className="shrink-0" />
+                         <span className="truncate">https://mokshasewa.org/{selectedPage?.slug}</span>
+                      </div>
+                      <h5 className="text-2xl font-black text-blue-900 group-hover:underline cursor-pointer leading-tight mb-4 lowercase tracking-tighter italic">
+                         {selectedPage?.metaTitle || 'UNNAMED_PAGE_PROTOCOL'}
+                      </h5>
+                      <p className="text-[14px] text-gray-500 line-clamp-4 leading-relaxed font-medium italic opacity-70">
+                         {selectedPage?.metaDescription || 'Add metadata for search visibility preview...'}
+                      </p>
+                   </div>
                 </div>
-                <h5 className="text-xl font-bold text-blue-900 font-sans leading-tight hover:underline cursor-pointer mb-2">
-                  {selectedPage?.metaTitle || 'Default Page Title | Moksha Sewa'}
-                </h5>
-                <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
-                  <span className="text-[10px] font-black text-gray-400 mr-2 uppercase tracking-widest">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} — </span>
-                  {selectedPage?.metaDescription || 'Add a meta description to see how this page will appear in human searches. A good description improves visibility and trust...'}
-                </p>
-              </div>
-              <div className="mt-8 flex justify-between items-center text-[9px] font-black text-navy-950/40 uppercase tracking-widest">
-                <span>Intelligence Match</span>
-                <span className="text-green-600">92% Optimal</span>
-              </div>
-              <div className="mt-2 w-full h-1.5 bg-navy-100 rounded-full overflow-hidden">
-                <div className="w-[92%] h-full bg-green-500 animate-pulse"></div>
-              </div>
-            </Card>
 
-            {/* QUICK ACTIONS */}
-            <div className="space-y-4">
-              <button className="w-full flex items-center justify-between p-6 bg-white border-2 border-navy-50 rounded-3xl group hover:border-navy-950 transition-all text-left">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-2xl bg-navy-50 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
-                    <Layout className="w-5 h-5" />
-                  </div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-navy-950">Structural Audit</div>
+                <div className="space-y-6 pt-10 border-t border-stone-50">
+                    <div className="flex justify-between items-center text-[11px] font-black uppercase tracking-widest italic">
+                       <span>Score Radar</span>
+                       <span className="text-emerald-500">{selectedPage?.seoScore || 0}% SECURE</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-stone-50 rounded-full overflow-hidden">
+                       <div className="h-full bg-emerald-500 transition-all duration-1000" style={{ width: `${selectedPage?.seoScore || 0}%` }} />
+                    </div>
                 </div>
-                <CheckCircle className="w-4 h-4 text-green-500" />
-              </button>
+             </Card>
 
-              <button className="w-full flex items-center justify-between p-6 bg-white border-2 border-navy-50 rounded-3xl group hover:border-navy-950 transition-all text-left">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-2xl bg-navy-50 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
-                    <ExternalLink className="w-5 h-5" />
-                  </div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-navy-950">Social Cloud Sync</div>
+             {/* STATS DECK */}
+             <Card className="p-10 bg-navy-950 text-white border-none shadow-2xl rounded-[3.5rem] relative overflow-hidden group">
+                <div className="absolute right-0 bottom-0 w-48 h-48 bg-gold-500/5 rounded-full blur-3xl" />
+                
+                <div className="space-y-10 relative z-10">
+                   <h4 className="text-[11px] font-black uppercase tracking-[0.4em] text-white/30 italic">Search Node Analytics</h4>
+                   
+                   <div className="grid grid-cols-2 gap-10">
+                      <div className="space-y-2">
+                         <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Global Views</p>
+                         <p className="text-2xl font-black italic tracking-tighter text-gold-500 font-mono">{selectedPage?.pageViews || 0}</p>
+                      </div>
+                      <div className="space-y-2">
+                         <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Organic Flow</p>
+                         <p className="text-2xl font-black italic tracking-tighter text-emerald-500 font-mono">{selectedPage?.organicTraffic || 0}</p>
+                      </div>
+                      <div className="space-y-2">
+                         <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Bounce Delta</p>
+                         <p className="text-2xl font-black italic tracking-tighter text-rose-500 font-mono">{selectedPage?.bounceRate || 0}%</p>
+                      </div>
+                      <div className="space-y-2">
+                         <p className="text-[10px] font-black text-white/20 uppercase tracking-widest">Avg Pulse (Sec)</p>
+                         <p className="text-2xl font-black italic tracking-tighter text-blue-500 font-mono">{selectedPage?.avgTimeOnPage || 0}</p>
+                      </div>
+                   </div>
                 </div>
-                <AlertCircle className="w-4 h-4 text-amber-500" />
-              </button>
-            </div>
+             </Card>
 
-            {/* PERFORMANCE RADAR */}
-            <Card className="p-8 bg-navy-950 text-white border-none shadow-2xl rounded-[3rem] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gold-500/10 rounded-full -translate-y-16 translate-x-16 blur-3xl"></div>
-              <h4 className="text-[10px] font-black uppercase tracking-widest mb-8 opacity-60">Technical Intelligence Radar</h4>
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-[9px] font-black uppercase mb-2">
-                    <span>Index Latency</span>
-                    <span>Critical Fast</span>
-                  </div>
-                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div className="w-full h-full bg-gold-500"></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-[9px] font-black uppercase mb-2">
-                    <span>Human Readability</span>
-                    <span>A+ Elite</span>
-                  </div>
-                  <div className="h-1 bg-white/10 rounded-full overflow-hidden">
-                    <div className="w-[88%] h-full bg-gold-500"></div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-
+             {/* TACTICAL SHORTCUTS */}
+             <div className="space-y-5">
+                <button 
+                   onClick={() => window.location.href = `/admin/content?slug=${selectedPage.slug}`}
+                   className="w-full flex items-center justify-between p-8 bg-white border border-stone-100 rounded-[2.5rem] shadow-sm hover:border-navy-950 transition-all group"
+                >
+                   <div className="flex items-center gap-5">
+                      <div className="w-12 h-12 bg-stone-50 rounded-2xl flex items-center justify-center text-stone-300 group-hover:bg-navy-950 group-hover:text-gold-500 transition-all">
+                         <Layout size={20} />
+                      </div>
+                      <span className="text-[11px] font-black uppercase tracking-widest italic">Open Architecture</span>
+                   </div>
+                   <ChevronRight size={18} className="text-stone-200 group-hover:text-navy-950 transform group-hover:translate-x-2 transition-all" />
+                </button>
+             </div>
           </div>
         </div>
       </div>
 
-      {/* Redirect Management Modal */}
+      {/* Redirect Authority Modal */}
       {isRedirectModalOpen && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-8 backdrop-blur-2xl bg-navy-950/60 animate-in fade-in duration-500">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-10 border-b border-navy-50 flex justify-between items-center bg-navy-50/50">
-              <div>
-                <h4 className="text-xl font-black text-navy-950 uppercase italic tracking-tighter">Redirect Authority</h4>
-                <p className="text-[9px] font-black text-navy-400 uppercase tracking-widest mt-1 italic">301 Permanent Protocol Management</p>
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center p-8 bg-navy-950/70 backdrop-blur-3xl animate-in fade-in duration-500">
+           <div className="bg-white w-full max-w-2xl rounded-[4rem] shadow-2xl flex flex-col overflow-hidden">
+              <div className="p-12 border-b border-stone-50 flex justify-between items-center bg-stone-50/50">
+                 <div>
+                    <h4 className="text-2xl font-black uppercase italic tracking-tighter">Routing Authority Override</h4>
+                    <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest mt-2 italic font-mono leading-none">301_PERMANENT_PROTOCOL</p>
+                 </div>
+                 <button onClick={() => setIsRedirectModalOpen(false)} className="w-12 h-12 rounded-2xl bg-white text-stone-400 hover:text-navy-950 flex items-center justify-center shadow-lg transition-all border border-stone-100">
+                    <X size={20} />
+                 </button>
               </div>
-              <button onClick={() => setIsRedirectModalOpen(false)} className="w-10 h-10 rounded-full bg-white text-navy-400 hover:text-navy-950 flex items-center justify-center shadow-sm">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-10 space-y-6 max-h-[60vh] overflow-y-auto">
-              <div className="p-6 bg-amber-50 border border-amber-100 rounded-3xl flex gap-4">
-                <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0" />
-                <p className="text-[10px] font-bold text-amber-900 uppercase leading-relaxed tracking-wider">
-                  Format: <code className="bg-amber-100 px-1 rounded">/old-path &gt; /new-path</code>. One rule per line. These rules are used to preserve SEO ranking for moved content.
-                </p>
+              <div className="p-12 space-y-8 bg-white">
+                 <div className="p-10 bg-gold-500 text-navy-950 rounded-[3rem] flex gap-6 border border-gold-400/50">
+                    <AlertCircle size={28} className="shrink-0" />
+                    <div>
+                       <p className="text-[11px] font-black uppercase tracking-[0.2em] leading-relaxed italic">Redirect Pattern Definition</p>
+                       <p className="text-[10px] font-bold mt-2 uppercase italic leading-relaxed opacity-80">Format: /old-path &gt; /new-path (Logic: 301 Permanent)</p>
+                    </div>
+                 </div>
+                 <textarea
+                   rows={6}
+                   value={selectedPage?.redirects || ''}
+                   onChange={(e) => updateField('redirects', e.target.value)}
+                   className="w-full bg-stone-50 border-2 border-stone-100 rounded-[2.5rem] p-12 font-mono text-xs font-bold text-navy-950 focus:bg-white focus:border-navy-950 outline-none transition-all placeholder:text-stone-200"
+                   placeholder="/old-slug > /new-slug"
+                 />
+                 <Button onClick={() => setIsRedirectModalOpen(false)} className="w-full h-16 bg-navy-950 text-gold-500 rounded-[1.5rem] font-black text-[11px] uppercase tracking-[0.4em] shadow-2xl">Confirm Patterns</Button>
               </div>
-              <textarea
-                rows={10}
-                value={selectedPage?.redirects || ''}
-                onChange={(e) => setSelectedPage({ ...selectedPage, redirects: e.target.value })}
-                className="w-full bg-navy-50/30 border-2 border-navy-50 rounded-[2rem] p-8 font-mono text-xs text-navy-950 focus:border-navy-950 outline-none transition-all placeholder:text-navy-200"
-                placeholder="/old-slug &gt; /new-slug&#10;/about-us &gt; /about"
-              />
-            </div>
-            <div className="p-8 bg-navy-50/50 flex justify-center">
-              <Button onClick={() => setIsRedirectModalOpen(false)} className="bg-navy-950 text-gold-500 px-12 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest">Confirm Logic</Button>
-            </div>
-          </div>
+           </div>
         </div>
+      )}
+
+      {/* Visual Archive Integration */}
+      {isPickerOpen.open && (
+        <AssetPickerHub 
+           onClose={() => setIsPickerOpen({ open: false, field: '' })}
+           onSelect={(url) => {
+              updateField(isPickerOpen.field, url);
+              setSelectedPage((prev: any) => ({ ...prev, [isPickerOpen.field]: url })); // Force double sync
+              setIsPickerOpen({ open: false, field: '' });
+           }}
+        />
       )}
     </div>
   );
 }
 
-function Database(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <ellipse cx="12" cy="5" rx="9" ry="3" />
-      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
-      <path d="M3 12A9 3 0 0 0 21 12" />
-    </svg>
-  )
+function AssetPickerHub({ onClose, onSelect }: { onClose: () => void, onSelect: (url: string) => void }) {
+    const [images, setImages] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        document.body.style.overflow = 'hidden';
+        const fetchGallery = async () => {
+            try {
+                setLoading(true);
+                const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+                const response = await fetch(`${API_BASE_URL}/api/media?limit=100`, {
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    setImages(Array.isArray(data.data) ? data.data : (data.data.images || []));
+                }
+            } catch (error) { console.error("Picker error:", error); } 
+            finally { setLoading(false); }
+        };
+        fetchGallery();
+        return () => { document.body.style.overflow = 'auto'; };
+    }, []);
+
+    return (
+        <div className="fixed inset-0 z-[9999] bg-stone-50 flex flex-col animate-in slide-in-from-bottom duration-700">
+            <div className="bg-white border-b border-stone-200 px-12 py-10 flex items-center justify-between">
+                <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 bg-navy-950 rounded-2xl flex items-center justify-center text-gold-500 shadow-xl">
+                        <Layers size={22} />
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black uppercase tracking-tighter italic text-navy-950 leading-none">Visual Archive Deployment</h2>
+                        <p className="text-[10px] font-black text-stone-300 uppercase tracking-[0.4em] italic mt-3 font-mono">Selecting OG_IMAGE_PAYLOAD for Hot-Swap</p>
+                    </div>
+                </div>
+                <button onClick={onClose} className="w-16 h-16 rounded-3xl bg-white border border-stone-200 text-stone-400 hover:text-navy-950 transition-all flex items-center justify-center shadow-sm group">
+                    <X size={24} className="group-hover:rotate-90 transition-transform" />
+                </button>
+            </div>
+
+            <div className="flex-grow overflow-y-auto p-12 bg-stone-50/50">
+                {loading ? (
+                    <div className="h-full flex flex-col items-center justify-center space-y-6 animate-pulse">
+                        <RefreshCcw size={48} className="text-navy-200 animate-spin" />
+                        <p className="text-xs font-black uppercase tracking-[0.5em] text-navy-300">Synchronizing Social Archive...</p>
+                    </div>
+                ) : (
+                    <div className="max-w-[1700px] mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10 pb-32">
+                        {images.map((img: any) => (
+                            <div
+                                key={img._id || img.id}
+                                onClick={() => onSelect(img.url)}
+                                className="group relative aspect-[4/5] rounded-[3.5rem] overflow-hidden bg-white cursor-pointer hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] transition-all border-4 border-white"
+                            >
+                                <img src={img.url} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                                <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-10">
+                                    <p className="text-[11px] font-black text-gold-500 uppercase tracking-widest italic">{img.title || 'UNNAMED_NODE'}</p>
+                                    <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-2">{img.category}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
