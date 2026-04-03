@@ -15,8 +15,13 @@ import {
   Award,
   Video
 } from "lucide-react";
+import { usePageConfig } from "@/hooks/usePageConfig";
+import { documentariesConfig } from "@/config/documentaries.config";
 
 export default function DocumentariesPage() {
+  const { config: pageConfig, loading: configLoading } = usePageConfig('documentaries', documentariesConfig);
+  const activeConfig = pageConfig || documentariesConfig;
+
   const [docs, setDocs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -55,7 +60,7 @@ export default function DocumentariesPage() {
     });
   }, [docs, activeCategory, searchQuery]);
 
-  if (loading) {
+  if (loading || configLoading) {
     return (
       <div className="min-h-screen bg-[#faf9f6] flex flex-col items-center justify-center p-6 text-center">
         <Film className="animate-bounce text-amber-600 mb-6" size={48} />
@@ -79,18 +84,22 @@ export default function DocumentariesPage() {
           <div className="max-w-6xl">
             <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white border border-amber-100 mb-8 md:mb-14 animate-fade-in shadow-[0_10px_30px_rgba(217,119,6,0.05)]">
               <Sparkles className="w-4 h-4 text-amber-600" />
-              <p className="text-amber-800 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.4em] leading-none text-center">Theatrical Collection . Prime</p>
+              <p className="text-amber-800 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.4em] leading-none text-center">
+                {activeConfig.hero?.badge || "Theatrical Collection . Prime"}
+              </p>
             </div>
             
             <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-[7.8rem] font-black uppercase tracking-tighter leading-[0.88] mb-12 md:mb-16 animate-fade-in italic text-stone-950 break-words drop-shadow-sm">
-              CINEMA <br />
-              <span className="text-amber-600 drop-shadow-[0_10px_20px_rgba(217,119,6,0.15)]">MANIFESTO</span>
+              {activeConfig.hero?.title || "CINEMA"} <br />
+              <span className="text-amber-600 drop-shadow-[0_10px_20px_rgba(217,119,6,0.15)]">
+                {activeConfig.hero?.subtitle || "MANIFESTO"}
+              </span>
             </h1>
             
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 pt-12 md:pt-16 border-t-[4px] md:border-t-[6px] border-stone-950 max-w-5xl">
                 <div className="w-full">
                    <p className="text-stone-700 text-xl md:text-3xl font-medium tracking-tight leading-snug md:leading-snug max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                    Documenting high-integrity narratives of <span className="text-amber-600 font-black italic underline decoration-amber-200 underline-offset-8">human dignity</span> and institutional impact across the globe.
+                    {activeConfig.hero?.description || "Documenting high-integrity narratives of human dignity and institutional impact across the globe."}
                    </p>
                 </div>
                 <div className="flex items-center gap-10 opacity-30 grayscale saturate-0 self-start md:self-auto border-l-2 border-amber-100 pl-10 hidden md:flex">
@@ -229,11 +238,13 @@ export default function DocumentariesPage() {
       <section className="py-24 md:py-32 bg-white border-t-2 border-stone-100">
           <Container className="text-center">
               <Film className="text-amber-600/10 mx-auto mb-14 w-16 h-16 md:w-20 md:h-20" />
-              <h2 className="text-5xl md:text-[10rem] font-black uppercase italic tracking-tighter text-stone-100 mb-20 md:mb-24 overflow-hidden drop-shadow-sm">THEATER_OF_DIGNITY</h2>
+              <h2 className="text-5xl md:text-[10rem] font-black uppercase italic tracking-tighter text-stone-100 mb-20 md:mb-24 overflow-hidden drop-shadow-sm">
+                {activeConfig.footer?.title || "THEATER_OF_DIGNITY"}
+              </h2>
               <div className="flex flex-wrap justify-center gap-10 md:gap-16 pt-16 md:pt-20 border-t border-amber-50 px-6">
-                  {['VARANASI', 'NEW DELHI', 'NEW YORK', 'GENEVA'].map(city => (
+                  {(activeConfig.footer?.cities || ['VARANASI', 'NEW DELHI', 'NEW YORK', 'GENEVA']).map(city => (
                       <div key={city} className="flex flex-col gap-2">
-                          <span className="text-[9px] font-black text-amber-600/30 uppercase tracking-[0.2em]">HUB</span>
+                          <span className="text-[9px] font-black text-amber-600/30 uppercase tracking-[0.2em]">{activeConfig.footer?.hubLabel || "HUB"}</span>
                           <span className="text-[11px] md:text-[12px] font-black text-stone-400 uppercase tracking-[0.5em] hover:text-amber-600 transition-colors cursor-default">{city}</span>
                       </div>
                   ))}

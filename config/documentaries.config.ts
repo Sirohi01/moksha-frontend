@@ -11,10 +11,10 @@ export const documentariesConfig: DocumentariesPageConfig = {
 
   // Hero Section
   hero: {
-    badge: "CINEMATIC SERIES",
-    title: "HUMAN",
-    subtitle: "DOCUMENTARIES",
-    description: "We capture the raw, emotional, and powerful moments of our mission through cinematic storytelling. Watch the truth of dignity in departure."
+    badge: "Theatrical Collection . Prime",
+    title: "CINEMA",
+    subtitle: "MANIFESTO",
+    description: "Documenting high-integrity narratives of human dignity and institutional impact across the globe."
   },
 
   // Films
@@ -88,6 +88,13 @@ export const documentariesConfig: DocumentariesPageConfig = {
       awards: "Awards",
       selections: "Selections"
     }
+  },
+
+  // Footer Section
+  footer: {
+    title: "THEATER_OF_DIGNITY",
+    hubLabel: "HUB",
+    cities: ['VARANASI', 'NEW DELHI', 'NEW YORK', 'GENEVA']
   }
 };
 

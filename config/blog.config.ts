@@ -2,10 +2,10 @@ import { BlogConfig } from "./blog.types";
 
 export const blogConfig: BlogConfig = {
   hero: {
-    badge: "INSIGHTS & STORIES",
-    title: "REFLECTIONS ON",
-    highlightText: "LAST DIGNITY",
-    description: "Deep dives into why every soul deserves a dignified departure, our journey across India, and how you can make a difference."
+    badge: "MOKSHA INSIGHTS",
+    title: "SACRED",
+    highlightText: "REVELATIONS",
+    description: "A curated documentation of our humanitarian impact, legislative progress, and the philosophy of dignity."
   },
   featuredBlog: {
     title: "FEATURED INSIGHT",
@@ -102,6 +102,14 @@ export const blogConfig: BlogConfig = {
     description: "Your small contribution can provide a peaceful and dignified departure for those who have no one else.",
     buttonText: "DONATE NOW",
     buttonHref: "/donate"
+  },
+  subscriptionCTA: {
+    badge: "The Sacred Digest",
+    title: "STAY IN THE",
+    highlightText: "SACRED LOOP",
+    description: "Join a community of souls dedicated to dignity. Get monthly mission updates delivered to your sanctum.",
+    inputPlaceholder: "ENTER EMAIL ADDRESS",
+    buttonText: "SUBSCRIBE"
   }
 };
 

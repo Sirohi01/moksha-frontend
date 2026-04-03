@@ -237,19 +237,23 @@ export default function BlogPage() {
               <div className="xl:col-span-7">
                 <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-white border border-stone-200 mb-10 shadow-sm backdrop-blur-md">
                    <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-pulse"></span>
-                   <span className="text-[11px] font-black text-stone-500 uppercase tracking-[0.3em] leading-none">The Sacred Digest</span>
+                   <span className="text-[11px] font-black text-stone-500 uppercase tracking-[0.3em] leading-none">
+                     {config.subscriptionCTA?.badge || "The Sacred Digest"}
+                   </span>
                 </div>
                 <h2 className="text-6xl md:text-[7.5rem] font-black uppercase tracking-tighter text-stone-950 mb-10 leading-[0.8]">
-                  STAY IN THE <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">SACRED LOOP</span>
+                  {config.subscriptionCTA?.title || "STAY IN THE"} <br />
+                  <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-600 via-amber-700 to-amber-900">
+                    {config.subscriptionCTA?.highlightText || "SACRED LOOP"}
+                  </span>
                 </h2>
                 <p className="text-stone-600 text-xl font-medium leading-relaxed max-w-2xl mb-14">
-                   Join a community of souls dedicated to dignity. Get monthly mission updates delivered to your sanctum.
+                   {config.subscriptionCTA?.description || "Join a community of souls dedicated to dignity. Get monthly mission updates delivered to your sanctum."}
                 </p>
                 <div className="w-full max-w-xl bg-white p-2 rounded-[2.5rem] border border-stone-200 flex flex-col sm:flex-row gap-4 shadow-sm group/form focus-within:ring-4 focus-within:ring-amber-500/10 transition-all">
-                  <input type="email" placeholder="ENTER EMAIL ADDRESS" className="flex-1 h-14 bg-transparent px-8 text-sm font-black tracking-widest outline-none border-none placeholder:text-stone-300" />
+                  <input type="email" placeholder={config.subscriptionCTA?.inputPlaceholder || "ENTER EMAIL ADDRESS"} className="flex-1 h-14 bg-transparent px-8 text-sm font-black tracking-widest outline-none border-none placeholder:text-stone-300" />
                   <button className="h-14 px-10 bg-stone-950 text-white rounded-[2rem] text-[11px] font-black uppercase tracking-widest hover:bg-amber-700 transition-all flex items-center gap-3">
-                    SUBSCRIBE <Send className="w-4 h-4" />
+                    {config.subscriptionCTA?.buttonText || "SUBSCRIBE"} <Send className="w-4 h-4" />
                   </button>
                 </div>
               </div>

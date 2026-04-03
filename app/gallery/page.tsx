@@ -236,7 +236,9 @@ export default function GalleryPage() {
                                 <div className="space-y-6">
                                     <div className="flex items-center gap-3">
                                         <div className="w-2 h-2 bg-gold-600 rounded-full animate-pulse shadow-[0_0_10px_rgba(212,163,47,0.5)]"></div>
-                                        <span className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em] leading-none">Verified Mission Data_</span>
+                                        <span className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em] leading-none">
+                                            {activeConfig.modal?.badge || "Verified Mission Data_"}
+                                        </span>
                                     </div>
                                     <h3 className="text-4xl lg:text-5xl font-black text-navy-950 uppercase tracking-tighter leading-none italic group">
                                         {selectedImg.title}
@@ -245,7 +247,7 @@ export default function GalleryPage() {
                                 </div>
 
                                 <blockquote className="text-lg font-bold text-navy-700/60 leading-relaxed italic border-l-4 border-gold-500/40 pl-6 uppercase tracking-tight">
-                                    {selectedImg.description || "Mission documentation from the Moksha Sewa Archive."}
+                                    {selectedImg.description || activeConfig.modal?.description || "Mission documentation from the Moksha Sewa Archive."}
                                 </blockquote>
 
                                 <div className="grid grid-cols-1 gap-6 pt-4 border-t border-stone-50">
@@ -254,7 +256,9 @@ export default function GalleryPage() {
                                             <MapPin className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] mb-1">Operational Zone</p>
+                                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] mb-1">
+                                                {activeConfig.modal?.zoneLabel || "Operational Zone"}
+                                            </p>
                                             <p className="text-navy-950 font-black uppercase italic tracking-tight text-sm">{selectedImg.location || "Central Hub"}</p>
                                         </div>
                                     </div>
@@ -263,7 +267,9 @@ export default function GalleryPage() {
                                             <Calendar className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] mb-1">Deployment Date</p>
+                                            <p className="text-[9px] font-black text-stone-400 uppercase tracking-[0.4em] mb-1">
+                                                {activeConfig.modal?.dateLabel || "Deployment Date"}
+                                            </p>
                                             <p className="text-navy-950 font-black uppercase italic tracking-tight text-sm">{selectedImg.date}</p>
                                         </div>
                                     </div>
@@ -275,7 +281,9 @@ export default function GalleryPage() {
                                     onClick={() => setSelectedImg(null)}
                                     className="w-full bg-navy-950 text-gold-500 py-6 rounded-2xl font-black uppercase tracking-[0.3em] text-[11px] hover:bg-gold-600 hover:text-navy-950 transition-all shadow-2xl group/exit relative overflow-hidden"
                                 >
-                                    <span className="relative z-10 font-black italic">Return to Archive Hub</span>
+                                    <span className="relative z-10 font-black italic">
+                                        {activeConfig.modal?.returnButton || "Return to Archive Hub"}
+                                    </span>
                                     <div className="absolute inset-0 bg-gold-600 translate-y-full group-hover/exit:translate-y-0 transition-transform duration-500" />
                                 </button>
                             </div>

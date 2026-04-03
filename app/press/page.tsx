@@ -16,8 +16,13 @@ import {
   Share2,
   Newspaper
 } from "lucide-react";
+import { usePageConfig } from "@/hooks/usePageConfig";
+import { pressConfig } from "@/config/press.config";
 
 export default function PressRoomPage() {
+  const { config: pageConfig, loading: configLoading } = usePageConfig('press', pressConfig);
+  const activeConfig = pageConfig || pressConfig;
+
   const [releases, setReleases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -56,7 +61,7 @@ export default function PressRoomPage() {
     });
   }, [releases, activeCategory, searchQuery]);
 
-  if (loading) {
+  if (loading || configLoading) {
     return (
       <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center justify-center p-6 text-center">
         <Newspaper className="animate-pulse text-navy-900 mb-6" size={48} />
@@ -80,18 +85,22 @@ export default function PressRoomPage() {
           <div className="max-w-6xl">
             <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white border border-navy-100 mb-8 md:mb-14 animate-fade-in shadow-[0_10px_30px_rgba(26,46,74,0.05)]">
               <div className="w-2.5 h-2.5 rounded-full bg-gold-600 animate-pulse" />
-              <p className="text-navy-600 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.4em] leading-none text-center">Official Media Syndicate . Prime</p>
+              <p className="text-navy-600 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.4em] leading-none text-center">
+                {activeConfig.hero?.badge || "Official Media Syndicate . Prime"}
+              </p>
             </div>
             
             <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-[7.8rem] font-black uppercase tracking-tighter leading-[0.88] mb-12 md:mb-16 animate-fade-in italic text-navy-950 break-words drop-shadow-sm">
-              GLOBAL <br />
-              <span className="text-gold-600 drop-shadow-[0_10px_20px_rgba(217,119,6,0.1)]">PRESS ROOM</span>
+              {activeConfig.hero?.title || "GLOBAL"} <br />
+              <span className="text-gold-600 drop-shadow-[0_10px_20px_rgba(217,119,6,0.1)]">
+                {activeConfig.hero?.subtitle || "PRESS ROOM"}
+              </span>
             </h1>
             
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 pt-12 md:pt-16 border-t-[4px] md:border-t-[6px] border-navy-950 max-w-5xl">
                 <div className="w-full">
                    <p className="text-navy-700 text-xl md:text-3xl font-medium tracking-tight leading-snug md:leading-snug max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
-                    The centralized depository for authorized statements, <span className="text-gold-600 font-black italic underline decoration-gold-200 underline-offset-8">media protocols</span>, and official institutional announcements.
+                    {activeConfig.hero?.description || "The centralized depository for authorized statements, media protocols, and official institutional announcements."}
                    </p>
                 </div>
                 <div className="flex items-center gap-10 opacity-30 grayscale self-start md:self-auto border-l-2 border-navy-100 pl-10 hidden md:flex">
@@ -220,12 +229,14 @@ export default function PressRoomPage() {
       <section className="py-24 md:py-32 bg-white border-t-2 border-navy-100">
           <Container className="text-center">
               <ShieldCheck className="text-gold-600/10 mx-auto mb-14 w-16 h-16 md:w-20 md:h-20" />
-              <h2 className="text-5xl md:text-[10rem] font-black uppercase italic tracking-tighter text-navy-100 mb-20 md:mb-24 overflow-hidden drop-shadow-sm">REPOSITORY_ALPHA</h2>
+              <h2 className="text-5xl md:text-[10rem] font-black uppercase italic tracking-tighter text-navy-100 mb-20 md:mb-24 overflow-hidden drop-shadow-sm">
+                {activeConfig.footer?.title || "REPOSITORY_ALPHA"}
+              </h2>
               <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-16 pt-16 md:pt-20 border-t border-navy-50 px-6">
-                  {['INTEGRITY', 'JURISDICTION', 'SYSTEM', 'ACCESS'].map(cat => (
+                  {(activeConfig.footer?.categories || ['INTEGRITY', 'JURISDICTION', 'SYSTEM', 'ACCESS']).map(cat => (
                       <div key={cat} className="flex flex-col gap-2">
-                          <span className="text-[9px] font-black text-gold-600/30 uppercase tracking-[0.2em]">PROTOCOL</span>
-                          <span className="text-[11px] md:text-[12px] font-black text-navy-400 uppercase tracking-[0.5em] hover:text-gold-600 transition-colors cursor-default">VERIFIED</span>
+                          <span className="text-[9px] font-black text-gold-600/30 uppercase tracking-[0.2em]">{activeConfig.footer?.protocolLabel || "PROTOCOL"}</span>
+                          <span className="text-[11px] md:text-[12px] font-black text-navy-400 uppercase tracking-[0.5em] hover:text-gold-600 transition-colors cursor-default">{cat}</span>
                       </div>
                   ))}
               </div>

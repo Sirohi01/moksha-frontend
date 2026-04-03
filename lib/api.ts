@@ -25,6 +25,7 @@ export const settingsAPI = {
     updateSettings: async (data: any) => apiRequest(API_ENDPOINTS.SETTINGS, { method: 'PUT', body: JSON.stringify(data) }),
     getSettingsSection: async (section: string) => apiRequest(`${API_ENDPOINTS.SETTINGS}/${section}`),
     updateSettingsSection: async (section: string, data: any) => apiRequest(`${API_ENDPOINTS.SETTINGS}/${section}`, { method: 'PUT', body: JSON.stringify(data) }),
+    backupSettings: async () => apiRequest(`${API_ENDPOINTS.SETTINGS}/backup`, { method: 'POST' }),
 };
 
 import { API_BASE_URL } from './api-base';

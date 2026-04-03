@@ -54,6 +54,13 @@ export interface PressPageConfig {
     description: string;
     contacts: ContactInfo[];
   };
+
+  // Footer Section
+  footer?: {
+    title: string;
+    protocolLabel: string;
+    categories: string[];
+  };
 }
 
 export default PressPageConfig;

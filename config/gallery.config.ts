@@ -185,6 +185,13 @@ export const galleryConfig: GalleryPageConfig = {
         height: 360
       }
     ]
+  },
+  modal: {
+    badge: "Verified Mission Data_",
+    description: "Mission documentation from the Moksha Sewa Archive.",
+    zoneLabel: "Operational Zone",
+    dateLabel: "Deployment Date",
+    returnButton: "Return to Archive Hub"
   }
 };
 
