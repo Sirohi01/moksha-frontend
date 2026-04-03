@@ -48,122 +48,89 @@ interface NavigationItem {
 }
 
 const getNavigationItems = (user: AdminUser): NavigationItem[] => {
-  const allPossibleItems: NavigationItem[] = [
+  const filtered = (items: any[]) => items.filter(item => checkUserPermission(user, item.href));
+
+  const sections: NavigationItem[] = [];
+
+  // 1. Core Overview
+  const coreItems = filtered([
     { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { title: 'Live Support', href: '/admin/support', icon: MessageSquare },
     { title: 'Tasks', href: '/admin/tasks', icon: Calendar },
-    { title: 'User Management', href: '/admin/users', icon: UserPlus },
-    { title: 'Board Applications', href: '/admin/board', icon: Users },
+  ]);
+  if (coreItems.length > 0) sections.push(...coreItems);
+
+  // 2. People & Operations
+  const managementItems = filtered([
+    { title: 'Members', href: '/admin/users', icon: UserPlus },
+    { title: 'Applications', href: '/admin/board', icon: Users },
     { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
     { title: 'Donations', href: '/admin/donations', icon: CreditCard },
-    { title: 'WhatsApp Hub', href: '/admin/whatsapp-hub', icon: MessageSquare },
-  ];
-  const filteredItems = allPossibleItems.filter(item => {
-    if (!item.href) return true;
-    return checkUserPermission(user, item.href);
-  });
-
-  // Strategic Evolution Hub
-  const strategicItems = [
-    { title: 'Blog Commander', href: '/admin/blogs', icon: FileText },
-    { title: 'Editorial Hub', href: '/admin/editorial-hub', icon: FileText },
-    { title: 'Master Visual Hub', href: '/admin/gallery-hub', icon: Image },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (strategicItems.length > 0) {
-    filteredItems.push({
-        title: 'Strategic Control',
-        items: strategicItems
-    });
+  ]);
+  if (managementItems.length > 0) {
+    sections.push({ title: 'Management', items: managementItems });
   }
 
-  // Operational Infrastructure
-  const infraItems = [
-    { title: 'Content Central', href: '/admin/content', icon: Layout },
-    { title: 'Page Configuration', href: '/admin/page-config', icon: Database },
-    { title: 'SEO Command Deck', href: '/admin/seo', icon: Globe },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (infraItems.length > 0) {
-    filteredItems.push({
-      title: 'Infrastructure Node',
-      items: infraItems
-    });
+  // 3. Website Content
+  const contentItems = filtered([
+    { title: 'Blogs', href: '/admin/blogs', icon: FileText },
+    { title: 'Editorial', href: '/admin/editorial-hub', icon: FileText },
+    { title: 'Page Content', href: '/admin/content', icon: Layout },
+    { title: 'Page Config', href: '/admin/page-config', icon: Database },
+    { title: 'SEO', href: '/admin/seo', icon: Globe },
+  ]);
+  if (contentItems.length > 0) {
+    sections.push({ title: 'Content', items: contentItems });
   }
 
-  // Marketing Group
-  const marketingItems = [
-    // { title: 'Campaigns', href: '/admin/marketing/campaigns', icon: Zap },
-    { title: 'Banners', href: '/admin/marketing/banners', icon: Layout },
-    { title: 'Newsletter Engine', href: '/admin/marketing/newsletter', icon: Mail },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (marketingItems.length > 0) {
-    filteredItems.push({
-      title: 'Marketing Strategy',
-      items: marketingItems
-    });
-  }
-
-  // Media Group
-  const mediaItems = [
-    { title: 'Gallery Management', href: '/admin/gallery', icon: Image },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
+  // 4. Multimedia & Press
+  const mediaItems = filtered([
+    { title: 'Visual Hub', href: '/admin/gallery-hub', icon: Image },
+    { title: 'Gallery', href: '/admin/gallery', icon: Image },
+    { title: 'Videos', href: '/admin/documentaries', icon: Film },
+    { title: 'Press', href: '/admin/press', icon: ShieldCheck },
+  ]);
   if (mediaItems.length > 0) {
-    filteredItems.push({
-      title: 'Multimedia Assets',
-      items: mediaItems
-    });
+    sections.push({ title: 'Media', items: mediaItems });
   }
 
-  // Visual & Official Logs
-  const visualOfficialItems = [
-    { title: 'Cinema Manifesto', href: '/admin/documentaries', icon: Film },
-    { title: 'Press Archives', href: '/admin/press', icon: ShieldCheck },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (visualOfficialItems.length > 0) {
-    filteredItems.push({
-      title: 'Visual & Official Logs',
-      items: visualOfficialItems
-    });
+  // 5. Forms & Submissions
+  const formItems = filtered([
+    { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
+    { title: 'Schemes', href: '/admin/schemes', icon: FileText },
+    { id: 'page_feedback', title: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
+    { title: 'Contacts', href: '/admin/contacts', icon: Mail },
+    { title: 'Legacy Requests', href: '/admin/legacy', icon: Heart },
+    { title: 'Expansion Node', href: '/admin/expansion', icon: TrendingUp },
+  ]);
+  if (formItems.length > 0) {
+    sections.push({ title: 'Forms & CRM', items: formItems });
   }
 
-
-  // Specialized Intelligence Group
-  const intelligenceItems = [
-    { title: 'Operation Logs', href: '/admin/activity-logs', icon: Activity },
-    { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
-    { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
-    { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
-    { title: 'Interaction Logic', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (intelligenceItems.length > 0) {
-    filteredItems.push({
-      title: 'Site Intelligence',
-      items: intelligenceItems
-    });
+  // 6. Communications & Ads
+  const commsItems = filtered([
+    { title: 'WhatsApp', href: '/admin/whatsapp-hub', icon: MessageSquare },
+    { title: 'Support', href: '/admin/support', icon: MessageSquare },
+    { title: 'Banners', href: '/admin/marketing/banners', icon: Layout },
+    { title: 'Newsletters', href: '/admin/marketing/newsletter', icon: Mail },
+  ]);
+  if (commsItems.length > 0) {
+    sections.push({ title: 'Communication', items: commsItems });
   }
 
-  /* 
-  // System Settings Group
-  const systemItems = [
+  // 6. Security & Logs
+  const logItems = filtered([
     { title: 'Global Settings', href: '/admin/settings', icon: Settings },
-    { title: 'SEO Engine', href: '/admin/seo', icon: Globe },
-    { title: 'Infrastructure', href: '/admin/system', icon: Database },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (systemItems.length > 0) {
-    filteredItems.push({
-      title: 'System & Control',
-      items: systemItems
-    });
+    { title: 'Activity Logs', href: '/admin/activity-logs', icon: Activity },
+    { title: 'Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
+    { title: 'System Health', href: '/admin/intelligence/system-logs', icon: Shield },
+    { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
+    { title: 'Interaction Logs', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
+  ]);
+  if (logItems.length > 0) {
+    sections.push({ title: 'System', items: logItems });
   }
-  */
 
-  return filteredItems;
+  return sections;
 };
 
 interface AdminUser {
@@ -207,10 +174,10 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               <Shield className="w-6 h-6 text-gold-500" />
             </div>
             <div>
-              <h2 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic">Command Deck</h2>
+              <h2 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic">Admin Panel</h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-600 animate-pulse"></span>
-                <span className="text-[9px] text-navy-700 font-black uppercase tracking-widest">Live System</span>
+                <span className="text-[9px] text-navy-700 font-black uppercase tracking-widest">Active Session</span>
               </div>
             </div>
           </div>
@@ -225,7 +192,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                   href={item.href}
                   onClick={() => window.innerWidth < 1024 && onClose()}
                   className={cn(
-                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
+                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
                     pathname === item.href
                       ? 'bg-navy-950 text-gold-500 shadow-2xl shadow-navy-200'
                       : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
@@ -254,7 +221,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                         href={subItem.href}
                         onClick={() => window.innerWidth < 1024 && onClose()}
                         className={cn(
-                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300',
+                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300',
                           pathname === subItem.href
                             ? 'bg-navy-950 text-gold-500 shadow-xl shadow-navy-200/50'
                             : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'

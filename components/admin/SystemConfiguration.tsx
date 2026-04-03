@@ -1,6 +1,27 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { 
+  Settings, 
+  Shield, 
+  Mail, 
+  Zap, 
+  Database, 
+  CreditCard, 
+  Globe, 
+  Bell, 
+  Save, 
+  RefreshCw,
+  Server,
+  Lock,
+  AppWindow,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  AlertCircle
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/context/ToastContext';
 
 interface SystemConfig {
   general: {
@@ -27,71 +48,35 @@ interface SystemConfig {
     fromEmail: string;
     fromName: string;
   };
+  razorpay: {
+    keyId: string;
+    keySecret: string;
+    webhookSecret: string;
+    enableTestMode: boolean;
+  };
   features: {
-    enableReports: boolean;
     enableDonations: boolean;
     enableVolunteers: boolean;
     enableGallery: boolean;
     enablePress: boolean;
     enableAnalytics: boolean;
   };
-  performance: {
-    cacheEnabled: boolean;
-    cacheDuration: number;
-    compressionEnabled: boolean;
-    cdnEnabled: boolean;
-    cdnUrl: string;
-  };
 }
 
 export default function SystemConfiguration() {
+  const { success: showSuccess, error: showError } = useToast();
   const [config, setConfig] = useState<SystemConfig>({
-    general: {
-      siteName: 'Moksha Sewa',
-      siteUrl: 'https://MokshaSewa.org',
-      adminEmail: 'officialmanishsirohi.01@gmail.com',
-      timezone: 'Asia/Kolkata',
-      language: 'en',
-      maintenanceMode: false
-    },
-    security: {
-      sessionTimeout: 30,
-      maxLoginAttempts: 5,
-      passwordMinLength: 8,
-      requireTwoFactor: false,
-      ipWhitelisting: false,
-      allowedIPs: []
-    },
-    email: {
-      smtpHost: '',
-      smtpPort: 587,
-      smtpUser: '',
-      smtpPassword: '',
-      fromEmail: 'noreply@MokshaSewa.org',
-      fromName: 'Moksha Sewa'
-    },
-    features: {
-      enableReports: true,
-      enableDonations: true,
-      enableVolunteers: true,
-      enableGallery: true,
-      enablePress: true,
-      enableAnalytics: true
-    },
-    performance: {
-      cacheEnabled: true,
-      cacheDuration: 3600,
-      compressionEnabled: true,
-      cdnEnabled: false,
-      cdnUrl: ''
-    }
+    general: { siteName: '', siteUrl: '', adminEmail: '', timezone: 'Asia/Kolkata', language: 'en', maintenanceMode: false },
+    security: { sessionTimeout: 24, maxLoginAttempts: 5, passwordMinLength: 8, requireTwoFactor: false, ipWhitelisting: false, allowedIPs: [] },
+    email: { smtpHost: '', smtpPort: 587, smtpUser: '', smtpPassword: '', fromEmail: '', fromName: '' },
+    razorpay: { keyId: '', keySecret: '', webhookSecret: '', enableTestMode: true },
+    features: { enableDonations: true, enableVolunteers: true, enableGallery: true, enablePress: true, enableAnalytics: true },
   });
 
   const [activeTab, setActiveTab] = useState('general');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [testingEmail, setTestingEmail] = useState(false);
-  const [backupInProgress, setBackupInProgress] = useState(false);
+  const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadConfiguration();
@@ -100,535 +85,383 @@ export default function SystemConfiguration() {
   const loadConfiguration = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/config`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/settings`, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
         },
       });
 
       if (response.ok) {
-        const data = await response.json();
-        setConfig(data.data);
+        const result = await response.json();
+        const data = result.data;
+        
+        // Merge with defaults to prevent undefined crashes
+        setConfig(prev => ({
+          general: { ...prev.general, ...data.general },
+          security: { ...prev.security, ...data.security },
+          email: { ...prev.email, ...data.email },
+          razorpay: { ...prev.razorpay, ...data.razorpay },
+          features: { ...prev.features, ...data.features },
+        }));
       }
     } catch (error) {
-      console.error('Failed to load configuration:', error);
+      showError('Failed to load system architecture data');
     } finally {
       setLoading(false);
     }
   };
 
-  const saveConfiguration = async () => {
+  const handleSave = async () => {
     try {
       setSaving(true);
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/config`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/settings`, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(config),
       });
 
       if (response.ok) {
-        alert('Configuration saved successfully!');
+        showSuccess('System configuration protocols updated');
+        loadConfiguration();
+      } else {
+        throw new Error('Update rejected by server');
       }
     } catch (error) {
-      console.error('Failed to save configuration:', error);
-      alert('Failed to save configuration');
+      showError('System update failed');
     } finally {
       setSaving(false);
     }
   };
-  const testEmailConfiguration = async () => {
-    try {
-      setTestingEmail(true);
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/test-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(config.email),
-      });
 
-      if (response.ok) {
-        alert('Test email sent successfully!');
-      } else {
-        alert('Failed to send test email');
-      }
-    } catch (error) {
-      console.error('Failed to test email:', error);
-      alert('Failed to test email configuration');
-    } finally {
-      setTestingEmail(false);
-    }
-  };
-
-  const createBackup = async () => {
-    try {
-      setBackupInProgress(true);
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/backup`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `moksha-seva-backup-${new Date().toISOString().split('T')[0]}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-    } catch (error) {
-      console.error('Failed to create backup:', error);
-      alert('Failed to create backup');
-    } finally {
-      setBackupInProgress(false);
-    }
-  };
-
-  const updateConfig = (section: keyof SystemConfig, field: string, value: any) => {
+  const updateSection = (section: keyof SystemConfig, data: any) => {
     setConfig(prev => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
+      [section]: { ...prev[section], ...data }
     }));
   };
 
-  const addAllowedIP = () => {
-    const ip = prompt('Enter IP address:');
-    if (ip && ip.trim()) {
-      setConfig(prev => ({
-        ...prev,
-        security: {
-          ...prev.security,
-          allowedIPs: [...prev.security.allowedIPs, ip.trim()]
-        }
-      }));
-    }
-  };
-
-  const removeAllowedIP = (index: number) => {
-    setConfig(prev => ({
-      ...prev,
-      security: {
-        ...prev.security,
-        allowedIPs: prev.security.allowedIPs.filter((_, i) => i !== index)
-      }
-    }));
+  const toggleSecret = (id: string) => {
+    setShowSecrets(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
   const tabs = [
-    { id: 'general', label: 'General', icon: '⚙️' },
-    { id: 'security', label: 'Security', icon: '🔒' },
-    { id: 'email', label: 'Email', icon: '📧' },
-    { id: 'features', label: 'Features', icon: '🎛️' },
-    { id: 'performance', label: 'Performance', icon: '⚡' },
-    { id: 'backup', label: 'Backup', icon: '💾' }
+    { id: 'general', label: 'General', icon: Globe, description: 'Core identity and location settings' },
+    { id: 'email', label: 'SMTP Config', icon: Mail, description: 'Communication node and mail bridges' },
+    { id: 'razorpay', label: 'Payment Gateway', icon: CreditCard, description: 'Razorpay credentials and transaction logic' },
+    { id: 'security', label: 'Security Protocols', icon: Shield, description: 'Access control and session integrity' },
+    { id: 'features', label: 'System Features', icon: Zap, description: 'Modular platform feature toggles' },
   ];
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="flex flex-col items-center justify-center h-96 space-y-4">
+        <RefreshCw className="w-8 h-8 text-rose-500 animate-spin" />
+        <p className="text-[10px] font-black uppercase tracking-widest text-navy-500 italic">Syncing with Core Architecture...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">🔧 System Configuration</h2>
-            <p className="text-gray-600 mt-1">Manage system settings and preferences</p>
-          </div>
+    <div className="flex flex-col lg:flex-row gap-8 min-h-[600px] bg-white rounded-[2.5rem] shadow-2xl border border-navy-50 overflow-hidden">
+      
+      {/* Component Sidebar */}
+      <div className="w-full lg:w-72 bg-[#fcfcfc] border-r border-navy-50 p-6 flex flex-col gap-2">
+        <div className="px-4 mb-6 pt-2">
+          <h3 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic flex items-center gap-2">
+            <Server className="w-4 h-4 text-rose-500" />
+            Config Matrix
+          </h3>
+        </div>
+        {tabs.map((tab) => (
           <button
-            onClick={saveConfiguration}
-            disabled={saving}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              "flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-500 group text-left",
+              activeTab === tab.id 
+                ? "bg-navy-950 text-rose-500 shadow-xl shadow-navy-200" 
+                : "text-navy-700 hover:bg-navy-50"
+            )}
           >
-            {saving ? 'Saving...' : '💾 Save Changes'}
+            <tab.icon className={cn(
+               "w-5 h-5 transition-all duration-500",
+               activeTab === tab.id ? "scale-110" : "opacity-40 group-hover:opacity-100 group-hover:scale-110"
+            )} />
+            <div className="flex flex-col gap-0.5">
+               <span className="text-[10px] font-black uppercase tracking-widest">{tab.label}</span>
+            </div>
           </button>
+        ))}
+
+        <div className="mt-auto pt-8 px-4">
+           <button 
+             onClick={handleSave}
+             disabled={saving}
+             className="w-full bg-rose-600 hover:bg-rose-700 text-white p-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 shadow-xl transition-all active:scale-95 disabled:grayscale"
+           >
+             {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+             Deploy Changes
+           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-8 px-6">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${activeTab === tab.id
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-            >
-              <span>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </nav>
-      </div>
+      {/* Settings Content Area */}
+      <div className="flex-1 p-8 lg:p-12 overflow-y-auto max-h-[85vh] custom-scrollbar">
+         {/* Tab Header */}
+         <div className="mb-10 animate-fadeIn">
+            <h2 className="text-2xl font-serif font-black text-navy-950 uppercase italic tracking-tighter">
+              {tabs.find(t => t.id === activeTab)?.label}
+            </h2>
+            <p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1 opacity-60 italic">
+               {tabs.find(t => t.id === activeTab)?.description}
+            </p>
+         </div>
 
-      <div className="p-6">
-        {/* General Settings */}
-        {activeTab === 'general' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Site Name</label>
-                <input
-                  type="text"
-                  value={config.general.siteName}
-                  onChange={(e) => updateConfig('general', 'siteName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Site URL</label>
-                <input
-                  type="url"
-                  value={config.general.siteUrl}
-                  onChange={(e) => updateConfig('general', 'siteUrl', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Admin Email</label>
-                <input
-                  type="email"
-                  value={config.general.adminEmail}
-                  onChange={(e) => updateConfig('general', 'adminEmail', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
-                <select
-                  value={config.general.timezone}
-                  onChange={(e) => updateConfig('general', 'timezone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="Asia/Kolkata">Asia/Kolkata</option>
-                  <option value="UTC">UTC</option>
-                  <option value="America/New_York">America/New_York</option>
-                  <option value="Europe/London">Europe/London</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
-                <select
-                  value={config.general.language}
-                  onChange={(e) => updateConfig('general', 'language', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="en">English</option>
-                  <option value="hi">Hindi</option>
-                  <option value="es">Spanish</option>
-                  <option value="fr">French</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="maintenanceMode"
-                checked={config.general.maintenanceMode}
-                onChange={(e) => updateConfig('general', 'maintenanceMode', e.target.checked)}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <label htmlFor="maintenanceMode" className="ml-2 text-sm text-gray-700">
-                Enable Maintenance Mode
-              </label>
-            </div>
-          </div>
-        )}
-        {/* Security Settings */}
-        {activeTab === 'security' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Session Timeout (minutes)</label>
-                <input
-                  type="number"
-                  value={config.security.sessionTimeout}
-                  onChange={(e) => updateConfig('security', 'sessionTimeout', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Max Login Attempts</label>
-                <input
-                  type="number"
-                  value={config.security.maxLoginAttempts}
-                  onChange={(e) => updateConfig('security', 'maxLoginAttempts', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Password Min Length</label>
-                <input
-                  type="number"
-                  value={config.security.passwordMinLength}
-                  onChange={(e) => updateConfig('security', 'passwordMinLength', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={config.security.requireTwoFactor}
-                  onChange={(e) => updateConfig('security', 'requireTwoFactor', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Require Two-Factor Authentication</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={config.security.ipWhitelisting}
-                  onChange={(e) => updateConfig('security', 'ipWhitelisting', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Enable IP Whitelisting</span>
-              </label>
-            </div>
-
-            {config.security.ipWhitelisting && (
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-medium text-gray-700">Allowed IP Addresses</label>
-                  <button
-                    onClick={addAllowedIP}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-sm"
-                  >
-                    + Add IP
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  {config.security.allowedIPs.map((ip, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-md">
-                      <span className="text-sm text-gray-700">{ip}</span>
-                      <button
-                        onClick={() => removeAllowedIP(index)}
-                        className="text-red-600 hover:text-red-800 text-sm"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))}
-                  {config.security.allowedIPs.length === 0 && (
-                    <p className="text-sm text-gray-500">No IP addresses configured</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Email Settings */}
-        {activeTab === 'email' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Host</label>
-                <input
-                  type="text"
-                  value={config.email.smtpHost}
-                  onChange={(e) => updateConfig('email', 'smtpHost', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Port</label>
-                <input
-                  type="number"
-                  value={config.email.smtpPort}
-                  onChange={(e) => updateConfig('email', 'smtpPort', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Username</label>
-                <input
-                  type="text"
-                  value={config.email.smtpUser}
-                  onChange={(e) => updateConfig('email', 'smtpUser', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">SMTP Password</label>
-                <input
-                  type="password"
-                  value={config.email.smtpPassword}
-                  onChange={(e) => updateConfig('email', 'smtpPassword', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">From Email</label>
-                <input
-                  type="email"
-                  value={config.email.fromEmail}
-                  onChange={(e) => updateConfig('email', 'fromEmail', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">From Name</label>
-                <input
-                  type="text"
-                  value={config.email.fromName}
-                  onChange={(e) => updateConfig('email', 'fromName', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <button
-                onClick={testEmailConfiguration}
-                disabled={testingEmail}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
-              >
-                {testingEmail ? 'Testing...' : '📧 Test Email'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Feature Flags */}
-        {activeTab === 'features' && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Feature Toggles</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(config.features).map(([key, value]) => (
-                <label key={key} className="flex items-center p-3 border border-gray-200 rounded-lg">
-                  <input
-                    type="checkbox"
-                    checked={value}
-                    onChange={(e) => updateConfig('features', key, e.target.checked)}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+         <div className="space-y-8 animate-slideUp">
+            
+            {activeTab === 'general' && (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <ConfigInput 
+                    label="Platform Name" 
+                    value={config.general.siteName} 
+                    onChange={(val: string) => updateSection('general', { siteName: val })} 
                   />
-                  <span className="ml-3 text-sm text-gray-700 capitalize">
-                    {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
+                  <ConfigInput 
+                    label="Canonical Base URL" 
+                    value={config.general.siteUrl} 
+                    onChange={(val: string) => updateSection('general', { siteUrl: val })} 
+                  />
+                  <ConfigInput 
+                    label="Administrative Contact" 
+                    value={config.general.adminEmail} 
+                    onChange={(val: string) => updateSection('general', { adminEmail: val })} 
+                  />
+                   <div className="space-y-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-navy-500 ml-1">Synchronized Timezone</label>
+                    <select 
+                      value={config.general.timezone}
+                      onChange={(e) => updateSection('general', { timezone: e.target.value })}
+                      className="w-full bg-navy-50/50 border border-navy-100 rounded-xl px-5 py-3 text-xs font-bold text-navy-950 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
+                      <option value="UTC">Universal Time (UTC)</option>
+                    </select>
+                  </div>
+                  <ConfigToggle 
+                    label="Platform Lock (Maintenance)" 
+                    description="Prevent public access to the UI while active."
+                    checked={config.general.maintenanceMode} 
+                    onChange={(val: boolean) => updateSection('general', { maintenanceMode: val })} 
+                  />
+               </div>
+            )}
 
-        {/* Performance Settings */}
-        {activeTab === 'performance' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Cache Duration (seconds)</label>
-                <input
-                  type="number"
-                  value={config.performance.cacheDuration}
-                  onChange={(e) => updateConfig('performance', 'cacheDuration', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">CDN URL</label>
-                <input
-                  type="url"
-                  value={config.performance.cdnUrl}
-                  onChange={(e) => updateConfig('performance', 'cdnUrl', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  disabled={!config.performance.cdnEnabled}
-                />
-              </div>
-            </div>
+            {activeTab === 'email' && (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <ConfigInput 
+                    label="SMTP Uplink Host" 
+                    value={config.email.smtpHost} 
+                    onChange={(val: string) => updateSection('email', { smtpHost: val })} 
+                    placeholder="e.g. smtp.gmail.com"
+                  />
+                  <ConfigInput 
+                    label="Communication Port" 
+                    type="number"
+                    value={config.email.smtpPort} 
+                    onChange={(val: string) => updateSection('email', { smtpPort: parseInt(val) })} 
+                  />
+                  <ConfigInput 
+                    label="Credential Username" 
+                    value={config.email.smtpUser} 
+                    onChange={(val: string) => updateSection('email', { smtpUser: val })} 
+                  />
+                  <ConfigInput 
+                    label="System Password" 
+                    type="password"
+                    isSecret
+                    value={config.email.smtpPassword} 
+                    onChange={(val: string) => updateSection('email', { smtpPassword: val })} 
+                  />
+                  <ConfigInput 
+                    label="Origin Address (Sender)" 
+                    value={config.email.fromEmail} 
+                    onChange={(val: string) => updateSection('email', { fromEmail: val })} 
+                  />
+                  <ConfigInput 
+                    label="Display Alias" 
+                    value={config.email.fromName} 
+                    onChange={(val: string) => updateSection('email', { fromName: val })} 
+                  />
+               </div>
+            )}
 
-            <div className="space-y-3">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={config.performance.cacheEnabled}
-                  onChange={(e) => updateConfig('performance', 'cacheEnabled', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Enable Caching</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={config.performance.compressionEnabled}
-                  onChange={(e) => updateConfig('performance', 'compressionEnabled', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Enable Compression</span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={config.performance.cdnEnabled}
-                  onChange={(e) => updateConfig('performance', 'cdnEnabled', e.target.checked)}
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                />
-                <span className="ml-2 text-sm text-gray-700">Enable CDN</span>
-              </label>
-            </div>
-          </div>
-        )}
+            {activeTab === 'razorpay' && (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <ConfigInput 
+                    label="Razorpay Public Key (Key ID)" 
+                    value={config.razorpay.keyId} 
+                    onChange={(val: string) => updateSection('razorpay', { keyId: val })} 
+                    placeholder="rzp_test_..."
+                  />
+                  <ConfigInput 
+                    label="Private Shield Key (Secret)" 
+                    type="password"
+                    isSecret
+                    value={config.razorpay.keySecret} 
+                    onChange={(val: string) => updateSection('razorpay', { keySecret: val })} 
+                  />
+                  <ConfigInput 
+                    label="Incoming Webhook Secret" 
+                    type="password"
+                    isSecret
+                    value={config.razorpay.webhookSecret} 
+                    onChange={(val: string) => updateSection('razorpay', { webhookSecret: val })} 
+                  />
+                  <ConfigToggle 
+                    label="Simulation Mode (Test)" 
+                    description="Use test credentials for dry-run transactions."
+                    checked={config.razorpay.enableTestMode} 
+                    onChange={(val: boolean) => updateSection('razorpay', { enableTestMode: val })} 
+                  />
+               </div>
+            )}
 
-        {/* Backup & Maintenance */}
-        {activeTab === 'backup' && (
-          <div className="space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="text-lg font-medium text-blue-800 mb-2">💾 System Backup</h3>
-              <p className="text-blue-700 mb-4">Create a complete backup of your system data and configuration.</p>
-              <button
-                onClick={createBackup}
-                disabled={backupInProgress}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-              >
-                {backupInProgress ? 'Creating Backup...' : '📦 Create Backup'}
-              </button>
-            </div>
+            {activeTab === 'security' && (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <ConfigInput 
+                    label="Auth Session TTL (Hours)" 
+                    type="number"
+                    value={config.security.sessionTimeout} 
+                    onChange={(val: string) => updateSection('security', { sessionTimeout: parseInt(val) })} 
+                  />
+                  <ConfigInput 
+                    label="Max Unauthorized Attempts" 
+                    type="number"
+                    value={config.security.maxLoginAttempts} 
+                    onChange={(val: string) => updateSection('security', { maxLoginAttempts: parseInt(val) })} 
+                  />
+                  <ConfigToggle 
+                    label="IP Validation Layer" 
+                    description="Enforce IP-based bridge filtering for admin access."
+                    checked={config.security.ipWhitelisting} 
+                    onChange={(val: boolean) => updateSection('security', { ipWhitelisting: val })} 
+                  />
+               </div>
+            )}
 
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h3 className="text-lg font-medium text-yellow-800 mb-2">🔧 Database Optimization</h3>
-              <p className="text-yellow-700 mb-4">Optimize database performance and clean up unused data.</p>
-              <button className="px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
-                🚀 Optimize Database
-              </button>
-            </div>
+            {activeTab === 'features' && (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <ConfigToggle 
+                    label="Financial Uplink (Donations)" 
+                    description="Activate payment modules across the platform."
+                    checked={config.features.enableDonations} 
+                    onChange={(val: boolean) => updateSection('features', { enableDonations: val })} 
+                  />
+                  <ConfigToggle 
+                    label="Human Resource (Volunteers)" 
+                    description="Allow registration and management of human assets."
+                    checked={config.features.enableVolunteers} 
+                    onChange={(val: boolean) => updateSection('features', { enableVolunteers: val })} 
+                  />
+                  <ConfigToggle 
+                    label="Visual Archive (Gallery)" 
+                    description="Enable image and documentary showcase modules."
+                    checked={config.features.enableGallery} 
+                    onChange={(val: boolean) => updateSection('features', { enableGallery: val })} 
+                  />
+                  <ConfigToggle 
+                    label="Public Relations (Press)" 
+                    description="Enable media kit and press release features."
+                    checked={config.features.enablePress} 
+                    onChange={(val: boolean) => updateSection('features', { enablePress: val })} 
+                  />
+                  <ConfigToggle 
+                    label="Operational Intel (Analytics)" 
+                    description="Track visitor traffic and interaction logs."
+                    checked={config.features.enableAnalytics} 
+                    onChange={(val: boolean) => updateSection('features', { enableAnalytics: val })} 
+                  />
+               </div>
+            )}
 
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <h3 className="text-lg font-medium text-red-800 mb-2">⚠️ System Reset</h3>
-              <p className="text-red-700 mb-4">Reset system to default settings. This action cannot be undone.</p>
-              <button className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                🔄 Reset System
-              </button>
-            </div>
-          </div>
-        )}
+         </div>
       </div>
+
     </div>
   );
+}
+
+interface ConfigInputProps {
+  label: string;
+  value: string | number;
+  onChange: (val: string) => void;
+  type?: string;
+  placeholder?: string;
+  isSecret?: boolean;
+}
+
+function ConfigInput({ label, value, onChange, type = 'text', placeholder = '', isSecret = false }: ConfigInputProps) {
+   const [show, setShow] = useState(false);
+   const inputType = isSecret ? (show ? 'text' : 'password') : type;
+
+   return (
+      <div className="space-y-2 group">
+         <label className="text-[9px] font-black uppercase tracking-widest text-navy-500 ml-1 group-focus-within:text-rose-500 transition-colors">
+            {label}
+         </label>
+         <div className="relative">
+            <input 
+               type={inputType}
+               value={value}
+               onChange={(e) => onChange(e.target.value)}
+               placeholder={placeholder}
+               className="w-full bg-navy-50/30 border border-navy-100 rounded-2xl px-5 py-4 text-xs font-bold text-navy-950 focus:outline-none focus:ring-4 focus:ring-rose-500/10 focus:border-rose-500 transition-all font-mono"
+            />
+            {isSecret && (
+               <button 
+                  onClick={() => setShow(!show)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-navy-400 hover:text-navy-950 transition-colors"
+               >
+                  {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+               </button>
+            )}
+         </div>
+      </div>
+   );
+}
+
+interface ConfigToggleProps {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (val: boolean) => void;
+}
+
+function ConfigToggle({ label, description, checked, onChange }: ConfigToggleProps) {
+   return (
+      <div 
+        onClick={() => onChange(!checked)}
+        className={cn(
+          "flex items-center justify-between p-6 rounded-3xl border-2 transition-all duration-500 cursor-pointer group",
+          checked ? "bg-white border-rose-500 shadow-xl shadow-rose-900/5" : "bg-navy-50/30 border-transparent hover:border-navy-100"
+        )}
+      >
+         <div className="space-y-1">
+            <h4 className="text-xs font-black uppercase tracking-widest text-navy-950">{label}</h4>
+            <p className="text-[10px] font-bold text-navy-500 tracking-tight italic opacity-60">{description}</p>
+         </div>
+         <div className={cn(
+            "w-12 h-6 rounded-full relative transition-colors duration-500",
+            checked ? "bg-rose-500" : "bg-navy-200"
+         )}>
+            <div className={cn(
+               "absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-500 shadow-sm",
+               checked ? "left-7" : "left-1"
+            )} />
+         </div>
+      </div>
+   );
 }

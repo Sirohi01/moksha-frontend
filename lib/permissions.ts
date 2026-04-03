@@ -1,12 +1,6 @@
-/**
- * MOKSHA ADMIN PERMISSION SYSTEM
- * Mapping between application routes and required permissions.
- */
-
 export const ROUTE_PERMISSIONS: Record<string, string> = {
   // Main Core Pages
   '/admin/dashboard': 'page_dashboard',
-  '/admin/support': 'page_support',
   '/admin/tasks': 'page_tasks',
   '/admin/users': 'page_users',
 
@@ -20,22 +14,33 @@ export const ROUTE_PERMISSIONS: Record<string, string> = {
   '/admin/expansion': 'page_expansion',
   '/admin/volunteers': 'page_volunteers',
   '/admin/donations': 'page_donations',
-  '/admin/newsletter': 'page_newsletter',
 
-  // Content & Config
+  // Website Content Section
+  '/admin/blogs': 'page_blogs',
+  '/admin/editorial-hub': 'page_editorial',
   '/admin/content': 'page_content',
-  '/admin/content-editor': 'page_content',
-  '/admin/page-config': 'page_content',
+  '/admin/page-config': 'page_pageconfig',
   '/admin/seo': 'page_seo',
-  '/admin/media': 'page_media',
-  '/admin/compliance': 'page_compliance',
 
-  // Intelligence Sub-sector
+  // Multimedia & Press Sector
+  '/admin/gallery-hub': 'page_galleryhub',
+  '/admin/gallery': 'page_gallery',
+  '/admin/documentaries': 'page_documentaries',
+  '/admin/press': 'page_press',
+
+  // Communication & Marketing
+  '/admin/whatsapp-hub': 'page_whatsapp',
+  '/admin/support': 'page_support',
+  '/admin/marketing/banners': 'page_banners',
+  '/admin/marketing/newsletter': 'page_newsletter',
+
+  // System & Intelligence
+  '/admin/settings': 'page_settings',
   '/admin/activity-logs': 'page_logs',
   '/admin/visitor-analytics': 'page_analytics',
-  '/admin/intelligence/system-logs': 'page_logs',
-  '/admin/intelligence/communication-logs': 'page_logs',
-  '/admin/email-logs': 'page_logs',
+  '/admin/intelligence/system-logs': 'page_system',
+  '/admin/intelligence/communication-logs': 'page_comm_logs',
+  '/admin/email-logs': 'page_email_logs',
 };
 export const checkUserPermission = (user: { role: string; permissions: string[] } | null, pathname: string): boolean => {
   if (!user) return false;
@@ -43,18 +48,9 @@ export const checkUserPermission = (user: { role: string; permissions: string[] 
   const baseRoute = pathname.split('?')[0];
 
   const requiredPermission = ROUTE_PERMISSIONS[baseRoute];
-
-  // Essential basic pages are visible to all authenticated personnel
   if (['/admin/dashboard', '/admin/support', '/admin/tasks'].includes(baseRoute)) return true;
-
-  // If no permission is explicitly required, allow access
   if (!requiredPermission) return true;
-
-  // 1. Check if user has the specific modern permission
   if (user.permissions.includes(requiredPermission)) return true;
-
-  // 2. BACKWARD COMPATIBILITY: Legacy Permission Mapping
-  // Map 'page_reports' -> 'view_reports' or 'manage_reports'
   const legacyBase = requiredPermission.replace('page_', '');
   const viewPerm = `view_${legacyBase}`;
   const managePerm = `manage_${legacyBase}`;

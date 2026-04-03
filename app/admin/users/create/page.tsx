@@ -22,35 +22,66 @@ import {
   Shield,
   ShieldAlert,
   BarChart3,
+  Settings,
+  Image,
   Lock,
-  CheckCircle2
+  CheckCircle2,
+  Zap,
+  Layout,
+  PlayCircle,
+  Layers,
+  Video,
+  Bell,
+  Activity
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 const PAGE_PERMISSIONS = [
-  { id: 'page_dashboard', label: 'Dashboard', icon: LayoutDashboard, group: 'Core' },
-  { id: 'page_support', label: 'Support', icon: MessageSquare, group: 'Core' },
-  { id: 'page_tasks', label: 'Tasks', icon: Calendar, group: 'Core' },
-  { id: 'page_users', label: 'User Mgmt', icon: UserPlus, group: 'Core' },
+  // 1. Core Overview
+  { id: 'page_dashboard', label: 'Main Dashboard', icon: LayoutDashboard, group: 'Core' },
+  { id: 'page_tasks', label: 'Operations Calendar', icon: Calendar, group: 'Core' },
+  { id: 'page_users', label: 'Personnel Mgmt', icon: UserPlus, group: 'Core' },
 
-  { id: 'page_reports', label: 'Reports', icon: BarChart3, group: 'Forms & CRM' },
-  { id: 'page_board', label: 'Board App', icon: Users, group: 'Forms & CRM' },
-  { id: 'page_feedback', label: 'Feedback', icon: MessageSquare, group: 'Forms & CRM' },
-  { id: 'page_schemes', label: 'Schemes', icon: FileText, group: 'Forms & CRM' },
-  { id: 'page_contacts', label: 'Contacts', icon: Mail, group: 'Forms & CRM' },
-  { id: 'page_legacy', label: 'Legacy', icon: Heart, group: 'Forms & CRM' },
-  { id: 'page_expansion', label: 'Expansion', icon: TrendingUp, group: 'Forms & CRM' },
-  { id: 'page_volunteers', label: 'Volunteers', icon: UserCheck, group: 'Forms & CRM' },
-  { id: 'page_donations', label: 'Donations', icon: CreditCard, group: 'Forms & CRM' },
-  { id: 'page_newsletter', label: 'Newsletter', icon: Mail, group: 'Forms & CRM' },
+  // 2. People & Operations
+  { id: 'page_board', label: 'Board Applications', icon: Users, group: 'Management' },
+  { id: 'page_volunteers', label: 'Volunteer Assets', icon: UserCheck, group: 'Management' },
+  { id: 'page_donations', label: 'Financial Donations', icon: CreditCard, group: 'Management' },
 
-  { id: 'page_content', label: 'Content', icon: Database, group: 'System' },
-  { id: 'page_seo', label: 'SEO', icon: Globe, group: 'System' },
-  { id: 'page_media', icon: Shield, label: 'Media', group: 'System' },
-  { id: 'page_compliance', label: 'Compliance', icon: ShieldAlert, group: 'System' },
-  { id: 'page_analytics', label: 'Analytics', icon: BarChart3, group: 'Intelligence' },
-  { id: 'page_logs', label: 'Logs', icon: Lock, group: 'Intelligence' },
+  // 3. Website Content
+  { id: 'page_blogs', label: 'Blog Publication', icon: FileText, group: 'Content' },
+  { id: 'page_editorial', label: 'Editorial Hub', icon: Zap, group: 'Content' },
+  { id: 'page_content', label: 'Base Page Content', icon: Database, group: 'Content' },
+  { id: 'page_pageconfig', label: 'UI Configuration', icon: Layout, group: 'Content' },
+  { id: 'page_seo', label: 'Technical SEO', icon: Globe, group: 'Content' },
+  { id: 'page_banners', label: 'Hero Banners', icon: PlayCircle, group: 'Content' },
+
+  // 4. Multimedia & Press
+  { id: 'page_galleryhub', label: 'Asset Management', icon: Layers, group: 'Media' },
+  { id: 'page_gallery', label: 'Image Archives', icon: Image, group: 'Media' },
+  { id: 'page_documentaries', label: 'Video Catalog', icon: Video, group: 'Media' },
+  { id: 'page_press', label: 'Press Releases', icon: ShieldCheck, group: 'Media' },
+
+  // 5. Communications
+  { id: 'page_whatsapp', label: 'WhatsApp Bridge', icon: MessageSquare, group: 'Communication' },
+  { id: 'page_support', label: 'Inbound Support', icon: Bell, group: 'Communication' },
+  { id: 'page_newsletter', label: 'Bulk Newsletters', icon: Mail, group: 'Communication' },
+
+  // 6. Forms & CRM
+  { id: 'page_reports', label: 'Inbound Reports', icon: BarChart3, group: 'Forms & CRM' },
+  { id: 'page_feedback', label: 'User Feedback', icon: MessageSquare, group: 'Forms & CRM' },
+  { id: 'page_schemes', label: 'Scheme Apps', icon: FileText, group: 'Forms & CRM' },
+  { id: 'page_contacts', label: 'Contact Leades', icon: Mail, group: 'Forms & CRM' },
+  { id: 'page_legacy', label: 'Legacy Requests', icon: Heart, group: 'Forms & CRM' },
+  { id: 'page_expansion', label: 'Expansion Nodes', icon: TrendingUp, group: 'Forms & CRM' },
+
+  // 7. System & Intelligence
+  { id: 'page_settings', label: 'Global Settings', icon: Settings, group: 'System' },
+  { id: 'page_analytics', label: 'Visual Analytics', icon: BarChart3, group: 'System' },
+  { id: 'page_logs', label: 'Security Audits', icon: Lock, group: 'System' },
+  { id: 'page_system', label: 'System Health', icon: Activity, group: 'System' },
+  { id: 'page_email_logs', label: 'Email Traffic', icon: Mail, group: 'System' },
+  { id: 'page_comm_logs', label: 'Interaction Logs', icon: MessageSquare, group: 'System' },
 ];
 
 export default function CreateUserPage() {
@@ -91,7 +122,7 @@ export default function CreateUserPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-32">
+    <div className="space-y-8 max-w-[1440px] mx-auto pb-32 px-4 md:px-8">
       {/* Header */}
       <div className="flex items-center justify-between bg-white/50 backdrop-blur-xl rounded-[2.5rem] border border-navy-50 p-8 shadow-xl">
         <div className="flex items-center gap-6">
@@ -183,10 +214,10 @@ export default function CreateUserPage() {
             <p className="text-[9px] text-navy-700 font-bold uppercase tracking-widest">Toggle Sector Access</p>
           </div>
 
-          {['Core', 'Forms & CRM', 'System', 'Intelligence'].map(group => (
+          {['Core', 'Management', 'Content', 'Media', 'Communication', 'Forms & CRM', 'System'].map(group => (
             <div key={group} className="space-y-6">
               <h5 className="text-[8px] font-black text-navy-300 uppercase tracking-[0.4em] ml-2 leading-none border-l-2 border-gold-600 pl-4">{group} Operations</h5>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {PAGE_PERMISSIONS.filter(p => p.group === group).map((perm) => {
                   const isChecked = newUser.permissions.includes(perm.id);
                   return (

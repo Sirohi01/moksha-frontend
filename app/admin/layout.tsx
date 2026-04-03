@@ -80,7 +80,7 @@ export default function AdminLayout({
     return (
       <div className="min-h-screen bg-navy-950 flex flex-col items-center justify-center p-8">
         <div className="w-16 h-16 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin mb-8 shadow-[0_0_20px_rgba(184,135,33,0.3)]"></div>
-        <p className="text-gold-500 font-black uppercase text-[10px] tracking-widest animate-pulse italic">Moksha Command Center Loading...</p>
+        <p className="text-gold-500 font-black uppercase text-[10px] tracking-widest animate-pulse italic">Moksha Admin Panel Loading...</p>
       </div>
     );
   }
@@ -186,7 +186,7 @@ export default function AdminLayout({
                     className="inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-gold-600 hover:text-navy-950 transition-all shadow-2xl"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    Return to Command
+                    Return to Dashboard
                   </Link>
                 </div>
               </div>
