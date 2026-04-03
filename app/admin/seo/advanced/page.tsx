@@ -16,7 +16,9 @@ import {
     ChevronRight,
     Terminal,
     HardDrive,
-    ShieldCheck
+    ShieldCheck,
+    Activity,
+    BarChart3
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +27,8 @@ export default function AdvancedSEOSettings() {
         headerScripts: '',
         footerScripts: '',
         robotsTxt: 'User-agent: *\nAllow: /',
-        sitemapUrl: '/sitemap.xml'
+        sitemapUrl: '/sitemap.xml',
+        googleAnalyticsId: ''
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -143,6 +146,36 @@ export default function AdvancedSEOSettings() {
                                         placeholder="<!-- Paste legacy scripts here -->"
                                         className="w-full bg-navy-950 text-gold-500 font-mono text-[11px] rounded-[3rem] p-12 outline-none resize-none shadow-inner leading-relaxed border-t border-white/5"
                                     />
+                                </div>
+                            </div>
+                        </Card>
+
+                        {/* Telemetry & Analytics Card */}
+                        <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white space-y-12">
+                            <div className="flex items-center gap-4">
+                                <Activity className="text-navy-950" />
+                                <h3 className="text-2xl font-black uppercase tracking-tighter italic">Telemetry & Analytics</h3>
+                            </div>
+
+                            <div className="space-y-10">
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center ml-4">
+                                        <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest italic">Google Analytics (GA4) Measurement ID</label>
+                                        <span className="text-[9px] font-bold text-stone-300 uppercase italic">G-XXXXXXXXXX</span>
+                                    </div>
+                                    <div className="relative group">
+                                         <div className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-stone-50 rounded-xl flex items-center justify-center text-stone-300 group-focus-within:bg-navy-950 group-focus-within:text-gold-500 transition-all border border-stone-100 flex-shrink-0">
+                                             <BarChart3 size={18} />
+                                         </div>
+                                         <input 
+                                            type="text"
+                                            value={settings.googleAnalyticsId}
+                                            onChange={(e) => setSettings({ ...settings, googleAnalyticsId: e.target.value })}
+                                            placeholder="G-MEASUREMENT_ID"
+                                            className="w-full h-16 pl-20 pr-8 bg-stone-50 rounded-3xl text-[12px] font-black uppercase tracking-widest text-navy-950 outline-none focus:bg-white border-2 border-transparent focus:border-stone-100 transition-all shadow-inner"
+                                         />
+                                    </div>
+                                    <p className="text-[9px] font-bold text-stone-400 mt-2 ml-4 uppercase italic">Note: Providing this ID will automatically inject the Global Site Tag (gtag.js) infrastructure across all site nodes.</p>
                                 </div>
                             </div>
                         </Card>

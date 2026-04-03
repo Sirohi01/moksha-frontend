@@ -99,6 +99,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {globalSeo?.googleAnalyticsId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${globalSeo.googleAnalyticsId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${globalSeo.googleAnalyticsId}');
+                `,
+              }}
+            />
+          </>
+        )}
         {globalSeo?.headerScripts && (
           <div dangerouslySetInnerHTML={{ __html: globalSeo.headerScripts }} />
         )}

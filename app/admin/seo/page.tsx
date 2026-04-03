@@ -31,7 +31,8 @@ import {
   Activity,
   ChevronRight,
   Code2,
-  Zap
+  Zap,
+  Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -89,6 +90,7 @@ export default function SEOCommandDeck() {
       const data = await response.json();
       if (data.success) {
         setPages(prev => prev.map(p => p._id === selectedPage._id ? data.data : p));
+        setSelectedPage(data.data);
         alert("SEO Evolution Synchronized.");
       }
     } catch (error) {
@@ -120,32 +122,35 @@ export default function SEOCommandDeck() {
       <div className="max-w-[1600px] mx-auto">
 
         {/* Global Toolbar */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10 mb-16">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-[1.5rem] bg-navy-950 flex items-center justify-center shadow-xl">
-              <Globe className="w-8 h-8 text-gold-500" />
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16 items-center">
+          {/* Logo & Title */}
+          <div className="lg:col-span-12 xl:col-span-4 flex items-center gap-4">
+            <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1rem] md:rounded-[1.5rem] bg-navy-950 flex items-center justify-center shadow-xl flex-shrink-0">
+              <Globe className="w-6 h-6 md:w-8 md:h-8 text-gold-500" />
             </div>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter italic leading-none">SEO Command Deck</h1>
-              <p className="text-navy-950/40 font-black text-[10px] uppercase tracking-[0.4em] mt-2 italic">Site Architecture Intelligence Center</p>
+            <div className="min-w-0">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tighter italic leading-none break-words">SEO Command Deck</h1>
+              <p className="text-navy-950/40 font-black text-[9px] md:text-[10px] uppercase tracking-[0.4em] mt-2 italic">Intelligence Center</p>
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-6 w-full xl:w-auto">
-            <div className="relative w-full md:w-96">
+          {/* Action Grid */}
+          <div className="lg:col-span-12 xl:col-span-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
+            {/* Page Selector */}
+            <div className="relative w-full">
                <div 
                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                 className="w-full h-16 bg-white border-2 border-stone-100 rounded-3xl flex items-center justify-between px-6 cursor-pointer hover:border-navy-950 transition-all group shadow-sm"
+                 className="w-full h-16 bg-white border-2 border-stone-100 rounded-3xl flex items-center justify-between px-6 cursor-pointer hover:border-navy-950 transition-all group shadow-sm overflow-hidden"
                >
-                 <div className="flex flex-col">
+                 <div className="flex flex-col min-w-0">
                    <span className="text-[9px] font-black text-stone-400 uppercase tracking-widest italic">Target Node</span>
-                   <span className="text-[12px] font-black text-navy-950 uppercase tracking-tight truncate max-w-[200px]">
+                   <span className="text-[12px] font-black text-navy-950 uppercase tracking-tight truncate">
                      {selectedPage?.title || "Select Page"}
                    </span>
                  </div>
-                 <div className="flex items-center gap-3">
+                 <div className="flex items-center gap-3 flex-shrink-0">
                     <span className={cn(
-                      "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest",
+                      "hidden sm:inline-block px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest",
                       selectedPage?.status === 'published' ? "bg-emerald-50 text-emerald-600" : "bg-amber-50 text-amber-600"
                     )}>
                       {selectedPage?.status || 'draft'}
@@ -183,14 +188,14 @@ export default function SEOCommandDeck() {
                             selectedPage?._id === page._id ? "bg-navy-950 text-white" : "text-navy-950"
                           )}
                         >
-                          <div className="flex flex-col">
-                            <span className="text-[11px] font-black uppercase tracking-tight">{page.title}</span>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[11px] font-black uppercase tracking-tight truncate">{page.title}</span>
                             <span className={cn(
                               "text-[9px] font-medium opacity-40 italic",
                               selectedPage?._id === page._id ? "text-stone-300" : "text-navy-950"
                             )}>/{page.slug}</span>
                           </div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-shrink-0">
                              <div className={cn(
                                "w-1.5 h-1.5 rounded-full",
                                page.status === 'published' ? "bg-emerald-500" : "bg-amber-500"
@@ -209,22 +214,31 @@ export default function SEOCommandDeck() {
             
             <Button
               onClick={() => window.location.href = '/admin/seo/advanced'}
-              className="w-full md:w-64 h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4 bg-white text-navy-950 border-2 border-stone-100 hover:border-navy-950 shadow-sm"
+              className="w-full h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4 bg-white text-navy-950 border-2 border-stone-100 hover:border-navy-950 shadow-sm"
             >
               <Settings size={20} />
-              GLOBAL PROTOCOLS
+              <span className="hidden md:inline">PROTOCOLS</span>
+              <span className="md:hidden">GLOBAL</span>
+            </Button>
+            
+            <Button
+              onClick={() => window.location.href = '/admin/seo/analytics'}
+              className="w-full h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4 bg-white text-navy-950 border-2 border-stone-100 hover:border-navy-950 shadow-sm"
+            >
+              <Activity size={20} />
+              COCKPIT
             </Button>
             
             <Button
               onClick={handleSave}
               disabled={saving}
               className={cn(
-                "w-full md:w-64 h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4",
-                saving ? "bg-stone-100 text-stone-400" : "bg-navy-950 text-gold-500 hover:bg-gold-500 hover:text-navy-950 shadow-2xl shadow-navy-950/20"
+                "w-full h-16 rounded-3xl font-black uppercase text-[11px] tracking-[0.3em] transition-all flex items-center justify-center gap-4 shadow-xl",
+                saving ? "bg-stone-100 text-stone-400" : "bg-navy-950 text-gold-500 hover:bg-gold-500 hover:text-navy-950 shadow-navy-950/20"
               )}
             >
               {saving ? <RefreshCcw size={20} className="animate-spin" /> : <Save size={20} />}
-              {saving ? 'SAVING...' : 'COMMIT CHANGES'}
+              COMMIT
             </Button>
           </div>
         </div>
@@ -454,11 +468,39 @@ export default function SEOCommandDeck() {
             {/* AUDIT HISTORY */}
             {activeTab === 'backup' && (
               <div className="animate-in fade-in duration-500">
-                 <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white text-center flex flex-col items-center justify-center min-h-[400px] space-y-8">
-                    <History size={48} className="text-stone-200" />
-                    <div className="space-y-3">
-                       <h4 className="text-xl font-black uppercase italic tracking-tighter">Evolution Protocol Log</h4>
-                       <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest italic font-mono">Last Synchronized: {selectedPage?.updatedAt ? new Date(selectedPage.updatedAt).toLocaleString() : 'N/A'}</p>
+                 <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white space-y-12">
+                    <div className="flex items-center justify-between border-b border-stone-50 pb-8">
+                       <div>
+                          <h4 className="text-2xl font-black uppercase italic tracking-tighter">Evolution Protocol Log</h4>
+                          <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest italic font-mono mt-2">Historical Node Shifts & Visual Calibration</p>
+                       </div>
+                       <History size={32} className="text-navy-950" />
+                    </div>
+
+                    <div className="space-y-6 relative ml-4 border-l-2 border-stone-50 pl-10 py-4">
+                       {selectedPage?.notes && selectedPage.notes.length > 0 ? (
+                         selectedPage.notes.map((audit: any, idx: number) => (
+                           <div key={idx} className="relative group">
+                              {/* Timeline Point */}
+                              <div className="absolute -left-[45px] top-1 w-2.5 h-2.5 rounded-full bg-stone-100 group-hover:bg-navy-950 transition-all border-2 border-white shadow-sm" />
+                              
+                              <div className="p-6 rounded-[2rem] bg-stone-50/50 hover:bg-stone-50 transition-all border border-transparent hover:border-stone-100">
+                                 <p className="text-[11px] font-black uppercase tracking-tight text-navy-950 mb-1">{audit.note}</p>
+                                 <div className="flex items-center gap-3">
+                                    <Clock size={10} className="text-stone-300" />
+                                    <p className="text-[9px] font-black text-stone-300 uppercase tracking-widest italic">
+                                       {new Date(audit.addedAt || audit.createdAt).toLocaleString()}
+                                    </p>
+                                 </div>
+                              </div>
+                           </div>
+                         ))
+                       ) : (
+                         <div className="text-center py-20 space-y-6">
+                            <History size={48} className="mx-auto text-stone-100" />
+                            <p className="text-[10px] font-black text-stone-200 uppercase tracking-[0.4em] italic">No prior synchronization logs found</p>
+                         </div>
+                       )}
                     </div>
                  </Card>
               </div>
