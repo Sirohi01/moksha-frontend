@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import RootLayoutContent from "@/components/layout/RootLayoutContent";
+import { Toaster } from "sonner";
 
 async function getSEO(pageName: string = 'homepage') {
   try {
@@ -146,13 +147,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           }}
         />
       </head>
-      <body className="min-h-screen antialiased">
-        {/* Body Injection for Tag Managers */}
-        {seo?.bodyCode && (
-          <div dangerouslySetInnerHTML={{ __html: seo.bodyCode }} />
-        )}
-        <RootLayoutContent>{children}</RootLayoutContent>
-      </body>
+       <body className="min-h-screen antialiased">
+         {/* Body Injection for Tag Managers */}
+         {seo?.bodyCode && (
+           <div dangerouslySetInnerHTML={{ __html: seo.bodyCode }} />
+         )}
+         <RootLayoutContent>{children}</RootLayoutContent>
+         <Toaster position="top-center" richColors />
+       </body>
     </html>
   );
 }

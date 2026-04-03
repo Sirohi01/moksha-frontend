@@ -35,15 +35,24 @@ export const chatService = {
 };
 
 export const intelligenceService = {
-  getErrorLogs: async (page = 1, limit = 20) => {
-    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/error-logs?page=${page}&limit=${limit}`);
+  getErrorLogs: async (page = 1, limit = 20, startDate?: string, endDate?: string, search?: string) => {
+    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (search) params.append('search', search);
+
+    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/error-logs?${params.toString()}`);
   },
-  getCommunicationLogs: async (page = 1, limit = 20, type?: string, status?: string, mode?: 'alerts' | 'interactions') => {
+  getCommunicationLogs: async (page = 1, limit = 20, type?: string, status?: string, mode?: 'alerts' | 'interactions', startDate?: string, endDate?: string, search?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (type) params.append('type', type);
     if (status) params.append('status', status);
     if (mode) params.append('mode', mode);
-    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/communication-logs?${params}`);
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (search) params.append('search', search);
+
+    return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/communication-logs?${params.toString()}`);
   },
   trackInteraction: async (platform: string, pageUrl: string) => {
     return apiRequest(`${API_ENDPOINTS.INTELLIGENCE}/track-interaction`, {

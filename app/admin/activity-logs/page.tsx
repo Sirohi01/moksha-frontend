@@ -84,15 +84,17 @@ export default function ActivityLogsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [filterAction, setFilterAction] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const response = await adminAPI.getActivities(page, 20);
-      setLogs(response.data);
-      setTotalPages(response.pagination.pages);
+      const response = await adminAPI.getActivities(page, 20, startDate, endDate, searchTerm || undefined, filterAction || undefined);
+      setLogs(response.data || []);
+      setTotalPages(response.pagination?.pages || 1);
     } catch (error) {
       console.error('Failed to fetch logs:', error);
     } finally {
@@ -102,7 +104,7 @@ export default function ActivityLogsPage() {
 
   useEffect(() => {
     fetchLogs();
-  }, [page]);
+  }, [page, startDate, endDate, searchTerm, filterAction]);
 
   const getActionConfig = (action: string) => {
     return ACTION_MAP[action] || { label: action.replace('_', ' '), color: 'bg-stone-50 text-stone-600 border-stone-100', icon: Activity };
@@ -134,9 +136,28 @@ export default function ActivityLogsPage() {
            </button>
            
            <div className="flex items-center gap-4 bg-navy-50/50 p-2 rounded-[1.5rem] border border-navy-50/50">
+             <div className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl border border-navy-50 shadow-sm text-gold-600">
+               <Calendar className="w-4 h-4" />
+               <input 
+                 type="date" 
+                 className="bg-transparent text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none border-none focus:ring-0"
+                 value={startDate}
+                 onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
+               />
+               <span className="text-[10px] font-black text-navy-300">→</span>
+               <input 
+                 type="date" 
+                 className="bg-transparent text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none border-none focus:ring-0"
+                 value={endDate}
+                 onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
+               />
+             </div>
+             
+             <div className="h-10 w-px bg-navy-100/50 mx-1"></div>
+
              <div className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl border border-navy-50 shadow-sm">
                <User className="w-4 h-4 text-gold-600" />
-               <span className="text-[10px] font-black uppercase tracking-widest text-navy-950">User Filter</span>
+               <span className="text-[10px] font-black uppercase tracking-widest text-navy-950">Action Filter</span>
              </div>
              <select 
                className="bg-transparent text-[10px] font-black uppercase tracking-widest text-navy-600 pr-4 outline-none border-none focus:ring-0"

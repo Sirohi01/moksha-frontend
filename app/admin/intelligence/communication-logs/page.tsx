@@ -13,6 +13,9 @@ export default function CommunicationLogsPage() {
   const [pagination, setPagination] = useState({ pages: 1, total: 0 });
   const [filters, setFilters] = useState({ type: 'whatsapp', status: '' });
   const [mode, setMode] = useState<'alerts' | 'interactions'>('alerts');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Adjust filters when mode changes
   const handleModeChange = (newMode: 'alerts' | 'interactions') => {
@@ -28,8 +31,8 @@ export default function CommunicationLogsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await intelligenceAPI.getCommunicationLogs(page, 20, filters.type, filters.status, mode);
-      setLogs(res.data);
+      const res = await intelligenceAPI.getCommunicationLogs(page, 20, filters.type, filters.status, mode, startDate, endDate, searchTerm || undefined);
+      setLogs(res.data || []);
       setPagination({
         pages: res.pagination?.pages || 1,
         total: res.pagination?.total || 0
@@ -43,7 +46,7 @@ export default function CommunicationLogsPage() {
 
   useEffect(() => {
     fetchData();
-  }, [page, filters, mode]);
+  }, [page, filters, mode, startDate, endDate, searchTerm]);
 
   const columns = mode === 'interactions' ? [
     {
@@ -221,6 +224,74 @@ export default function CommunicationLogsPage() {
       {error && <Alert type="error" message={error} />}
 
       <div className="space-y-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between bg-white p-3 rounded-[2rem] border border-navy-50 shadow-sm gap-4">
+          <div className="flex flex-wrap items-center gap-3 px-4">
+             <div className="relative group">
+                <input 
+                  type="text"
+                  placeholder={mode === 'alerts' ? "Search Numbers, Content..." : "Search IPs, Pages..."}
+                  value={searchTerm}
+                  onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
+                  className="bg-navy-50/50 border border-navy-100/30 rounded-xl px-10 py-3 text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all placeholder:text-navy-200"
+                />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy-300" />
+             </div>
+
+             <div className="flex items-center gap-2 p-1 bg-navy-50 rounded-xl border border-navy-50 shadow-inner">
+                <input 
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
+                  className="bg-transparent text-[10px] font-black uppercase tracking-tight text-navy-950 px-3 py-1.5 outline-none border-none focus:ring-0"
+                />
+                <span className="text-gray-300">→</span>
+                <input 
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
+                  className="bg-transparent text-[10px] font-black uppercase tracking-tight text-navy-950 px-3 py-1.5 outline-none border-none focus:ring-0"
+                />
+             </div>
+             
+             <button 
+               onClick={() => { setStartDate(''); setEndDate(''); setSearchTerm(''); setPage(1); }}
+               className="p-2 bg-navy-950 text-white rounded-xl hover:bg-black transition-all active:scale-95"
+               title="Reset Archive Sensors"
+             >
+               <RefreshCw className="w-3.5 h-3.5" />
+             </button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 px-4">
+            {mode === 'alerts' && (
+              <>
+                <select 
+                  className="bg-gray-50 text-[10px] font-black uppercase tracking-widest text-navy-600 rounded-xl px-4 py-2.5 border-none"
+                  value={filters.type}
+                  onChange={(e) => { setFilters({...filters, type: e.target.value}); setPage(1); }}
+                >
+                  <option value="whatsapp">WHATSAPP</option>
+                  <option value="sms">SMS</option>
+                  <option value="broadcast">BROADCAST</option>
+                  <option value="alert">ALERTS</option>
+                  <option value="system">SYSTEM</option>
+                </select>
+                <select 
+                  className="bg-gray-50 text-[10px] font-black uppercase tracking-widest text-navy-600 rounded-xl px-4 py-2.5 border-none"
+                  value={filters.status}
+                  onChange={(e) => { setFilters({...filters, status: e.target.value}); setPage(1); }}
+                >
+                  <option value="">ALL STATUS</option>
+                  <option value="delivered">DELIVERED</option>
+                  <option value="sent">SENT</option>
+                  <option value="failed">FAILED</option>
+                  <option value="pending">PENDING</option>
+                </select>
+              </>
+            )}
+          </div>
+        </div>
+
         <DataTable
           columns={columns}
           data={logs}

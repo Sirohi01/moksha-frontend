@@ -25,18 +25,21 @@ export default function EmailLogsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedLog, setSelectedLog] = useState<EmailLog | null>(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchLogs();
-  }, [currentPage]);
+  }, [currentPage, startDate, endDate, searchTerm]);
 
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const response = await adminAPI.getEmailLogs(currentPage, 10);
+      const response = await adminAPI.getEmailLogs(currentPage, 10, startDate, endDate, searchTerm || undefined);
       if (response.success) {
-        setLogs(response.data);
-        setTotalPages(response.pagination.pages);
+        setLogs(response.data || []);
+        setTotalPages(response.pagination?.pages || 1);
       } else {
         throw new Error(response.message || 'Failed to fetch email logs');
       }
@@ -238,6 +241,51 @@ export default function EmailLogsPage() {
       </PageHeader>
 
       {error && <Alert type="error" message={error} />}
+
+      <div className="flex flex-col lg:flex-row items-center justify-between bg-white p-4 rounded-[2rem] border border-navy-50 shadow-sm mb-6 gap-6">
+        <div className="flex items-center gap-3 px-4">
+           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+           <h3 className="text-[10px] font-black text-navy-950 uppercase tracking-[0.3em]">Communication Stream</h3>
+        </div>
+
+        <div className="flex items-center flex-wrap gap-4 px-4">
+           <div className="relative group">
+              <input 
+                type="text"
+                placeholder="Search Subjects, Recipients..."
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                className="bg-navy-50/50 border border-navy-100/50 rounded-xl px-10 py-3 text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all placeholder:text-navy-200"
+              />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-gold-600"></div>
+              </div>
+           </div>
+
+           <div className="flex items-center gap-3 p-1.5 bg-navy-50/50 rounded-2xl border border-navy-50 transition-all focus-within:ring-2 focus-within:ring-gold-500/10">
+              <input 
+                type="date"
+                value={startDate}
+                onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
+                className="bg-transparent text-[10px] font-black uppercase tracking-tight text-navy-950 px-3 py-2 outline-none border-none focus:ring-0"
+              />
+              <span className="text-gray-300">→</span>
+              <input 
+                type="date"
+                value={endDate}
+                onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
+                className="bg-transparent text-[10px] font-black uppercase tracking-tight text-navy-950 px-3 py-2 outline-none border-none focus:ring-0"
+              />
+           </div>
+           
+           <button 
+             onClick={() => { setStartDate(''); setEndDate(''); setSearchTerm(''); setCurrentPage(1); }}
+             className="px-6 py-3 bg-navy-950 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black transition-all shadow-sm active:scale-95"
+           >
+             Reset Archive
+           </button>
+        </div>
+      </div>
 
       <DataTable
         columns={columns}

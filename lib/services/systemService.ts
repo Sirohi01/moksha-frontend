@@ -12,12 +12,21 @@ export const adminService = {
     return apiRequest(url);
   },
 
-  getActivities: async (page = 1, limit = 10) => {
-    return apiRequest(`${API_ENDPOINTS.ADMIN_ACTIVITIES}?page=${page}&limit=${limit}`);
+  getActivities: async (page = 1, limit = 10, startDate?: string, endDate?: string, search?: string, action?: string) => {
+    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (search) params.append('search', search);
+    if (action) params.append('action', action);
+    return apiRequest(`${API_ENDPOINTS.ADMIN_ACTIVITIES}?${params.toString()}`);
   },
 
-  getEmailLogs: async (page = 1, limit = 20) => {
-    return apiRequest(`${API_ENDPOINTS.ADMIN_EMAIL_LOGS}?page=${page}&limit=${limit}`);
+  getEmailLogs: async (page = 1, limit = 20, startDate?: string, endDate?: string, search?: string) => {
+    const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    if (search) params.append('search', search);
+    return apiRequest(`${API_ENDPOINTS.ADMIN_EMAIL_LOGS}?${params.toString()}`);
   },
 
   getUser: async (id: string) => {

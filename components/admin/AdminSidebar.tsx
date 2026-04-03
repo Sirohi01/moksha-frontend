@@ -56,6 +56,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'Board Applications', href: '/admin/board', icon: Users },
     { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
     { title: 'Donations', href: '/admin/donations', icon: CreditCard },
+    { title: 'WhatsApp Hub', href: '/admin/whatsapp-hub', icon: MessageSquare },
   ];
   const filteredItems = allPossibleItems.filter(item => {
     if (!item.href) return true;

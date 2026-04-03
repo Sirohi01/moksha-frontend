@@ -28,5 +28,21 @@ export const settingsAPI = {
     backupSettings: async () => apiRequest(`${API_ENDPOINTS.SETTINGS}/backup`, { method: 'POST' }),
 };
 
+export const contactsAPI = {
+    getAll: async (params: any = {}) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`${API_BASE_URL}/api/admin/contacts?${query}`);
+    },
+    sendWhatsApp: async (data: any) => apiRequest(`${API_BASE_URL}/api/admin/contacts/whatsapp`, { method: 'POST', body: JSON.stringify(data) }),
+    getWAHubLogs: async (params: any = {}) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`${API_BASE_URL}/api/admin/contacts/whatsapp/logs?${query}`);
+    },
+    getHistory: async (phone: string, params: any = {}) => {
+        const query = new URLSearchParams(params).toString();
+        return apiRequest(`${API_BASE_URL}/api/admin/contacts/whatsapp/history/${phone}?${query}`);
+    },
+};
+
 import { API_BASE_URL } from './api-base';
 export default API_BASE_URL;
