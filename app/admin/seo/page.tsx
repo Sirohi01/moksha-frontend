@@ -484,15 +484,25 @@ export default function SEOCommandDeck() {
                               {/* Timeline Point */}
                               <div className="absolute -left-[45px] top-1 w-2.5 h-2.5 rounded-full bg-stone-100 group-hover:bg-navy-950 transition-all border-2 border-white shadow-sm" />
                               
-                              <div className="p-6 rounded-[2rem] bg-stone-50/50 hover:bg-stone-50 transition-all border border-transparent hover:border-stone-100">
-                                 <p className="text-[11px] font-black uppercase tracking-tight text-navy-950 mb-1">{audit.note}</p>
-                                 <div className="flex items-center gap-3">
-                                    <Clock size={10} className="text-stone-300" />
-                                    <p className="text-[9px] font-black text-stone-300 uppercase tracking-widest italic">
-                                       {new Date(audit.addedAt || audit.createdAt).toLocaleString()}
-                                    </p>
-                                 </div>
-                              </div>
+                               <div className="p-8 rounded-[3rem] bg-stone-50/50 hover:bg-white transition-all border border-transparent hover:border-stone-100 hover:shadow-2xl shadow-sm">
+                                  <p className="text-[16px] font-black text-navy-950 mb-3 leading-tight tracking-tight italic">
+                                     {audit.note}
+                                  </p>
+                                  <div className="flex items-center gap-4">
+                                     <div className="flex items-center gap-2 px-5 py-2 bg-white rounded-[2rem] border border-stone-100 shadow-md">
+                                        <Clock size={12} className="text-navy-400 animate-pulse" />
+                                        <p className="text-[11px] font-black text-stone-400 uppercase tracking-[0.2em] font-mono italic">
+                                           {new Date(audit.addedAt || audit.createdAt).toLocaleString('en-IN', {
+                                              day: 'numeric',
+                                              month: 'short',
+                                              year: 'numeric',
+                                              hour: '2-digit',
+                                              minute: '2-digit'
+                                           })}
+                                        </p>
+                                     </div>
+                                  </div>
+                               </div>
                            </div>
                          ))
                        ) : (
