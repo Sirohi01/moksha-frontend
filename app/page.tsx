@@ -8,23 +8,15 @@ import { usePageConfig } from "@/hooks/usePageConfig";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Skeleton, CardSkeleton } from "@/components/ui/Skeleton";
 import { Card } from "@/components/ui/Card";
-import { cn } from "@/lib/utils";
+import { cn, getSafeSrc, getAlt } from '@/lib/utils';
 import { homepageConfig } from "@/config/homepage.config";
 import { getIcon } from "@/config/icons.config";
 import { getRatioClass } from "@/lib/ratios";
 
 export default function HomePage() {
-  const { config: dynamicConfig, loading } = usePageConfig('homepage', homepageConfig);
+  const { config: dynamicConfig, seo, loading } = usePageConfig('homepage', homepageConfig);
   const config = dynamicConfig || homepageConfig;
-  const getSafeSrc = (imgSource: any) => {
-    if (!imgSource) return '';
-    if (typeof imgSource === 'string') return imgSource;
-    if (typeof imgSource === 'object') {
-      if (typeof imgSource.src === 'string') return imgSource.src;
-      if (typeof imgSource.src === 'object') return getSafeSrc(imgSource.src);
-    }
-    return '';
-  };
+
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentLocationSlide, setCurrentLocationSlide] = useState(0);
@@ -106,7 +98,6 @@ export default function HomePage() {
       {!config.seo?.h1Tag && config.about?.title && (
         <h1 className="sr-only">{config.about.title} {config.about.titleHighlight}</h1>
       )}
-      {/* ── HERO (HINDU RITUALS & SACRED DEPARTURE) ── */}
       <section className={cn(
         "relative w-full overflow-hidden bg-white border-b-4 border-stone-100 transition-all duration-700",
         getRatioClass(config.hero.aspectRatio || (config.hero as any).protocol, "aspect-[1620/700]"),
@@ -114,7 +105,7 @@ export default function HomePage() {
       )}>
         {config.hero?.slides?.map((slide, idx) => {
           const src = typeof slide === 'string' ? slide : slide.src;
-          const alt = typeof slide === 'string' ? (config.hero.altText || config.labels?.heroAltText || "Moksha Sewa") : slide.alt;
+          const alt = getAlt(slide, seo, config.hero.altText || config.labels?.heroAltText);
           return (
             <div
               key={src}
@@ -134,8 +125,6 @@ export default function HomePage() {
             </div>
           );
         })}
-
-        {/* Dynamic Progress Indicator (Smile Style) */}
         <div className="absolute bottom-0 left-0 right-0 z-20 h-2.5 flex bg-black/10">
           {config.hero?.slides?.map((_, idx) => (
             <div key={idx} className="flex-1 h-full overflow-hidden bg-white/10">
@@ -148,8 +137,6 @@ export default function HomePage() {
             </div>
           ))}
         </div>
-
-        {/* Floating Indicator Dots */}
         <div className="absolute bottom-6 right-6 z-30 flex gap-2">
           {config.hero?.slides?.map((_, idx) => (
             <button
@@ -264,8 +251,8 @@ export default function HomePage() {
                     "aspect-square lg:aspect-square"
                   )}>
                     <Image
-                      src={getSafeSrc(config.about.image)}
-                      alt={config.about.alt || "Moksha Sewa - Dignified Final Journey"}
+                      src={getSafeSrc(config.about?.image)}
+                      alt={getAlt(config.about?.image, seo, config.about?.alt || "Moksha Sewa - Dignified Final Journey")}
                       fill
                       className="object-cover"
                     />
@@ -357,9 +344,9 @@ export default function HomePage() {
                     <div className="relative aspect-[3/2] rounded-2xl overflow-hidden mb-4 shadow-md bg-stone-50">
                       <Image
                         src={getSafeSrc(p.image)}
-                        alt={p.alt || p.title}
+                        alt={getAlt(p.image, seo, p.alt || p.title || "Moksha Seva Service")}
                         fill
-                        className="object-contain group-hover:scale-105 transition-transform duration-700 bg-stone-50"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                     </div>
@@ -416,7 +403,7 @@ export default function HomePage() {
                         >
                           <Image
                             src={getSafeSrc(slide.src)}
-                            alt={slide.alt || slide.title}
+                            alt={getAlt(slide.src, seo, slide.alt || slide.title)}
                             fill
                             className="object-contain"
                           />
@@ -601,7 +588,12 @@ export default function HomePage() {
               <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide px-4 -mx-4">
                 {config.storiesInMotion.stories.map((story, i) => (
                   <div key={i} className="relative min-w-[280px] md:min-w-[400px] aspect-[16/10] rounded-[2rem] overflow-hidden group shadow-lg">
-                    <Image src={getSafeSrc(story.image)} alt={story.title} fill className="object-contain group-hover:scale-105 transition-transform duration-700 bg-stone-50" />
+                    <Image
+                      src={getSafeSrc(story.image)}
+                      alt={getAlt(story.image, seo, story.title || "Moksha Seva Story")}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-700 bg-stone-50"
+                    />
                     <div className="absolute bottom-5 left-6 z-10">
                       <p className="text-white font-black uppercase text-[10px] tracking-widest drop-shadow-md">{story.title}</p>
                     </div>
@@ -623,7 +615,7 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0">
           <Image
             src={getSafeSrc(config.joinMission.backgroundImage)}
-            alt={config.labels?.joinMissionAltText || "Join Our Mission"}
+            alt={getAlt(config.joinMission.backgroundImage, seo, config.labels?.joinMissionAltText || "Join Our Mission")}
             fill
             className="object-cover opacity-60"
           />
@@ -759,10 +751,10 @@ export default function HomePage() {
                       <div className="relative aspect-[3/2] overflow-hidden bg-stone-50">
                         <Image
                           src={getSafeSrc(c.image)}
-                          alt={c.alt || c.title}
+                          alt={getAlt(c.image, seo, c.alt || c.title || "Urgent Mission")}
                           fill
                           className={cn(
-                            "object-contain transition-transform duration-700 bg-stone-50",
+                            "object-cover transition-transform duration-700 bg-stone-50",
                             position === 0 ? "scale-100" : "scale-105 group-hover:scale-100"
                           )}
                         />

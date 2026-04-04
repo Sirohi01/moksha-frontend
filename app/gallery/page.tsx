@@ -6,12 +6,12 @@ import Image from "next/image";
 import { galleryConfig } from "@/config/gallery.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { cn } from "@/lib/utils";
+import { cn, getAlt, getSafeSrc } from "@/lib/utils";
 import { galleryAPI } from '@/lib/api';
 import { getRatioClass } from '@/lib/ratios';
 
 export default function GalleryPage() {
-    const { config, loading: configLoading } = usePageConfig('gallery', galleryConfig);
+    const { config, seo, loading: configLoading } = usePageConfig('gallery', galleryConfig);
     const activeConfig = config || galleryConfig;
 
     const initialCategories = activeConfig.gallery?.categories || ["All", "Services", "Community", "Events", "Volunteers"];
@@ -74,13 +74,6 @@ export default function GalleryPage() {
         const nextPage = page + 1;
         setPage(nextPage);
         fetchGalleryImages(nextPage, activeCategory);
-    };
-
-    const getSafeSrc = (imgSource: any) => {
-        if (!imgSource) return "/gallery/hero_moksha_1.png";
-        if (typeof imgSource === 'string') return imgSource;
-        if (typeof imgSource === 'object' && imgSource.src) return imgSource.src;
-        return "/gallery/hero_moksha_1.png";
     };
 
     if (configLoading && galleryImages.length === 0) {
@@ -160,7 +153,7 @@ export default function GalleryPage() {
                                 )}>
                                     <Image
                                         src={getSafeSrc(image.src)}
-                                        alt={image.title}
+                                        alt={getAlt(image.src, seo, image.altText || image.alt || image.title || "Gallery Image")}
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
                                         className="object-cover transition-all duration-[2000ms] group-hover:scale-110"
@@ -221,7 +214,7 @@ export default function GalleryPage() {
                         <div className="w-full md:w-1/2 aspect-square bg-[#0a0a0a] relative flex items-center justify-center overflow-hidden border-r border-stone-50">
                             <Image
                                 src={getSafeSrc(selectedImg.src)}
-                                alt={selectedImg.title}
+                                alt={getAlt(selectedImg.src, seo, selectedImg.altText || selectedImg.alt || selectedImg.title || "Gallery Detailed Image")}
                                 fill
                                 className="object-cover transition-transform duration-1000 select-none animate-in fade-in duration-1000"
                                 priority

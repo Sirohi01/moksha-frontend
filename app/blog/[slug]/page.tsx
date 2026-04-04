@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
+import { getAlt } from '@/lib/utils';
 
 async function getBlogPost(slug: string) {
   const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
@@ -11,6 +12,20 @@ async function getBlogPost(slug: string) {
   if (!response.ok) return null;
   const result = await response.json();
   return result.success ? result.data : null;
+}
+
+async function getSEOData(slug: string) {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/seo/page/${slug}`, {
+      next: { revalidate: 3600 }
+    });
+    if (!response.ok) return null;
+    const result = await response.json();
+    return result.success ? result.data : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -35,6 +50,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = await getBlogPost(params.slug);
+  const seo = await getSEOData(params.slug);
   if (!post) notFound();
 
   return (
@@ -44,7 +60,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {post.featuredImage?.url && (
           <Image 
             src={post.featuredImage.url} 
-            alt={post.featuredImage.alt || post.title}
+            alt={getAlt(post.featuredImage.url, seo, post.featuredImage.alt || post.title)}
             fill
             className="object-cover"
             priority

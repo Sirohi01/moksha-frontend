@@ -5,7 +5,8 @@ import { InputField, TextareaField, SelectField } from "@/components/ui/FormFiel
 import Button from "@/components/ui/Button";
 import EmailVerification from "@/components/ui/EmailVerification";
 import MobileVerification from "@/components/ui/MobileVerification";
-import { cn } from "@/lib/utils";
+import NextImage from "next/image";
+import { cn, getAlt } from "@/lib/utils";
 import { volunteerConfig as localVolunteerConfig } from "@/config/volunteer.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -246,7 +247,13 @@ export default function VolunteerPage() {
                                 onClick={() => photoFileInput.current?.click()}
                              >
                                 {profilePhoto ? (
-                                   <img src={profilePhoto} className="w-full h-full object-cover transition-all duration-700 shadow-2xl" alt="Identity" />
+                                   <NextImage 
+                                     src={profilePhoto} 
+                                     alt={getAlt(profilePhoto, null, "Identity Profile")}
+                                     fill
+                                     unoptimized
+                                     className="object-cover transition-all duration-700 shadow-2xl" 
+                                   />
                                 ) : (
                                    <div className="text-center font-black uppercase tracking-widest text-navy-200 text-[10px] md:text-xs space-y-4 md:space-y-6 p-6 md:p-10">
                                       <Camera className="w-8 h-8 md:w-12 md:h-12 mx-auto text-stone-200 group-hover:text-gold-500 transition-all duration-700" /> 

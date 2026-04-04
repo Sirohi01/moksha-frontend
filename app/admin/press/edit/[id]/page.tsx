@@ -107,7 +107,7 @@ export default function EditPressReleasePage() {
             });
             const result = await response.json();
             if (result.success) {
-                setFormData({ ...formData, featuredImage: { url: result.data.url, alt: formData.title } });
+                setFormData({ ...formData, featuredImage: { url: result.data.url, alt: '' } });
             }
         } catch (error) {
             console.error('Upload failed:', error);
@@ -255,6 +255,23 @@ export default function EditPressReleasePage() {
                                         <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} />
                                     </label>
                                 )}
+                            </div>
+                             <div className="space-y-4">
+                                <label className="text-[10px] font-black text-rose-600 uppercase tracking-widest pl-4 flex items-center gap-1.5">
+                                   Press Asset Alt Text (SEO Mandatory) *
+                                   <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                                </label>
+                                <input 
+                                    required
+                                    type="text" 
+                                    placeholder="DESCRIBE THIS PRESS ASSET..."
+                                    value={formData.featuredImage.alt}
+                                    onChange={(e) => setFormData({...formData, featuredImage: {...formData.featuredImage, alt: e.target.value}})}
+                                    className={cn(
+                                        "w-full h-14 px-6 bg-stone-50 rounded-xl border-none text-[10px] font-black uppercase tracking-widest focus:ring-4 focus:ring-navy-500/10 focus:bg-white transition-all outline-none shadow-inner",
+                                        !formData.featuredImage.alt ? "ring-2 ring-rose-100" : ""
+                                    )}
+                                />
                             </div>
                         </div>
                     </div>

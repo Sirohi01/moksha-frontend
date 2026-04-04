@@ -24,7 +24,7 @@ import {
     ArrowRight,
     X
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getAlt } from '@/lib/utils';
 import { setNestedValue } from '@/lib/editor-utils';
 
 export default function MasterVisualHub() {
@@ -33,10 +33,33 @@ export default function MasterVisualHub() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [seoData, setSeoData] = useState<any>(null);
 
     useEffect(() => {
         fetchGalleryData();
     }, []);
+
+    useEffect(() => {
+        if (selectedSlug) {
+            fetchSeoForPage(selectedSlug);
+        }
+    }, [selectedSlug]);
+
+    const fetchSeoForPage = async (slug: string) => {
+        try {
+            const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+            const response = await fetch(`${API_BASE_URL}/api/seo/page/${slug}`);
+            const data = await response.json();
+            if (data.success) {
+                setSeoData(data.data);
+            } else {
+                setSeoData(null);
+            }
+        } catch (error) {
+            console.error("SEO fetch error:", error);
+            setSeoData(null);
+        }
+    };
 
     const fetchGalleryData = async () => {
         try {
@@ -70,11 +93,8 @@ export default function MasterVisualHub() {
             const currentSection = section || key;
 
             if (typeof val === 'string' && val.length > 3) {
-                // Check by extension/protocol
                 const hasImageExtension = /\.(jpg|jpeg|png|webp|gif|svg|avif|bmp|tiff)($|\?)/i.test(val);
                 const isUrl = val.startsWith('http') || val.startsWith('/') || val.startsWith('data:image/');
-
-                // Check by context (if key name sounds like an image)
                 const isImageContext = ['image', 'img', 'src', 'url', 'slides', 'banner', 'logo', 'background', 'thumb', 'icon', 'visual'].some(k =>
                     key.toLowerCase().includes(k)
                 );
@@ -84,13 +104,13 @@ export default function MasterVisualHub() {
                         url: val,
                         path: currentPath,
                         section: currentSection,
-                        key: key
+                        key: key,
+                        alt: getAlt(val, seoData || currentPageData?.seo) // Prioritize SEOPage model mappings
                     });
                 }
             } else if (Array.isArray(val)) {
                 val.forEach((item, idx) => {
                     if (typeof item === 'string') {
-                        // Direct string in array (like hero.slides)
                         const isImg = /\.(jpg|jpeg|png|webp|gif|svg|avif)($|\?)/i.test(item) ||
                             item.startsWith('/') || item.startsWith('http');
                         if (isImg) {
@@ -98,7 +118,8 @@ export default function MasterVisualHub() {
                                 url: item,
                                 path: `${currentPath}[${idx}]`,
                                 section: currentSection,
-                                key: `${key}[${idx}]`
+                                key: `${key}[${idx}]`,
+                                alt: getAlt(item, seoData || currentPageData?.seo)
                             });
                         }
                     } else {
@@ -121,15 +142,41 @@ export default function MasterVisualHub() {
         groupedImages[sectionName].push(img);
     });
 
-    const handleUpdateImage = async (path: string, value: any) => {
+    const handleUpdateImage = async (path: string, urlValue: any, altValue?: string) => {
         if (!currentPageData) return;
+        
+        // Hard Enforcement Check
+        if (!altValue || altValue.trim().length < 3) {
+            alert("SEO PROTOCOL REJECTED: Alt Text is mandatory (min 3 chars) for deployment.");
+            return;
+        }
 
-        const newConfig = setNestedValue(currentPageData.config, path, value);
+        const newConfig = setNestedValue(currentPageData.config, path, urlValue);
+
+        const normalizeUrl = (s: string) => {
+            if (!s || typeof s !== 'string') return s;
+            return s.replace(/^https?:\/\//, '').replace(/\/v\d+\//, '/');
+        };
+
+        const srcValue = typeof urlValue === 'string' ? urlValue : (urlValue.src || urlValue.url || "");
+        const currentSeo = currentPageData.seo || { imageAltMappings: {} };
+        const newAltMappings = { ...currentSeo.imageAltMappings };
+
+        if (altValue && srcValue) {
+            const normalized = normalizeUrl(srcValue);
+            // Clean up old matches to prevent ghost mappings
+            Object.keys(newAltMappings).forEach(k => {
+                if (normalizeUrl(k) === normalized) delete newAltMappings[k];
+            });
+            newAltMappings[srcValue] = altValue;
+        }
 
         setSaving(true);
         try {
             const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-            const response = await fetch(`${API_BASE_URL}/api/page-config/${selectedSlug}`, {
+
+            // 1. Update Config
+            const configResponse = await fetch(`${API_BASE_URL}/api/page-config/${selectedSlug}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -140,9 +187,46 @@ export default function MasterVisualHub() {
                     changeLog: `Master Hub Sync: ${path}`
                 })
             });
-            const data = await response.json();
+
+            // 2. Update SEO Mappings (PageConfig)
+            await fetch(`${API_BASE_URL}/api/page-config/${selectedSlug}/seo`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                },
+                body: JSON.stringify({
+                    seo: { ...currentSeo, imageAltMappings: newAltMappings }
+                })
+            });
+
+            // 3. Update Global SEO Hub (SEOPage Model) - THE SOURCE OF TRUTH
+            try {
+                const seoRes = await fetch(`${API_BASE_URL}/api/seo/page/${selectedSlug}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                    },
+                    body: JSON.stringify({
+                        imageAltMappings: newAltMappings
+                    })
+                });
+                const seoResult = await seoRes.json();
+                if (seoResult.success) {
+                    setSeoData(seoResult.data);
+                }
+            } catch (err) {
+                console.error("Global SEO Sync failed:", err);
+            }
+
+            const data = await configResponse.json();
             if (data.success) {
-                setPages(prev => prev.map(p => p.slug === selectedSlug ? { ...p, config: newConfig } : p));
+                setPages(prev => prev.map(p => p.slug === selectedSlug ? {
+                    ...p,
+                    config: newConfig,
+                    seo: { ...currentSeo, imageAltMappings: newAltMappings }
+                } : p));
             } else {
                 alert(data.message || "Sync Protocol Rejected.");
             }
@@ -237,7 +321,8 @@ export default function MasterVisualHub() {
                                                 title={img.path.split('.').pop()?.replace(/\[|\]/g, ' ')}
                                                 path={img.path}
                                                 url={img.url}
-                                                onSwap={(newUrl: string) => handleUpdateImage(img.path, newUrl)}
+                                                alt={img.alt}
+                                                onSwap={(newUrl: string, newAlt: string) => handleUpdateImage(img.path, newUrl, newAlt)}
                                                 onUpload={(file: File) => handleImageUpload(file, img.path)}
                                                 saving={saving}
                                             />
@@ -264,10 +349,18 @@ export default function MasterVisualHub() {
     );
 }
 
-function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
+function VisualAssetCard({ title, path, url, alt, onSwap, onUpload, saving }: any) {
     const [tempUrl, setTempUrl] = useState(url);
+    const [tempAlt, setTempAlt] = useState(alt || '');
     const [isPickerOpen, setIsPickerOpen] = useState(false);
-    const fileInputRef = Object.assign(useState<any>(null)[0] || {}, { current: null }); // Static-safe ref
+
+    // Synchronize local state with incoming props (Crucial for pre-filling)
+    useEffect(() => {
+        setTempUrl(url);
+        setTempAlt(alt || '');
+    }, [url, alt]);
+
+    const fileInputRef = Object.assign(useState<any>(null)[0] || {}, { current: null });
 
     // Determine Requirement protocol based on path
     const getRequirement = (path: string) => {
@@ -309,22 +402,22 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
                             <Layers className="w-3 md:w-4 h-3 md:h-4" />
                             Archive
                         </button>
-                        
+
                         <div className="flex items-center gap-2 text-white/40 text-[7px] md:text-[8px] font-black uppercase tracking-widest">
-                           <div className="w-4 md:w-8 h-px bg-white/20" /> OR <div className="w-4 md:w-8 h-px bg-white/20" />
+                            <div className="w-4 md:w-8 h-px bg-white/20" /> OR <div className="w-4 md:w-8 h-px bg-white/20" />
                         </div>
 
                         <label className="cursor-pointer bg-white/10 hover:bg-white/20 text-white px-4 md:px-8 py-2 md:py-3 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-widest flex items-center gap-2 border border-white/20 transition-all backdrop-blur-md transform hover:-translate-y-1">
                             <Upload className="w-3 md:w-4 h-3 md:h-4" />
                             Upload
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              accept="image/*"
-                              onChange={(e) => {
-                                 const file = e.target.files?.[0];
-                                 if (file) onUpload(file);
-                              }}
+                            <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) onUpload(file);
+                                }}
                             />
                         </label>
                     </div>
@@ -353,16 +446,33 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
                                 value={tempUrl}
                                 onChange={(e) => setTempUrl(e.target.value)}
                                 className="w-full h-12 md:h-14 bg-stone-50 rounded-xl md:rounded-2xl pl-10 md:pl-12 pr-4 md:pr-6 text-[10px] md:text-[11px] font-extrabold text-navy-900 outline-none border-2 border-transparent focus:border-gold-500/50 transition-all font-mono truncate"
+                                placeholder="IMAGE_URL"
+                            />
+                        </div>
+
+                        {/* Mandate Alt Text Input Layer */}
+                        <div className="relative">
+                            <div className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 w-1 md:w-1.5 h-1 md:h-1.5 rounded-full bg-rose-500 animate-pulse"></div>
+                            <input
+                                type="text"
+                                shadow-inner
+                                value={tempAlt}
+                                onChange={(e) => setTempAlt(e.target.value)}
+                                className={cn(
+                                    "w-full h-12 md:h-14 bg-rose-50/30 rounded-xl md:rounded-2xl pl-10 md:pl-12 pr-4 md:pr-6 text-[10px] md:text-[11px] font-black text-navy-950 outline-none border-2 transition-all italic",
+                                    !tempAlt ? "border-rose-200 ring-2 ring-rose-50" : "border-emerald-100 focus:border-gold-500"
+                                )}
+                                placeholder="DESCRIPTION_REQUIRED (SEO ALT)"
                             />
                         </div>
                     </div>
 
                     <Button
-                        onClick={() => onSwap(tempUrl)}
-                        disabled={saving || tempUrl === url}
+                        onClick={() => onSwap(tempUrl, tempAlt)}
+                        disabled={saving || (tempUrl === url && tempAlt === alt) || !tempAlt || tempAlt.trim().length < 3}
                         className={cn(
                             "w-full h-12 md:h-16 rounded-xl md:rounded-2xl text-[9px] md:text-[11px] font-black uppercase tracking-widest md:tracking-[0.3em] transition-all flex items-center justify-center gap-2 md:gap-3",
-                            tempUrl === url
+                            (tempUrl === url && tempAlt === alt) || !tempAlt || tempAlt.trim().length < 3
                                 ? "bg-stone-50 text-navy-400 border-2 border-navy-50/50 cursor-default opacity-80"
                                 : "bg-gold-500 text-black shadow-[0_10px_20px_rgba(245,158,11,0.2)] hover:bg-navy-950 hover:text-gold-500 hover:-translate-y-1 active:translate-y-0"
                         )}
@@ -377,8 +487,9 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
             {isPickerOpen && (
                 <AssetPickerModal
                     onClose={() => setIsPickerOpen(false)}
-                    onSelect={(selectedUrl) => {
+                    onSelect={(selectedUrl, selectedAlt) => {
                         setTempUrl(selectedUrl);
+                        setTempAlt(selectedAlt || '');
                         setIsPickerOpen(false);
                     }}
                 />
@@ -387,7 +498,7 @@ function VisualAssetCard({ title, path, url, onSwap, onUpload, saving }: any) {
     );
 }
 
-function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect: (url: string) => void }) {
+function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect: (url: string, alt: string) => void }) {
     const [images, setImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [category, setCategory] = useState('all');
@@ -395,7 +506,7 @@ function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect
     useEffect(() => {
         // LOCK BODY SCROLL
         document.body.style.overflow = 'hidden';
-        
+
         const fetchGallery = async () => {
             try {
                 setLoading(true);
@@ -419,7 +530,7 @@ function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect
     }, []);
 
     const filteredImages = category === 'all' ? images : images.filter(img => img.category === category);
-    
+
     const availableCategories = useMemo(() => {
         const cats = new Set(images.map(img => img.category).filter(Boolean));
         return ['all', ...Array.from(cats)].sort();
@@ -455,7 +566,7 @@ function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect
                         ))}
                     </div>
 
-                    <button 
+                    <button
                         onClick={onClose}
                         className="w-14 h-14 rounded-2xl bg-white border-2 border-stone-100 text-navy-950 hover:bg-navy-950 hover:text-white transition-all flex items-center justify-center shadow-sm group"
                     >
@@ -476,7 +587,7 @@ function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect
                         {filteredImages.map((img) => (
                             <div
                                 key={img._id || img.id}
-                                onClick={() => onSelect(img.url)}
+                                onClick={() => onSelect(img.url, img.altText || img.alt)}
                                 className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white cursor-pointer ring-offset-4 ring-gold-500 hover:ring-4 transition-all shadow-xl hover:-translate-y-2 duration-500 border-4 border-white"
                             >
                                 <img

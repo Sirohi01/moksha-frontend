@@ -5,13 +5,13 @@ import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
 import { ChevronRight } from "lucide-react";
 import Button from "@/components/ui/Button";
-import { getSafeSrc } from "@/lib/utils";
+import { getSafeSrc, getAlt } from "@/lib/utils";
 import { tributeConfig } from "@/config/tribute.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function TributePage() {
-    const { config, loading, error } = usePageConfig('tribute', tributeConfig);
+    const { config, seo, loading, error } = usePageConfig('tribute', tributeConfig);
     
     // Use fallback config if dynamic config is null
     const activeConfig = config || tributeConfig;
@@ -88,7 +88,7 @@ export default function TributePage() {
                     <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-16">
                         <div className="md:w-1/2">
                             <div className="relative aspect-square rounded-[3rem] overflow-hidden grayscale group hover:grayscale-0 transition-all duration-700 shadow-2xl">
-                                <Image src={getSafeSrc(activeConfig.quote.imageUrl)} alt={activeConfig.quote.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                                <Image src={getSafeSrc(activeConfig.quote.imageUrl)} alt={getAlt(activeConfig.quote.imageUrl, seo, activeConfig.quote.imageAlt || "Tribute Quote Image")} fill className="object-cover group-hover:scale-105 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 to-transparent" />
                             </div>
                         </div>

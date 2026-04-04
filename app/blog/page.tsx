@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Elements";
 import { blogConfig } from "@/config/blog.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { cn, getSafeSrc } from "@/lib/utils";
+import { cn, getSafeSrc, getAlt } from "@/lib/utils";
 import { 
   Search, 
   MapPin, 
@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 export default function BlogPage() {
-  const { config: pageConfig, loading: configLoading } = usePageConfig('blog', blogConfig);
+  const { config: pageConfig, seo, loading: configLoading } = usePageConfig('blog', blogConfig);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
@@ -178,8 +178,8 @@ export default function BlogPage() {
                   <div className="aspect-[16/9] relative overflow-hidden rounded-[2.8rem] m-2">
                     <Image 
                       src={getSafeSrc(blog.featuredImage?.url)} 
-                      alt={blog.title} 
-                      fill 
+                      alt={getAlt(blog.featuredImage?.url, seo, blog.featuredImage?.alt || blog.title)} 
+                      fill
                       className="object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute top-6 left-6 flex flex-col gap-2">

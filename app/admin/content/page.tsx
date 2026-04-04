@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { contentAPI } from '@/lib/api';
-import { Database, Search, FileText, Newspaper, Megaphone, Activity, RotateCcw } from 'lucide-react';
+import { Database, Search, FileText, Newspaper, Megaphone, Activity, RotateCcw, PlusCircle, CheckCircle2, Trash2 } from 'lucide-react';
 import { PageHeader, DataTable, ActionButton, LoadingSpinner } from '@/components/admin/AdminComponents';
+import Button from '@/components/ui/Button';
+import Link from 'next/link';
 
 interface ContentItem {
   _id: string;
@@ -21,12 +23,15 @@ interface ContentItem {
 export default function ContentManagement() {
   const [content, setContent] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [filters, setFilters] = useState({
     type: '',
     status: '',
     search: ''
   });
+
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchContent();
@@ -38,20 +43,20 @@ export default function ContentManagement() {
       setError('');
 
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-      const response = await fetch(`${API_BASE_URL}/api/content?type=page_config&limit=100`, {
+      const response = await fetch(`${API_BASE_URL}/api/page-config?hydrate=false`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
       });
       const data = await response.json();
 
-      if (data.success && data.data?.content) {
-        const validContent = data.data.content.map((item: any) => ({
+      if (data.success && data.data?.configs) {
+        const validContent = data.data.configs.map((item: any) => ({
           _id: item._id,
           slug: item.slug,
           title: item.title.replace(' Page Configuration', ''),
           type: 'page' as const,
           status: 'published' as const,
           updatedAt: item.updatedAt,
-          author: { name: 'Admin Core' },
+          author: { name: item.author?.name || 'Admin Core' },
           views: item.views || 0
         }));
 
@@ -64,6 +69,63 @@ export default function ContentManagement() {
       setLoading(false);
     }
   };
+
+  const handleDeleteNode = async (slug: string) => {
+    if (!window.confirm(`AUTHORIZED PERSONNEL ONLY: Are you sure you want to terminate node /p/${slug}? This action is irreversible and will purge the asset from the network.`)) return;
+
+    try {
+      setDeleting(slug);
+      const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('adminToken');
+
+      // 1. Terminate the page node
+      const deleteRes = await fetch(`${API_BASE_URL}/api/page-config/${slug}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      const deleteResult = await deleteRes.json();
+      if (!deleteResult.success) throw new Error(deleteResult.message);
+
+      // 2. Clear from Layout/Navbar
+      const layoutRes = await fetch(`${API_BASE_URL}/api/page-config/layout`);
+      const layoutData = await layoutRes.json();
+      
+      if (layoutData.success) {
+         const updatedLayout = { ...layoutData.data.config };
+         const navLinks = updatedLayout.navbar.navigation;
+         let changed = false;
+
+         navLinks.forEach((link: any) => {
+            if (link.subLinks) {
+               const originalLength = link.subLinks.length;
+               link.subLinks = link.subLinks.filter((sub: any) => sub.href !== `/p/${slug}`);
+               if (link.subLinks.length !== originalLength) changed = true;
+            }
+         });
+
+         if (changed) {
+            await fetch(`${API_BASE_URL}/api/page-config/layout`, {
+               method: 'PUT',
+               headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`
+               },
+               body: JSON.stringify({ config: updatedLayout, changeLog: `Purged /p/${slug} from Navbar` })
+            });
+         }
+      }
+
+      setSuccessMessage(`Node /p/${slug} has been successfully purged from the infrastructure.`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+      fetchContent();
+    } catch (err: any) {
+      setError(err.message || 'System breach detected during termination');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
 
   const filteredContent = content.filter(item => {
     return (
@@ -129,21 +191,23 @@ export default function ContentManagement() {
       )
     },
     {
-      key: 'modified',
-      label: 'LAST SYNC',
-      render: (_value: any, item: ContentItem) => (
-        <div className="text-[9px] font-black text-navy-700 uppercase tracking-widest italic">{new Date(item.updatedAt).toLocaleDateString()}</div>
-      )
-    },
-    {
       key: 'actions',
       label: 'CMD',
       render: (_value: any, item: ContentItem) => (
-        <ActionButton onClick={() => {
-          window.location.href = `/admin/content-editor?page=${item.slug}`;
-        }} size="sm">
-          EDIT
-        </ActionButton>
+        <div className="flex items-center gap-2">
+          <ActionButton onClick={() => {
+            window.location.href = `/admin/content-editor?page=${item.slug}`;
+          }} size="sm">
+            EDIT
+          </ActionButton>
+          <button 
+            disabled={deleting === item.slug}
+            onClick={() => handleDeleteNode(item.slug)}
+            className="w-10 h-10 rounded-xl bg-gray-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center disabled:opacity-50"
+          >
+            {deleting === item.slug ? <RotateCcw className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          </button>
+        </div>
       )
     }
   ];
@@ -171,8 +235,17 @@ export default function ContentManagement() {
         title="Content Management"
         description="Deploy and optimize operational content across the Moksha network."
         icon={<Database className="w-8 h-8" />}
-      >
-      </PageHeader>
+      />
+
+      {successMessage && (
+        <div className="p-6 bg-emerald-50 border border-emerald-100 rounded-[2rem] flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-500 mb-8">
+          <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+          <div>
+            <p className="text-[10px] font-black uppercase text-emerald-600 tracking-widest">Protocol Success</p>
+            <p className="text-xs font-bold text-emerald-800 mt-0.5">{successMessage}</p>
+          </div>
+        </div>
+      )}
 
       {/* Audit Filters */}
       <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.03)] border border-navy-50">

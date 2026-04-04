@@ -55,10 +55,16 @@ export default function GalleryManager() {
         20,
         selectedCategory === 'all' ? undefined : selectedCategory,
         searchTerm || undefined,
-        true, // isAdmin = true
+        true,
         visibilityFilter === 'all' ? undefined : (visibilityFilter === 'live' ? true : false)
       );
-      setImages(data.data.images || []);
+      const allAssets: GalleryImage[] = data.data.images || [];
+      const onlyImages = allAssets.filter(asset => {
+        const url = asset.src.toLowerCase();
+        return !url.endsWith('.pdf') && !url.endsWith('.mp4') && !url.endsWith('.mov') && !url.endsWith('.webm');
+      });
+
+      setImages(onlyImages);
       setTotalPages(data.data.total ? Math.ceil(data.data.total / 20) : 1);
     } catch (error: any) {
       console.error('Failed to fetch images:', error);
@@ -71,7 +77,7 @@ export default function GalleryManager() {
   const handleToggleVisibility = async (image: GalleryImage) => {
     try {
       const newStatus = !image.isPublic;
-      setImages(prev => prev.map(img => 
+      setImages(prev => prev.map(img =>
         img.id === image.id ? { ...img, isPublic: newStatus } : img
       ));
       await galleryAPI.updateImage(image.id, { isPublic: newStatus });
@@ -112,7 +118,7 @@ export default function GalleryManager() {
       <div className="relative group overflow-hidden bg-navy-950 p-8 md:p-10 rounded-[2.5rem] border border-white/5 shadow-2xl transition-all duration-700">
         <div className="absolute top-0 right-0 w-80 h-80 bg-gold-500/5 blur-[80px] rounded-full -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-40 h-40 bg-navy-800/20 blur-[50px] rounded-full translate-y-1/2 -translate-x-1/2" />
-        
+
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
@@ -121,7 +127,7 @@ export default function GalleryManager() {
               </div>
               <span className="text-[10px] font-black text-gold-500 uppercase tracking-[0.4em] italic opacity-80">Archive Terminal</span>
             </div>
-            
+
             <div className="space-y-1">
               <h1 className="text-4xl font-black text-white uppercase italic tracking-tighter leading-none">
                 Visual <span className="text-gold-500">Infrastructure</span>
@@ -235,9 +241,9 @@ export default function GalleryManager() {
                   height={400}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                
+
                 <div className="absolute top-3 left-3">
-                   <div className={cn("w-2 h-2 rounded-full ring-2 ring-white shadow-lg animate-pulse", image.isPublic ? "bg-emerald-500" : "bg-rose-500")} />
+                  <div className={cn("w-2 h-2 rounded-full ring-2 ring-white shadow-lg animate-pulse", image.isPublic ? "bg-emerald-500" : "bg-rose-500")} />
                 </div>
 
                 <div className="absolute inset-0 bg-navy-950/40 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-[1px]">
@@ -254,16 +260,16 @@ export default function GalleryManager() {
                 <h3 className="font-black text-navy-950 text-[10px] uppercase tracking-tight line-clamp-1 group-hover:text-gold-600 transition-colors">
                   {image.title}
                 </h3>
-                
+
                 <div className="grid grid-cols-2 gap-2 pt-3 border-t border-navy-50">
-                   <div className="space-y-0">
-                      <p className="text-[6px] font-black text-navy-200 uppercase tracking-widest leading-none">DIM</p>
-                      <p className="text-[8px] font-black text-navy-900 uppercase tracking-tighter whitespace-nowrap">{image.dimensions || 'Opt'}</p>
-                   </div>
-                   <div className="space-y-0 text-right">
-                      <p className="text-[6px] font-black text-navy-200 uppercase tracking-widest leading-none">SIZE</p>
-                      <p className="text-[8px] font-black text-gold-600 uppercase tracking-tighter whitespace-nowrap">{image.size}</p>
-                   </div>
+                  <div className="space-y-0">
+                    <p className="text-[6px] font-black text-navy-200 uppercase tracking-widest leading-none">DIM</p>
+                    <p className="text-[8px] font-black text-navy-900 uppercase tracking-tighter whitespace-nowrap">{image.dimensions || 'Opt'}</p>
+                  </div>
+                  <div className="space-y-0 text-right">
+                    <p className="text-[6px] font-black text-navy-200 uppercase tracking-widest leading-none">SIZE</p>
+                    <p className="text-[8px] font-black text-gold-600 uppercase tracking-tighter whitespace-nowrap">{image.size}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -307,10 +313,10 @@ export default function GalleryManager() {
                   </td>
                   <td className="p-8">
                     <div className="flex items-center justify-end gap-4">
-                       <button onClick={() => handleToggleVisibility(image)} className={cn("p-4 rounded-2xl border-2 transition-all hover:scale-110", image.isPublic ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-white text-navy-300 border-navy-50")}>
-                         {image.isPublic ? <Eye size={18} /> : <EyeOff size={18} />}
-                       </button>
-                       <button onClick={() => handleDeleteImage(image.id)} className="p-4 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-2xl border-2 border-rose-100 shadow-sm transition-all hover:scale-110"><Trash2 size={18} /></button>
+                      <button onClick={() => handleToggleVisibility(image)} className={cn("p-4 rounded-2xl border-2 transition-all hover:scale-110", image.isPublic ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-white text-navy-300 border-navy-50")}>
+                        {image.isPublic ? <Eye size={18} /> : <EyeOff size={18} />}
+                      </button>
+                      <button onClick={() => handleDeleteImage(image.id)} className="p-4 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white rounded-2xl border-2 border-rose-100 shadow-sm transition-all hover:scale-110"><Trash2 size={18} /></button>
                     </div>
                   </td>
                 </tr>
@@ -324,8 +330,8 @@ export default function GalleryManager() {
       {totalPages > 1 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-8 px-12 py-10 bg-navy-950 rounded-[3rem] text-white shadow-3xl mt-12">
           <div className="space-y-1">
-             <p className="text-[9px] font-black text-navy-400 uppercase tracking-[0.4em]">Archival Page Registry</p>
-             <p className="text-xl font-black text-white italic tracking-tighter">DISPLAYING SECTOR <span className="text-gold-500">{currentPage}</span> / {totalPages}</p>
+            <p className="text-[9px] font-black text-navy-400 uppercase tracking-[0.4em]">Archival Page Registry</p>
+            <p className="text-xl font-black text-white italic tracking-tighter">DISPLAYING SECTOR <span className="text-gold-500">{currentPage}</span> / {totalPages}</p>
           </div>
           <div className="flex items-center gap-6">
             <button

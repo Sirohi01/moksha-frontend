@@ -37,7 +37,7 @@ import {
 import { cn } from '@/lib/utils';
 
 // Tabs for the SEO Hub
-type SEOTab = 'ranking' | 'social' | 'technical' | 'backup';
+type SEOTab = 'ranking' | 'assets' | 'social' | 'technical' | 'backup';
 
 export default function SEOCommandDeck() {
   const [activeTab, setActiveTab] = useState<SEOTab>('ranking');
@@ -247,6 +247,7 @@ export default function SEOCommandDeck() {
         <div className="flex flex-wrap items-center gap-3 mb-12 overflow-x-auto pb-4 scrollbar-hide">
           {[
             { id: 'ranking', label: 'Primary Metatags', icon: BarChart3 },
+            { id: 'assets', label: 'Asset Mappings', icon: ImageIcon },
             { id: 'social', label: 'Social Engagement', icon: Share2 },
             { id: 'technical', label: 'Technical SEO', icon: Code2 },
             { id: 'backup', label: 'Audit History', icon: History }
@@ -328,6 +329,92 @@ export default function SEOCommandDeck() {
                            onChange={(e) => updateField('metaDescription', e.target.value)}
                            className="w-full bg-stone-50 border border-stone-50 rounded-[3rem] p-10 font-bold text-navy-950 focus:bg-white focus:border-gold-500 transition-all outline-none resize-none leading-relaxed"
                          />
+                      </div>
+                   </div>
+                </Card>
+              </div>
+            )}
+
+            {/* ASSET MAPPINGS HUB */}
+            {activeTab === 'assets' && (
+              <div className="space-y-10 animate-in fade-in duration-500">
+                <Card className="p-12 border-none shadow-2xl rounded-[4rem] bg-white space-y-12">
+                   <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-2xl font-black uppercase tracking-tighter italic flex items-center gap-4">
+                          <ImageIcon className="text-gold-600" /> Site-Wide Asset Registry
+                        </h3>
+                        <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest mt-2 italic font-mono leading-none">Global_Alt_Mapping_Protocol (Source of Truth)</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const url = prompt("Enter Image URL (Full or Static path):");
+                          if (url) {
+                            const alt = prompt("Enter Alt SEO Description:");
+                            if (alt) {
+                              const mappings = { ...(selectedPage?.imageAltMappings || {}) };
+                              mappings[url] = alt;
+                              setSelectedPage((prev: any) => ({ ...prev, imageAltMappings: mappings }));
+                            }
+                          }
+                        }}
+                        className="px-6 py-4 bg-navy-950 text-gold-500 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gold-500 hover:text-navy-950 transition-all flex items-center gap-3 shadow-xl"
+                      >
+                         <Plus size={16} />
+                         MANUAL_UPLINK
+                      </button>
+                   </div>
+
+                   <div className="space-y-6">
+                      <div className="grid grid-cols-12 gap-8 px-8 py-4 bg-stone-50 rounded-2xl text-[10px] font-black uppercase tracking-widest text-stone-400">
+                         <span className="col-span-5">Network Endpoint (URL)</span>
+                         <span className="col-span-5">SEO Protocol (Alt Tag)</span>
+                         <span className="col-span-2 text-right">Action</span>
+                      </div>
+
+                      <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                         {Object.entries(selectedPage?.imageAltMappings || {}).length > 0 ? (
+                           Object.entries(selectedPage?.imageAltMappings || {}).map(([url, alt]: [string, any], idx: number) => (
+                             <div key={idx} className="grid grid-cols-12 gap-6 items-center p-6 bg-white border border-stone-100 rounded-3xl hover:border-gold-500/50 hover:shadow-xl transition-all group">
+                                <div className="col-span-12 lg:col-span-5 flex items-center gap-4 min-w-0">
+                                   <div className="w-12 h-12 rounded-xl bg-stone-50 overflow-hidden flex-shrink-0 shadow-inner">
+                                      <img src={url} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="Preview"/>
+                                   </div>
+                                   <span className="text-[11px] font-mono font-bold truncate opacity-60 decoration-navy-950/20 group-hover:opacity-100 transition-opacity" title={url}>{url}</span>
+                                </div>
+                                <div className="col-span-12 lg:col-span-5">
+                                   <input 
+                                     type="text"
+                                     value={alt}
+                                     placeholder="ENTER_ALT_TEXT_HERE"
+                                     onChange={(e) => {
+                                       const newMappings = { ...(selectedPage?.imageAltMappings || {}) };
+                                       newMappings[url] = e.target.value;
+                                       setSelectedPage((prev: any) => ({ ...prev, imageAltMappings: newMappings }));
+                                     }}
+                                     className="w-full h-12 bg-stone-50 rounded-xl px-4 text-[11px] font-black italic text-navy-950 border border-transparent focus:border-gold-500 focus:bg-white outline-none transition-all placeholder:text-rose-400"
+                                   />
+                                </div>
+                                <div className="col-span-12 lg:col-span-2 flex justify-end gap-2">
+                                   <button 
+                                     onClick={() => {
+                                       const newMappings = { ...(selectedPage?.imageAltMappings || {}) };
+                                       delete newMappings[url];
+                                       setSelectedPage((prev: any) => ({ ...prev, imageAltMappings: newMappings }));
+                                     }}
+                                     className="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center hover:bg-rose-500 hover:text-white transition-all shadow-sm"
+                                   >
+                                      <Trash2 size={14} />
+                                   </button>
+                                </div>
+                             </div>
+                           ))
+                         ) : (
+                           <div className="py-20 text-center space-y-6 bg-stone-50/50 rounded-[3rem] border border-stone-100">
+                              <ImageIcon className="w-16 h-16 text-stone-200 mx-auto opacity-40 animate-pulse" />
+                              <p className="text-[10px] font-black text-stone-300 uppercase tracking-widest italic">No Asset Protocols Mapped In This Sector</p>
+                           </div>
+                         )}
                       </div>
                    </div>
                 </Card>

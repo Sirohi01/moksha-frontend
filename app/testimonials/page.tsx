@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
-import { getSafeSrc } from "@/lib/utils";
+import { getSafeSrc, getAlt } from "@/lib/utils";
 import { testimonialsConfig } from "@/config/testimonials.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
@@ -10,7 +10,7 @@ import VideoModal from "@/components/ui/VideoModal";
 import { formsAPI } from "@/lib/api";
 
 export default function Testimonials() {
-  const { config, loading: configLoading, error: configError } = usePageConfig('testimonials', testimonialsConfig);
+  const { config, seo, loading: configLoading, error: configError } = usePageConfig('testimonials', testimonialsConfig);
   const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loadingTestimonials, setLoadingTestimonials] = useState(true);
@@ -170,7 +170,7 @@ export default function Testimonials() {
               >
                 <Image 
                   src={getSafeSrc(video.thumbnail)}
-                  alt={video.alt}
+                  alt={getAlt(video.thumbnail, seo, video.alt || "Testimonial Video")}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />

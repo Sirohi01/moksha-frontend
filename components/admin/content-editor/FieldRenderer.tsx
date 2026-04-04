@@ -289,23 +289,34 @@ export default function FieldRenderer(props: FieldRendererProps) {
               </div>
 
               <div className="p-6 bg-slate-50 border-t space-y-4">
-                 <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Search Image Description (Alt Text)</label>
-                    <div className="flex items-center gap-1.5 text-[8px] font-black text-emerald-600 uppercase bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
-                       <Zap className="w-2.5 h-2.5" /> Google Sync
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-navy-600 block ml-1 mb-1 relative flex items-center gap-1.5">
+                       Alt Text (SEO Mandatory) *
+                       <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                    </label>
+                    <div className="flex items-center gap-1.5 text-[8px] font-black text-rose-600 uppercase bg-rose-50 px-2.5 py-1.5 rounded-full border border-rose-100 animate-pulse mb-1">
+                       <Zap className="w-2.5 h-2.5" /> High SEO Priority
                     </div>
-                 </div>
+                  </div>
                  <input
                    type="text"
                    value={seoData?.imageAltMappings?.[src] || ''}
                    onChange={(e) => {
                      const newAlt = e.target.value;
-                     setSeoData((prev: any) => ({
-                       ...prev,
-                       imageAltMappings: { ...prev.imageAltMappings, [src]: newAlt }
-                     }));
+                      setSeoData((prev: any) => {
+                        const newSeo = { ...prev, imageAltMappings: { ...prev.imageAltMappings, [src]: newAlt } };
+                        // SEND LIVE PREVIEW SIGNAL
+                        const previewIframe = document.querySelector('iframe');
+                        if (previewIframe?.contentWindow) {
+                           previewIframe.contentWindow.postMessage({ type: 'UPDATE_SEO_DATA', payload: newSeo }, '*');
+                        }
+                        return newSeo;
+                      });
                    }}
-                   className="w-full h-12 px-6 bg-white border border-slate-200 rounded-[1.25rem] text-xs font-bold focus:ring-4 focus:ring-gold-500/10 transition-all"
+                   className={cn(
+                     "w-full h-12 px-6 bg-white border rounded-[1.25rem] text-xs font-bold transition-all",
+                     !(seoData?.imageAltMappings?.[src]) ? "border-rose-300 ring-4 ring-rose-50" : "border-slate-200 focus:ring-4 focus:ring-gold-500/10"
+                   )}
                    placeholder="Describe this image for Google..."
                  />
               </div>

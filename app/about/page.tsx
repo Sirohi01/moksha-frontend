@@ -6,16 +6,11 @@ import Image from 'next/image';
 import { aboutConfig } from "@/config/about.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
-import { cn, getSafeSrc } from "@/lib/utils";
+import { cn, getSafeSrc, getAlt } from "@/lib/utils";
 
 export default function AboutPage() {
-  // Use dynamic config with fallback to static config
-  const { config: dynamicConfig, loading, error } = usePageConfig('about', aboutConfig);
-
-  // Use dynamic config if available, otherwise fallback to static
+  const { config: dynamicConfig, seo, loading, error } = usePageConfig('about', aboutConfig);
   const config = dynamicConfig || aboutConfig;
-
-  // Show loading state
   if (loading) {
     return (
       <div className="bg-stone-50 min-h-screen font-sans flex items-center justify-center">
@@ -65,12 +60,12 @@ export default function AboutPage() {
               <div className="absolute -top-4 -left-4 w-full h-full bg-amber-100 rounded-2xl"></div>
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
                 <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 relative">
-                    <Image
-                      src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
-                      alt={config.hero?.cardTitle || "About Moksha Sewa"}
-                      fill
-                      className="object-cover"
-                    />
+                  <Image
+                    src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
+                    alt={getAlt(config.hero?.image, seo, config.hero?.cardTitle || "About Moksha Sewa")}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <div className="text-center">
                   <h3 className="font-semibold text-gray-900 mb-2">{config.hero?.cardTitle}</h3>
@@ -146,7 +141,7 @@ export default function AboutPage() {
               <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-4 relative">
                 <Image
                   src={getSafeSrc(config.story?.image) || "/gallery/image009.png"}
-                  alt={config.story?.imageAlt || "Our Journey"}
+                  alt={getAlt(config.story?.image, seo, config.story?.imageAlt || "Our Journey")}
                   fill
                   className="object-cover"
                 />

@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import {
   Save, ArrowLeft, Eye, Settings, Search,
-  FileText, Plus, HelpCircle,
+  FileText, Plus, HelpCircle, Copy, Link as LinkIcon,
   ChevronDown, ChevronRight, Globe, Layout,
   Image as ImageIcon, Loader2, Upload, X,
   CheckCircle2, Clock, Terminal, PlusCircle, History, Cpu
@@ -324,6 +324,22 @@ export default function ContentEditor() {
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
                 Last Updated: {lastSaved ? lastSaved.toLocaleTimeString() : 'N/A'}
               </p>
+              <div className="flex items-center gap-2 mt-1">
+                 <LinkIcon className="w-3 h-3 text-gold-600" />
+                 <span className="text-[10px] font-black text-navy-400 uppercase tracking-widest break-all">
+                    Route: /p/{pageName}
+                 </span>
+                 <button 
+                    onClick={() => {
+                       navigator.clipboard.writeText(`${window.location.origin}/p/${pageName}`);
+                       setSuccessMessage('URL Copied to Clipboard!');
+                    }}
+                    className="p-1.5 bg-navy-50 text-navy-400 rounded-lg hover:bg-gold-500 hover:text-navy-950 transition-all ml-2"
+                    title="Copy for Navigation"
+                 >
+                    <Copy size={10} />
+                 </button>
+              </div>
             </div>
           </div>
 
@@ -339,11 +355,11 @@ export default function ContentEditor() {
             </div>
 
             <Button
-              onClick={() => window.open(`/${pageName === 'homepage' ? '' : pageName}`, '_blank')}
+              onClick={() => window.open(`/p/${pageName}`, '_blank')}
               className="bg-white border-2 border-navy-50 text-navy-950 hover:bg-gray-50 px-8 py-3.5 rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center gap-2"
             >
               <Eye className="w-4 h-4" />
-              Preview
+              Live View
             </Button>
 
             <Button

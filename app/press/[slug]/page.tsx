@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Container } from "@/components/ui/Elements";
+import { getAlt } from '@/lib/utils';
 import { ShieldCheck, FileBadge, Calendar, MapPin, Globe, ChevronRight, Newspaper, Play } from "lucide-react";
 
 async function getPressRelease(slug: string) {
@@ -13,6 +14,20 @@ async function getPressRelease(slug: string) {
   if (!response.ok) return null;
   const result = await response.json();
   return result.success ? result.data : null;
+}
+
+async function getSEOData(slug: string) {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/seo/page/${slug}`, {
+      next: { revalidate: 3600 }
+    });
+    if (!response.ok) return null;
+    const result = await response.json();
+    return result.success ? result.data : null;
+  } catch (e) {
+    return null;
+  }
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -33,6 +48,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function PressReleaseDetailPage({ params }: { params: { slug: string } }) {
   const pr = await getPressRelease(params.slug);
+  const seo = await getSEOData(params.slug);
   if (!pr) notFound();
 
   const getYoutubeId = (url: string) => {
@@ -124,7 +140,7 @@ export default async function PressReleaseDetailPage({ params }: { params: { slu
                    ) : pr.featuredImage?.url ? (
                      <Image 
                        src={pr.featuredImage.url} 
-                       alt={pr.featuredImage.alt || pr.title}
+                       alt={getAlt(pr.featuredImage.url, seo, pr.featuredImage.alt || pr.title)}
                        fill
                        className="object-cover group-hover:scale-105 transition-transform duration-[8s]"
                        priority
