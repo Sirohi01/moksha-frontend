@@ -6,6 +6,7 @@ import { adminService, seoService, analyticsService } from './services/systemSer
 import { marketingService } from './services/marketingService';
 import { chatService, intelligenceService, newsletterService } from './services/interactionService';
 import { mediaService } from './services/mediaService';
+import { sopService } from './services/sopService';
 export const authAPI = authService;
 export const adminAPI = adminService;
 export const formsAPI = formsService;
@@ -19,6 +20,7 @@ export const chatAPI = chatService;
 export const intelligenceAPI = intelligenceService;
 export const newsletterAPI = newsletterService;
 export const galleryAPI = mediaService;
+export const sopAPI = sopService;
 import { apiRequest, API_ENDPOINTS } from './api-base';
 export const settingsAPI = {
     getSettings: async () => apiRequest(API_ENDPOINTS.SETTINGS),

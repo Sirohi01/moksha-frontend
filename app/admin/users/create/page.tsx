@@ -51,6 +51,7 @@ const PAGE_PERMISSIONS = [
   { id: 'page_volunteers', label: 'Volunteers', icon: UserCheck, group: 'Management' },
   { id: 'page_donations', label: 'Donations', icon: CreditCard, group: 'Management' },
   { id: 'page_compliance', label: 'Tax & Compliance', icon: ShieldCheck, group: 'Management' },
+  { id: 'page_sops', label: 'SOP Manuals', icon: FileText, group: 'Management' },
 
   // 3. Website Content
   { id: 'page_blogs', label: 'Blogs', icon: FileText, group: 'Content' },

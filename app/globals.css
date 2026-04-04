@@ -143,3 +143,41 @@ h1, h2, h3, h4, h5, h6 {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* MISSION-CRITICAL PRINT PROTOCOL */
+@media print {
+  /* HIDE NON-ESSENTIAL UI CLUSTERS */
+  header, footer, nav, aside, 
+  .no-print, 
+  [role="banner"], 
+  [role="contentinfo"],
+  .social-floating, 
+  .emergency-floating,
+  iframe, 
+  .chat-widget,
+  .marketing-banner {
+    display: none !important;
+  }
+
+  /* RESET LAYOUT FOR PROFESSIONAL FEED */
+  body, html {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* FORCE LINK VISIBILITY */
+  a:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}

@@ -228,7 +228,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-24 left-6 z-[1100] font-sans">
+    <div className="fixed bottom-24 left-6 z-[1100] font-sans print:hidden">
       {isOpen && (
         <div className="mb-4 w-[380px] h-[550px] bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden flex flex-col animate-fadeIn">
           {/* Incoming Call Alert */}

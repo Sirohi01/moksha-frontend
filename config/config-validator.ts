@@ -61,15 +61,17 @@ export function validateConfig(): ValidationResult {
   });
 
   // Validate image paths (basic check)
-  const checkImagePath = (path: string, location: string) => {
-    if (path && !path.startsWith('/')) {
-      warnings.push(`Image path "${path}" in ${location} should start with "/" for absolute path`);
+  const checkImagePath = (image: string | { src: string; alt: string } | undefined, location: string) => {
+    if (!image) return;
+    const path = typeof image === 'string' ? image : image.src;
+    if (path && !path.startsWith('/') && !path.startsWith('http')) {
+      warnings.push(`Image path "${path}" in ${location} should start with "/" (for relative) or "http" (for external)`);
     }
   };
 
   // Check hero images
   homepageConfig.hero?.slides?.forEach((slide, index) => {
-    checkImagePath(slide, `hero.slides[${index}]`);
+    checkImagePath(slide as any, `hero.slides[${index}]`);
   });
 
   // Check programme images

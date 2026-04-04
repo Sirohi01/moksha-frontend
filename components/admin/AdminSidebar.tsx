@@ -67,6 +67,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
     { title: 'Donations', href: '/admin/donations', icon: CreditCard },
     { title: 'Tax & Compliance', href: '/admin/compliance', icon: ShieldCheck },
+    { title: 'SOP Manuals', href: '/admin/sops', icon: FileText },
   ]);
   if (managementItems.length > 0) {
     sections.push({ title: 'Management', items: managementItems });

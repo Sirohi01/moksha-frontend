@@ -15,6 +15,7 @@ export const ROUTE_PERMISSIONS: Record<string, string> = {
   '/admin/volunteers': 'page_volunteers',
   '/admin/donations': 'page_donations',
   '/admin/compliance': 'page_compliance',
+  '/admin/sops': 'page_sops',
 
   // Website Content Section
   '/admin/blogs': 'page_blogs',
