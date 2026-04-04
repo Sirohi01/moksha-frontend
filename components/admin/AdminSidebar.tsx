@@ -98,7 +98,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
   const formItems = filtered([
     { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
     { title: 'Schemes', href: '/admin/schemes', icon: FileText },
-    { id: 'page_feedback', title: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
+    { id: 'page_testimonials', title: 'Testimonials', href: '/admin/feedback', icon: Star },
     { title: 'Contacts', href: '/admin/contacts', icon: Mail },
     { title: 'Legacy Requests', href: '/admin/legacy', icon: Heart },
     { title: 'Expansion Node', href: '/admin/expansion', icon: TrendingUp },
@@ -176,10 +176,10 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               <Shield className="w-6 h-6 text-gold-500" />
             </div>
             <div>
-              <h2 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic">Admin Panel</h2>
+              <h2 className="text-navy-950 font-black text-sm uppercase tracking-tighter italic">Admin Panel</h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-600 animate-pulse"></span>
-                <span className="text-[9px] text-navy-700 font-black uppercase tracking-widest">Active Session</span>
+                <span className="text-[11px] text-navy-700 font-black uppercase tracking-widest">Active Session</span>
               </div>
             </div>
           </div>
@@ -194,7 +194,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                   href={item.href}
                   onClick={() => window.innerWidth < 1024 && onClose()}
                   className={cn(
-                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
+                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
                     pathname === item.href
                       ? 'bg-navy-950 text-gold-500 shadow-2xl shadow-navy-200'
                       : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
@@ -214,7 +214,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               ) : (
                 <div className="pt-4 space-y-1">
                   <div className="px-5 mb-2 mt-4 first:mt-0">
-                    <span className="text-[10px] font-black text-navy-950 uppercase tracking-[0.4em] opacity-80">{item.title}</span>
+                    <span className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] opacity-80">{item.title}</span>
                   </div>
                   <div className="space-y-1">
                     {item.items?.map((subItem) => (
@@ -223,7 +223,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                         href={subItem.href}
                         onClick={() => window.innerWidth < 1024 && onClose()}
                         className={cn(
-                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all duration-300',
+                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[13px] font-black uppercase tracking-widest transition-all duration-300',
                           pathname === subItem.href
                             ? 'bg-navy-950 text-gold-500 shadow-xl shadow-navy-200/50'
                             : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
@@ -249,7 +249,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
         <div className="p-6 border-t border-navy-50 bg-[#fcfcfc]/50">
           <button
             onClick={onLogout}
-            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all group"
+            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[12px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all group"
           >
             <div className="p-2 rounded-xl bg-rose-50 group-hover:bg-rose-600 group-hover:text-white transition-all">
               <X className="w-4 h-4" />

@@ -136,7 +136,7 @@ export default function HomePage() {
         })}
 
         {/* Dynamic Progress Indicator (Smile Style) */}
-        <div className="absolute bottom-0 left-0 right-0 z-20 h-2 flex bg-black/10">
+        <div className="absolute bottom-0 left-0 right-0 z-20 h-2.5 flex bg-black/10">
           {config.hero?.slides?.map((_, idx) => (
             <div key={idx} className="flex-1 h-full overflow-hidden bg-white/10">
               <div
@@ -216,11 +216,11 @@ export default function HomePage() {
                 <span className="text-gray-700 block">{config.about.titleHighlight}</span>
               </h2>
 
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed font-medium">
                 {config.about.description}
               </p>
 
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
                 {config.about.secondaryDescription}
               </p>
 
@@ -319,8 +319,8 @@ export default function HomePage() {
               <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{config.ourSeva.badge}</span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6">{config.ourSeva.title}</h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+            <h2 className="text-4xl lg:text-6xl font-black text-gray-900 mb-8 uppercase tracking-tighter italic">{config.ourSeva.title}</h2>
+            <p className="text-2xl md:text-3xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium italic">
               {config.ourSeva.description}
             </p>
           </div>
@@ -346,10 +346,10 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 text-center group-hover:text-gray-700 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 text-center group-hover:text-gray-700 transition-colors uppercase tracking-tight">
                       {p.title}
                     </h3>
-                    <p className="text-gray-600 text-center leading-relaxed mb-6">
+                    <p className="text-lg text-gray-600 text-center leading-relaxed mb-6 font-medium">
                       {p.description}
                     </p>
 
@@ -392,8 +392,8 @@ export default function HomePage() {
                 <span className="text-sm text-gray-600 uppercase tracking-wider">{config.whereWeServe.badge}</span>
                 <div className="w-8 h-px bg-gray-300"></div>
               </div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">{config.whereWeServe.title}</h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <h2 className="text-4xl font-black text-gray-900 mb-8 uppercase tracking-tighter italic">{config.whereWeServe.title}</h2>
+              <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed font-medium">
                 {config.whereWeServe.description}
               </p>
             </div>
@@ -426,8 +426,8 @@ export default function HomePage() {
                               <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
                               <span className="text-sm font-medium">{slide.location}</span>
                             </div>
-                            <h3 className="text-3xl font-bold mb-2">{slide.title}</h3>
-                            <p className="text-lg opacity-90">{slide.description}</p>
+                            <h3 className="text-4xl font-black mb-4 uppercase tracking-tighter italic">{slide.title}</h3>
+                            <p className="text-xl opacity-95 font-medium leading-snug">{slide.description}</p>
                           </div>
                         </div>
                       ))}
@@ -528,8 +528,8 @@ export default function HomePage() {
               <span className="text-amber-800 text-sm uppercase tracking-wider">{config.missionPillars.badge}</span>
               <div className="w-8 h-px bg-amber-700"></div>
             </div>
-            <h2 className="text-3xl font-bold text-amber-900 mb-3">{config.missionPillars.title}</h2>
-            <p className="text-amber-800 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black text-amber-900 mb-6 uppercase tracking-tighter italic">{config.missionPillars.title}</h2>
+            <p className="text-xl md:text-2xl text-amber-800 max-w-3xl mx-auto font-medium leading-relaxed">
               {config.missionPillars.description}
             </p>
           </div>
@@ -636,11 +636,11 @@ export default function HomePage() {
             <div className="inline-block px-4 py-1.5 rounded-full bg-navy-50/10 border border-navy-50/20 mb-6 backdrop-blur-md">
               <p className="text-[#20b2aa] font-black text-[10px] uppercase tracking-[0.4em] leading-none">{config.joinMission.badge}</p>
             </div>
-            <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter text-white leading-none md:leading-[0.85] mb-8">
+            <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter text-white leading-none md:leading-[0.85] mb-10">
               {config.joinMission.title} <br />
               <span className="text-[#f4c430]">{config.joinMission.titleHighlight}</span>
             </h2>
-            <p className="text-white/90 font-medium text-lg mb-10 leading-snug drop-shadow-lg">
+            <p className="text-white font-medium text-xl md:text-2xl mb-12 leading-relaxed drop-shadow-xl max-w-2xl">
               {config.joinMission.description}
             </p>
 
@@ -686,8 +686,8 @@ export default function HomePage() {
               <span className="text-amber-700 text-sm uppercase tracking-wider font-medium">{config.urgentCampaigns.badge}</span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-amber-600 to-transparent"></div>
             </div>
-            <h2 className="text-4xl font-bold text-black mb-3">{config.urgentCampaigns.title}</h2>
-            <p className="text-black text-lg">{config.urgentCampaigns.description}</p>
+            <h2 className="text-4xl lg:text-5xl font-black text-black mb-8 uppercase tracking-tighter italic">{config.urgentCampaigns.title}</h2>
+            <p className="text-xl md:text-2xl text-black font-medium leading-relaxed max-w-3xl mx-auto">{config.urgentCampaigns.description}</p>
           </div>
 
           {/* Enhanced 3D Circular Carousel */}

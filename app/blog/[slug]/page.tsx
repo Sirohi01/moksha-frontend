@@ -57,11 +57,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         {/* Full-width Meta Header */}
         <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 border-b border-stone-50">
           <div className="flex flex-wrap items-center gap-3 mb-8">
-            <span className="px-5 py-1.5 bg-stone-950 text-white text-[10px] font-black uppercase tracking-[0.25em] rounded-full shadow-lg shadow-stone-950/20 italic">
+            <span className="px-6 py-2 bg-stone-950 text-white text-[12px] md:text-[14px] font-black uppercase tracking-[0.25em] rounded-full shadow-lg shadow-stone-950/20 italic transition-all hover:scale-105 cursor-default">
               {post.category || 'humanitarian_log'}
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse border border-amber-600/20" />
-            <span className="text-stone-400 text-[10px] font-black uppercase tracking-widest">{post.type || 'MISSION_LOG'}</span>
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse border border-amber-600/20" />
+            <span className="text-stone-400 text-[12px] md:text-[14px] font-black uppercase tracking-widest">{post.type || 'MISSION_LOG'}</span>
           </div>
 
           <h1 className="text-4xl md:text-8xl font-black text-stone-950 uppercase italic tracking-tighter leading-[0.8] mb-12 animate-fade-in">
@@ -74,17 +74,17 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   <span className="text-xl font-black">{post.author?.name?.charAt(0) || 'M'}</span>
                 </div>
                 <div>
-                  <p className="text-[11px] font-black text-stone-950 uppercase tracking-widest leading-none mb-1.5">
+                  <p className="text-[13px] md:text-[15px] font-black text-stone-950 uppercase tracking-widest leading-none mb-2">
                     WRITTEN BY: <span className="text-amber-700">{post.author?.name || 'Moksha Editorial'}</span>
                   </p>
-                  <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest">{post.author?.role || 'Mission Director'}</p>
+                  <p className="text-[11px] md:text-[13px] text-stone-400 font-bold uppercase tracking-widest">{post.author?.role || 'Mission Director'}</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-8">
                 <div className="text-right">
-                  <p className="text-[11px] font-black text-stone-950 uppercase tracking-widest leading-none mb-1.5">PUBLISHED ON:</p>
-                  <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest">
+                  <p className="text-[13px] md:text-[15px] font-black text-stone-950 uppercase tracking-widest leading-none mb-2">PUBLISHED ON:</p>
+                  <p className="text-[11px] md:text-[13px] text-stone-400 font-bold uppercase tracking-widest">
                     {new Date(post.publishedAt || post.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
                   </p>
                 </div>
@@ -95,14 +95,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {/* Story Narrative Layer */}
           <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
             <div 
-              className="prose prose-xl prose-stone max-w-none 
-                prose-headings:text-stone-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none prose-headings:mb-8 prose-headings:mt-16
-                prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-2xl prose-p:font-medium prose-p:mb-12
+              className="prose prose-2xl prose-stone max-w-none 
+                prose-headings:text-stone-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none prose-headings:mb-12 prose-headings:mt-24
+                prose-h2:text-4xl md:prose-h2:text-6xl prose-h3:text-3xl md:prose-h3:text-5xl
+                prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-2xl md:prose-p:text-[2.25rem] prose-p:font-medium prose-p:mb-16
                 prose-img:rounded-[3rem] prose-img:shadow-2xl prose-img:border prose-img:border-stone-50
-                prose-ul:list-disc prose-ul:marker:text-amber-600 prose-ul:space-y-4
+                prose-ul:list-disc prose-ul:marker:text-amber-600 prose-ul:space-y-8 prose-li:text-2xl md:prose-li:text-[2.25rem] prose-li:leading-relaxed
                 prose-a:text-amber-700 prose-a:font-black prose-a:uppercase prose-a:tracking-widest prose-a:no-underline hover:prose-a:text-stone-950 transition-colors
                 prose-strong:text-stone-950 prose-strong:font-black
-                prose-blockquote:border-l-4 prose-blockquote:border-amber-600 prose-blockquote:bg-stone-50 prose-blockquote:p-10 prose-blockquote:rounded-[3rem] prose-blockquote:italic prose-blockquote:text-stone-950 prose-blockquote:font-black prose-blockquote:text-2xl"
+                prose-blockquote:border-l-[12px] prose-blockquote:border-amber-600 prose-blockquote:bg-stone-50 prose-blockquote:p-14 prose-blockquote:rounded-[4rem] prose-blockquote:italic prose-blockquote:text-stone-950 prose-blockquote:font-black prose-blockquote:text-4xl md:prose-blockquote:text-5xl"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>

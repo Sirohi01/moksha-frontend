@@ -102,7 +102,7 @@ export default function BlogPage() {
                 {config.hero?.highlightText || "REVELATIONS"}
               </span>
             </h1>
-            <p className="text-stone-400 text-lg md:text-2xl font-medium leading-relaxed max-w-2xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
+            <p className="text-stone-400 text-xl md:text-3xl font-medium leading-relaxed max-w-4xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
               {config.hero?.description || "A curated documentation of our humanitarian impact, legislative progress, and the philosophy of dignity."}
             </p>
           </div>
@@ -206,7 +206,7 @@ export default function BlogPage() {
                     <h3 className="text-2xl font-black uppercase tracking-tighter text-stone-950 mb-4 group-hover:text-amber-700 transition-colors line-clamp-2 leading-tight italic">
                       {blog.title}
                     </h3>
-                    <p className="text-stone-500 text-lg font-medium leading-relaxed mb-10 line-clamp-3 group-hover:text-stone-700 transition-colors">
+                    <p className="text-stone-500 text-xl font-medium leading-relaxed mb-10 line-clamp-3 group-hover:text-stone-700 transition-colors">
                       {blog.excerpt}
                     </p>
                     
@@ -247,7 +247,7 @@ export default function BlogPage() {
                     {config.subscriptionCTA?.highlightText || "SACRED LOOP"}
                   </span>
                 </h2>
-                <p className="text-stone-600 text-xl font-medium leading-relaxed max-w-2xl mb-14">
+                <p className="text-stone-600 text-2xl font-medium leading-relaxed max-w-3xl mb-14">
                    {config.subscriptionCTA?.description || "Join a community of souls dedicated to dignity. Get monthly mission updates delivered to your sanctum."}
                 </p>
                 <div className="w-full max-w-xl bg-white p-2 rounded-[2.5rem] border border-stone-200 flex flex-col sm:flex-row gap-4 shadow-sm group/form focus-within:ring-4 focus-within:ring-amber-500/10 transition-all">

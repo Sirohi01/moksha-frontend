@@ -12,14 +12,18 @@ export const formsService = {
       body: JSON.stringify({ status }),
     });
   },
-  getFeedback: async (page = 1, limit = 10) => {
-    return apiRequest(`${API_ENDPOINTS.FEEDBACK}?page=${page}&limit=${limit}`);
+  getFeedback: async (page = 1, limit = 10, params: any = {}) => {
+    const queryParams = new URLSearchParams({ page: page.toString(), limit: limit.toString(), ...params });
+    return apiRequest(`${API_ENDPOINTS.FEEDBACK}?${queryParams}`);
   },
-  updateFeedbackStatus: async (id: string, status: string) => {
+  updateFeedbackStatus: async (id: string, data: { status?: string; isPublic?: boolean }) => {
     return apiRequest(`${API_ENDPOINTS.FEEDBACK}/${id}/status`, {
       method: 'PUT',
-      body: JSON.stringify({ status }),
+      body: JSON.stringify(data),
     });
+  },
+  getPublicTestimonials: async () => {
+    return apiRequest(`${API_ENDPOINTS.FEEDBACK}/testimonials`);
   },
   getVolunteers: async (page = 1, limit = 10, status?: string) => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
