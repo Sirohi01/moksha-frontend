@@ -35,57 +35,57 @@ import {
   Bell,
   Activity,
   Video,
-  Terminal
+  Terminal,
+  Star,
+  Film
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { adminAPI } from '@/lib/api';
 
 const PAGE_PERMISSIONS = [
-  // 1. Core Overview
-  { id: 'page_dashboard', label: 'Main Dashboard', icon: LayoutDashboard, group: 'Core' },
-  { id: 'page_tasks', label: 'Operations Calendar', icon: Calendar, group: 'Core' },
-  { id: 'page_users', label: 'Personnel Mgmt', icon: UserPlus, group: 'Core' },
-
-  // 2. People & Operations
-  { id: 'page_board', label: 'Board Applications', icon: Users, group: 'Management' },
-  { id: 'page_volunteers', label: 'Volunteer Assets', icon: UserCheck, group: 'Management' },
-  { id: 'page_donations', label: 'Financial Donations', icon: CreditCard, group: 'Management' },
+  { id: 'page_dashboard', label: 'Dashboard', icon: LayoutDashboard, group: 'Core' },
+  { id: 'page_tasks', label: 'Tasks', icon: Calendar, group: 'Core' },
+  { id: 'page_users', label: 'Members', icon: UserPlus, group: 'Core' },
+  { id: 'page_board', label: 'Applications', icon: Users, group: 'Management' },
+  { id: 'page_volunteers', label: 'Volunteers', icon: UserCheck, group: 'Management' },
+  { id: 'page_donations', label: 'Donations', icon: CreditCard, group: 'Management' },
+  { id: 'page_compliance', label: 'Tax & Compliance', icon: ShieldCheck, group: 'Management' },
 
   // 3. Website Content
-  { id: 'page_blogs', label: 'Blog Publication', icon: FileText, group: 'Content' },
-  { id: 'page_editorial', label: 'Editorial Hub', icon: Zap, group: 'Content' },
-  { id: 'page_content', label: 'Base Page Content', icon: Database, group: 'Content' },
-  { id: 'page_pageconfig', label: 'UI Configuration', icon: Layout, group: 'Content' },
-  { id: 'page_seo', label: 'Technical SEO', icon: Globe, group: 'Content' },
-  { id: 'page_banners', label: 'Hero Banners', icon: PlayCircle, group: 'Content' },
+  { id: 'page_blogs', label: 'Blogs', icon: FileText, group: 'Content' },
+  { id: 'page_editorial', label: 'Editorial', icon: FileText, group: 'Content' },
+  { id: 'page_content', label: 'Page Content', icon: Layout, group: 'Content' },
+  { id: 'page_pageconfig', label: 'Page Config', icon: Database, group: 'Content' },
+  { id: 'page_seo', label: 'SEO', icon: Globe, group: 'Content' },
+  { id: 'page_banners', label: 'Banners', icon: Layout, group: 'Content' },
 
   // 4. Multimedia & Press
-  { id: 'page_galleryhub', label: 'Asset Management', icon: Layers, group: 'Media' },
-  { id: 'page_gallery', label: 'Image Archives', icon: Image, group: 'Media' },
-  { id: 'page_documentaries', label: 'Video Catalog', icon: Video, group: 'Media' },
-  { id: 'page_press', label: 'Press Releases', icon: ShieldCheck, group: 'Media' },
+  { id: 'page_galleryhub', label: 'Visual Hub', icon: Image, group: 'Media' },
+  { id: 'page_gallery', label: 'Gallery', icon: Image, group: 'Media' },
+  { id: 'page_documentaries', label: 'Videos', icon: Film, group: 'Media' },
+  { id: 'page_press', label: 'Press', icon: ShieldCheck, group: 'Media' },
 
   // 5. Communications
-  { id: 'page_whatsapp', label: 'WhatsApp Bridge', icon: MessageSquare, group: 'Communication' },
-  { id: 'page_support', label: 'Inbound Support', icon: Bell, group: 'Communication' },
-  { id: 'page_newsletter', label: 'Bulk Newsletters', icon: Mail, group: 'Communication' },
+  { id: 'page_whatsapp', label: 'WhatsApp', icon: MessageSquare, group: 'Communication' },
+  { id: 'page_support', label: 'Support', icon: MessageSquare, group: 'Communication' },
+  { id: 'page_newsletter', label: 'Newsletters', icon: Mail, group: 'Communication' },
 
   // 6. Forms & CRM
-  { id: 'page_reports', label: 'Inbound Reports', icon: BarChart3, group: 'Forms & CRM' },
-  { id: 'page_feedback', label: 'User Feedback', icon: MessageSquare, group: 'Forms & CRM' },
-  { id: 'page_schemes', label: 'Scheme Apps', icon: FileText, group: 'Forms & CRM' },
-  { id: 'page_contacts', label: 'Contact Leades', icon: Mail, group: 'Forms & CRM' },
+  { id: 'page_reports', label: 'Reports', icon: BarChart3, group: 'Forms & CRM' },
+  { id: 'page_feedback', label: 'Testimonials', icon: Star, group: 'Forms & CRM' },
+  { id: 'page_schemes', label: 'Schemes', icon: FileText, group: 'Forms & CRM' },
+  { id: 'page_contacts', label: 'Contacts', icon: Mail, group: 'Forms & CRM' },
   { id: 'page_legacy', label: 'Legacy Requests', icon: Heart, group: 'Forms & CRM' },
-  { id: 'page_expansion', label: 'Expansion Nodes', icon: TrendingUp, group: 'Forms & CRM' },
+  { id: 'page_expansion', label: 'Expansion Node', icon: TrendingUp, group: 'Forms & CRM' },
 
   // 7. System & Intelligence
   { id: 'page_settings', label: 'Global Settings', icon: Settings, group: 'System' },
-  { id: 'page_analytics', label: 'Visual Analytics', icon: BarChart3, group: 'System' },
-  { id: 'page_logs', label: 'Security Audits', icon: Lock, group: 'System' },
-  { id: 'page_system', label: 'System Health', icon: Activity, group: 'System' },
-  { id: 'page_maintenance', label: 'Infrastructure Terminal', icon: Terminal, group: 'System' },
-  { id: 'page_email_logs', label: 'Email Traffic', icon: Mail, group: 'System' },
+  { id: 'page_analytics', label: 'Analytics', icon: BarChart3, group: 'System' },
+  { id: 'page_logs', label: 'Activity Logs', icon: Activity, group: 'System' },
+  { id: 'page_system', label: 'System Health', icon: Shield, group: 'System' },
+  { id: 'page_maintenance', label: 'Maintenance', icon: Terminal, group: 'System' },
+  { id: 'page_email_logs', label: 'Email Logs', icon: Mail, group: 'System' },
   { id: 'page_comm_logs', label: 'Interaction Logs', icon: MessageSquare, group: 'System' },
 ];
 
