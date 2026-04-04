@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { marketingAPI, galleryAPI } from '@/lib/api';
 import {
     Image as ImageIcon,
@@ -450,7 +451,13 @@ export default function BannersPage() {
 
                                             <div className="aspect-[16/10] w-full relative overflow-hidden bg-navy-50">
                                                 {formData.imageUrl ? (
-                                                    <img src={formData.imageUrl} className="w-full h-full object-cover group-hover/pop:scale-105 transition-transform duration-1000" alt="Popup" />
+                                                    <Image 
+                                                        src={formData.imageUrl} 
+                                                        fill 
+                                                        className="object-cover group-hover/pop:scale-105 transition-transform duration-1000" 
+                                                        alt={formData.altText || 'Marketing Assets'} 
+                                                        unoptimized 
+                                                    />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10 text-navy-100" /></div>
                                                 )}
@@ -544,7 +551,13 @@ export default function BannersPage() {
                                     <div className="flex items-start gap-5">
                                         <div className="w-24 h-24 rounded-[1.5rem] bg-navy-50 overflow-hidden shadow-inner border border-navy-100/50 flex-shrink-0 relative">
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} className="w-full h-full object-cover filter saturate-0 group-hover:saturate-100 transition-all duration-700" alt="Asset" />
+                                                <Image 
+                                                    src={item.imageUrl} 
+                                                    fill 
+                                                    className="object-cover filter saturate-0 group-hover:saturate-100 transition-all duration-700" 
+                                                    alt={item.altText || 'Asset'} 
+                                                    unoptimized 
+                                                />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8 text-navy-200" /></div>
                                             )}

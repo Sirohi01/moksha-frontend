@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import {
@@ -381,10 +382,12 @@ function VisualAssetCard({ title, path, url, alt, onSwap, onUpload, saving }: an
             <Card className="group relative bg-white border-2 border-navy-50 rounded-[1.5rem] md:rounded-[3rem] p-4 md:p-10 space-y-4 md:space-y-8 hover:border-gold-500 transition-all duration-700 shadow-[0_20px_50px_rgba(0,0,0,0.03)] flex flex-col h-full w-full min-w-[280px]">
                 {/* Visual Canvas */}
                 <div className="aspect-[16/10] relative rounded-[1rem] md:rounded-[2rem] overflow-hidden bg-navy-50 shadow-inner">
-                    <img
+                    <Image
                         src={tempUrl}
                         alt={title}
-                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                        fill
+                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                        unoptimized
                     />
 
                     {/* Protocol Overlay */}
@@ -590,10 +593,12 @@ function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect
                                 onClick={() => onSelect(img.url, img.altText || img.alt)}
                                 className="group relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white cursor-pointer ring-offset-4 ring-gold-500 hover:ring-4 transition-all shadow-xl hover:-translate-y-2 duration-500 border-4 border-white"
                             >
-                                <img
+                                <Image
                                     src={img.url}
-                                    alt={img.title}
-                                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                    alt={img.title || 'Gallery Asset'}
+                                    fill
+                                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                                    unoptimized
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8">
                                     <p className="text-[10px] font-black text-gold-500 uppercase tracking-widest mb-1 truncate">{img.title || 'UNNAMED_ASSET'}</p>

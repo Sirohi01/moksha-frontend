@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { marketingAPI } from '@/lib/api';
 import { X, ExternalLink, Zap } from 'lucide-react';
 import { cn, getSafeSrc } from '@/lib/utils';
@@ -103,10 +104,12 @@ export default function MarketingPopup() {
 
                 {/* Visual Content Block */}
                 <div className="relative aspect-video w-full overflow-hidden group">
-                    <img 
+                    <Image 
                         src={getSafeSrc(popup.imageUrl)} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2000ms]" 
-                        alt="Campaign Visual" 
+                        fill 
+                        className="object-cover group-hover:scale-105 transition-transform duration-[2000ms]" 
+                        alt={popup.altText || 'Campaign Visual'} 
+                        unoptimized 
                     />
                     {/* Glass Branding Overlay */}
                     <div className="absolute top-6 left-6 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-2">

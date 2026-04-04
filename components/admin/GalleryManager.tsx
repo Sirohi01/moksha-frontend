@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Upload, Search, Grid, List, Trash2, Maximize2, CheckCircle2, Eye, EyeOff, Globe, ArrowRight, Filter, Box } from 'lucide-react';
 import Link from 'next/link';
 import LazyImage from '@/components/ui/LazyImage';
@@ -291,8 +292,8 @@ export default function GalleryManager() {
                 <tr key={image.id} className="group hover:bg-navy-50/20 transition-all">
                   <td className="p-8">
                     <div className="flex items-center gap-8">
-                      <div className="w-24 h-24 rounded-[2rem] bg-navy-50 overflow-hidden flex-shrink-0 border-4 border-white shadow-2xl group-hover:scale-105 transition-transform">
-                        <img src={image.src} className="w-full h-full object-cover" alt="" />
+                      <div className="w-24 h-24 rounded-[2rem] bg-navy-50 overflow-hidden flex-shrink-0 border-4 border-white shadow-2xl group-hover:scale-105 transition-transform relative">
+                        <Image src={image.src} fill className="object-cover" alt={image.alt || 'Asset'} unoptimized />
                       </div>
                       <div className="space-y-1">
                         <p className="font-black text-navy-950 uppercase italic text-sm tracking-tight">{image.title}</p>
@@ -378,7 +379,13 @@ export default function GalleryManager() {
           <div className="relative w-full max-w-7xl h-full max-h-[85vh] flex flex-col lg:flex-row bg-navy-900 rounded-[4rem] overflow-hidden shadow-[0_100px_200px_-50px_rgba(0,0,0,0.9)] border border-white/5 animate-in zoom-in-95 duration-500">
             <div className="flex-grow bg-black/60 relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-white/10">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.1)_0%,transparent_70%)] opacity-30" />
-              <img src={previewImage.src} alt={previewImage.alt} className="relative z-10 w-full h-full object-contain p-8 md:p-20 select-none pointer-events-none" />
+              <Image 
+                src={previewImage.src} 
+                alt={previewImage.alt || 'Asset Preview'} 
+                fill 
+                className="relative z-10 object-contain p-8 md:p-20 select-none pointer-events-none" 
+                unoptimized 
+              />
             </div>
 
             <div className="w-full lg:w-[450px] bg-navy-950 p-10 md:p-16 flex flex-col justify-between shrink-0 overflow-y-auto">

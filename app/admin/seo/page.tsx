@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import {
@@ -377,8 +378,14 @@ export default function SEOCommandDeck() {
                            Object.entries(selectedPage?.imageAltMappings || {}).map(([url, alt]: [string, any], idx: number) => (
                              <div key={idx} className="grid grid-cols-12 gap-6 items-center p-6 bg-white border border-stone-100 rounded-3xl hover:border-gold-500/50 hover:shadow-xl transition-all group">
                                 <div className="col-span-12 lg:col-span-5 flex items-center gap-4 min-w-0">
-                                   <div className="w-12 h-12 rounded-xl bg-stone-50 overflow-hidden flex-shrink-0 shadow-inner">
-                                      <img src={url} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="Preview"/>
+                                   <div className="w-12 h-12 rounded-xl bg-stone-50 overflow-hidden flex-shrink-0 shadow-inner relative">
+                                      <Image 
+                                         src={url} 
+                                         fill 
+                                         className="object-cover transition-transform group-hover:scale-110" 
+                                         alt="Asset Preview" 
+                                         unoptimized 
+                                      />
                                    </div>
                                    <span className="text-[11px] font-mono font-bold truncate opacity-60 decoration-navy-950/20 group-hover:opacity-100 transition-opacity" title={url}>{url}</span>
                                 </div>
@@ -459,7 +466,13 @@ export default function SEOCommandDeck() {
                          <div className="group relative aspect-video bg-stone-50 border-2 border-dashed border-stone-200 rounded-[3rem] overflow-hidden flex items-center justify-center p-2 transition-all hover:border-blue-500">
                             {selectedPage?.ogImage ? (
                                <>
-                                  <img src={selectedPage.ogImage} className="w-full h-full object-cover rounded-[2.5rem] shadow-xl" />
+                                  <Image 
+                                     src={selectedPage.ogImage} 
+                                     fill 
+                                     className="object-cover rounded-[2.5rem] shadow-xl" 
+                                     alt="Social Share Thumbnail" 
+                                     unoptimized 
+                                  />
                                   <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-6">
                                      <button onClick={() => setIsPickerOpen({ open: true, field: 'ogImage' })} className="bg-white text-navy-950 p-5 rounded-2xl shadow-2xl hover:scale-110 transition-transform">
                                         <Layers size={22} />
@@ -790,7 +803,13 @@ function AssetPickerHub({ onClose, onSelect }: { onClose: () => void, onSelect: 
                                 onClick={() => onSelect(img.url)}
                                 className="group relative aspect-[4/5] rounded-[3.5rem] overflow-hidden bg-white cursor-pointer hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] transition-all border-4 border-white"
                             >
-                                <img src={img.url} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                                <Image 
+                                    src={img.url} 
+                                    fill 
+                                    className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                    alt={img.title || 'Archive Asset'} 
+                                    unoptimized 
+                                />
                                 <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col justify-end p-10">
                                     <p className="text-[11px] font-black text-gold-500 uppercase tracking-widest italic">{img.title || 'UNNAMED_NODE'}</p>
                                     <p className="text-[9px] font-bold text-white/50 uppercase tracking-widest mt-2">{img.category}</p>

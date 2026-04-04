@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Upload, CheckCircle2, ArrowLeft, Image as ImageIcon, Eye, Copy, Loader2 } from 'lucide-react';
 import { ActionButton } from '@/components/admin/AdminComponents';
@@ -130,7 +131,13 @@ export default function GalleryUploadPage() {
             >
               {preview ? (
                 <>
-                  <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                  <Image 
+                    src={preview} 
+                    alt="Current preview" 
+                    fill 
+                    className="object-cover" 
+                    unoptimized 
+                  />
                   <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 backdrop-blur-sm">
                     <span className="text-white text-[9px] font-black uppercase tracking-[0.3em] bg-gold-600 px-6 py-3 rounded-full shadow-2xl">Change Image</span>
                   </div>

@@ -366,8 +366,16 @@ export default function VolunteerPage() {
                                         <div key={idx} className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-10 shadow-xl border border-stone-100 flex flex-col gap-6 md:gap-8 relative group/member animate-in zoom-in-95 transition-all hover:border-gold-500 hover:shadow-2xl">
                                            <button onClick={() => removeMember(idx)} className="absolute top-6 right-6 md:top-8 md:right-8 text-stone-200 hover:text-red-500 transition-all transform hover:rotate-90 duration-500"><Trash2 className="w-4 h-4 md:w-5 md:h-5" /></button>
                                            <div className="flex flex-col xs:flex-row items-center xs:items-start gap-6 md:gap-8">
-                                              <div className="w-16 h-20 md:w-20 md:h-24 bg-stone-50 rounded-xl md:rounded-2xl border-2 border-dashed border-stone-200 flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer shadow-inner hover:border-gold-500 transition-all" onClick={() => document.getElementById(`m-${idx}`)?.click()}>
-                                                 {member.photo ? <img src={member.photo} className="w-full h-full object-cover" /> : <Camera className="w-6 h-6 md:w-8 md:h-8 text-stone-200" />}
+                                              <div className="w-16 h-20 md:w-20 md:h-24 bg-stone-50 rounded-xl md:rounded-2xl border-2 border-dashed border-stone-200 flex items-center justify-center overflow-hidden flex-shrink-0 cursor-pointer shadow-inner hover:border-gold-500 transition-all relative" onClick={() => document.getElementById(`m-${idx}`)?.click()}>
+                                                 {member.photo ? (
+                                                    <NextImage 
+                                                       src={member.photo} 
+                                                       fill 
+                                                       className="object-cover" 
+                                                       alt="Member Identity" 
+                                                       unoptimized 
+                                                    />
+                                                 ) : <Camera className="w-6 h-6 md:w-8 md:h-8 text-stone-200" />}
                                                  <input id={`m-${idx}`} type="file" onChange={(e) => handlePhotoUpload(e, idx)} className="hidden" accept="image/*" />
                                               </div>
                                               <div className="flex-1 w-full">
