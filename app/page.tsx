@@ -100,8 +100,8 @@ export default function HomePage() {
       )}
       <section className={cn(
         "relative w-full overflow-hidden bg-white border-b-4 border-stone-100 transition-all duration-700",
-        getRatioClass(config.hero.aspectRatio || (config.hero as any).protocol, "aspect-[1620/700]"),
-        config.hero.mobileAspectRatio
+        getRatioClass(config.hero.aspectRatio, "aspect-[1620/700]"),
+        getRatioClass(config.hero.mobileAspectRatio, "aspect-[1620/700]")
       )}>
         {config.hero?.slides?.map((slide, idx) => {
           const src = typeof slide === 'string' ? slide : slide.src;
@@ -118,7 +118,7 @@ export default function HomePage() {
                 src={getSafeSrc(src)}
                 alt={alt}
                 fill
-                className="object-contain"
+                className="object-cover"
                 style={{ imageRendering: 'auto', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}
                 priority={idx === 0}
               />

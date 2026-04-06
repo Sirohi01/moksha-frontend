@@ -144,12 +144,10 @@ export default function MasterVisualHub() {
     });
 
     const handleUpdateImage = async (path: string, urlValue: any, altValue?: string) => {
-        if (!currentPageData) return;
-        
-        // Hard Enforcement Check
+        if (!currentPageData) return false;
         if (!altValue || altValue.trim().length < 3) {
             alert("SEO PROTOCOL REJECTED: Alt Text is mandatory (min 3 chars) for deployment.");
-            return;
+            return false;
         }
 
         const newConfig = setNestedValue(currentPageData.config, path, urlValue);
@@ -165,7 +163,6 @@ export default function MasterVisualHub() {
 
         if (altValue && srcValue) {
             const normalized = normalizeUrl(srcValue);
-            // Clean up old matches to prevent ghost mappings
             Object.keys(newAltMappings).forEach(k => {
                 if (normalizeUrl(k) === normalized) delete newAltMappings[k];
             });
@@ -188,8 +185,6 @@ export default function MasterVisualHub() {
                     changeLog: `Master Hub Sync: ${path}`
                 })
             });
-
-            // 2. Update SEO Mappings (PageConfig)
             await fetch(`${API_BASE_URL}/api/page-config/${selectedSlug}/seo`, {
                 method: 'PUT',
                 headers: {
@@ -200,8 +195,6 @@ export default function MasterVisualHub() {
                     seo: { ...currentSeo, imageAltMappings: newAltMappings }
                 })
             });
-
-            // 3. Update Global SEO Hub (SEOPage Model) - THE SOURCE OF TRUTH
             try {
                 const seoRes = await fetch(`${API_BASE_URL}/api/seo/page/${selectedSlug}`, {
                     method: 'PUT',
@@ -228,19 +221,27 @@ export default function MasterVisualHub() {
                     config: newConfig,
                     seo: { ...currentSeo, imageAltMappings: newAltMappings }
                 } : p));
+                return true;
             } else {
                 alert(data.message || "Sync Protocol Rejected.");
+                return false;
             }
         } catch (error) {
             alert("Sync Failed.");
+            return false;
         } finally {
             setSaving(false);
         }
     };
 
-    const handleImageUpload = async (file: File, path: string) => {
+    const handleImageUpload = async (file: File, path: string, altValue: string) => {
         if (file.size > 10 * 1024 * 1024) { // Increased to 10MB for Master Hub High-Res
             alert(`Image Protocol Rejected: ${file.name} is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Max limit is 10MB for High-Res assets.`);
+            return;
+        }
+
+        if (!altValue || altValue.trim().length < 3) {
+            alert("SEO PROTOCOL REJECTED: Alt Text is required BEFORE uploading this media.");
             return;
         }
 
@@ -258,8 +259,8 @@ export default function MasterVisualHub() {
             const data = await res.json();
 
             if (data.success) {
-                await handleUpdateImage(path, data.data.url);
-                alert("Direct Upload Success!");
+                const updated = await handleUpdateImage(path, data.data.url, altValue);
+                if (updated) alert("Direct Upload Success!");
             } else {
                 alert(data.message || 'Upload protocol failed');
             }
@@ -324,7 +325,7 @@ export default function MasterVisualHub() {
                                                 url={img.url}
                                                 alt={img.alt}
                                                 onSwap={(newUrl: string, newAlt: string) => handleUpdateImage(img.path, newUrl, newAlt)}
-                                                onUpload={(file: File) => handleImageUpload(file, img.path)}
+                                                onUpload={(file: File, altValue: string) => handleImageUpload(file, img.path, altValue)}
                                                 saving={saving}
                                             />
                                         </div>
@@ -419,7 +420,7 @@ function VisualAssetCard({ title, path, url, alt, onSwap, onUpload, saving }: an
                                 accept="image/*"
                                 onChange={(e) => {
                                     const file = e.target.files?.[0];
-                                    if (file) onUpload(file);
+                                    if (file) onUpload(file, tempAlt);
                                 }}
                             />
                         </label>

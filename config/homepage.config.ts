@@ -1,10 +1,6 @@
-// Homepage Configuration
-// All text, images, and content for the homepage
-
 import { HomepageConfig } from './types';
 
 export const homepageConfig: HomepageConfig = {
-  // Hero Section
   hero: {
     slides: [
       "/gallery/image1.png",
@@ -15,8 +11,8 @@ export const homepageConfig: HomepageConfig = {
       "/gallery/image6.png",
     ],
     autoSlideInterval: 5000,
-    mobileAspectRatio: "aspect-[1620/700]",
-    aspectRatio: "md:aspect-[1620/700]"
+    mobileAspectRatio: "hero",
+    aspectRatio: "hero"
   },
 
   // Action Banner
