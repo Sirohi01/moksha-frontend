@@ -34,17 +34,6 @@ export const layoutConfig: LayoutConfig = {
         ]
       },
       {
-        label: "Campaigns",
-        icon: "Target",
-        subLinks: [
-          { href: "/campaigns", label: "All Campaigns", icon: "Target" },
-          { href: "/campaigns/dignity-for-all", label: "Dignity For All", icon: "Heart" },
-          { href: "/campaigns/adopt-a-city", label: "Adopt a City", icon: "Globe" },
-          { href: "/campaigns/sacred-river", label: "Sacred River Initiative", icon: "Anchor" },
-          { href: "/campaigns/home-for-saathis", label: "Saathi Shelter", icon: "Tent" },
-        ]
-      },
-      {
         label: "Impact",
         icon: "TrendingUp",
         subLinks: [
