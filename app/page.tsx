@@ -118,7 +118,7 @@ export default function HomePage() {
                 src={getSafeSrc(src)}
                 alt={alt}
                 fill
-                className="object-contain"
+                className="object-cover"
                 style={{ imageRendering: 'auto', WebkitBackfaceVisibility: 'hidden', backfaceVisibility: 'hidden' }}
                 priority={idx === 0}
               />

@@ -64,7 +64,7 @@ export default function AboutPage() {
                     src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
                     alt={getAlt(config.hero?.image, seo, config.hero?.cardTitle || "About Moksha Sewa")}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                   />
                 </div>
                 <div className="text-center">
@@ -143,7 +143,7 @@ export default function AboutPage() {
                   src={getSafeSrc(config.story?.image) || "/gallery/image009.png"}
                   alt={getAlt(config.story?.image, seo, config.story?.imageAlt || "Our Journey")}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                 />
               </div>
             </div>
