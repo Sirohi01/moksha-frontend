@@ -50,4 +50,11 @@ export interface GalleryPageConfig {
   };
   hero: GalleryHeroConfig;
   gallery: GalleryGridConfig;
+  modal?: {
+    badge: string;
+    description: string;
+    zoneLabel: string;
+    dateLabel: string;
+    returnButton: string;
+  };
 }

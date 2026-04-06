@@ -56,6 +56,11 @@ export interface DocumentariesPageConfig {
       selections: string;
     };
   };
+  footer?: {
+    title: string;
+    hubLabel: string;
+    cities: string[];
+  };
 }
 
 export default DocumentariesPageConfig;

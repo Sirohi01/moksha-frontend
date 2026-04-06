@@ -2,14 +2,14 @@
 
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
-import { getSafeSrc } from "@/lib/utils";
+import { getSafeSrc, getAlt } from "@/lib/utils";
 import { whyMokshaSewaConfig } from "@/config/why-moksha-seva.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function WhyMokshaSewa() {
   // Use dynamic config with fallback to static config
-  const { config: dynamicConfig, loading, error } = usePageConfig('why-moksha-seva', whyMokshaSewaConfig);
+  const { config: dynamicConfig, seo, loading, error } = usePageConfig('why-moksha-seva', whyMokshaSewaConfig);
 
   // Use dynamic config if available, otherwise fallback to static
   const config = dynamicConfig || whyMokshaSewaConfig;
@@ -49,13 +49,12 @@ export default function WhyMokshaSewa() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                 <Image
                   src={getSafeSrc(config.hero.image)}
-                  alt={config.hero.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={400}
-                  height={400}
+                  alt={getAlt(config.hero.image, seo, config.hero.imageAlt || "Why Moksha Sewa Hero")}
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-100 rounded-full opacity-20"></div>

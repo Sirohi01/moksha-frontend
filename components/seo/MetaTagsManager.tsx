@@ -396,7 +396,7 @@ export default function MetaTagsManager({ data, onChange, onSave }: MetaTagsMana
                     <Image 
                       src={getSafeSrc(formData.ogImage)} 
                       alt="Preview" 
-                      className="max-h-full max-w-full object-cover"
+                      className="max-h-full max-w-full object-contain"
                       width={200}
                       height={128}
                       onError={(e) => {

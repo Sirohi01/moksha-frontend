@@ -21,13 +21,13 @@ export function PageHeader({ title, description, icon, children }: PageHeaderPro
             </div>
           )}
           <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-4 h-0.5 bg-gold-600 rounded-full"></span>
-              <p className="text-[10px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-6 h-1 bg-gold-600 rounded-full"></span>
+              <p className="text-[12px] font-black text-gold-600 uppercase tracking-[0.4em]">Protocol Active</p>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-navy-950 uppercase italic tracking-tight leading-[0.9] py-2 flex-wrap break-words">{title}</h1>
             {description && (
-              <p className="text-navy-700 text-xs sm:text-sm font-bold uppercase tracking-[0.1em] mt-3 max-w-xl leading-relaxed italic">{description}</p>
+              <p className="text-navy-700 text-sm sm:text-base font-bold uppercase tracking-[0.1em] mt-3 max-w-xl leading-relaxed italic">{description}</p>
             )}
           </div>
         </div>
@@ -61,7 +61,7 @@ export function StatsCard({ title, value, icon, gradient, change, changeType = '
           {typeof icon === 'string' ? <span className="text-xl sm:text-2xl">{icon}</span> : icon}
         </div>
         {change && (
-          <div className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm ${changeType === 'positive' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+          <div className={`px-4 py-2 rounded-xl text-[12px] font-black uppercase tracking-widest shadow-sm ${changeType === 'positive' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
             changeType === 'negative' ? 'bg-rose-50 text-rose-600 border border-rose-100' :
               'bg-navy-50 text-navy-600'
             }`}>
@@ -71,7 +71,7 @@ export function StatsCard({ title, value, icon, gradient, change, changeType = '
       </div>
 
       <div className="relative z-10">
-        <p className="text-navy-900 text-[10px] font-black uppercase tracking-[0.2em] mb-2 italic">{title}</p>
+        <p className="text-navy-900 text-[12px] font-black uppercase tracking-[0.2em] mb-2 italic">{title}</p>
         <p className="text-3xl sm:text-4xl font-black text-navy-950 uppercase italic tracking-tighter leading-none group-hover:text-gold-600 transition-colors py-1">
           {typeof value === 'number' ? value.toLocaleString() : value}
         </p>
@@ -119,9 +119,9 @@ export function ActionButton({
   };
 
   const sizes = {
-    sm: "px-5 py-2.5 text-[9px]",
-    md: "px-8 py-4 text-[10px]",
-    lg: "px-10 py-5 text-[11px]"
+    sm: "px-5 py-2.5 text-[11px]",
+    md: "px-8 py-4 text-[13px]",
+    lg: "px-10 py-5 text-[15px]"
   };
 
   const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`;
@@ -156,6 +156,92 @@ export function ActionButton({
       {content}
     </button>
 
+  );
+}
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  total?: number;
+  onPageChange: (page: number) => void;
+}
+
+export function Pagination({ currentPage, totalPages, total, onPageChange }: PaginationProps) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-4 sm:px-10 py-6 bg-white border border-navy-50 rounded-[1.5rem] sm:rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
+          <BarChart3 className="w-5 h-5" />
+        </div>
+        <div className="flex flex-col">
+          <p className="text-[12px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
+            Node Status: Deployment <span className="text-gold-600">{currentPage}</span> / {totalPages}
+          </p>
+          {total && <p className="text-[10px] text-navy-400 font-bold uppercase tracking-widest mt-1">Packet Inventory: {total} Units</p>}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </button>
+
+        <div className="flex items-center gap-1.5 p-1.5 bg-navy-50/30 rounded-2xl border border-navy-50/50 overflow-x-auto max-w-[200px] sm:max-w-none scrollbar-hide">
+          {(() => {
+            const range = [];
+            const delta = 2;
+
+            for (let i = Math.max(1, currentPage - delta); i <= Math.min(totalPages, currentPage + delta); i++) {
+              range.push(i);
+            }
+
+            return (
+              <>
+                {range[0] > 1 && (
+                  <>
+                    <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[12px] font-black transition-all hover:bg-navy-50 text-navy-700">1</button>
+                    {range[0] > 2 && <span className="text-navy-200 px-1 text-[12px] font-black">...</span>}
+                  </>
+                )}
+
+                {range.map(pageNum => (
+                  <button
+                    key={pageNum}
+                    onClick={() => onPageChange(pageNum)}
+                    className={`w-10 h-10 flex-shrink-0 rounded-xl text-[12px] font-black uppercase transition-all duration-300 ${currentPage === pageNum
+                      ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10'
+                      : 'hover:bg-navy-50 text-navy-700 hover:text-navy-950'
+                      }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+
+                {range[range.length - 1] < totalPages && (
+                  <>
+                    {range[range.length - 1] < totalPages - 1 && <span className="text-navy-200 px-1 text-[12px] font-black">...</span>}
+                    <button onClick={() => onPageChange(totalPages)} className="w-10 h-10 rounded-xl text-[12px] font-black transition-all hover:bg-navy-50 text-navy-700">{totalPages}</button>
+                  </>
+                )}
+              </>
+            );
+          })()}
+        </div>
+
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
+        >
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -195,7 +281,7 @@ export function DataTable({
           <div className="w-16 h-16 bg-navy-50 rounded-2xl flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin"></div>
           </div>
-          <p className="text-[10px] font-black text-navy-700 uppercase tracking-[0.3em]">Decrypting Data Streams...</p>
+          <p className="text-[12px] font-black text-navy-700 uppercase tracking-[0.3em]">Decrypting Data Streams...</p>
         </div>
       </div>
     );
@@ -211,7 +297,7 @@ export function DataTable({
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className="px-8 py-6 text-left text-[10px] font-black text-gold-500 uppercase tracking-[0.2em] border-b border-white/5"
+                    className="px-8 py-6 text-left text-[12px] font-black text-gold-500 uppercase tracking-[0.2em] border-b border-white/5"
                   >
                     {column.label}
                   </th>
@@ -226,7 +312,7 @@ export function DataTable({
                       <div className="w-20 h-20 bg-navy-50 rounded-[2rem] flex items-center justify-center">
                         <span className="text-4xl text-navy-950 font-black italic">!</span>
                       </div>
-                      <p className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] italic">{emptyMessage}</p>
+                      <p className="text-sm font-black text-navy-950 uppercase tracking-[0.4em] italic">{emptyMessage}</p>
                     </div>
                   </td>
                 </tr>
@@ -234,7 +320,7 @@ export function DataTable({
                 data.map((row, index) => (
                   <tr key={index} className="hover:bg-navy-50/50 transition-all duration-300 group">
                     {columns.map((column) => (
-                      <td key={column.key} className="px-8 py-6 whitespace-nowrap text-[11px] font-bold text-navy-950 uppercase tracking-tight group-hover:text-navy-950 transition-colors">
+                      <td key={column.key} className="px-8 py-6 whitespace-nowrap text-[13px] font-bold text-navy-950 uppercase tracking-tight group-hover:text-navy-950 transition-colors">
                         {column.render ? column.render(row[column.key], row) : row[column.key]}
                       </td>
                     ))}
@@ -247,82 +333,13 @@ export function DataTable({
       </div>
 
       {/* Pagination Footer */}
-      {pagination && pagination.totalPages > 1 && onPageChange && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-6 bg-white border border-navy-50 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.02)]">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-2xl bg-navy-950 flex items-center justify-center text-gold-500 shadow-lg shadow-navy-950/20">
-              <BarChart3 className="w-5 h-5" />
-            </div>
-            <div className="flex flex-col">
-              <p className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] italic">
-                Node Status: Deployment <span className="text-gold-600">{pagination.currentPage}</span> / {pagination.totalPages}
-              </p>
-              {pagination.total && <p className="text-[8px] text-navy-300 font-bold uppercase tracking-widest mt-0.5">Packet Inventory: {pagination.total} Units</p>}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => onPageChange(pagination.currentPage - 1)}
-              disabled={pagination.currentPage === 1}
-              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-
-            <div className="flex items-center gap-1.5 p-1.5 bg-navy-50/30 rounded-2xl border border-navy-50/50">
-              {(() => {
-                const total = pagination.totalPages;
-                const current = pagination.currentPage;
-                const range = [];
-                const delta = 2; // Show 2 pages before and after current
-
-                for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
-                  range.push(i);
-                }
-
-                return (
-                  <>
-                    {range[0] > 1 && (
-                      <>
-                        <button onClick={() => onPageChange(1)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">1</button>
-                        {range[0] > 2 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
-                      </>
-                    )}
-
-                    {range.map(pageNum => (
-                      <button
-                        key={pageNum}
-                        onClick={() => onPageChange(pageNum)}
-                        className={`w-10 h-10 rounded-xl text-[10px] font-black uppercase transition-all duration-300 ${current === pageNum
-                            ? 'bg-navy-950 text-gold-500 shadow-xl scale-110 relative z-10'
-                            : 'hover:bg-navy-50 text-navy-700 hover:text-navy-950'
-                          }`}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-
-                    {range[range.length - 1] < total && (
-                      <>
-                        {range[range.length - 1] < total - 1 && <span className="text-navy-200 px-1 text-[10px] font-black">...</span>}
-                        <button onClick={() => onPageChange(total)} className="w-10 h-10 rounded-xl text-[10px] font-black transition-all hover:bg-navy-50 text-navy-700">{total}</button>
-                      </>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-
-            <button
-              onClick={() => onPageChange(pagination.currentPage + 1)}
-              disabled={pagination.currentPage === pagination.totalPages}
-              className="w-11 h-11 flex items-center justify-center rounded-2xl border border-navy-50 hover:bg-navy-950 hover:text-gold-500 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-navy-700 text-navy-950 transition-all duration-300 group active:scale-90"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+      {pagination && onPageChange && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          total={pagination.total}
+          onPageChange={onPageChange}
+        />
       )}
     </div>
   );
@@ -339,7 +356,7 @@ export function LoadingSpinner({ message }: { size?: 'sm' | 'md' | 'lg', message
         </div>
       </div>
       {message && (
-        <p className="text-[10px] font-black text-navy-700 uppercase tracking-[0.4em] animate-pulse italic">{message}</p>
+        <p className="text-[12px] font-black text-navy-700 uppercase tracking-[0.4em] animate-pulse italic">{message}</p>
       )}
     </div>
   );
@@ -373,8 +390,8 @@ export function Alert({ type, title, message, onClose }: AlertProps) {
           {type[0].toUpperCase()}
         </div>
         <div>
-          {title && <h3 className="text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</h3>}
-          <p className="text-xs font-bold tracking-tight">{message}</p>
+          {title && <h3 className="text-[12px] font-black uppercase tracking-[0.2em] mb-1">{title}</h3>}
+          <p className="text-sm font-bold tracking-tight">{message}</p>
         </div>
       </div>
     </div>
@@ -405,7 +422,7 @@ export function FormInput({
 }: FormInputProps) {
   return (
     <div className="mb-4">
-      <label className="block text-sm font-semibold text-gray-700 mb-2">
+      <label className="block text-base font-semibold text-gray-700 mb-2">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </label>

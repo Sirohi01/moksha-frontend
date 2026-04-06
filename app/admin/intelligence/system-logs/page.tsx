@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { intelligenceAPI } from '@/lib/api';
 import { PageHeader, DataTable, Alert, ActionButton, LoadingSpinner } from '@/components/admin/AdminComponents';
-import { Shield, AlertTriangle, Clock, Terminal, Activity, RefreshCw } from 'lucide-react';
+import { Shield, AlertTriangle, Clock, Terminal, Activity, RefreshCw, Search } from 'lucide-react';
 
 export default function SystemLogsPage() {
   const [logs, setLogs] = useState([]);
@@ -12,15 +12,18 @@ export default function SystemLogsPage() {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ pages: 1, total: 0 });
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const [logsRes, summaryRes] = await Promise.all([
-        intelligenceAPI.getErrorLogs(page),
+        intelligenceAPI.getErrorLogs(page, 20, startDate, endDate, searchTerm || undefined),
         intelligenceAPI.getPerformanceSummary()
       ]);
-      setLogs(logsRes.data);
+      setLogs(logsRes.data || []);
       setSummary(summaryRes.data);
       setPagination({
         pages: logsRes.pagination?.pages || 1,
@@ -35,7 +38,7 @@ export default function SystemLogsPage() {
 
   useEffect(() => {
     fetchData();
-  }, [page]);
+  }, [page, startDate, endDate, searchTerm]);
 
   const columns = [
     {
@@ -134,10 +137,46 @@ export default function SystemLogsPage() {
       {error && <Alert type="error" message={error} />}
 
       <div className="space-y-6">
-        <div className="flex items-center justify-between px-6">
+        <div className="flex flex-col lg:flex-row items-center justify-between px-6 gap-6">
           <div className="flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
             <h3 className="text-xs font-black text-navy-950 uppercase tracking-[0.3em]">Live Intelligence Feed</h3>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center gap-4 bg-white p-2 rounded-[1.8rem] border border-navy-50 shadow-sm">
+            <div className="relative group">
+              <input 
+                type="text" 
+                placeholder="Search Methods, Path, Errors..." 
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
+                className="bg-navy-50/50 border border-navy-100/30 rounded-xl px-10 py-3 text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none focus:ring-2 focus:ring-gold-500/20 transition-all placeholder:text-navy-200"
+              />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-navy-300" />
+            </div>
+
+            <div className="flex items-center gap-2 px-6 py-3 bg-navy-50/50 rounded-2xl">
+              <Clock className="w-3.5 h-3.5 text-navy-400" />
+              <input 
+                type="date" 
+                value={startDate}
+                onChange={(e) => { setStartDate(e.target.value); setPage(1); }}
+                className="bg-transparent text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none border-none focus:ring-0"
+              />
+              <span className="text-[10px] font-black text-navy-200">→</span>
+              <input 
+                type="date" 
+                value={endDate}
+                onChange={(e) => { setEndDate(e.target.value); setPage(1); }}
+                className="bg-transparent text-[10px] font-black uppercase tracking-widest text-navy-950 outline-none border-none focus:ring-0"
+              />
+            </div>
+            <button 
+              onClick={() => { setStartDate(''); setEndDate(''); setSearchTerm(''); setPage(1); }}
+              className="px-6 py-3 bg-navy-950 text-white text-[9px] font-black uppercase tracking-widest rounded-2xl hover:bg-black transition-all shadow-sm active:scale-95 text-nowrap"
+            >
+              Reset Feeds
+            </button>
           </div>
         </div>
         <DataTable

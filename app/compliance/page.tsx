@@ -2,8 +2,18 @@
 
 import React, { useState, useEffect } from "react";
 import { Container } from "@/components/ui/Elements";
-import { ShieldCheck, FileText, Download, CheckCircle2, Award, Scale, BarChart3, Globe, Loader2, AlertCircle } from "lucide-react";
-import Button from "@/components/ui/Button";
+import {
+  FileText,
+  Download,
+  ShieldCheck,
+  Scale,
+  BarChart3,
+  Globe,
+  Loader2,
+  AlertCircle,
+  X,
+  Award
+} from "lucide-react";
 import { configService } from "@/services/configService";
 
 interface Document {
@@ -49,6 +59,66 @@ export default function CompliancePage() {
 
     fetchData();
   }, []);
+
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
+  const [pendingDocId, setPendingDocId] = useState<string | null>(null);
+  const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '', pincode: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check if user has already registered in this browser
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  useEffect(() => {
+    const access = localStorage.getItem('moksha_archival_access');
+    if (access) setIsAuthorized(true);
+  }, []);
+
+  const handleAccessRequest = (docId: string) => {
+    if (isAuthorized) {
+      handleDownload(docId);
+    } else {
+      setPendingDocId(docId);
+      setIsLeadModalOpen(true);
+    }
+  };
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+      const res = await fetch(`${backendUrl}/api/compliance/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...leadForm, documentId: pendingDocId })
+      });
+
+      if (res.ok) {
+        localStorage.setItem('moksha_archival_access', 'true');
+        setIsAuthorized(true);
+        setIsLeadModalOpen(false);
+        if (pendingDocId) handleDownload(pendingDocId);
+      }
+    } catch (err) {
+      console.error('Lead sync failed:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDownload = (docId: string) => {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    // We trigger the secure download proxy directly
+    const downloadUrl = `${backendUrl}/api/media/download/${docId}`;
+    
+    // Create a temporary link to force download
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -127,14 +197,13 @@ export default function CompliancePage() {
                       <span>{doc.fileSize}</span>
                     </div>
 
-                    <a
-                      href={doc.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-3 w-full py-5 rounded-2xl bg-stone-950 text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#7ab800] transition-all shadow-lg active:scale-95"
+                    <button
+                      onClick={() => handleAccessRequest(doc._id)}
+                      className="inline-flex items-center justify-center gap-3 w-full py-5 rounded-2xl bg-stone-950 text-white text-[11px] font-black uppercase tracking-widest hover:bg-[#7ab800] hover:shadow-[0_20px_40px_rgba(122,184,0,0.3)] transition-all shadow-lg active:scale-95 group/btn"
                     >
-                      <Download size={16} /> DOWNLOAD DOCUMENT
-                    </a>
+                      <Download size={16} className="group-hover/btn:-translate-y-1 transition-transform" />
+                      SECURE DOWNLOAD PACKET
+                    </button>
                   </div>
                 );
               })}
@@ -147,6 +216,79 @@ export default function CompliancePage() {
           )}
         </Container>
       </section>
+      {isLeadModalOpen && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-stone-900/90 backdrop-blur-md">
+          <div className="relative w-full max-w-lg bg-white rounded-[3rem] p-10 shadow-3xl overflow-hidden">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-[#7ab800]/5 blur-3xl rounded-full" />
+             
+             <div className="relative z-10">
+               <div className="w-16 h-16 rounded-2xl bg-[#7ab800]/10 flex items-center justify-center mb-8">
+                 <ShieldCheck className="text-[#7ab800]" size={32} />
+               </div>
+               
+               <h3 className="text-3xl font-black uppercase tracking-tighter mb-4 text-stone-900 leading-tight">Official Access Registration</h3>
+               <p className="text-stone-500 font-medium text-sm mb-10 leading-relaxed">
+                 To maintain archival integrity and transparency, we require your details before granting access to our official compliance documents.
+               </p>
+               
+               <form onSubmit={handleLeadSubmit} className="space-y-4">
+                 <div className="grid grid-cols-1 gap-4">
+                    <input 
+                      required
+                      type="text" 
+                      placeholder="FULL NAME"
+                      className="w-full px-6 py-4 rounded-2xl bg-stone-50 border border-stone-100 font-black text-[10px] tracking-widest uppercase focus:bg-white focus:border-[#7ab800] transition-all outline-none"
+                      value={leadForm.name}
+                      onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input 
+                        required
+                        type="email" 
+                        placeholder="EMAIL ADDRESS"
+                        className="w-full px-6 py-4 rounded-2xl bg-stone-50 border border-stone-100 font-black text-[10px] tracking-widest uppercase focus:bg-white focus:border-[#7ab800] transition-all outline-none"
+                        value={leadForm.email}
+                        onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
+                      />
+                      <input 
+                        required
+                        type="tel" 
+                        placeholder="PHONE NUMBER"
+                        className="w-full px-6 py-4 rounded-2xl bg-stone-50 border border-stone-100 font-black text-[10px] tracking-widest uppercase focus:bg-white focus:border-[#7ab800] transition-all outline-none"
+                        value={leadForm.phone}
+                        onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
+                      />
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder="PINCODE (OPTIONAL)"
+                      className="w-full px-6 py-4 rounded-2xl bg-stone-50 border border-stone-100 font-black text-[10px] tracking-widest uppercase focus:bg-white focus:border-[#7ab800] transition-all outline-none"
+                      value={leadForm.pincode}
+                      onChange={(e) => setLeadForm({...leadForm, pincode: e.target.value})}
+                    />
+                 </div>
+                 
+                 <div className="flex items-center gap-4 pt-4">
+                    <button 
+                      type="button" 
+                      onClick={() => setIsLeadModalOpen(false)}
+                      className="flex-1 py-5 rounded-2xl bg-stone-50 text-stone-400 font-black text-[10px] uppercase tracking-widest hover:bg-stone-100 transition-all font-black"
+                    >
+                      CANCEL
+                    </button>
+                    <button 
+                      type="submit" 
+                      disabled={isSubmitting}
+                      className="flex-[2] py-5 rounded-2xl bg-[#7ab800] text-stone-900 font-black text-[10px] uppercase tracking-widest hover:shadow-xl hover:shadow-[#7ab800]/30 transition-all flex items-center justify-center gap-2"
+                    >
+                      {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : 'GRANT ACCESS'}
+                    </button>
+                 </div>
+               </form>
+             </div>
+          </div>
+        </div>
+      )}
 
       {/* Tax Exemption Section */}
       <section className="py-24 bg-stone-100">
@@ -206,4 +348,3 @@ export default function CompliancePage() {
     </main>
   );
 }
-

@@ -30,7 +30,11 @@ import {
   Star,
   Zap,
   Layout,
-  Layers
+  Layers,
+  Film,
+  ShieldCheck,
+  Activity,
+  Terminal
 } from 'lucide-react';
 
 interface NavigationItem {
@@ -45,90 +49,92 @@ interface NavigationItem {
 }
 
 const getNavigationItems = (user: AdminUser): NavigationItem[] => {
-  const allPossibleItems: NavigationItem[] = [
+  const filtered = (items: any[]) => items.filter(item => checkUserPermission(user, item.href));
+
+  const sections: NavigationItem[] = [];
+
+  // 1. Core Overview
+  const coreItems = filtered([
     { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { title: 'Live Support', href: '/admin/support', icon: MessageSquare },
     { title: 'Tasks', href: '/admin/tasks', icon: Calendar },
-    { title: 'User Management', href: '/admin/users', icon: UserPlus },
-    { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
-    { title: 'Board Applications', href: '/admin/board', icon: Users },
-    { title: 'Feedback', href: '/admin/feedback', icon: MessageSquare },
-    { title: 'Government Schemes', href: '/admin/schemes', icon: FileText },
-    { title: 'Contacts', href: '/admin/contacts', icon: Mail },
-    { title: 'Legacy Giving', href: '/admin/legacy', icon: Heart },
-    { title: 'Expansion Requests', href: '/admin/expansion', icon: TrendingUp },
+  ]);
+  if (coreItems.length > 0) sections.push(...coreItems);
+
+  // 2. People & Operations
+  const managementItems = filtered([
+    { title: 'Members', href: '/admin/users', icon: UserPlus },
+    { title: 'Applications', href: '/admin/board', icon: Users },
     { title: 'Volunteers', href: '/admin/volunteers', icon: UserCheck },
     { title: 'Donations', href: '/admin/donations', icon: CreditCard },
-    { title: 'Newsletter', href: '/admin/newsletter', icon: Mail },
-    // { title: 'Blog', href: '/admin/content-editor?page=blog', icon: FileText },
-    { title: 'Page Config', href: '/admin/page-config', icon: Image },
-    { title: 'Content Management', href: '/admin/content', icon: Database },
-    { title: 'Compliance', href: '/admin/compliance', icon: Shield },
-  ];
-  const filteredItems = allPossibleItems.filter(item => {
-    if (!item.href) return true;
-    return checkUserPermission(user, item.href);
-  });
-
-  // Marketing Group
-  const marketingItems = [
-    // { title: 'Campaigns', href: '/admin/marketing/campaigns', icon: Zap },
-    { title: 'Banners', href: '/admin/marketing/banners', icon: Layout },
-    { title: 'Newsletter Engine', href: '/admin/marketing/newsletter', icon: Mail },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (marketingItems.length > 0) {
-    filteredItems.push({
-      title: 'Marketing Strategy',
-      items: marketingItems
-    });
+    { title: 'Tax & Compliance', href: '/admin/compliance', icon: ShieldCheck },
+    { title: 'SOP Manuals', href: '/admin/sops', icon: FileText },
+  ]);
+  if (managementItems.length > 0) {
+    sections.push({ title: 'Management', items: managementItems });
   }
 
-  // Media Group
-  const mediaItems = [
+  // 3. Website Content
+  const contentItems = filtered([
+    { title: 'Blogs', href: '/admin/blogs', icon: FileText },
+    { title: 'Editorial', href: '/admin/editorial-hub', icon: FileText },
+    { title: 'Page Content', href: '/admin/content', icon: Layout },
+    { title: 'Page Config', href: '/admin/page-config', icon: Database },
+    { title: 'SEO', href: '/admin/seo', icon: Globe },
+  ]);
+  if (contentItems.length > 0) {
+    sections.push({ title: 'Content', items: contentItems });
+  }
+
+  // 4. Multimedia & Press
+  const mediaItems = filtered([
+    { title: 'Visual Hub', href: '/admin/gallery-hub', icon: Image },
     { title: 'Gallery', href: '/admin/gallery', icon: Image },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
+    { title: 'Videos', href: '/admin/documentaries', icon: Film },
+    { title: 'Press', href: '/admin/press', icon: ShieldCheck },
+  ]);
   if (mediaItems.length > 0) {
-    filteredItems.push({
-      title: 'Multimedia Assets',
-      items: mediaItems
-    });
+    sections.push({ title: 'Media', items: mediaItems });
   }
 
-
-  // Specialized Intelligence Group
-  const intelligenceItems = [
-    { title: 'Visitor Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
-    { title: 'System Logs', href: '/admin/intelligence/system-logs', icon: Shield },
-    { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
-    { title: 'Interaction Logic', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (intelligenceItems.length > 0) {
-    filteredItems.push({
-      title: 'Intelligence',
-      items: intelligenceItems
-    });
+  // 5. Forms & Submissions
+  const formItems = filtered([
+    { title: 'Reports', href: '/admin/reports', icon: BarChart3 },
+    { title: 'Schemes', href: '/admin/schemes', icon: FileText },
+    { id: 'page_testimonials', title: 'Testimonials', href: '/admin/feedback', icon: Star },
+    { title: 'Contacts', href: '/admin/contacts', icon: Mail },
+    { title: 'Legacy Requests', href: '/admin/legacy', icon: Heart },
+    { title: 'Expansion Node', href: '/admin/expansion', icon: TrendingUp },
+  ]);
+  if (formItems.length > 0) {
+    sections.push({ title: 'Forms & CRM', items: formItems });
   }
 
-  /* 
-  // System Settings Group
-  const systemItems = [
+  // 6. Communications & Ads
+  const commsItems = filtered([
+    { title: 'WhatsApp', href: '/admin/whatsapp-hub', icon: MessageSquare },
+    { title: 'Support', href: '/admin/support', icon: MessageSquare },
+    { title: 'Banners', href: '/admin/marketing/banners', icon: Layout },
+    { title: 'Newsletters', href: '/admin/marketing/newsletter', icon: Mail },
+  ]);
+  if (commsItems.length > 0) {
+    sections.push({ title: 'Communication', items: commsItems });
+  }
+
+  // 6. Security & Logs
+  const logItems = filtered([
     { title: 'Global Settings', href: '/admin/settings', icon: Settings },
-    { title: 'SEO Engine', href: '/admin/seo', icon: Globe },
-    { title: 'Infrastructure', href: '/admin/system', icon: Database },
-  ].filter(sub => checkUserPermission(user, sub.href));
-
-  if (systemItems.length > 0) {
-    filteredItems.push({
-      title: 'System & Control',
-      items: systemItems
-    });
+    { title: 'Activity Logs', href: '/admin/activity-logs', icon: Activity },
+    { title: 'Analytics', href: '/admin/visitor-analytics', icon: BarChart3 },
+    { title: 'System Health', href: '/admin/intelligence/system-logs', icon: Shield },
+    { title: 'Maintenance', href: '/admin/system/maintenance', icon: Terminal },
+    { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
+    { title: 'Interaction Logs', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
+  ]);
+  if (logItems.length > 0) {
+    sections.push({ title: 'System', items: logItems });
   }
-  */
 
-  return filteredItems;
+  return sections;
 };
 
 interface AdminUser {
@@ -172,10 +178,10 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               <Shield className="w-6 h-6 text-gold-500" />
             </div>
             <div>
-              <h2 className="text-navy-950 font-black text-xs uppercase tracking-tighter italic">Command Deck</h2>
+              <h2 className="text-navy-950 font-black text-sm uppercase tracking-tighter italic">Admin Panel</h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-600 animate-pulse"></span>
-                <span className="text-[9px] text-navy-700 font-black uppercase tracking-widest">Live System</span>
+                <span className="text-[11px] text-navy-700 font-black uppercase tracking-widest">Active Session</span>
               </div>
             </div>
           </div>
@@ -190,7 +196,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                   href={item.href}
                   onClick={() => window.innerWidth < 1024 && onClose()}
                   className={cn(
-                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
+                    'group flex items-center gap-4 px-5 py-4 rounded-2xl text-[13px] font-black uppercase tracking-widest transition-all duration-300 relative overflow-hidden',
                     pathname === item.href
                       ? 'bg-navy-950 text-gold-500 shadow-2xl shadow-navy-200'
                       : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
@@ -210,7 +216,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               ) : (
                 <div className="pt-4 space-y-1">
                   <div className="px-5 mb-2 mt-4 first:mt-0">
-                    <span className="text-[10px] font-black text-navy-950 uppercase tracking-[0.4em] opacity-80">{item.title}</span>
+                    <span className="text-xs font-black text-navy-950 uppercase tracking-[0.4em] opacity-80">{item.title}</span>
                   </div>
                   <div className="space-y-1">
                     {item.items?.map((subItem) => (
@@ -219,7 +225,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                         href={subItem.href}
                         onClick={() => window.innerWidth < 1024 && onClose()}
                         className={cn(
-                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-300',
+                          'group/sub flex items-center gap-4 px-5 py-3 rounded-2xl text-[13px] font-black uppercase tracking-widest transition-all duration-300',
                           pathname === subItem.href
                             ? 'bg-navy-950 text-gold-500 shadow-xl shadow-navy-200/50'
                             : 'text-navy-700 hover:text-navy-950 hover:bg-navy-50'
@@ -245,7 +251,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
         <div className="p-6 border-t border-navy-50 bg-[#fcfcfc]/50">
           <button
             onClick={onLogout}
-            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all group"
+            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-[12px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 transition-all group"
           >
             <div className="p-2 rounded-xl bg-rose-50 group-hover:bg-rose-600 group-hover:text-white transition-all">
               <X className="w-4 h-4" />

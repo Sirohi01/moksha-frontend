@@ -1,16 +1,14 @@
 "use client";
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
-import { getSafeSrc } from '@/lib/utils';
+import { getSafeSrc, getAlt } from '@/lib/utils';
 import { impactConfig } from "@/config/impact.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function Impact() {
   // Use dynamic config with fallback to static config
-  const { config: dynamicConfig, loading: configLoading } = usePageConfig('impact', impactConfig);
-  
-  // Use dynamic config if available, otherwise fallback to static
+  const { config: dynamicConfig, seo, loading: configLoading } = usePageConfig('impact', impactConfig);
   const config = dynamicConfig || impactConfig;
   const impactStats = config.impactStats.stats.map(stat => ({
     icon: getIcon(stat.icon),
@@ -76,13 +74,13 @@ export default function Impact() {
 
               {/* Quick Actions */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <a 
+                <a
                   href={config.hero.actions.joinMission.href}
                   className="bg-amber-700 hover:bg-amber-800 text-white px-6 py-3 rounded-lg font-semibold transition-all text-center"
                 >
                   {config.hero.actions.joinMission.text}
                 </a>
-                <a 
+                <a
                   href={config.hero.actions.supportWork.href}
                   className="border-2 border-amber-700 text-amber-700 hover:bg-amber-700 hover:text-white px-6 py-3 rounded-lg font-semibold transition-all text-center"
                 >
@@ -90,26 +88,25 @@ export default function Impact() {
                 </a>
               </div>
             </div>
-            
+
             <div className="relative">
-              <div className="aspect-square rounded-2xl overflow-hidden shadow-xl">
-                <Image 
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
+                <Image
                   src={getSafeSrc(config.hero.image)}
-                  alt={config.hero.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={400}
-                  height={400}
+                  alt={getAlt(config.hero.image, seo, config.hero.imageAlt || "Mission Impact")}
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-amber-100 rounded-full opacity-30"></div>
               <div className="absolute -top-4 -left-4 w-16 h-16 bg-stone-200 rounded-full opacity-40"></div>
-              
+
               {/* Floating stats */}
               <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
                 <div className="text-lg font-black text-amber-700">{config.hero.floatingStats.volunteers.number}</div>
                 <div className="text-xs text-gray-600">{config.hero.floatingStats.volunteers.label}</div>
               </div>
-              
+
               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-lg">
                 <div className="text-lg font-black text-green-600">{config.hero.floatingStats.compliance.number}</div>
                 <div className="text-xs text-gray-600">{config.hero.floatingStats.compliance.label}</div>
@@ -139,19 +136,19 @@ export default function Impact() {
                   {/* Background decoration */}
                   <div className="absolute top-0 right-0 w-20 h-20 bg-amber-50 rounded-full -translate-y-10 translate-x-10 opacity-50"></div>
                   <div className="absolute bottom-0 left-0 w-16 h-16 bg-stone-100 rounded-full translate-y-8 -translate-x-8 opacity-30"></div>
-                  
+
                   <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center mb-6 mx-auto group-hover:scale-110 transition-transform shadow-lg ${stat.color}`}>
                     <stat.icon className="w-8 h-8" />
                   </div>
-                  
+
                   <div className="text-4xl md:text-5xl font-black text-amber-700 mb-3 group-hover:scale-105 transition-transform">
                     {stat.number}
                   </div>
-                  
+
                   <div className="text-sm font-bold uppercase tracking-widest text-gray-600 mb-4">
                     {stat.label}
                   </div>
-                  
+
                   {/* Add descriptive text for each stat */}
                   <div className="text-xs text-gray-500 leading-relaxed">
                     {stat.description}
@@ -171,7 +168,7 @@ export default function Impact() {
                 <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.freeService.title}</div>
                 <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.freeService.description}</div>
               </div>
-              
+
               <div className="group">
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <span className="text-green-700 font-black text-lg">{config.impactStats.additionalMetrics.certified.symbol}</span>
@@ -179,7 +176,7 @@ export default function Impact() {
                 <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.certified.title}</div>
                 <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.certified.description}</div>
               </div>
-              
+
               <div className="group">
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <span className="text-blue-700 font-black text-lg">{config.impactStats.additionalMetrics.available247.symbol}</span>
@@ -187,7 +184,7 @@ export default function Impact() {
                 <div className="text-lg font-black text-gray-900 mb-1">{config.impactStats.additionalMetrics.available247.title}</div>
                 <div className="text-xs text-gray-500">{config.impactStats.additionalMetrics.available247.description}</div>
               </div>
-              
+
               <div className="group">
                 <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                   <span className="text-purple-700 font-black text-lg">{config.impactStats.additionalMetrics.withDignity.symbol}</span>
@@ -212,7 +209,7 @@ export default function Impact() {
               <p className="text-gray-600 mb-8">
                 {config.growthTimeline.description}
               </p>
-              
+
               <div className="grid grid-cols-2 gap-6">
                 {config.growthTimeline.highlightedYears.map((data, index) => (
                   <div key={index} className="bg-white p-4 rounded-xl border border-stone-200 hover:shadow-lg transition-all">
@@ -225,15 +222,14 @@ export default function Impact() {
                 ))}
               </div>
             </div>
-            
+
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
-                <Image 
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
+                <Image
                   src={getSafeSrc(config.growthTimeline.image)}
-                  alt={config.growthTimeline.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={500}
-                  height={375}
+                  alt={getAlt(config.growthTimeline.image, seo, config.growthTimeline.imageAlt || "Growth Timeline")}
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-100 rounded-full opacity-20"></div>
@@ -257,12 +253,12 @@ export default function Impact() {
               <div key={index} className="bg-white p-6 rounded-2xl border border-stone-100 hover:shadow-lg transition-all duration-500 relative">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden">
-                    <Image 
+                    <Image
                       src={getSafeSrc(testimonial.image)}
-                      alt={testimonial.author}
-                      className="w-full h-full object-cover"
+                      alt={getAlt(testimonial.image, seo, testimonial.author || "Testimonial Author")}
                       width={48}
                       height={48}
+                      className="w-full h-full object-contain bg-stone-50"
                     />
                   </div>
                   <div>
@@ -274,7 +270,7 @@ export default function Impact() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-amber-700 text-2xl mb-3">&quot;</div>
                 <p className="text-gray-700 italic leading-relaxed text-sm">
                   {testimonial.quote}
@@ -297,13 +293,13 @@ export default function Impact() {
                 {config.callToAction.description}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <a 
+                <a
                   href={config.callToAction.actions.joinMission.href}
                   className="bg-amber-100 hover:bg-white text-amber-800 px-6 py-3 rounded-lg font-black uppercase tracking-widest transition-all text-center"
                 >
                   {config.callToAction.actions.joinMission.text}
                 </a>
-                <a 
+                <a
                   href={config.callToAction.actions.supportWork.href}
                   className="border-2 border-white text-white hover:bg-white hover:text-amber-800 px-6 py-3 rounded-lg font-black uppercase tracking-widest transition-all text-center"
                 >
@@ -312,13 +308,12 @@ export default function Impact() {
               </div>
             </div>
             <div className="relative">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
-                <Image 
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
+                <Image
                   src={getSafeSrc(config.callToAction.image)}
-                  alt={config.callToAction.imageAlt}
-                  className="w-full h-full object-cover"
-                  width={500}
-                  height={375}
+                  alt={getAlt(config.callToAction.image, seo, config.callToAction.imageAlt || "Call to Action")}
+                  fill
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/20 rounded-full"></div>

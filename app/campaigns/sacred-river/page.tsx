@@ -11,7 +11,7 @@ export default function SacredRiverPage() {
             {/* Hero Section */}
             <section className="bg-stone-900 text-white py-32 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-100">
-                    <Image src="/gallery/gallery_cremation_ceremony_1772861295131.png" alt="Sacred River Ceremony" fill className="object-cover" />
+                    <Image src="/gallery/gallery_cremation_ceremony_1772861295131.png" alt="Sacred River Ceremony" fill className="object-contain" />
                     <div className="absolute inset-0 bg-stone-900/50" />
                 </div>
                 <Container className="relative z-10 text-center">
@@ -31,7 +31,7 @@ export default function SacredRiverPage() {
                     <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-16">
                         <div className="md:w-1/2">
                             <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl relative">
-                                <Image src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=2000" alt="Clean River" fill className="object-cover" />
+                                <Image src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=2000" alt="Clean River" fill className="object-contain" />
                             </div>
                         </div>
                         <div className="md:w-1/2 text-left">

@@ -1,89 +1,136 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import RootLayoutContent from "@/components/layout/RootLayoutContent";
+import { Toaster } from "sonner";
+import { headers } from "next/headers";
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://moksha-seva.org'),
-  title: {
-    default: "Moksha Sewa — Dignity in Departure",
-    template: "%s | Moksha Sewa",
-  },
-  icons: {
-    icon: "/icon.png",
-    apple: "/icons/icon-192x192.png",
-  },
-  manifest: "/manifest.json",
-  description:
-    "Moksha Sewa provides dignified cremation services for unclaimed bodies, homeless individuals, and poor families across India. Transparency, compassion, and service.",
-  keywords: [
-    "cremation", "unclaimed bodies", "humanitarian", "NGO", "India", "dignity",
-    "charity", "donation", "volunteer", "social service", "death care", "funeral services",
-    "homeless support", "community service", "transparency", "compassion"
-  ],
-  authors: [{ name: "Moksha Sewa Foundation" }],
-  creator: "Moksha Sewa Foundation",
-  publisher: "Moksha Sewa Foundation",
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  openGraph: {
-    title: "Moksha Sewa — Dignity in Departure",
-    description: "Providing dignified cremation services for unclaimed bodies and poor families across India.",
-    type: "website",
-    locale: "en_IN",
-    url: "https://moksha-seva.org",
-    siteName: "Moksha Sewa",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Moksha Sewa - Dignity in Departure",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Moksha Sewa — Dignity in Departure",
-    description: "Providing dignified cremation services for unclaimed bodies and poor families.",
-    images: ["/twitter-image.png"],
-    creator: "@moksha_seva",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-  verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
-  },
-  alternates: {
-    canonical: "https://moksha-seva.org",
-    languages: {
-      'en-IN': 'https://moksha-seva.org',
-      'hi-IN': 'https://moksha-seva.org/hi',
-    },
-  },
-  category: 'social',
-  classification: 'Non-profit organization',
-  other: {
-    'google-site-verification': 'your-google-site-verification',
-  },
-};
+async function getSEO(pageName: string = 'homepage') {
+  try {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const response = await fetch(`${API_BASE_URL}/api/seo/page/${pageName}`, {
+      cache: 'no-store'
+    });
+    if (response.ok) {
+      const result = await response.json();
+      return result.data || null;
+    }
+  } catch (error) {
+    console.error(`Failed to fetch SEO for ${pageName}:`, error);
+  }
+  return null;
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export async function generateMetadata(): Promise<Metadata> {
+  const heads = headers();
+  const pathname = heads.get('x-url') || '/';
+  let slug = 'homepage';
+  if (pathname && pathname !== '/') {
+    const segments = pathname.split('/').filter(Boolean);
+    slug = segments[0] || 'homepage';
+    if (pathname.includes('/blog/') || pathname.includes('/documentaries/')) {
+      slug = pathname.replace(/^\//, '').replace(/\/$/, '');
+    }
+  }
+
+  const seo = await getSEO(slug);
+
+  const siteName = "Moksha Sewa";
+  const defaultTitle = "Moksha Sewa — Dignity in Departure";
+  const defaultDesc = "Moksha Sewa provides dignified cremation services for unclaimed bodies and poor families across India.";
+
+  return {
+    metadataBase: new URL('https://mokshasewa.org'),
+    title: {
+      default: seo?.metaTitle || defaultTitle,
+      template: `%s | ${siteName}`,
+    },
+    description: seo?.metaDescription || defaultDesc,
+    keywords: seo?.metaKeywords ? seo.metaKeywords.split(',').map((k: string) => k.trim()) : [],
+    alternates: {
+      canonical: seo?.canonicalUrl || "https://mokshasewa.org",
+    },
+    robots: seo?.robots || 'index, follow',
+    openGraph: {
+      title: seo?.ogTitle || seo?.metaTitle || defaultTitle,
+      description: seo?.ogDescription || seo?.metaDescription || defaultDesc,
+      images: [{ url: seo?.ogImage || "/og-image.png" }],
+      type: 'website' as const,
+      siteName: siteName,
+    },
+    twitter: {
+      card: (seo?.twitterCard || "summary_large_image") as any,
+      title: seo?.ogTitle || seo?.metaTitle || defaultTitle,
+      description: seo?.ogDescription || seo?.metaDescription || defaultDesc,
+      images: [seo?.ogImage || "/twitter-image.png"],
+    },
+  };
+}
+
+async function getGlobalSEO() {
+  try {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+    const response = await fetch(`${API_BASE_URL}/api/seo/settings`, {
+      cache: 'no-store'
+    });
+    if (response.ok) {
+      const result = await response.json();
+      return result.data || null;
+    }
+  } catch (error) {
+    console.error('Failed to fetch global SEO settings:', error);
+  }
+  return null;
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const globalSeo = await getGlobalSEO();
+  const heads = headers();
+  const pathname = heads.get('x-url') || '/';
+  let slug = 'homepage';
+  if (pathname && pathname !== '/') {
+    const segments = pathname.split('/').filter(Boolean);
+    slug = segments[0] || 'homepage';
+    if (pathname.includes('/blog/') || pathname.includes('/documentaries/')) {
+      slug = pathname.replace(/^\//, '').replace(/\/$/, '');
+    }
+  }
+  const pageSeo = await getSEO(slug);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {globalSeo?.googleAnalyticsId && (
+          <>
+            <script async src={`https://www.googletagmanager.com/gtag/js?id=${globalSeo.googleAnalyticsId}`} />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${globalSeo.googleAnalyticsId}');
+                `,
+              }}
+            />
+          </>
+        )}
+        {globalSeo?.headerScripts && (
+          <div dangerouslySetInnerHTML={{ __html: globalSeo.headerScripts }} />
+        )}
+        {pageSeo?.headCode && (
+          <div dangerouslySetInnerHTML={{ __html: pageSeo.headCode }} />
+        )}
+        {pageSeo?.schemaMarkup && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: typeof pageSeo.schemaMarkup === 'string'
+                ? pageSeo.schemaMarkup
+                : JSON.stringify(pageSeo.schemaMarkup)
+            }}
+          />
+        )}
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="manifest" href="/manifest.json" />
@@ -96,49 +143,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#8B4513" />
         <meta name="msapplication-tap-highlight" content="no" />
-
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "NGO",
-              "name": "Moksha Sewa Foundation",
-              "alternateName": "Moksha Sewa",
-              "url": "https://moksha-seva.org",
-              "logo": "https://moksha-seva.org/logo.png",
-              "description": "Providing dignified cremation services for unclaimed bodies and poor families across India",
-              "foundingDate": "2020",
-              "address": {
-                "@type": "PostalAddress",
-                "addressCountry": "IN",
-                "addressRegion": "India"
-              },
-              "contactPoint": {
-                "@type": "ContactPoint",
-                "telephone": "+91-XXXXXXXXXX",
-                "contactType": "customer service",
-                "availableLanguage": ["English", "Hindi"]
-              },
-              "sameAs": [
-                "https://facebook.com/moksha-seva",
-                "https://twitter.com/moksha_seva",
-                "https://instagram.com/moksha_seva",
-                "https://linkedin.com/company/moksha-seva"
-              ],
-              "areaServed": "India",
-              "knowsAbout": ["Cremation Services", "Humanitarian Aid", "Social Work"],
-              "memberOf": {
-                "@type": "Organization",
-                "name": "Indian NGO Network"
-              }
-            })
-          }}
-        />
       </head>
       <body className="min-h-screen antialiased">
+        {/* Global Footer Scripts */}
+        {globalSeo?.footerScripts && (
+          <div dangerouslySetInnerHTML={{ __html: globalSeo.footerScripts }} />
+        )}
+
+        {/* Page-Specific Body Code */}
+        {pageSeo?.bodyCode && (
+          <div dangerouslySetInnerHTML={{ __html: pageSeo.bodyCode }} />
+        )}
+
         <RootLayoutContent>{children}</RootLayoutContent>
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );

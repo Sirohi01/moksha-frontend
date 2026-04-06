@@ -15,7 +15,7 @@ export default function CampaignsPage() {
     utmSource: '',
     utmMedium: 'social',
     utmCampaign: '',
-    redirectUrl: 'https://moksha-seva.org'
+    redirectUrl: 'https://mokshasewa.org'
   });
 
   const fetchData = async () => {
@@ -161,7 +161,7 @@ export default function CampaignsPage() {
               label="Redirect Target (Node)"
               value={formData.redirectUrl}
               onChange={v => setFormData({ ...formData, redirectUrl: v })}
-              placeholder="https://moksha-seva.org..."
+              placeholder="https://mokshasewa.org..."
             />
           </div>
 

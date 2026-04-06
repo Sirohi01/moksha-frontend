@@ -93,7 +93,7 @@ export const HeroEditor = ({ section, onUpdate }: EditorProps) => {
                       src={getSafeSrc(section.image) || '/gallery/hero_moksha_1.png'} 
                       alt="Hero preview" 
                       fill
-                      className="object-cover rounded"
+                      className="object-contain rounded"
                     />
                   </div>
                   <input

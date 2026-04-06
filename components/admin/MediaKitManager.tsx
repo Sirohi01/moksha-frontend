@@ -383,7 +383,7 @@ function MediaKitModal({ isOpen, onClose, onSave, editingKit }: any) {
                       <Image
                         src={getSafeSrc(asset.thumbnailUrl)}
                         alt={asset.title}
-                        className="w-12 h-12 object-cover rounded"
+                        className="w-12 h-12 object-contain rounded"
                         width={48}
                         height={48}
                       />

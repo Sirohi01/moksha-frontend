@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 
 interface UsePageConfigReturn<T> {
   config: T | null;
+  seo: any | null;
   loading: boolean;
   error: string | null;
 }
 
 export function usePageConfig<T>(pageName: string, fallbackConfig: T): UsePageConfigReturn<T> {
   const [config, setConfig] = useState<T | null>(null);
+  const [seo, setSeo] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,12 +20,15 @@ export function usePageConfig<T>(pageName: string, fallbackConfig: T): UsePageCo
         setError(null);
         
         const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
-        const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`);
+        const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`, {
+          cache: 'no-store'
+        });
         
         if (response.ok) {
           const data = await response.json();
-          if (data.success && data.data.config) {
-            setConfig(data.data.config as T);
+          if (data.success) {
+            if (data.data.config) setConfig(data.data.config as T);
+            if (data.data.seo) setSeo(data.data.seo);
           } else {
             console.warn(`No config found for ${pageName}, using fallback`);
             setConfig(fallbackConfig);
@@ -64,11 +69,15 @@ export function usePageConfig<T>(pageName: string, fallbackConfig: T): UsePageCo
             return newConfig;
           });
         }
+        
+        if (event.data?.type === 'UPDATE_SEO_DATA') {
+            if (event.data.payload) setSeo(event.data.payload);
+        }
     };
 
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  return { config, loading, error };
+  return { config, seo, loading, error };
 }

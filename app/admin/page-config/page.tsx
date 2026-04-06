@@ -54,28 +54,20 @@ export default function PageConfigManagement() {
       setLoading(true);
       const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
 
-      const pages = ['homepage', 'about', 'how-it-works', 'why-moksha-seva', 'our-reach', 'board', 'services', 'report', 'impact', 'stories', 'remembrance', 'testimonials', 'gallery', 'feedback', 'volunteer', 'corporate', 'legacy-giving', 'tribute', 'transparency', 'schemes', 'contact', 'press', 'documentaries', 'layout', 'blog', 'compliance'];
-      
-      const configPromises = pages.map(async (pageName) => {
-        try {
-          const response = await fetch(`${API_BASE_URL}/api/page-config/${pageName}`);
-          if (response.ok) {
-            const data = await response.json();
-            return {
-              pageName,
-              config: data.data.config,
-              lastModified: data.data.lastModified,
-              version: data.data.version
-            };
-          }
-          return null;
-        } catch (error) {
-          return null;
-        }
+      const response = await fetch(`${API_BASE_URL}/api/page-config?hydrate=true&limit=100`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
       });
-
-      const results = await Promise.all(configPromises);
-      setConfigs(results.filter(Boolean) as PageConfig[]);
+      
+      if (response.ok) {
+        const data = await response.json();
+        const configList = data.data.configs.map((c: any) => ({
+           pageName: c.slug,
+           config: c.config,
+           lastModified: c.updatedAt,
+           version: c.version || 1
+        }));
+        setConfigs(configList);
+      }
     } catch (error: any) {
       showError('Failed to load page configurations');
     } finally {

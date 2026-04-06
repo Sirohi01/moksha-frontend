@@ -59,6 +59,34 @@ h1, h2, h3, h4, h5, h6 {
   .text-accent-navy {
     color: var(--accent-navy);
   }
+
+  /* Image & Aspect Ratio Utilities for Consistency */
+  .aspect-wide {
+    aspect-ratio: 21 / 9;
+  }
+  .aspect-classic {
+    aspect-ratio: 4 / 3;
+  }
+  .aspect-poster {
+    aspect-ratio: 3 / 4;
+  }
+  .aspect-marketing {
+    aspect-ratio: 16 / 10;
+  }
+
+  .image-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Prevent layout shift during loading */
+  .image-container {
+    position: relative;
+    overflow: hidden;
+    background-color: #f3f4f6; /* stone-100 placeholder */
+  }
 }
 
 /* Custom scrollbar for a cleaner look */
@@ -114,4 +142,42 @@ h1, h2, h3, h4, h5, h6 {
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* MISSION-CRITICAL PRINT PROTOCOL */
+@media print {
+  /* HIDE NON-ESSENTIAL UI CLUSTERS */
+  header, footer, nav, aside, 
+  .no-print, 
+  [role="banner"], 
+  [role="contentinfo"],
+  .social-floating, 
+  .emergency-floating,
+  iframe, 
+  .chat-widget,
+  .marketing-banner {
+    display: none !important;
+  }
+
+  /* RESET LAYOUT FOR PROFESSIONAL FEED */
+  body, html {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  /* FORCE LINK VISIBILITY */
+  a:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
 }

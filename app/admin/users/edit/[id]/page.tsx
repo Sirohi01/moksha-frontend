@@ -22,10 +22,22 @@ import {
   Shield,
   ShieldAlert,
   BarChart3,
+  Settings,
+  Image,
   Lock,
   CheckCircle2,
   Edit3,
-  Power
+  Power,
+  Zap,
+  Layout,
+  PlayCircle,
+  Layers,
+  Bell,
+  Activity,
+  Video,
+  Terminal,
+  Star,
+  Film
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -33,27 +45,49 @@ import { adminAPI } from '@/lib/api';
 
 const PAGE_PERMISSIONS = [
   { id: 'page_dashboard', label: 'Dashboard', icon: LayoutDashboard, group: 'Core' },
-  { id: 'page_support', label: 'Support', icon: MessageSquare, group: 'Core' },
   { id: 'page_tasks', label: 'Tasks', icon: Calendar, group: 'Core' },
-  { id: 'page_users', label: 'User Mgmt', icon: UserPlus, group: 'Core' },
+  { id: 'page_users', label: 'Members', icon: UserPlus, group: 'Core' },
+  { id: 'page_board', label: 'Applications', icon: Users, group: 'Management' },
+  { id: 'page_volunteers', label: 'Volunteers', icon: UserCheck, group: 'Management' },
+  { id: 'page_donations', label: 'Donations', icon: CreditCard, group: 'Management' },
+  { id: 'page_compliance', label: 'Tax & Compliance', icon: ShieldCheck, group: 'Management' },
+  { id: 'page_sops', label: 'SOP Manuals', icon: FileText, group: 'Management' },
 
+  // 3. Website Content
+  { id: 'page_blogs', label: 'Blogs', icon: FileText, group: 'Content' },
+  { id: 'page_editorial', label: 'Editorial', icon: FileText, group: 'Content' },
+  { id: 'page_content', label: 'Page Content', icon: Layout, group: 'Content' },
+  { id: 'page_pageconfig', label: 'Page Config', icon: Database, group: 'Content' },
+  { id: 'page_seo', label: 'SEO', icon: Globe, group: 'Content' },
+  { id: 'page_banners', label: 'Banners', icon: Layout, group: 'Content' },
+
+  // 4. Multimedia & Press
+  { id: 'page_galleryhub', label: 'Visual Hub', icon: Image, group: 'Media' },
+  { id: 'page_gallery', label: 'Gallery', icon: Image, group: 'Media' },
+  { id: 'page_documentaries', label: 'Videos', icon: Film, group: 'Media' },
+  { id: 'page_press', label: 'Press', icon: ShieldCheck, group: 'Media' },
+
+  // 5. Communications
+  { id: 'page_whatsapp', label: 'WhatsApp', icon: MessageSquare, group: 'Communication' },
+  { id: 'page_support', label: 'Support', icon: MessageSquare, group: 'Communication' },
+  { id: 'page_newsletter', label: 'Newsletters', icon: Mail, group: 'Communication' },
+
+  // 6. Forms & CRM
   { id: 'page_reports', label: 'Reports', icon: BarChart3, group: 'Forms & CRM' },
-  { id: 'page_board', label: 'Board App', icon: Users, group: 'Forms & CRM' },
-  { id: 'page_feedback', label: 'Feedback', icon: MessageSquare, group: 'Forms & CRM' },
+  { id: 'page_feedback', label: 'Testimonials', icon: Star, group: 'Forms & CRM' },
   { id: 'page_schemes', label: 'Schemes', icon: FileText, group: 'Forms & CRM' },
   { id: 'page_contacts', label: 'Contacts', icon: Mail, group: 'Forms & CRM' },
-  { id: 'page_legacy', label: 'Legacy', icon: Heart, group: 'Forms & CRM' },
-  { id: 'page_expansion', label: 'Expansion', icon: TrendingUp, group: 'Forms & CRM' },
-  { id: 'page_volunteers', label: 'Volunteers', icon: UserCheck, group: 'Forms & CRM' },
-  { id: 'page_donations', label: 'Donations', icon: CreditCard, group: 'Forms & CRM' },
-  { id: 'page_newsletter', label: 'Newsletter', icon: Mail, group: 'Forms & CRM' },
+  { id: 'page_legacy', label: 'Legacy Requests', icon: Heart, group: 'Forms & CRM' },
+  { id: 'page_expansion', label: 'Expansion Node', icon: TrendingUp, group: 'Forms & CRM' },
 
-  { id: 'page_content', label: 'Content', icon: Database, group: 'System' },
-  { id: 'page_seo', label: 'SEO', icon: Globe, group: 'System' },
-  { id: 'page_media', icon: Shield, label: 'Media', group: 'System' },
-  { id: 'page_compliance', label: 'Compliance', icon: ShieldAlert, group: 'System' },
-  { id: 'page_analytics', label: 'Analytics', icon: BarChart3, group: 'Intelligence' },
-  { id: 'page_logs', label: 'Logs', icon: Lock, group: 'Intelligence' },
+  // 7. System & Intelligence
+  { id: 'page_settings', label: 'Global Settings', icon: Settings, group: 'System' },
+  { id: 'page_analytics', label: 'Analytics', icon: BarChart3, group: 'System' },
+  { id: 'page_logs', label: 'Activity Logs', icon: Activity, group: 'System' },
+  { id: 'page_system', label: 'System Health', icon: Shield, group: 'System' },
+  { id: 'page_maintenance', label: 'Maintenance', icon: Terminal, group: 'System' },
+  { id: 'page_email_logs', label: 'Email Logs', icon: Mail, group: 'System' },
+  { id: 'page_comm_logs', label: 'Interaction Logs', icon: MessageSquare, group: 'System' },
 ];
 
 export default function EditUserPage() {
@@ -132,7 +166,7 @@ export default function EditUserPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-32">
+    <div className="space-y-8 max-w-[1440px] mx-auto pb-32 px-4 md:px-8">
       {/* Header */}
       <div className="flex items-center justify-between bg-white/50 backdrop-blur-xl rounded-[2.5rem] border border-navy-50 p-8 shadow-xl">
         <div className="flex items-center gap-6">
@@ -233,10 +267,10 @@ export default function EditUserPage() {
             <p className="text-[9px] text-navy-700 font-bold uppercase tracking-widest">Toggle Sector Access</p>
           </div>
 
-          {['Core', 'Forms & CRM', 'System', 'Intelligence'].map(group => (
+          {['Core', 'Management', 'Content', 'Media', 'Communication', 'Forms & CRM', 'System'].map(group => (
             <div key={group} className="space-y-6">
               <h5 className="text-[8px] font-black text-navy-300 uppercase tracking-[0.4em] ml-2 leading-none border-l-2 border-gold-600 pl-4">{group} Operations</h5>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                 {PAGE_PERMISSIONS.filter(p => p.group === group).map((perm) => {
                   const isChecked = editUser.permissions.includes(perm.id);
                   return (

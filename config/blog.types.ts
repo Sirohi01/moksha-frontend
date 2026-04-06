@@ -38,4 +38,12 @@ export interface BlogConfig {
     buttonText: string;
     buttonHref: string;
   };
+  subscriptionCTA?: {
+    badge: string;
+    title: string;
+    highlightText: string;
+    description: string;
+    inputPlaceholder: string;
+    buttonText: string;
+  };
 }

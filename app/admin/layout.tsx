@@ -80,7 +80,7 @@ export default function AdminLayout({
     return (
       <div className="min-h-screen bg-navy-950 flex flex-col items-center justify-center p-8">
         <div className="w-16 h-16 border-4 border-gold-600/20 border-t-gold-600 rounded-full animate-spin mb-8 shadow-[0_0_20px_rgba(184,135,33,0.3)]"></div>
-        <p className="text-gold-500 font-black uppercase text-[10px] tracking-widest animate-pulse italic">Moksha Command Center Loading...</p>
+        <p className="text-gold-500 font-black uppercase text-xs tracking-widest animate-pulse italic">Moksha Admin Panel Loading...</p>
       </div>
     );
   }
@@ -108,7 +108,7 @@ export default function AdminLayout({
               <Menu className="w-6 h-6" />
             </button>
             <div className="flex flex-col">
-              <h1 className="text-[10px] font-black uppercase tracking-widest text-navy-700 italic hidden xs:block">Moksha Admin Platform</h1>
+              <h1 className="text-xs font-black uppercase tracking-widest text-navy-700 italic hidden xs:block">Moksha Admin Platform</h1>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-lg sm:text-xl font-black text-navy-950 uppercase italic tracking-tighter truncate max-w-[120px] sm:max-w-none py-1 px-2 mb-2 inline-block leading-none">
                   {pathname.split('/').pop()?.replace('-', ' ') || 'Dashboard'}
@@ -121,12 +121,12 @@ export default function AdminLayout({
           <div className="flex items-center gap-4 sm:gap-8">
             <div className="hidden lg:flex items-center gap-6 pr-8 border-r border-navy-50">
               <div className="text-right">
-                <p className="text-[9px] font-black uppercase text-gray-400 leading-none">Status</p>
-                <p className="text-[11px] font-black uppercase text-emerald-500 mt-1">Ready</p>
+                <p className="text-[11px] font-black uppercase text-gray-400 leading-none">Status</p>
+                <p className="text-[13px] font-black uppercase text-emerald-500 mt-1">Ready</p>
               </div>
               <div className="text-right">
-                <p className="text-[9px] font-black uppercase text-gray-400 leading-none">Session</p>
-                <p className="text-[11px] font-black uppercase text-navy-950 mt-1">Active</p>
+                <p className="text-[11px] font-black uppercase text-gray-400 leading-none">Session</p>
+                <p className="text-[13px] font-black uppercase text-navy-950 mt-1">Active</p>
               </div>
             </div>
 
@@ -147,10 +147,10 @@ export default function AdminLayout({
 
               <div className="hidden xs:block">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-[10px] font-black text-navy-950 uppercase tracking-tight group-hover:text-gold-600 transition-colors">{user.name}</p>
+                  <p className="text-xs font-black text-navy-950 uppercase tracking-tight group-hover:text-gold-600 transition-colors">{user.name}</p>
                 </div>
                 <div className="flex items-center gap-1 mt-0.5">
-                  <span className="text-[8px] font-black text-gold-600 uppercase tracking-tighter italic opacity-80">{user.role}</span>
+                  <span className="text-[10px] font-black text-gold-600 uppercase tracking-tighter italic opacity-80">{user.role}</span>
                 </div>
               </div>
             </div>
@@ -176,17 +176,17 @@ export default function AdminLayout({
               </div>
 
               <div className="text-center space-y-4 max-w-sm px-6">
-                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">ACCESS RESTRICTED</h2>
-                <p className="text-slate-400 text-sm font-medium leading-relaxed italic">
+                <h2 className="text-5xl font-black text-slate-900 tracking-tighter">ACCESS RESTRICTED</h2>
+                <p className="text-slate-400 text-lg font-medium leading-relaxed italic">
                   "Your current node identifier does not have clearance for this administrative sector."
                 </p>
                 <div className="pt-6">
                   <Link
                     href="/admin/dashboard"
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-gold-600 hover:text-navy-950 transition-all shadow-2xl"
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-gold-600 hover:text-navy-950 transition-all shadow-2xl"
                   >
                     <ArrowLeft className="w-4 h-4" />
-                    Return to Command
+                    Return to Dashboard
                   </Link>
                 </div>
               </div>

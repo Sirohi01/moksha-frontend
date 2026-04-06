@@ -2,17 +2,39 @@
 import React, { useState } from "react";
 import { Container } from "@/components/ui/Elements";
 import Image from "next/image";
-import { getSafeSrc } from "@/lib/utils";
+import { getSafeSrc, getAlt } from "@/lib/utils";
 import { testimonialsConfig } from "@/config/testimonials.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 import VideoModal from "@/components/ui/VideoModal";
+import { formsAPI } from "@/lib/api";
 
 export default function Testimonials() {
-  const { config, loading, error } = usePageConfig('testimonials', testimonialsConfig);
+  const { config, seo, loading: configLoading, error: configError } = usePageConfig('testimonials', testimonialsConfig);
   const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [loadingTestimonials, setLoadingTestimonials] = useState(true);
+
+  React.useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        setLoadingTestimonials(true);
+        const response = await formsAPI.getPublicTestimonials();
+        console.log('Testimonials API Response:', response);
+        if (response && response.success) {
+          console.log('Loaded Testimonials:', response.data.length);
+          setTestimonials(response.data || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch testimonials:', err);
+      } finally {
+        setLoadingTestimonials(false);
+      }
+    };
+    fetchTestimonials();
+  }, []);
   
-  if (loading) {
+  if (configLoading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700"></div>
@@ -20,14 +42,22 @@ export default function Testimonials() {
     );
   }
 
-  if (error) {
-    console.error('Failed to load Testimonials page config:', error);
+  if (configError) {
+    console.error('Failed to load Testimonials page config:', configError);
   }
-
+ 
   // Use fallback config if dynamic config is null
   const activeConfig = config || testimonialsConfig;
-  const testimonials = activeConfig.testimonialsGrid.testimonials;
   const stats = activeConfig.stats;
+ 
+  // Combined testimonials: dynamically loaded ones first, then fill from config if empty
+  const displayTestimonials = (testimonials && testimonials.length > 0) ? testimonials.map(t => ({
+    name: t.name || 'Anonymous',
+    quote: t.message || 'No message provided',
+    rating: Number(t.experienceRating) || 5,
+    role: (t.feedbackType || 'User').replace('_', ' '),
+    location: 'Verified User'
+  })) : activeConfig.testimonialsGrid.testimonials;
 
   const StarIcon = getIcon('Star');
   const QuoteIcon = getIcon('Quote');
@@ -79,7 +109,7 @@ export default function Testimonials() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+            {displayTestimonials.map((testimonial, index) => (
               <div key={index} className="bg-white p-8 rounded-2xl border border-stone-100 hover:shadow-xl transition-all duration-500 group">
                 <div className="flex items-center gap-1 mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
@@ -140,9 +170,9 @@ export default function Testimonials() {
               >
                 <Image 
                   src={getSafeSrc(video.thumbnail)}
-                  alt={video.alt}
+                  alt={getAlt(video.thumbnail, seo, video.alt || "Testimonial Video")}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="object-contain group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
                   <div className="w-16 h-16 rounded-full bg-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform">

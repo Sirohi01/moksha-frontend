@@ -11,10 +11,10 @@ export const pressConfig: PressPageConfig = {
 
   // Hero Section
   hero: {
-    badge: "MEDIA RELATIONS",
-    title: "PRESS ROOM &",
-    subtitle: "RESOURCES",
-    description: "Official media assets, press releases, and stories for journalists covering humanitarian work, social justice, and dignified response."
+    badge: "Official Media Syndicate . Prime",
+    title: "GLOBAL",
+    subtitle: "PRESS ROOM",
+    description: "The centralized depository for authorized statements, media protocols, and official institutional announcements."
   },
 
   // Press Coverage
@@ -94,6 +94,13 @@ export const pressConfig: PressPageConfig = {
         href: "tel:+919876543210"
       }
     ]
+  },
+
+  // Footer Section
+  footer: {
+    title: "REPOSITORY_ALPHA",
+    protocolLabel: "PROTOCOL",
+    categories: ['INTEGRITY', 'JURISDICTION', 'SYSTEM', 'ACCESS']
   }
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import Image from 'next/image';
 import { PageHeader, DataTable, LoadingSpinner, ActionButton } from "@/components/admin/AdminComponents";
 import { 
   UserCheck, 
@@ -376,7 +377,15 @@ export default function VolunteersManagement() {
       render: (_: any, v: Volunteer) => (
         <div className="flex items-center gap-4">
            {v.photo ? (
-             <img src={v.photo} className="w-10 h-10 rounded-xl object-cover grayscale border border-stone-100 shadow-sm" />
+             <div className="w-10 h-10 rounded-xl overflow-hidden grayscale border border-stone-100 shadow-sm relative">
+                <Image 
+                    src={v.photo} 
+                    fill 
+                    className="object-contain" 
+                    alt="Volunteer Identity" 
+                    unoptimized 
+                />
+             </div>
            ) : (
              <div className="w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center text-stone-300 border border-stone-200">
                 {v.registrationType === 'group' ? <Users className="w-5 h-5" /> : <User className="w-5 h-5" />}
@@ -627,7 +636,13 @@ export default function VolunteersManagement() {
                         <div className="flex flex-col md:flex-row gap-10 md:gap-16 items-center md:items-start pt-4">
                            <div className="w-48 h-64 md:w-64 md:h-80 rounded-[2rem] md:rounded-[3rem] bg-stone-50 border border-stone-100 shadow-inner overflow-hidden relative group/photo flex-shrink-0">
                               {selectedVolunteer?.photo ? (
-                                <img src={selectedVolunteer.photo} className="w-full h-full object-cover grayscale group-hover/photo:grayscale-0 transition-all duration-1000" />
+                                <Image 
+                                    src={selectedVolunteer.photo} 
+                                    fill 
+                                    className="object-contain grayscale group-hover/photo:grayscale-0 transition-all duration-1000" 
+                                    alt="Unit Asset Portrait" 
+                                    unoptimized 
+                                />
                               ) : (
                                 <div className="flex flex-col items-center justify-center h-full text-stone-200">
                                    <Camera className="w-10 h-10 md:w-14 md:h-14 mb-3" />
@@ -709,8 +724,18 @@ export default function VolunteersManagement() {
                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10">
                                 {selectedVolunteer.groupMembers.map((m, i) => (
                                   <div key={i} className="p-6 md:p-8 bg-stone-50 rounded-[2rem] md:rounded-[2.5rem] border border-stone-100 flex items-center gap-6 md:gap-8 group/member hover:bg-white hover:shadow-xl transition-all duration-700 relative overflow-hidden">
-                                     <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl border border-stone-200 overflow-hidden shadow-xl flex-shrink-0 group-hover/member:border-gold-300">
-                                        {m.photo ? <img src={m.photo} className="w-full h-full object-cover grayscale" /> : <User className="w-6 h-6 md:w-8 md:h-8 text-stone-100 m-auto mt-4" />}
+                                     <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-xl md:rounded-2xl border border-stone-200 overflow-hidden shadow-xl flex-shrink-0 group-hover/member:border-gold-300 relative">
+                                        {m.photo ? (
+                                            <Image 
+                                                src={m.photo} 
+                                                fill 
+                                                className="object-contain grayscale" 
+                                                alt="Agent Resource Visual" 
+                                                unoptimized 
+                                            />
+                                        ) : (
+                                            <User className="w-6 h-6 md:w-8 md:h-8 text-stone-100 m-auto mt-4" />
+                                        )}
                                      </div>
                                      <div className="flex-1">
                                         <h5 className="text-[14px] md:text-base font-black text-zinc-950 uppercase italic leading-none mb-1 md:mb-1.5">{m.name}</h5>

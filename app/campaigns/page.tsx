@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/Elements";
 import { Heart, Globe, Anchor, Tent, ChevronRight, Share2, Play } from "lucide-react";
 import Link from "next/link";
 import Button from "@/components/ui/Button";
-import { getSafeSrc } from "@/lib/utils";
+import { getSafeSrc, getAlt } from "@/lib/utils";
 
 export default function CampaignsPage() {
     const campaigns = [
@@ -58,10 +58,10 @@ export default function CampaignsPage() {
                 <div className="absolute inset-0 opacity-100">
                     <Image 
                         src="/gallery/gallery_community_support_1772861359875.png" 
-                        alt="Community Support" 
+                        alt={getAlt("/gallery/gallery_community_support_1772861359875.png", null, "Community Support")} 
                         fill 
                         sizes="100vw"
-                        className="object-cover" 
+                        className="object-contain" 
                     />
                     <div className="absolute inset-0 bg-stone-900/60" />
                 </div>
@@ -90,13 +90,13 @@ export default function CampaignsPage() {
                             )}>
                                 {/* Visual Side */}
                                 <div className="lg:w-1/2 w-full">
-                                    <div className="relative aspect-[16/10] rounded-[3rem] overflow-hidden shadow-2xl group">
+                                    <div className="relative aspect-[16/9] rounded-[3rem] overflow-hidden shadow-2xl group">
                                         <Image 
                                             src={getSafeSrc(campaign.image)} 
-                                            alt={campaign.title} 
+                                            alt={getAlt(campaign.image, null, campaign.title)} 
                                             fill 
                                             sizes="(max-width: 1024px) 100vw, 50vw"
-                                            className="object-cover group-hover:scale-110 transition-transform duration-1000" 
+                                            className="object-contain group-hover:scale-110 transition-transform duration-1000" 
                                         />
                                         <div className="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-all" />
                                         <div className="absolute top-8 left-8">

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Mail, Send, Trash2, Shield, Upload, Loader2, Globe, Users, CheckCircle2, AlertCircle, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -117,7 +118,7 @@ export default function NewsletterDispatchPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/80 backdrop-blur-3xl p-6 rounded-3xl border border-navy-50 shadow-2xl">
                 <div className="flex items-center gap-6">
                     <div className="w-16 h-16 bg-navy-950 rounded-2xl flex items-center justify-center shadow-xl border border-white/10 p-2 transform -rotate-1 hover:rotate-0 transition-transform duration-500">
-                        <img src="/logo.png" className="w-full h-full object-contain" alt="Logo" style={{ filter: 'none' }} />
+                        <Image src="/logo.png" width={64} height={64} className="w-full h-full object-contain" alt="Logo" style={{ filter: 'none' }} />
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -248,7 +249,16 @@ export default function NewsletterDispatchPage() {
                                 className="rounded-[4rem] bg-white border border-navy-50 shadow-[0_60px_100px_rgba(0,0,0,0.1)] overflow-hidden relative min-h-[600px] flex items-center justify-center p-0"
                             >
                                 {assetType === 'image' ? (
-                                    <img src={asset} className="w-full h-auto object-contain animate-in zoom-in-95 duration-1000" alt="Broadcast Preview" />
+                                    <div className="relative w-full h-auto min-h-[400px]">
+                                        <Image 
+                                            src={asset!} 
+                                            alt="Broadcast Preview" 
+                                            width={1200}
+                                            height={800}
+                                            className="w-full h-auto object-contain animate-in zoom-in-95 duration-1000" 
+                                            unoptimized 
+                                        />
+                                    </div>
                                 ) : (
                                     <div className="bg-white w-full h-[600px] overflow-hidden">
                                         <iframe 

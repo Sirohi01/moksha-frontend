@@ -11,7 +11,7 @@ export default function SaathiShelterPage() {
             {/* Hero Section */}
             <section className="bg-stone-900 text-white py-32 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-100">
-                    <Image src="/gallery/gallery_volunteer_meeting_1772862633347.png" alt="Volunteer Meeting" fill className="object-cover" />
+                    <Image src="/gallery/gallery_volunteer_meeting_1772862633347.png" alt="Volunteer Meeting" fill className="object-contain" />
                     <div className="absolute inset-0 bg-stone-900/50" />
                 </div>
                 <Container className="relative z-10">

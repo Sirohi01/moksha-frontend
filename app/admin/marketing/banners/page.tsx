@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { marketingAPI, galleryAPI } from '@/lib/api';
 import {
     Image as ImageIcon,
@@ -38,6 +39,7 @@ export default function BannersPage() {
         title: '',
         content: '',
         imageUrl: '',
+        altText: '',
         targetUrl: '',
         isActive: true,
         displayRules: {
@@ -70,6 +72,8 @@ export default function BannersPage() {
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        // Size restriction lifted as per mission protocol
 
         try {
             setIsUploading(true);
@@ -110,6 +114,7 @@ export default function BannersPage() {
                 title: '',
                 content: '',
                 imageUrl: '',
+                altText: '',
                 targetUrl: '',
                 isActive: true,
                 displayRules: { page: 'all', priority: 0 },
@@ -245,6 +250,17 @@ export default function BannersPage() {
                                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                 />
                             </div>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-navy-300 uppercase tracking-widest ml-4 flex items-center gap-2 italic">
+                                    <ImageIcon className="w-3 h-3" /> SEO Alt Text
+                                </label>
+                                <input
+                                    placeholder="SEARCH ENGINE CONTEXT..."
+                                    className="w-full p-4 bg-navy-50/50 border-2 border-transparent focus:border-gold-500 rounded-2xl outline-none font-black text-navy-950 transition-all uppercase tracking-widest text-[10px]"
+                                    value={formData.altText || ''}
+                                    onChange={(e) => setFormData({ ...formData, altText: e.target.value })}
+                                />
+                            </div>
                         </div>
 
                         {/* Visual Config */}
@@ -282,7 +298,7 @@ export default function BannersPage() {
                         </div>
 
                         <div className="space-y-2">
-                             <label className="text-[9px] font-black text-navy-300 uppercase tracking-widest ml-4 flex items-center gap-2 italic">
+                            <label className="text-[9px] font-black text-navy-300 uppercase tracking-widest ml-4 flex items-center gap-2 italic">
                                 <Zap className="w-3 h-3" /> Strategic Priority (0-99)
                             </label>
                             <input
@@ -300,10 +316,11 @@ export default function BannersPage() {
                                 <div className="flex items-center justify-between px-2">
                                     <label className="text-[9px] font-black text-navy-300 uppercase tracking-[0.3em]">Asset Payload</label>
                                     <label htmlFor="asset-upload" className="flex items-center gap-2 text-[9px] font-black text-gold-600 uppercase tracking-widest cursor-pointer hover:underline bg-gold-50 px-3 py-1 rounded-lg">
-                                        <Upload className="w-3 h-3" /> {isUploading ? 'SYNCING...' : 'UPLOAD'}
+                                        <Upload className="w-3 h-3" /> {isUploading ? 'SYNCING...' : 'UPLOAD ASSET'}
                                     </label>
                                     <input type="file" id="asset-upload" className="hidden" onChange={handleFileUpload} accept="image/*" />
                                 </div>
+                                <p className="text-[8px] text-gold-600 font-bold uppercase tracking-widest pl-2">Recommended: 1200x750px (Popup) | 1920x200px (Banner)</p>
                                 <input
                                     placeholder="ASSET URL..."
                                     className="w-full p-4 bg-navy-50/10 border-2 border-dashed border-navy-100 rounded-xl outline-none font-bold text-navy-400 transition-all text-[9px] select-all truncate"
@@ -312,13 +329,13 @@ export default function BannersPage() {
                                 />
                             </div>
                         )}
-                        
+
                         <div className="space-y-2 pt-2">
                             <label className="text-[9px] font-black text-navy-300 uppercase tracking-widest ml-4 flex items-center gap-2 italic">
                                 <Search className="w-3 h-3" /> Redirect Protocol
                             </label>
                             <input
-                                placeholder="https://moksha-seva.org/donate..."
+                                placeholder="https://mokshasewa.org/donate..."
                                 className="w-full p-5 bg-navy-50/50 border-2 border-transparent focus:border-gold-500 rounded-2xl outline-none font-bold text-navy-700 transition-all text-xs"
                                 value={formData.targetUrl}
                                 onChange={(e) => setFormData({ ...formData, targetUrl: e.target.value })}
@@ -329,7 +346,7 @@ export default function BannersPage() {
                         {(() => {
                             const isImageRequired = formData.type === 'popup';
                             const isInvalid = !formData.title || (isImageRequired && !formData.imageUrl) || status === 'saving';
-                            
+
                             return (
                                 <button
                                     onClick={handleSubmit}
@@ -387,8 +404,8 @@ export default function BannersPage() {
                                     <div className={cn(
                                         "w-full px-6 py-3 flex items-center justify-between gap-4 border-b transition-all duration-700 animate-in slide-in-from-top-10 shadow-lg",
                                         formData.appearance.theme === 'navy-gold' ? "bg-gradient-to-r from-navy-950 via-navy-900 to-navy-950 text-gold-500 border-gold-500/20" :
-                                        formData.appearance.theme === 'emergency-red' ? "bg-gradient-to-r from-rose-600 via-red-500 to-rose-600 text-white border-white/10" :
-                                        formData.appearance.theme === 'dark' ? "bg-black text-gold-400 border-white/5" : "bg-white text-navy-950 border-navy-100 shadow-sm"
+                                            formData.appearance.theme === 'emergency-red' ? "bg-gradient-to-r from-rose-600 via-red-500 to-rose-600 text-white border-white/10" :
+                                                formData.appearance.theme === 'dark' ? "bg-black text-gold-400 border-white/5" : "bg-white text-navy-950 border-navy-100 shadow-sm"
                                     )}>
                                         <div className="flex items-center gap-2">
                                             <div className="relative flex h-2 w-2">
@@ -434,7 +451,13 @@ export default function BannersPage() {
 
                                             <div className="aspect-[16/10] w-full relative overflow-hidden bg-navy-50">
                                                 {formData.imageUrl ? (
-                                                    <img src={formData.imageUrl} className="w-full h-full object-cover group-hover/pop:scale-105 transition-transform duration-1000" alt="Popup" />
+                                                    <Image 
+                                                        src={formData.imageUrl} 
+                                                        fill 
+                                                        className="object-contain group-hover/pop:scale-105 transition-transform duration-1000" 
+                                                        alt={formData.altText || 'Marketing Assets'} 
+                                                        unoptimized 
+                                                    />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-10 h-10 text-navy-100" /></div>
                                                 )}
@@ -508,7 +531,7 @@ export default function BannersPage() {
                         {(() => {
                             const winningPopup = [...content]
                                 .filter(c => c.type === 'popup' && c.isActive)
-                                .sort((a,b) => {
+                                .sort((a, b) => {
                                     const pA = a.displayRules?.priority || 0;
                                     const pB = b.displayRules?.priority || 0;
                                     if (pA !== pB) return pB - pA;
@@ -528,7 +551,13 @@ export default function BannersPage() {
                                     <div className="flex items-start gap-5">
                                         <div className="w-24 h-24 rounded-[1.5rem] bg-navy-50 overflow-hidden shadow-inner border border-navy-100/50 flex-shrink-0 relative">
                                             {item.imageUrl ? (
-                                                <img src={item.imageUrl} className="w-full h-full object-cover filter saturate-0 group-hover:saturate-100 transition-all duration-700" alt="Asset" />
+                                                <Image 
+                                                    src={item.imageUrl} 
+                                                    fill 
+                                                    className="object-contain filter saturate-0 group-hover:saturate-100 transition-all duration-700" 
+                                                    alt={item.altText || 'Asset'} 
+                                                    unoptimized 
+                                                />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-8 h-8 text-navy-200" /></div>
                                             )}

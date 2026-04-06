@@ -3,12 +3,12 @@ import React from "react";
 import Image from "next/image";
 import { Container } from "@/components/ui/Elements";
 import { storiesConfig } from "@/config/stories.config";
-import { getSafeSrc } from "@/lib/utils";
+import { getSafeSrc, getAlt } from "@/lib/utils";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function StoriesPage() {
-    const { config, loading, error } = usePageConfig('stories', storiesConfig);
+    const { config, seo, loading, error } = usePageConfig('stories', storiesConfig);
     
     if (loading) {
         return (
@@ -58,7 +58,7 @@ export default function StoriesPage() {
                         {stories.map((story, i) => (
                             <div key={i} className="flex flex-col lg:flex-row items-center gap-12 group">
                                 <div className="lg:w-1/2 w-full aspect-video rounded-[3rem] overflow-hidden shadow-2xl relative">
-                                    <Image src={getSafeSrc(story.image)} alt={story.imageAlt} fill className="object-cover group-hover:scale-105 transition-transform duration-1000" />
+                                    <Image src={getSafeSrc(story.image)} alt={getAlt(story.image, seo, story.imageAlt || "Moksha Seva Story")} fill className="object-contain group-hover:scale-105 transition-transform duration-1000" />
                                     <div className="absolute inset-0 bg-stone-900/30 group-hover:bg-stone-900/10 transition-colors" />
                                     {/* <button className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white flex items-center justify-center text-[#7ab800] shadow-2xl hover:scale-110 transition-all">
                                         {(() => {

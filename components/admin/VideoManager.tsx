@@ -220,7 +220,7 @@ export default function VideoManager({ onVideoSelect }: VideoManagerProps) {
                 <Image
                   src={getSafeSrc(video.thumbnailUrl)}
                   alt={video.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   width={400}
                   height={225}
                 />

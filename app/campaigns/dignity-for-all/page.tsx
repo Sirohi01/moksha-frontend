@@ -12,7 +12,7 @@ export default function DignityForAllPage() {
             {/* Hero Section */}
             <section className="bg-stone-900 text-white py-32 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-100">
-                    <Image src="/gallery/gallery_peaceful_departure_1772861335733.png" alt="Dignity in Departure" fill className="object-cover" />
+                    <Image src="/gallery/gallery_peaceful_departure_1772861335733.png" alt="Dignity in Departure" fill className="object-contain" />
                     <div className="absolute inset-0 bg-stone-900/40" />
                 </div>
                 <Container className="relative z-10">

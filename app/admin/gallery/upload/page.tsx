@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Upload, CheckCircle2, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Upload, CheckCircle2, ArrowLeft, Image as ImageIcon, Eye, Copy, Loader2 } from 'lucide-react';
 import { ActionButton } from '@/components/admin/AdminComponents';
 import { cn } from '@/lib/utils';
 import { galleryAPI } from '@/lib/api';
@@ -12,10 +13,13 @@ export default function GalleryUploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [title, setTitle] = useState('');
+  const [altText, setAltText] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('gallery');
+  const [isPublic, setIsPublic] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -26,6 +30,7 @@ export default function GalleryUploadPage() {
         setPreview(reader.result as string);
       };
       reader.readAsDataURL(selectedFile);
+      setError('');
     }
   };
 
@@ -36,18 +41,22 @@ export default function GalleryUploadPage() {
     try {
       setIsUploading(true);
       setError('');
-      
+
       const formData = new FormData();
       formData.append('image', file);
       formData.append('title', title);
       formData.append('description', description);
       formData.append('category', category);
-      formData.append('alt', title);
+      formData.append('altText', altText);
+      formData.append('isPublic', String(isPublic));
 
       const result = await galleryAPI.uploadImage(formData);
-      
+
       if (result.success) {
-        router.push('/admin/gallery');
+        setSuccessMessage('Asset successfully synchronized with the archive!');
+        setTimeout(() => {
+          router.push('/admin/gallery');
+        }, 2000);
       }
     } catch (err: any) {
       console.error('Upload failed:', err);
@@ -72,7 +81,7 @@ export default function GalleryUploadPage() {
             Manage and synchronize visual assets to the project gallery archive.
           </p>
         </div>
-        <button 
+        <button
           onClick={() => router.push('/admin/gallery')}
           className="flex items-center gap-2 text-navy-400 hover:text-navy-950 font-black uppercase text-[10px] tracking-widest transition-all group"
         >
@@ -90,71 +99,87 @@ export default function GalleryUploadPage() {
         </div>
       )}
 
+      {successMessage && (
+        <div className="bg-emerald-50 border-2 border-emerald-100 rounded-2xl p-6 text-emerald-700 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3">
+            <CheckCircle2 className="w-6 h-6 text-emerald-500" />
+            <p className="text-xs font-black uppercase tracking-widest">{successMessage}</p>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        
+
         {/* Left Column: Image Selection */}
         <div className="lg:col-span-12 xl:col-span-5 space-y-6">
           <div className="bg-white p-8 rounded-[2.5rem] border-2 border-navy-50 shadow-sm space-y-6">
-             <div className="flex items-center justify-between">
-                <label className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em]">Visual Archive</label>
-                {file && (
-                  <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Validated</span>
-                )}
-             </div>
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em]">Visual Archive</label>
+              {file && (
+                <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Validated</span>
+              )}
+            </div>
 
-             <div 
-                onClick={() => document.getElementById('gallery-file-input')?.click()}
-                className={cn(
-                  "relative aspect-video sm:aspect-square rounded-[2rem] border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all duration-500 overflow-hidden group shadow-inner",
-                  preview 
-                    ? "border-gold-500 bg-stone-50" 
-                    : "border-navy-100 bg-navy-50/20 hover:border-gold-400 hover:bg-stone-50"
-                )}
-              >
-                {preview ? (
-                  <>
-                    <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 backdrop-blur-sm">
-                       <span className="text-white text-[9px] font-black uppercase tracking-[0.3em] bg-gold-600 px-6 py-3 rounded-full shadow-2xl">Change Image</span>
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center p-8 space-y-4">
-                    <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-lg border border-navy-50 group-hover:scale-110 transition-transform duration-500">
-                      <ImageIcon className="w-8 h-8 text-navy-950" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-xs font-black text-navy-950 uppercase tracking-widest">Select Asset</p>
-                      <p className="text-[9px] text-navy-400 font-bold uppercase tracking-widest">JPG, PNG, WEBP UP TO 10MB</p>
-                    </div>
+            <div
+              onClick={() => document.getElementById('gallery-file-input')?.click()}
+              className={cn(
+                "relative aspect-video sm:aspect-square rounded-[2rem] border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all duration-500 overflow-hidden group shadow-inner",
+                preview
+                  ? "border-gold-500 bg-stone-50"
+                  : "border-navy-100 bg-navy-50/20 hover:border-gold-400 hover:bg-stone-50"
+              )}
+            >
+              {preview ? (
+                <>
+                  <Image 
+                    src={preview} 
+                    alt="Current preview" 
+                    fill 
+                    className="object-contain" 
+                    unoptimized 
+                  />
+                  <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 backdrop-blur-sm">
+                    <span className="text-white text-[9px] font-black uppercase tracking-[0.3em] bg-gold-600 px-6 py-3 rounded-full shadow-2xl">Change Image</span>
                   </div>
-                )}
-                <input 
-                  id="gallery-file-input"
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={handleFileChange}
-                />
-              </div>
+                </>
+              ) : (
+                <div className="text-center p-8 space-y-4">
+                  <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-lg border border-navy-50 group-hover:scale-110 transition-transform duration-500">
+                    <ImageIcon className="w-8 h-8 text-navy-950" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-xs font-black text-navy-950 uppercase tracking-widest">Select Asset</p>
+                    <p className="text-[9px] text-navy-400 font-bold uppercase tracking-widest">JPG, PNG, WEBP | Performance Optimized</p>
+                    <p className="text-[8px] text-gold-600 font-black uppercase tracking-widest mt-1 italic">Recommended: 800x800px (1:1 Ratio)</p>
+                  </div>
+                </div>
+              )}
+              <input
+                id="gallery-file-input"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+            </div>
 
-              <div className="pt-4 border-t border-navy-50">
-                 <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 mt-0.5 rounded bg-gold-500 flex items-center justify-center text-navy-950 flex-shrink-0">
-                      <CheckCircle2 className="w-3 h-3" />
-                    </div>
-                    <p className="text-[10px] font-bold text-navy-500 leading-relaxed uppercase tracking-tight italic">
-                      Ensure high-resolution assets for better visual impact across all digital segments.
-                    </p>
-                 </div>
+            <div className="pt-4 border-t border-navy-50">
+              <div className="flex items-start gap-3">
+                <div className="w-5 h-5 mt-0.5 rounded bg-gold-500 flex items-center justify-center text-navy-950 flex-shrink-0">
+                  <CheckCircle2 className="w-3 h-3" />
+                </div>
+                <p className="text-[10px] font-bold text-navy-500 leading-relaxed uppercase tracking-tight italic">
+                  Ensure high-resolution assets for better visual impact across all digital segments.
+                </p>
               </div>
+            </div>
           </div>
         </div>
 
         {/* Right Column: Information */}
         <div className="lg:col-span-12 xl:col-span-7 space-y-8">
           <div className="bg-white p-8 sm:p-10 rounded-[2.5rem] border-2 border-navy-50 shadow-sm space-y-8">
-            
+
             {/* Title Section */}
             <div className="space-y-3">
               <label className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] px-1">
@@ -167,6 +192,27 @@ export default function GalleryUploadPage() {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full px-6 py-5 bg-stone-50 border-2 border-transparent border-b-navy-100 focus:border-gold-500 focus:bg-white transition-all duration-300 text-sm font-black text-navy-950 placeholder:text-navy-200 uppercase tracking-tight"
+              />
+            </div>
+
+            {/* Alt Text Section */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] px-1">
+                  SEO Alt Text *
+                </label>
+                <span className="text-[8px] text-rose-600 font-black uppercase tracking-widest bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 flex items-center gap-1.5 animate-pulse">
+                  <div className="w-1.5 h-1.5 bg-rose-600 rounded-full" />
+                  Strictly Required for SEO Protocol
+                </span>
+              </div>
+              <input
+                type="text"
+                required
+                placeholder="DESCRIBE IMAGE FOR SEARCH ENGINES..."
+                value={altText}
+                onChange={(e) => setAltText(e.target.value)}
+                className="w-full px-6 py-5 bg-stone-50 border-2 border-transparent border-b-navy-100 focus:border-amber-500 focus:bg-white transition-all duration-300 text-sm font-black text-navy-950 placeholder:text-navy-200 uppercase tracking-tight"
               />
             </div>
 
@@ -193,6 +239,36 @@ export default function GalleryUploadPage() {
               </div>
             </div>
 
+            {/* Visibility Toggle */}
+            <div className="p-6 bg-navy-50/30 rounded-3xl border-2 border-navy-50 flex items-center justify-between group hover:bg-white hover:border-gold-200 transition-all duration-500">
+              <div className="flex items-center gap-4">
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 shadow-sm",
+                  isPublic ? "bg-emerald-500 text-white shadow-emerald-200" : "bg-stone-200 text-stone-500"
+                )}>
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-black text-navy-950 uppercase tracking-widest">Public Visibility</p>
+                  <p className="text-[8px] font-bold text-navy-400 uppercase tracking-tighter italic">If enabled, this asset will be live on the public archive.</p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsPublic(!isPublic)}
+                className={cn(
+                  "relative w-14 h-8 rounded-full transition-all duration-500",
+                  isPublic ? "bg-emerald-500" : "bg-stone-300"
+                )}
+              >
+                <div className={cn(
+                  "absolute top-1 w-6 h-6 bg-white rounded-full transition-all duration-500 shadow-md",
+                  isPublic ? "left-7" : "left-1"
+                )} />
+              </button>
+            </div>
+
             {/* Description Section */}
             <div className="space-y-3">
               <label className="text-[10px] font-black text-navy-950 uppercase tracking-[0.2em] px-1">
@@ -209,7 +285,7 @@ export default function GalleryUploadPage() {
 
             {/* Action Footer */}
             <div className="flex flex-col sm:flex-row items-center justify-end gap-6 pt-8 border-t border-navy-50">
-               <button 
+              <button
                 type="button"
                 onClick={() => router.push('/admin/gallery')}
                 disabled={isUploading}
@@ -217,8 +293,8 @@ export default function GalleryUploadPage() {
               >
                 Abort Sync
               </button>
-              <ActionButton 
-                variant="primary" 
+              <ActionButton
+                variant="primary"
                 type="submit"
                 loading={isUploading}
                 disabled={!file || !title}

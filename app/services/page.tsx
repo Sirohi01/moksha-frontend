@@ -1,14 +1,14 @@
 "use client";
 import { Container } from "@/components/ui/Elements";
 import Image from 'next/image';
-import { getSafeSrc } from '@/lib/utils';
+import { getSafeSrc, getAlt } from '@/lib/utils';
 import { servicesConfig } from "@/config/services.config";
 import { getIcon } from "@/config/icons.config";
 import { usePageConfig } from "@/hooks/usePageConfig";
 
 export default function ServicesPage() {
   // Use dynamic config with fallback to static config
-  const { config: dynamicConfig, loading: configLoading } = usePageConfig('services', servicesConfig);
+  const { config: dynamicConfig, seo, loading: configLoading } = usePageConfig('services', servicesConfig);
   
   // Use dynamic config if available, otherwise fallback to static
   const config = dynamicConfig || servicesConfig;
@@ -102,10 +102,10 @@ export default function ServicesPage() {
                       <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden">
                         <Image
                           src={getSafeSrc(item.image)}
-                          alt={item.title}
+                          alt={getAlt(item.image, seo, item.title || "Service Icon")}
                           width={48}
                           height={48}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     </div>
@@ -118,13 +118,12 @@ export default function ServicesPage() {
             <div className="space-y-6">
               {/* Main image */}
               <div className="relative">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] rounded-2xl overflow-hidden shadow-xl relative">
                   <Image
                     src={getSafeSrc(config.eligibility.mainImage)}
-                    alt={config.eligibility.mainImageAlt}
-                    width={400}
-                    height={300}
-                    className="w-full h-full object-cover"
+                    alt={getAlt(config.eligibility.mainImage, seo, config.eligibility.mainImageAlt || "Eligibility Illustration")}
+                    fill
+                    className="object-contain"
                   />
                 </div>
                 <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-amber-100 rounded-full opacity-30"></div>

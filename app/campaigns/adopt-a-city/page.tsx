@@ -15,7 +15,7 @@ export default function AdoptACityPage() {
                         alt="Ambulance Response Unit" 
                         fill 
                         sizes="100vw"
-                        className="object-cover" 
+                        className="object-contain" 
                     />
                     <div className="absolute inset-0 bg-stone-900/50" />
                 </div>

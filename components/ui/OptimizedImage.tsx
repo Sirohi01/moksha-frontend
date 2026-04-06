@@ -13,6 +13,7 @@ interface OptimizedImageProps {
   priority?: boolean;
   fill?: boolean;
   sizes?: string;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none';
   quality?: number;
   placeholder?: 'blur' | 'empty';
   blurDataURL?: string;
@@ -28,6 +29,7 @@ export default function OptimizedImage({
   className,
   priority = false,
   fill = false,
+  objectFit,
   sizes,
   quality = 85,
   placeholder = 'empty',
@@ -63,6 +65,9 @@ export default function OptimizedImage({
     );
   }
 
+  const defaultObjectFit = fill ? 'object-contain' : '';
+  const finalObjectFit = objectFit ? `object-${objectFit}` : defaultObjectFit;
+
   return (
     <div className={cn('relative overflow-hidden', className)}>
       {isLoading && (
@@ -87,7 +92,7 @@ export default function OptimizedImage({
         className={cn(
           'transition-opacity duration-300',
           isLoading ? 'opacity-0' : 'opacity-100',
-          fill ? 'object-cover' : ''
+          finalObjectFit
         )}
       />
     </div>
