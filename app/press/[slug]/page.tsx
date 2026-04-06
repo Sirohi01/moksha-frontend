@@ -142,7 +142,7 @@ export default async function PressReleaseDetailPage({ params }: { params: { slu
                        src={pr.featuredImage.url} 
                        alt={getAlt(pr.featuredImage.url, seo, pr.featuredImage.alt || pr.title)}
                        fill
-                       className="object-cover group-hover:scale-105 transition-transform duration-[8s]"
+                       className="object-contain group-hover:scale-105 transition-transform duration-[8s]"
                        priority
                      />
                    ) : (

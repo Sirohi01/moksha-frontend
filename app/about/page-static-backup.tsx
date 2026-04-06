@@ -95,7 +95,7 @@ export default function AboutPage() {
                   <Image
                     src={aboutConfig.hero.image}
                     alt={aboutConfig.hero.cardTitle}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     width={400}
                     height={300}
                   />
@@ -175,7 +175,7 @@ export default function AboutPage() {
                   <Image
                     src={aboutConfig.story.image}
                     alt={aboutConfig.story.imageAlt}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     width={400}
                     height={300}
                   />

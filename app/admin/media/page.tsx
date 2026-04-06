@@ -411,7 +411,7 @@ export default function MediaDashboard() {
                     <Image
                       src={getSafeSrc(asset.thumbnailUrl || asset.url)}
                       alt={asset.altText || asset.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                       width={400}
                       height={300}
                     />

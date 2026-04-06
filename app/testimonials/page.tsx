@@ -172,7 +172,7 @@ export default function Testimonials() {
                   src={getSafeSrc(video.thumbnail)}
                   alt={getAlt(video.thumbnail, seo, video.alt || "Testimonial Video")}
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="object-contain group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center group-hover:bg-black/20 transition-all">
                   <div className="w-16 h-16 rounded-full bg-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform">

@@ -130,7 +130,7 @@ export default function ImageBrowser({
                       alt="Gallery Asset"
                       fill
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 20vw"
-                      className={`object-cover transition-all duration-700 ${
+                      className={`object-contain transition-all duration-700 ${
                         isActive ? 'scale-110' : 'group-hover:scale-105 opacity-80 group-hover:opacity-100'
                       }`}
                     />

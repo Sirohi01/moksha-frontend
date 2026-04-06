@@ -95,7 +95,7 @@ export default function Impact() {
                   src={getSafeSrc(config.hero.image)}
                   alt={getAlt(config.hero.image, seo, config.hero.imageAlt || "Mission Impact")}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-amber-100 rounded-full opacity-30"></div>
@@ -229,7 +229,7 @@ export default function Impact() {
                   src={getSafeSrc(config.growthTimeline.image)}
                   alt={getAlt(config.growthTimeline.image, seo, config.growthTimeline.imageAlt || "Growth Timeline")}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-amber-100 rounded-full opacity-20"></div>
@@ -313,7 +313,7 @@ export default function Impact() {
                   src={getSafeSrc(config.callToAction.image)}
                   alt={getAlt(config.callToAction.image, seo, config.callToAction.imageAlt || "Call to Action")}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/20 rounded-full"></div>

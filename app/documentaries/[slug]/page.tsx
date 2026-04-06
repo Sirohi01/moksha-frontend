@@ -71,7 +71,7 @@ export default async function DocumentaryDetailPage({ params }: { params: { slug
             src={doc.featuredImage.url} 
             alt={doc.featuredImage.alt || doc.title}
             fill
-            className="object-cover opacity-60"
+            className="object-contain opacity-60"
             priority
           />
         ) : (

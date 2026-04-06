@@ -381,7 +381,7 @@ export default function VolunteersManagement() {
                 <Image 
                     src={v.photo} 
                     fill 
-                    className="object-cover" 
+                    className="object-contain" 
                     alt="Volunteer Identity" 
                     unoptimized 
                 />
@@ -639,7 +639,7 @@ export default function VolunteersManagement() {
                                 <Image 
                                     src={selectedVolunteer.photo} 
                                     fill 
-                                    className="object-cover grayscale group-hover/photo:grayscale-0 transition-all duration-1000" 
+                                    className="object-contain grayscale group-hover/photo:grayscale-0 transition-all duration-1000" 
                                     alt="Unit Asset Portrait" 
                                     unoptimized 
                                 />
@@ -729,7 +729,7 @@ export default function VolunteersManagement() {
                                             <Image 
                                                 src={m.photo} 
                                                 fill 
-                                                className="object-cover grayscale" 
+                                                className="object-contain grayscale" 
                                                 alt="Agent Resource Visual" 
                                                 unoptimized 
                                             />

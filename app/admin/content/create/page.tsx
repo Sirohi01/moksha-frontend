@@ -368,7 +368,7 @@ export default function CreateDynamicPage() {
                                             alt="Hero" 
                                             fill 
                                             sizes="100vw"
-                                            className="object-cover opacity-90 transition-transform duration-[4s] group-hover:scale-110" 
+                                            className="object-contain opacity-90 transition-transform duration-[4s] group-hover:scale-110" 
                                         />
                                     ) : (
                                         <div className="absolute inset-0 bg-slate-100 flex items-center justify-center">
@@ -445,7 +445,7 @@ export default function CreateDynamicPage() {
                                                         alt="Segment Visual" 
                                                         fill 
                                                         sizes="(max-width: 1024px) 100vw, 50vw"
-                                                        className="object-cover group-hover/img-node:scale-110 transition-transform duration-1000" 
+                                                        className="object-contain group-hover/img-node:scale-110 transition-transform duration-1000" 
                                                     />
                                                     <div className="absolute inset-0 bg-slate-950/10 group-hover/img-node:bg-transparent transition-colors" />
                                                     

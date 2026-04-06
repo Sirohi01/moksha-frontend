@@ -61,7 +61,7 @@ export default function CampaignsPage() {
                         alt={getAlt("/gallery/gallery_community_support_1772861359875.png", null, "Community Support")} 
                         fill 
                         sizes="100vw"
-                        className="object-cover" 
+                        className="object-contain" 
                     />
                     <div className="absolute inset-0 bg-stone-900/60" />
                 </div>
@@ -96,7 +96,7 @@ export default function CampaignsPage() {
                                             alt={getAlt(campaign.image, null, campaign.title)} 
                                             fill 
                                             sizes="(max-width: 1024px) 100vw, 50vw"
-                                            className="object-cover group-hover:scale-110 transition-transform duration-1000" 
+                                            className="object-contain group-hover:scale-110 transition-transform duration-1000" 
                                         />
                                         <div className="absolute inset-0 bg-stone-900/20 group-hover:bg-transparent transition-all" />
                                         <div className="absolute top-8 left-8">

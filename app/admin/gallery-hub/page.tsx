@@ -368,7 +368,7 @@ function VisualAssetCard({ title, path, url, alt, onSwap, onUpload, saving }: an
     const getRequirement = (path: string) => {
         const lowerPath = path.toLowerCase();
         // SEO Team Mission Directives
-        if (lowerPath.includes('hero') || lowerPath.includes('slide')) return "1620x700px (Cinematic)";
+        if (lowerPath.includes('hero') || lowerPath.includes('slide')) return "1650x700px (Cinematic)";
         if (lowerPath.includes('about')) return "1000x1000px (1:1 High Res)";
         if (lowerPath.includes('service') || lowerPath.includes('impact')) return "800x600px (Standard Card)";
         if (lowerPath.includes('logo')) return "400x200px (Vector Opt)";
@@ -387,7 +387,7 @@ function VisualAssetCard({ title, path, url, alt, onSwap, onUpload, saving }: an
                         src={tempUrl}
                         alt={title}
                         fill
-                        className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                        className="object-contain transition-transform duration-1000 group-hover:scale-110"
                         unoptimized
                     />
 
@@ -598,7 +598,7 @@ function AssetPickerModal({ onClose, onSelect }: { onClose: () => void, onSelect
                                     src={img.url}
                                     alt={img.title || 'Gallery Asset'}
                                     fill
-                                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                                    className="object-contain transition-transform duration-1000 group-hover:scale-110"
                                     unoptimized
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8">

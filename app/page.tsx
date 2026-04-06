@@ -100,8 +100,8 @@ export default function HomePage() {
       )}
       <section className={cn(
         "relative w-full overflow-hidden bg-white border-b-4 border-stone-100 transition-all duration-700",
-        getRatioClass(config.hero.aspectRatio, "aspect-[1620/700]"),
-        getRatioClass(config.hero.mobileAspectRatio, "aspect-[1620/700]")
+        getRatioClass(config.hero.aspectRatio, "aspect-[1650/700]"),
+        getRatioClass(config.hero.mobileAspectRatio, "aspect-[1650/700]")
       )}>
         {config.hero?.slides?.map((slide, idx) => {
           const src = typeof slide === 'string' ? slide : slide.src;
@@ -254,7 +254,7 @@ export default function HomePage() {
                       src={getSafeSrc(config.about?.image)}
                       alt={getAlt(config.about?.image, seo, config.about?.alt || "Moksha Sewa - Dignified Final Journey")}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                     {/* Subtle overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
@@ -346,7 +346,7 @@ export default function HomePage() {
                         src={getSafeSrc(p.image)}
                         alt={getAlt(p.image, seo, p.alt || p.title || "Moksha Seva Service")}
                         fill
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
                     </div>
@@ -592,7 +592,7 @@ export default function HomePage() {
                       src={getSafeSrc(story.image)}
                       alt={getAlt(story.image, seo, story.title || "Moksha Seva Story")}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 bg-stone-50"
+                      className="object-contain group-hover:scale-105 transition-transform duration-700 bg-stone-50"
                     />
                     <div className="absolute bottom-5 left-6 z-10">
                       <p className="text-white font-black uppercase text-[10px] tracking-widest drop-shadow-md">{story.title}</p>
@@ -611,7 +611,7 @@ export default function HomePage() {
       )}
 
       {/* Join The Mission - Reverted to Full Background per user request */}
-      <section className="relative py-16 md:py-32 overflow-hidden bg-stone-950">
+      {/* <section className="relative py-16 md:py-32 overflow-hidden bg-stone-950">
         <div className="absolute inset-0 z-0">
           <Image
             src={getSafeSrc(config.joinMission.backgroundImage)}
@@ -619,7 +619,6 @@ export default function HomePage() {
             fill
             className="object-cover opacity-60"
           />
-          {/* Subtle gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
         </div>
 
@@ -661,7 +660,7 @@ export default function HomePage() {
             </div>
           </div>
         </Container>
-      </section>
+      </section> */}
 
       {/* Urgent Campaigns */}
       <section className="py-12 bg-gradient-to-br from-stone-50 to-stone-100 relative overflow-hidden">
@@ -754,7 +753,7 @@ export default function HomePage() {
                           alt={getAlt(c.image, seo, c.alt || c.title || "Urgent Mission")}
                           fill
                           className={cn(
-                            "object-cover transition-transform duration-700 bg-stone-50",
+                            "object-contain transition-transform duration-700 bg-stone-50",
                             position === 0 ? "scale-100" : "scale-105 group-hover:scale-100"
                           )}
                         />

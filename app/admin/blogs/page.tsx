@@ -197,7 +197,7 @@ export default function AdminBlogHub() {
                                 {/* Image Preview */}
                                 <div className="w-full md:w-64 aspect-video md:aspect-[16/10] relative rounded-[2rem] overflow-hidden bg-stone-50 shadow-inner">
                                     {blog.featuredImage?.url ? (
-                                        <Image src={blog.featuredImage.url} alt={blog.title} fill className="object-cover group-hover:scale-110 transition-transform duration-[2000ms]" />
+                                        <Image src={blog.featuredImage.url} alt={blog.title} fill className="object-contain group-hover:scale-110 transition-transform duration-[2000ms]" />
                                     ) : (
                                         <div className="absolute inset-0 flex items-center justify-center text-stone-100">
                                             <ImageIcon size={64} />

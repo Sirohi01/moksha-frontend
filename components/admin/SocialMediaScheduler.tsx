@@ -334,7 +334,7 @@ export default function SocialMediaScheduler() {
                   {post.mediaAssets.slice(0, 3).map((asset, index) => (
                     <div key={index} className="w-12 h-12 bg-gray-100 rounded overflow-hidden">
                       {asset.type === 'image' ? (
-                        <Image src={getSafeSrc(asset.url)} alt={asset.title} className="w-full h-full object-cover" width={48} height={48} />
+                        <Image src={getSafeSrc(asset.url)} alt={asset.title} className="w-full h-full object-contain" width={48} height={48} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">
                           {asset.type === 'video' ? '🎥' : '📄'}

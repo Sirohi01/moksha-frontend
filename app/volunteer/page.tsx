@@ -252,7 +252,7 @@ export default function VolunteerPage() {
                                      alt={getAlt(profilePhoto, null, "Identity Profile")}
                                      fill
                                      unoptimized
-                                     className="object-cover transition-all duration-700 shadow-2xl" 
+                                     className="object-contain transition-all duration-700 shadow-2xl" 
                                    />
                                 ) : (
                                    <div className="text-center font-black uppercase tracking-widest text-navy-200 text-[10px] md:text-xs space-y-4 md:space-y-6 p-6 md:p-10">
@@ -371,7 +371,7 @@ export default function VolunteerPage() {
                                                     <NextImage 
                                                        src={member.photo} 
                                                        fill 
-                                                       className="object-cover" 
+                                                       className="object-contain" 
                                                        alt="Member Identity" 
                                                        unoptimized 
                                                     />

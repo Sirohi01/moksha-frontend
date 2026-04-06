@@ -303,7 +303,7 @@ export default function CreateBlogPage() {
                                         </div>
                                     ) : formData.featuredImage.url ? (
                                         <>
-                                            <Image src={formData.featuredImage.url} alt="Preview" fill className="object-cover" />
+                                            <Image src={formData.featuredImage.url} alt="Preview" fill className="object-contain" />
                                             <div className="absolute inset-0 bg-navy-950/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center gap-4">
                                                 <label className="cursor-pointer bg-white text-navy-950 p-3 rounded-full hover:scale-110 transition-transform">
                                                     <Upload size={18} />

@@ -107,7 +107,7 @@ export default function MarketingPopup() {
                     <Image 
                         src={getSafeSrc(popup.imageUrl)} 
                         fill 
-                        className="object-cover group-hover:scale-105 transition-transform duration-[2000ms]" 
+                        className="object-contain group-hover:scale-105 transition-transform duration-[2000ms]" 
                         alt={popup.altText || 'Campaign Visual'} 
                         unoptimized 
                     />

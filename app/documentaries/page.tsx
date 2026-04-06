@@ -174,7 +174,7 @@ export default function DocumentariesPage() {
                         src={getSafeSrc(doc.featuredImage?.url)} 
                         alt={doc.title}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-[6000ms]"
+                        className="object-contain group-hover:scale-110 transition-transform duration-[6000ms]"
                       />
                       <div className="absolute inset-0 bg-stone-950/15 group-hover:bg-transparent transition-colors duration-1000" />
                       

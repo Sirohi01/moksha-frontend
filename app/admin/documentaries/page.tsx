@@ -195,7 +195,7 @@ export default function AdminDocumentaryHub() {
                             <div key={doc._id} className="group bg-white p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-stone-100 shadow-sm hover:border-amber-500/20 transition-all flex flex-col md:flex-row items-center gap-6 md:gap-10">
                                 <div className="w-full md:w-64 aspect-video md:aspect-[16/10] relative rounded-[2rem] overflow-hidden bg-stone-50 shadow-inner">
                                     {doc.featuredImage?.url ? (
-                                        <Image src={doc.featuredImage.url} alt={doc.title} fill className="object-cover group-hover:scale-110 transition-transform duration-[2000ms]" />
+                                        <Image src={doc.featuredImage.url} alt={doc.title} fill className="object-contain group-hover:scale-110 transition-transform duration-[2000ms]" />
                                     ) : (
                                         <div className="absolute inset-0 flex items-center justify-center text-stone-100">
                                             <ImageIcon size={64} />

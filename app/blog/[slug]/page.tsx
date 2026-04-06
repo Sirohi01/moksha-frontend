@@ -62,7 +62,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             src={post.featuredImage.url} 
             alt={getAlt(post.featuredImage.url, seo, post.featuredImage.alt || post.title)}
             fill
-            className="object-cover"
+            className="object-contain"
             priority
           />
         )}

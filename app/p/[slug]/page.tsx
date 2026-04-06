@@ -91,7 +91,7 @@ export default async function DynamicGenericPage({ params }: { params: { slug: s
               alt={getAlt(page.featuredImage.url, seo, page.title)}
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-contain"
               priority
             />
           ) : (
@@ -138,7 +138,7 @@ export default async function DynamicGenericPage({ params }: { params: { slug: s
                         alt="Section Visual"
                         fill
                         sizes="(max-width: 1024px) 100vw, 50vw"
-                        className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                        className="object-contain group-hover:scale-110 transition-transform duration-1000"
                       />
                       <div className="absolute inset-0 bg-navy-950/20 group-hover:bg-transparent transition-colors" />
                     </div>

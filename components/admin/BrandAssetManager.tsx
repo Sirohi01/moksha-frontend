@@ -247,7 +247,7 @@ export default function BrandAssetManager() {
             <div key={asset.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
               <div className="aspect-video bg-gray-100 flex items-center justify-center relative">
                 {asset.thumbnailUrl ? (
-                  <NextImage src={getSafeSrc(asset.thumbnailUrl)} alt={asset.name} fill className="object-cover" />
+                  <NextImage src={getSafeSrc(asset.thumbnailUrl)} alt={asset.name} fill className="object-contain" />
                 ) : (
                   <div className="text-gray-400">
                     {getAssetIcon(asset.type)}
@@ -330,7 +330,7 @@ export default function BrandAssetManager() {
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center relative">
                           {asset.thumbnailUrl ? (
-                            <NextImage src={getSafeSrc(asset.thumbnailUrl)} alt={asset.name} fill className="object-cover rounded" />
+                            <NextImage src={getSafeSrc(asset.thumbnailUrl)} alt={asset.name} fill className="object-contain rounded" />
                           ) : (
                             getAssetIcon(asset.type)
                           )}

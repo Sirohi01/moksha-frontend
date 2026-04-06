@@ -454,7 +454,7 @@ export default function BannersPage() {
                                                     <Image 
                                                         src={formData.imageUrl} 
                                                         fill 
-                                                        className="object-cover group-hover/pop:scale-105 transition-transform duration-1000" 
+                                                        className="object-contain group-hover/pop:scale-105 transition-transform duration-1000" 
                                                         alt={formData.altText || 'Marketing Assets'} 
                                                         unoptimized 
                                                     />
@@ -554,7 +554,7 @@ export default function BannersPage() {
                                                 <Image 
                                                     src={item.imageUrl} 
                                                     fill 
-                                                    className="object-cover filter saturate-0 group-hover:saturate-100 transition-all duration-700" 
+                                                    className="object-contain filter saturate-0 group-hover:saturate-100 transition-all duration-700" 
                                                     alt={item.altText || 'Asset'} 
                                                     unoptimized 
                                                 />

@@ -104,7 +104,7 @@ export default function AdminLogin() {
             src="/auth-bg.png" 
             alt="Moksha Background" 
             fill 
-            className="object-cover animate-slow-zoom brightness-105"
+            className="object-contain animate-slow-zoom brightness-105"
             priority
          />
          {/* Premium Overlay Filter */}

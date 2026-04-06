@@ -242,7 +242,7 @@ export default function EditPressReleasePage() {
                             <div className="aspect-[16/9] bg-stone-50 rounded-3xl relative overflow-hidden border-2 border-dashed border-stone-100 group/image hover:border-navy-500/30 transition-all flex flex-col items-center justify-center text-stone-300">
                                 {uploading ? <Loader2 className="animate-spin text-navy-600" /> : formData.featuredImage.url ? (
                                     <>
-                                        <Image src={formData.featuredImage.url} alt="Preview" fill className="object-cover" />
+                                        <Image src={formData.featuredImage.url} alt="Preview" fill className="object-contain" />
                                         <div className="absolute inset-0 bg-navy-950/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center gap-4">
                                             <label className="cursor-pointer bg-white text-navy-950 p-3 rounded-full"><Upload size={18} /><input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} /></label>
                                             <button onClick={() => setFormData({...formData, featuredImage: {url: '', alt: ''}})} className="bg-red-500 text-white p-3 rounded-full"><X size={18} /></button>

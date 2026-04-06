@@ -105,7 +105,7 @@ export default function CorporatePage() {
                         </div>
                         <div className="lg:w-1/2 w-full">
                             <div className="aspect-video rounded-[3rem] overflow-hidden shadow-2xl relative group">
-                                <Image src={getSafeSrc(activeConfig.trust.imageUrl)} alt={activeConfig.trust.imageAlt} fill className="object-cover group-hover:scale-110 transition-transform duration-1000" />
+                                <Image src={getSafeSrc(activeConfig.trust.imageUrl)} alt={activeConfig.trust.imageAlt} fill className="object-contain group-hover:scale-110 transition-transform duration-1000" />
                                 <div className="absolute inset-0 bg-stone-900/40 flex items-center justify-center">
                                     <Link href={activeConfig.trust.videoButtonLink}>
                                         <button className="bg-white w-20 h-20 rounded-full flex items-center justify-center text-[#7ab800] shadow-2xl hover:scale-110 transition-all">

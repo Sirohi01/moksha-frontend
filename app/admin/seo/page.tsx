@@ -382,7 +382,7 @@ export default function SEOCommandDeck() {
                                       <Image 
                                          src={url} 
                                          fill 
-                                         className="object-cover transition-transform group-hover:scale-110" 
+                                         className="object-contain transition-transform group-hover:scale-110" 
                                          alt="Asset Preview" 
                                          unoptimized 
                                       />
@@ -469,7 +469,7 @@ export default function SEOCommandDeck() {
                                   <Image 
                                      src={selectedPage.ogImage} 
                                      fill 
-                                     className="object-cover rounded-[2.5rem] shadow-xl" 
+                                     className="object-contain rounded-[2.5rem] shadow-xl" 
                                      alt="Social Share Thumbnail" 
                                      unoptimized 
                                   />
@@ -806,7 +806,7 @@ function AssetPickerHub({ onClose, onSelect }: { onClose: () => void, onSelect: 
                                 <Image 
                                     src={img.url} 
                                     fill 
-                                    className="object-cover transition-transform duration-1000 group-hover:scale-110" 
+                                    className="object-contain transition-transform duration-1000 group-hover:scale-110" 
                                     alt={img.title || 'Archive Asset'} 
                                     unoptimized 
                                 />

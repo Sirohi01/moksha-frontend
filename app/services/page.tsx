@@ -105,7 +105,7 @@ export default function ServicesPage() {
                           alt={getAlt(item.image, seo, item.title || "Service Icon")}
                           width={48}
                           height={48}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
                         />
                       </div>
                     </div>
@@ -123,7 +123,7 @@ export default function ServicesPage() {
                     src={getSafeSrc(config.eligibility.mainImage)}
                     alt={getAlt(config.eligibility.mainImage, seo, config.eligibility.mainImageAlt || "Eligibility Illustration")}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                   />
                 </div>
                 <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-amber-100 rounded-full opacity-30"></div>

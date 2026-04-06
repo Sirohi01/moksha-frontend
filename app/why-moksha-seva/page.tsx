@@ -54,7 +54,7 @@ export default function WhyMokshaSewa() {
                   src={getSafeSrc(config.hero.image)}
                   alt={getAlt(config.hero.image, seo, config.hero.imageAlt || "Why Moksha Sewa Hero")}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-100 rounded-full opacity-20"></div>

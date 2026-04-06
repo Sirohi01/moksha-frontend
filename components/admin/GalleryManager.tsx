@@ -240,7 +240,7 @@ export default function GalleryManager() {
                   alt={image.alt}
                   width={400}
                   height={400}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700"
                 />
 
                 <div className="absolute top-3 left-3">
@@ -293,7 +293,7 @@ export default function GalleryManager() {
                   <td className="p-8">
                     <div className="flex items-center gap-8">
                       <div className="w-24 h-24 rounded-[2rem] bg-navy-50 overflow-hidden flex-shrink-0 border-4 border-white shadow-2xl group-hover:scale-105 transition-transform relative">
-                        <Image src={image.src} fill className="object-cover" alt={image.alt || 'Asset'} unoptimized />
+                        <Image src={image.src} fill className="object-contain" alt={image.alt || 'Asset'} unoptimized />
                       </div>
                       <div className="space-y-1">
                         <p className="font-black text-navy-950 uppercase italic text-sm tracking-tight">{image.title}</p>

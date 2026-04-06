@@ -175,7 +175,7 @@ export default function PressRoomPage() {
                         src={getSafeSrc(pr.featuredImage?.url)} 
                         alt={pr.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-[5000ms]"
+                        className="object-contain group-hover:scale-105 transition-transform duration-[5000ms]"
                       />
                       <div className="absolute inset-0 bg-navy-950/15 group-hover:bg-transparent transition-colors duration-1000" />
                       <div className="absolute top-6 left-6">

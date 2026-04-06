@@ -180,7 +180,7 @@ export default function BlogPage() {
                       src={getSafeSrc(blog.featuredImage?.url)} 
                       alt={getAlt(blog.featuredImage?.url, seo, blog.featuredImage?.alt || blog.title)} 
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-1000"
+                      className="object-contain group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute top-6 left-6 flex flex-col gap-2">
                       <div className="bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-full shadow-2xl">

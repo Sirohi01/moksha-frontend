@@ -135,7 +135,7 @@ export default function GalleryUploadPage() {
                     src={preview} 
                     alt="Current preview" 
                     fill 
-                    className="object-cover" 
+                    className="object-contain" 
                     unoptimized 
                   />
                   <div className="absolute inset-0 bg-navy-950/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300 backdrop-blur-sm">

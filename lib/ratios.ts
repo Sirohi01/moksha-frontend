@@ -1,5 +1,5 @@
 export const ASPECT_RATIOS = {
-  hero: { label: 'Panoramic (Hero)', value: 'aspect-[1620/700]', res: '1620x700px' },
+  hero: { label: 'Panoramic (Hero)', value: 'aspect-[1650/700]', res: '1650x700px' },
   video: { label: 'Video (16:9)', value: 'aspect-video', res: '1280x720px' },
   square: { label: 'Square (1:1)', value: 'aspect-square', res: '1000x1000px' },
   card: { label: 'Standard Card (3:2)', value: 'aspect-[3/2]', res: '1200x800px' },

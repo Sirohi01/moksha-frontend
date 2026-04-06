@@ -65,7 +65,7 @@ export default function OptimizedImage({
     );
   }
 
-  const defaultObjectFit = fill ? 'object-cover' : '';
+  const defaultObjectFit = fill ? 'object-contain' : '';
   const finalObjectFit = objectFit ? `object-${objectFit}` : defaultObjectFit;
 
   return (
