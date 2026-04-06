@@ -11,8 +11,10 @@ export default function AdminLogin() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    mobile: '',
     otp: ''
   });
+  const [loginMode, setLoginMode] = useState<'password' | 'otp'>('password');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -67,6 +69,32 @@ export default function AdminLogin() {
     }
   };
 
+  const handleSendMobileOTP = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.mobile) {
+      setError('Please provide registered mobile number');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const data = await authAPI.sendLoginOTP(formData.mobile);
+      if (data.success) {
+        setOtpSent(true);
+        setMobileMasked(formData.mobile.replace(/.(?=.{4})/g, '*'));
+        setCountdown(60);
+      } else {
+        setError(data.message || 'Mobile verification failed');
+      }
+    } catch (error: any) {
+      setError(error.message || 'OTP server unreachable');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleOTPSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.otp) {
@@ -78,7 +106,12 @@ export default function AdminLogin() {
     setError('');
 
     try {
-      const data = await authAPI.verify2FA(formData.email, formData.otp);
+      let data;
+      if (loginMode === 'otp') {
+        data = await authAPI.loginWithOTP(formData.mobile, formData.otp);
+      } else {
+        data = await authAPI.verify2FA(formData.email, formData.otp);
+      }
 
       if (data.success) {
         setToken(data.data.token);
@@ -88,7 +121,7 @@ export default function AdminLogin() {
         setError(data.message || 'Invalid Secure Key');
       }
     } catch (error: any) {
-      console.error("2FA Handshake Failure:", error);
+      console.error("Auth Failure:", error);
       setError(error.message || 'Protocol Error during Secure Handshake');
     } finally {
       setLoading(false);
@@ -161,61 +194,91 @@ export default function AdminLogin() {
             )}
 
             {!otpSent ? (
-              <form onSubmit={handleInitialSubmit} className="space-y-6 sm:space-y-10 animate-fade-in relative z-10">
-                <div className="space-y-2 sm:space-y-4">
-                  <div className="flex justify-between items-center px-2">
-                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
-                    <Star className="w-4 h-4 text-slate-100 group-hover:text-amber-300 transition-colors" />
-                  </div>
-                  <input
-                    type="email"
-                    required
-                    className="w-full h-15 sm:h-18 px-6 sm:px-8 bg-slate-50/50 border-2 border-slate-100/50 rounded-2xl sm:rounded-3xl focus:border-amber-600 focus:bg-white focus:ring-8 focus:ring-amber-100/30 outline-none transition-all text-base sm:text-lg font-bold text-slate-800 placeholder:text-slate-200"
-                    placeholder="your@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
+               <form onSubmit={loginMode === 'password' ? handleInitialSubmit : handleSendMobileOTP} className="space-y-6 sm:space-y-8 animate-fade-in relative z-10">
+                  {loginMode === 'password' ? (
+                    <>
+                      <div className="space-y-2 sm:space-y-4">
+                        <div className="flex justify-between items-center px-2">
+                           <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Email Address</label>
+                           <Star className="w-4 h-4 text-slate-100 group-hover:text-amber-300 transition-colors" />
+                        </div>
+                        <input
+                          type="email"
+                          required
+                          className="w-full h-15 sm:h-18 px-6 sm:px-8 bg-slate-50/50 border-2 border-slate-100/50 rounded-2xl sm:rounded-3xl focus:border-amber-600 focus:bg-white focus:ring-8 focus:ring-amber-100/30 outline-none transition-all text-base sm:text-lg font-bold text-slate-800 placeholder:text-slate-200"
+                          placeholder="your@email.com"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        />
+                      </div>
 
-                <div className="space-y-2 sm:space-y-4">
-                  <div className="flex justify-between items-center px-2">
-                    <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Password</label>
-                    <Link href="/admin/auth/forgot-password" title="Recover Password" className="text-[11px] font-black uppercase text-amber-600 hover:text-slate-900 transition-all">Forgot?</Link>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      className="w-full h-15 sm:h-18 px-6 sm:px-8 pr-16 bg-slate-50/50 border-2 border-slate-100/50 rounded-2xl sm:rounded-3xl focus:border-amber-600 focus:bg-white focus:ring-8 focus:ring-amber-100/30 outline-none transition-all text-base sm:text-lg font-bold text-slate-800 placeholder:text-slate-200"
-                      placeholder="••••••••••••"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    />
+                      <div className="space-y-2 sm:space-y-4">
+                        <div className="flex justify-between items-center px-2">
+                           <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">Password</label>
+                           <button type="button" onClick={() => setLoginMode('otp')} className="text-[11px] font-black uppercase text-amber-600 hover:text-slate-900 transition-all">Forgot?</button>
+                        </div>
+                        <div className="relative">
+                           <input
+                             type={showPassword ? "text" : "password"}
+                             required
+                             className="w-full h-15 sm:h-18 px-6 sm:px-8 pr-16 bg-slate-50/50 border-2 border-slate-100/50 rounded-2xl sm:rounded-3xl focus:border-amber-600 focus:bg-white focus:ring-8 focus:ring-amber-100/30 outline-none transition-all text-base sm:text-lg font-bold text-slate-800 placeholder:text-slate-200"
+                             placeholder="••••••••••••"
+                             value={formData.password}
+                             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                           />
+                           <button
+                             type="button"
+                             onClick={() => setShowPassword(!showPassword)}
+                             className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-900 transition-colors"
+                           >
+                             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                           </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="space-y-2 sm:space-y-4">
+                      <div className="flex justify-between items-center px-2">
+                         <label className="text-[11px] font-black uppercase tracking-widest text-slate-400">WhatsApp Mobile Number</label>
+                         <Smartphone className="w-4 h-4 text-amber-500" />
+                      </div>
+                      <input
+                        type="tel"
+                        required
+                        className="w-full h-15 sm:h-18 px-6 sm:px-8 bg-slate-50/50 border-2 border-slate-100/50 rounded-2xl sm:rounded-3xl focus:border-amber-600 focus:bg-white focus:ring-8 focus:ring-amber-100/30 outline-none transition-all text-base sm:text-lg font-bold text-slate-800 placeholder:text-slate-200"
+                        placeholder="+91 XXXXX XXXXX"
+                        value={formData.mobile}
+                        onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                      />
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-2 italic">We'll send a secure login key to your WhatsApp.</p>
+                    </div>
+                  )}
+
+                  <div className="space-y-4 pt-2">
                     <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-6 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-900 transition-colors"
+                      type="submit"
+                      disabled={loading}
+                      className="w-full h-16 sm:h-20 bg-slate-950 text-white rounded-2xl sm:rounded-[2rem] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-xs sm:text-sm shadow-2xl hover:bg-amber-600 transition-all duration-300 transform hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-4 relative group"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      {loading ? (
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          <span>{loginMode === 'password' ? 'Authorize Session' : 'Get Access Key'}</span>
+                          <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-500 shrink-0" />
+                        </>
+                      )}
+                    </button>
+
+                    <button 
+                      type="button"
+                      onClick={() => setLoginMode(loginMode === 'password' ? 'otp' : 'password')}
+                      className="w-full text-center text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-amber-600 transition-colors"
+                    >
+                      {loginMode === 'password' ? 'Login with WhatsApp OTP' : 'Back to Password Login'}
                     </button>
                   </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-16 sm:h-20 bg-slate-950 text-white rounded-2xl sm:rounded-[2rem] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-xs sm:text-sm shadow-2xl hover:bg-amber-600 transition-all duration-300 transform hover:scale-[1.01] active:scale-95 flex items-center justify-center gap-4 relative group"
-                >
-                  {loading ? (
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <span>Login Now</span>
-                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-2 transition-transform duration-500 shrink-0" />
-                    </>
-                  )}
-                </button>
-              </form>
+               </form>
             ) : (
               <div className="space-y-8 sm:space-y-12 animate-fade-in relative z-10 text-center">
                 <div className="space-y-4">
