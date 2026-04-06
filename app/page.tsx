@@ -306,8 +306,8 @@ export default function HomePage() {
               <span className="text-gray-600 text-sm uppercase tracking-wider font-medium">{config.ourSeva.badge}</span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
             </div>
-            <h2 className="text-4xl lg:text-6xl font-black text-gray-900 mb-8 uppercase tracking-tighter italic">{config.ourSeva.title}</h2>
-            <p className="text-2xl md:text-3xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium italic">
+            <h2 className="text-3xl lg:text-5xl font-extrabold text-gray-900 mb-8 uppercase tracking-tighter italic">{config.ourSeva.title}</h2>
+            <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium italic">
               {config.ourSeva.description}
             </p>
           </div>
@@ -333,10 +333,10 @@ export default function HomePage() {
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 text-center group-hover:text-gray-700 transition-colors uppercase tracking-tight">
+                    <h3 className="text-lg font-bold text-gray-900 mb-3 text-center group-hover:text-gray-700 transition-colors uppercase tracking-tight">
                       {p.title}
                     </h3>
-                    <p className="text-lg text-gray-600 text-center leading-relaxed mb-6 font-medium">
+                    <p className="text-base text-gray-600 text-center leading-relaxed mb-6 font-normal">
                       {p.description}
                     </p>
 
