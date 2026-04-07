@@ -3,8 +3,6 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Skip static assets and internal requests
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||

@@ -18,53 +18,22 @@ export default function DonatePage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
-    // Personal Details
     name: "",
     email: "",
     phone: "",
-    alternatePhone: "",
-    
-    // Address Details
     address: "",
     city: "",
     state: "",
     pincode: "",
-    country: donateConfig.form.defaultCountry,
-    
-    // PAN & Tax Details
     panNumber: "",
-    aadharNumber: "",
-    
-    // Donation Details
-    donationType: "one-time", // one-time, monthly, yearly
-    donationPurpose: "general", // general, specific-campaign, memorial, tribute
-    campaignName: "",
-    
-    // Memorial/Tribute Details
+    donationType: "one-time", 
+    donationPurpose: "general",
     tributeName: "",
-    tributeRelation: "",
     tributeMessage: "",
-    
-    // Payment Details
-    paymentMethod: "upi", // upi, card, netbanking, wallet
-    upiId: "",
-    cardNumber: "",
-    cardName: "",
-    cardExpiry: "",
-    cardCvv: "",
-    bankName: "",
-    accountNumber: "",
-    ifscCode: "",
-    walletType: "", // paytm, phonepe, googlepay
-    walletNumber: "",
-    
-    // Additional Information
     isAnonymous: false,
     receiveUpdates: true,
     taxReceiptRequired: true,
     message: "",
-    
-    // Terms
     agreeToTerms: false,
     agreeToRefundPolicy: false,
   });
@@ -74,23 +43,17 @@ export default function DonatePage() {
   const finalAmount = customAmount ? parseInt(customAmount) : selectedAmount;
 
   const handleDonate = async () => {
-    // Validation
     if (!finalAmount || finalAmount < 100) {
       alert(donateConfig.validation.minAmount);
       return;
     }
 
-    if (!isEmailVerified) {
-      alert("Please verify your email address first");
+    if (!isEmailVerified || !isMobileVerified) {
+      alert("Please verify your email and mobile number via WhatsApp first");
       return;
     }
 
-    if (!isMobileVerified) {
-      alert("Please verify your mobile number via WhatsApp first");
-      return;
-    }
-
-    if (!form.name || !form.email || !form.phone || !form.address || !form.city || !form.state) {
+    if (!form.name || !form.email || !form.phone || !form.address || !form.city || !form.state || !form.pincode) {
       alert(donateConfig.validation.requiredFields);
       return;
     }
@@ -100,143 +63,117 @@ export default function DonatePage() {
       return;
     }
 
-    // Validate payment method specific fields
-    if (form.paymentMethod === 'upi' && !form.upiId) {
-      alert(donateConfig.validation.upiRequired);
-      return;
-    }
-
-    if (form.paymentMethod === 'card' && (!form.cardNumber || !form.cardName || !form.cardExpiry || !form.cardCvv)) {
-      alert(donateConfig.validation.cardRequired);
-      return;
-    }
-
-    if (form.paymentMethod === 'netbanking' && !form.bankName) {
-      alert(donateConfig.validation.bankRequired);
-      return;
-    }
-
-    if (form.paymentMethod === 'wallet' && (!form.walletType || !form.walletNumber)) {
-      alert(donateConfig.validation.walletRequired);
-      return;
-    }
-
     setLoading(true);
     try {
-      // Create donation record with completed status (bypassing Razorpay for now)
-      const donationData = {
-        // Basic donation info
+      const donorData = {
         amount: finalAmount,
         currency: 'INR',
-        donationType: form.donationType.replace('-', '_'), // Convert 'one-time' to 'one_time'
-        purpose: form.donationPurpose,
-        
-        // Personal Details
         name: form.name,
         email: form.email,
         phone: form.phone,
-        alternatePhone: form.alternatePhone || undefined,
-        
-        // Address
         address: form.address,
         city: form.city,
         state: form.state,
         pincode: form.pincode,
-        country: form.country,
-        
-        // Tax Details
         panNumber: form.panNumber || undefined,
-        aadharNumber: form.aadharNumber || undefined,
-        
-        // Tribute Details (if applicable)
+        donationType: form.donationType.replace('-', '_'),
+        purpose: form.donationPurpose.replace('-', '_'),
         dedicatedTo: form.tributeName || undefined,
         message: form.tributeMessage || form.message || undefined,
-        
-        // Payment Details
-        paymentMethod: form.paymentMethod,
-        paymentStatus: 'completed', // Mark as completed since we're bypassing Razorpay
-        
-        // Additional payment info based on method
-        ...(form.paymentMethod === 'upi' && { upiId: form.upiId }),
-        ...(form.paymentMethod === 'card' && { 
-          cardLast4: form.cardNumber.slice(-4),
-          cardName: form.cardName 
-        }),
-        ...(form.paymentMethod === 'netbanking' && { bankName: form.bankName }),
-        ...(form.paymentMethod === 'wallet' && { 
-          walletType: form.walletType,
-          walletNumber: form.walletNumber 
-        }),
-        
-        // Preferences
         isAnonymous: form.isAnonymous,
         needReceipt: form.taxReceiptRequired,
-        
-        // System info
-        source: 'website',
-        transactionId: `TXN_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` // Generate a dummy transaction ID
+        paymentMethod: 'upi', 
+        source: 'website'
       };
 
-      // Submit donation directly to backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/donations`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(donationData),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to process donation');
+      const orderResult = await createRazorpayOrder(donorData);
+      
+      if (!orderResult.success) {
+        throw new Error(orderResult.message || 'Failed to initiate payment');
       }
 
-      const donationResult = await response.json();
-      console.log('Donation processed successfully:', donationResult);
-      
-      // Show success message
-      setSubmitted(true);
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_XXXXXXXXXXXXXX',
+        amount: orderResult.order.amount,
+        currency: orderResult.order.currency,
+        name: "Moksha Sewa",
+        description: `Donation: ${form.donationPurpose}`,
+        order_id: orderResult.order.id,
+        handler: async (response: any) => {
+          try {
+            setLoading(true);
+            const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/donations/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                donationId: orderResult.donationId
+              })
+            });
+
+            const verifyResult = await verifyRes.json();
+            if (verifyResult.success) {
+              setSubmitted(true);
+            } else {
+              alert("Payment verification failed. Please contact support.");
+            }
+          } catch (err) {
+            console.error("Verification error:", err);
+            alert("Payment verification failed due to a network error.");
+          } finally {
+            setLoading(false);
+          }
+        },
+        prefill: {
+          name: form.name,
+          email: form.email,
+          contact: form.phone,
+        },
+        theme: {
+          color: "#c2410c", 
+        },
+        modal: {
+          ondismiss: () => {
+            setLoading(false);
+          },
+        },
+      };
+
+      await initiatePayment(options);
 
     } catch (error) {
       console.error('Donation error:', error);
-      alert(`Failed to process donation: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    } finally {
+      alert(`Payment failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
       setLoading(false);
     }
   };
 
   if (submitted) {
     return (
-      <section className="min-h-[70vh] flex items-center justify-center bg-cream-50">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="w-20 h-20 bg-saffron-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-saffron-600" />
+      <section className="min-h-[70vh] flex items-center justify-center bg-cream-50 py-16">
+        <div className="text-center max-w-md mx-auto px-4 bg-white p-10 rounded-3xl shadow-xl border border-stone-100">
+          <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-bounce">
+            <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
-          <h2 className="font-serif text-2xl font-bold text-stone-800 mb-3">
-            Thank You! Your Donation Request Received
+          <h2 className="font-serif text-3xl font-bold text-stone-900 mb-4">
+            Payment Successful!
           </h2>
-          <p className="text-stone-600 mb-2">
-            Your donation request of {finalAmount ? formatCurrency(finalAmount) : "₹500"} has been successfully submitted.
+          <p className="text-stone-600 mb-6 leading-relaxed">
+            Your generous donation of {finalAmount ? formatCurrency(finalAmount || 0) : "₹500"} has been received. 
+            Thank you for helping us provide a dignified farewell to those in need.
           </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-            <p className="text-blue-800 text-sm font-medium">
-              📞 Our team will contact you within 24 hours to complete the donation process.
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-8">
+            <p className="text-amber-800 text-sm font-semibold flex items-center justify-center gap-2">
+              <FileText className="w-4 h-4" /> Your 80G Tax Receipt has been emailed to you.
             </p>
           </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-            <p className="text-amber-800 text-sm font-medium">
-              ⚠️ Note: This is a test submission. Razorpay payment integration is not yet active.
-            </p>
-          </div>
-          <p className="text-stone-500 text-sm mb-6">
-            After payment confirmation, you will receive an 80G tax receipt via email.
-          </p>
           <button 
-            onClick={() => setSubmitted(false)} 
-            className="text-saffron-600 text-sm underline"
-            aria-label="Make another donation"
+            onClick={() => window.location.href = '/'} 
+            className="w-full bg-stone-900 text-white font-bold py-4 rounded-xl hover:bg-stone-800 transition-colors shadow-lg"
           >
-            Donate Again
+            Back to Home
           </button>
         </div>
       </section>
@@ -245,9 +182,7 @@ export default function DonatePage() {
 
   return (
     <>
-      {/* Enhanced Hero Section */}
       <section className="relative bg-stone-50 text-gray-900 py-12 md:py-20 lg:py-24 overflow-hidden">
-        {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0)`,
@@ -255,14 +190,8 @@ export default function DonatePage() {
           }}></div>
         </div>
         
-        {/* Floating Elements */}
-        <div className="absolute top-10 left-10 w-20 h-20 bg-amber-100 rounded-full blur-xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-32 h-32 bg-stone-200 rounded-full blur-xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-amber-200 rounded-full blur-xl animate-pulse delay-500"></div>
-        
         <Container className="relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-amber-100 backdrop-blur-sm border border-amber-200 rounded-full px-6 py-2 mb-6">
               {(() => {
                 const BadgeIcon = getIcon(donateConfig.hero.badge.icon);
@@ -273,21 +202,16 @@ export default function DonatePage() {
               </span>
             </div>
             
-            {/* Main Heading */}
             <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-gray-900">
               <span className="block">{donateConfig.hero.title.line1}</span>
-              <span className="block text-amber-700">
-                {donateConfig.hero.title.line2}
-              </span>
+              <span className="block text-amber-700">{donateConfig.hero.title.line2}</span>
               <span className="block">{donateConfig.hero.title.line3}</span>
             </h1>
             
-            {/* Subtitle */}
             <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               {donateConfig.hero.subtitle}
             </p>
             
-            {/* Impact Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 max-w-3xl mx-auto">
               {donateConfig.hero.impactStats.map((stat, i) => (
                 <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-stone-200">
@@ -297,7 +221,6 @@ export default function DonatePage() {
               ))}
             </div>
             
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <button 
                 onClick={() => document.getElementById('donation-form')?.scrollIntoView({ behavior: 'smooth' })}
@@ -316,27 +239,10 @@ export default function DonatePage() {
                 {donateConfig.hero.ctaButtons.secondary}
               </Link>
             </div>
-            
-            {/* Trust Indicators */}
-            <div className="mt-12 pt-8 border-t border-stone-200">
-              <p className="text-gray-500 text-sm mb-4 font-medium">{donateConfig.hero.trustMessage}</p>
-              <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-600">
-                {donateConfig.hero.trustIndicators.map((indicator, i) => {
-                  const IndicatorIcon = getIcon(indicator.icon);
-                  return (
-                    <div key={i} className="flex items-center gap-2">
-                      <IndicatorIcon className="w-4 h-4 text-green-600" />
-                      <span>{indicator.text}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </div>
         </Container>
       </section>
 
-      {/* Trust signals */}
       <section className="py-6 bg-green-50 border-b border-green-100">
         <Container>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-green-800">
@@ -352,17 +258,14 @@ export default function DonatePage() {
       <section id="donation-form" className="py-10 bg-stone-100">
         <Container size="xl">
           <div className="max-w-6xl mx-auto space-y-5">
-            
-            {/* Amount Selection Section */}
             <div className="bg-white rounded-lg border border-cream-200 shadow-md p-5">
               <div className="text-center mb-4">
                 <h2 className="font-serif text-xl font-bold text-stone-800 mb-1">
-                  {donateConfig.amountSelection.title}
+                  1. {donateConfig.amountSelection.title}
                 </h2>
                 <p className="text-stone-600 text-xs">{donateConfig.amountSelection.subtitle}</p>
               </div>
 
-              {/* Preset Amounts */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {donateConfig.donationTiers.map((tier) => (
                   <button
@@ -386,15 +289,11 @@ export default function DonatePage() {
                       </p>
                       <p className="font-semibold text-stone-800 text-sm mb-1">{tier.label}</p>
                       <p className="text-stone-500 text-xs leading-tight">{tier.desc}</p>
-                      <div className="mt-2 text-xs text-orange-600 font-medium">
-                        {tier.impact}
-                      </div>
                     </div>
                   </button>
                 ))}
               </div>
 
-              {/* Custom Amount */}
               <div className="max-w-md mx-auto mb-4">
                 <label className="block text-xs font-semibold text-stone-700 mb-1.5 text-center">
                   {donateConfig.amountSelection.customAmountLabel}
@@ -411,63 +310,20 @@ export default function DonatePage() {
                   />
                 </div>
               </div>
-
-              {/* Impact Display */}
-              {finalAmount && (
-                <div className="max-w-md mx-auto bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 border border-green-200">
-                  <div className="flex items-start gap-2">
-                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Heart className="w-4 h-4 text-white fill-white" />
-                    </div>
-                    <div>
-                      <p className="text-green-900 font-bold text-xs mb-0.5">{donateConfig.amountSelection.impactTitle}</p>
-                      <p className="text-green-800 text-xs leading-snug">
-                        {formatCurrency(finalAmount)} will help:{" "}
-                        <span className="font-semibold">
-                          {donateConfig.donationTiers.find((t) => t.amount === finalAmount)?.impact ||
-                            `${Math.floor(finalAmount / 500)} cremation service${Math.floor(finalAmount / 500) > 1 ? 's' : ''}`}
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Trust Badges */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200 p-4">
-              <h3 className="font-bold text-stone-800 text-sm mb-3 text-center flex items-center justify-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-blue-600" />
-                {donateConfig.trustBadges.title}
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {donateConfig.trustBadges.badges.map((badge, idx) => (
-                  <div key={idx} className="flex items-center gap-2 bg-white p-2 rounded-md">
-                    <span className="w-5 h-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
-                      {badge.icon}
-                    </span>
-                    <span className="text-stone-700 text-xs font-medium">{badge.text}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Donation Form */}
             <div className="bg-white rounded-lg border border-cream-200 shadow-md overflow-hidden">
               <div className="bg-gradient-to-r from-saffron-600 to-orange-600 text-white p-5 text-center">
-                <h3 className="font-serif text-xl font-bold mb-1">{donateConfig.form.title}</h3>
+                <h3 className="font-serif text-xl font-bold mb-1">2. {donateConfig.form.title}</h3>
                 <p className="text-saffron-100 text-xs">{donateConfig.form.subtitle}</p>
               </div>
               
               <div className="p-6">
-                <div className="space-y-6">
-                
-                    {/* Personal Details */}
-                    <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-8">
+                    <div className="grid md:grid-cols-2 gap-8">
                       <div>
-                        <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                          <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.personalInfo.stepNumber}</span>
-                          {donateConfig.form.sections.personalInfo.title}
+                        <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2 lowercase tracking-wider text-sm">
+                          PERSONAL INFORMATION
                         </h4>
                         <div className="space-y-4">
                           <InputField
@@ -490,12 +346,8 @@ export default function DonatePage() {
                               }}
                               disabled={isEmailVerified}
                             />
-                            
                             {form.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) && (
-                              <EmailVerification 
-                                email={form.email} 
-                                onVerified={setIsEmailVerified} 
-                              />
+                              <EmailVerification email={form.email} onVerified={setIsEmailVerified} />
                             )}
                           </div>
                           <div className="space-y-4">
@@ -511,27 +363,21 @@ export default function DonatePage() {
                               }}
                               disabled={isMobileVerified}
                             />
-                            
                             {form.phone && form.phone.length >= 10 && (
-                              <MobileVerification 
-                                mobile={form.phone} 
-                                onVerified={setIsMobileVerified} 
-                              />
+                              <MobileVerification mobile={form.phone} onVerified={setIsMobileVerified} />
                             )}
                           </div>
                         </div>
                       </div>
 
-                      {/* Address Details */}
                       <div>
-                        <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                          <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.address.stepNumber}</span>
-                          {donateConfig.form.sections.address.title}
+                        <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2 lowercase tracking-wider text-sm">
+                          ADDRESS FOR 80G RECEIPT
                         </h4>
                         <div className="space-y-4">
                           <div>
                             <label className="block text-sm font-semibold text-stone-700 mb-2">
-                              {donateConfig.form.sections.address.fields.address.label} <span className="text-red-500">*</span>
+                              {donateConfig.form.sections.address.fields.address.label} *
                             </label>
                             <textarea
                               placeholder={donateConfig.form.sections.address.fields.address.placeholder}
@@ -561,7 +407,7 @@ export default function DonatePage() {
                           </div>
                           <div>
                             <label className="block text-sm font-semibold text-stone-700 mb-2">
-                              {donateConfig.form.sections.address.fields.state.label} <span className="text-red-500">*</span>
+                              {donateConfig.form.sections.address.fields.state.label} *
                             </label>
                             <select
                               required
@@ -579,346 +425,142 @@ export default function DonatePage() {
                       </div>
                     </div>
 
-                    {/* Tax Details */}
-                    <div>
-                      <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                        <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.taxDetails.stepNumber}</span>
-                        {donateConfig.form.sections.taxDetails.title}
-                      </h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        <InputField
-                          label={donateConfig.form.sections.taxDetails.fields.panNumber.label}
-                          placeholder={donateConfig.form.sections.taxDetails.fields.panNumber.placeholder}
-                          maxLength={10}
-                          value={form.panNumber}
-                          onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                        />
-                        <InputField
-                          label={donateConfig.form.sections.taxDetails.fields.aadharNumber.label}
-                          placeholder={donateConfig.form.sections.taxDetails.fields.aadharNumber.placeholder}
-                          maxLength={12}
-                          value={form.aadharNumber}
-                          onChange={(e) => setForm({ ...form, aadharNumber: e.target.value })}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Donation Preferences */}
-                    <div>
-                      <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                        <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.preferences.stepNumber}</span>
-                        {donateConfig.form.sections.preferences.title}
-                      </h4>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            {donateConfig.form.sections.preferences.frequency.label} <span className="text-red-500">*</span>
-                          </label>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            {donateConfig.form.sections.preferences.frequency.types.map((type) => (
-                              <button
-                                key={type.value}
-                                type="button"
-                                onClick={() => setForm({ ...form, donationType: type.value })}
-                                className={`px-4 py-4 rounded-xl border-2 text-sm font-semibold transition-all duration-300 text-center ${
-                                  form.donationType === type.value
-                                    ? "border-orange-500 bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg transform scale-105"
-                                    : "border-stone-300 bg-white text-stone-700 hover:border-orange-400 hover:shadow-md hover:scale-102"
-                                }`}
-                              >
-                                <div className="font-bold">{type.label}</div>
-                                <div className="text-xs opacity-80 mt-1">{type.desc}</div>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-semibold text-stone-700 mb-2">
-                            {donateConfig.form.sections.preferences.purpose.label} <span className="text-red-500">*</span>
-                          </label>
-                          <select
-                            required
-                            value={form.donationPurpose}
-                            onChange={(e) => setForm({ ...form, donationPurpose: e.target.value })}
-                            className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white font-medium"
-                          >
-                            {donateConfig.form.sections.preferences.purpose.options.map((option) => (
-                              <option key={option.value} value={option.value}>{option.label}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {(form.donationPurpose === "memorial" || form.donationPurpose === "tribute") && (
-                          <div className="space-y-3 bg-amber-50 p-4 rounded-lg border-2 border-amber-200">
-                            <InputField
-                              label={form.donationPurpose === "memorial" ? donateConfig.form.sections.preferences.tribute.memorialLabel : donateConfig.form.sections.preferences.tribute.honorLabel}
-                              placeholder={donateConfig.form.sections.preferences.tribute.nameLabel}
-                              value={form.tributeName}
-                              onChange={(e) => setForm({ ...form, tributeName: e.target.value })}
-                            />
-                            <div>
-                              <label className="block text-sm font-semibold text-stone-700 mb-2">{donateConfig.form.tribute.messageLabel}</label>
-                              <textarea
-                                placeholder={donateConfig.form.sections.preferences.tribute.messagePlaceholder}
-                                rows={2}
-                                value={form.tributeMessage}
-                                onChange={(e) => setForm({ ...form, tributeMessage: e.target.value })}
-                                className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500"
-                              />
+                    <div className="grid md:grid-cols-2 gap-8">
+                       <div>
+                        <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2 lowercase tracking-wider text-sm">
+                          DONATION PREFERENCES
+                        </h4>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-semibold text-stone-700 mb-2">Frequency *</label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {donateConfig.form.sections.preferences.frequency.types.map((type) => (
+                                <button
+                                  key={type.value}
+                                  type="button"
+                                  onClick={() => setForm({ ...form, donationType: type.value })}
+                                  className={`px-3 py-2 rounded-lg border-2 text-xs font-bold transition-all ${
+                                    form.donationType === type.value
+                                      ? "border-orange-600 bg-orange-600 text-white"
+                                      : "border-stone-200 bg-white text-stone-600 hover:border-orange-400"
+                                  }`}
+                                >
+                                  {type.label}
+                                </button>
+                              ))}
                             </div>
                           </div>
-                        )}
-                      </div>
-                    </div>
-
-                {/* Payment Method */}
-                <div>
-                  <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2">
-                    <span className="w-7 h-7 bg-saffron-600 text-white rounded-full flex items-center justify-center text-sm font-bold">{donateConfig.form.sections.payment.stepNumber}</span>
-                    {donateConfig.form.sections.payment.title}
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                    {donateConfig.form.sections.payment.methods.map((method) => (
-                      <button
-                        key={method.value}
-                        type="button"
-                        onClick={() => setForm({ ...form, paymentMethod: method.value })}
-                        className={`px-3 py-4 rounded-xl border-2 text-sm font-semibold transition-all duration-300 text-center ${
-                          form.paymentMethod === method.value
-                            ? "border-orange-500 bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg transform scale-105"
-                            : "border-stone-300 bg-white text-stone-700 hover:border-orange-400 hover:shadow-md hover:scale-102"
-                        }`}
-                      >
-                        <div className="text-2xl mb-1">{method.icon}</div>
-                        <div className="font-bold">{method.label}</div>
-                        <div className="text-xs opacity-80 mt-1">{method.desc}</div>
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* UPI Details */}
-                  {form.paymentMethod === "upi" && (
-                    <div className="bg-blue-50 rounded-lg p-4 border-2 border-blue-200 space-y-3">
-                      <InputField
-                        label={donateConfig.form.sections.payment.upi.label}
-                        placeholder={donateConfig.form.sections.payment.upi.placeholder}
-                        required
-                        value={form.upiId}
-                        onChange={(e) => setForm({ ...form, upiId: e.target.value })}
-                      />
-                      <p className="text-xs text-blue-700 font-medium">{donateConfig.form.sections.payment.upi.helpText}</p>
-                    </div>
-                  )}
-
-                  {/* Card Details */}
-                  {form.paymentMethod === "card" && (
-                    <div className="bg-purple-50 rounded-lg p-4 border-2 border-purple-200 space-y-3">
-                      <InputField
-                        label={donateConfig.form.sections.payment.card.cardNumber.label}
-                        placeholder={donateConfig.form.sections.payment.card.cardNumber.placeholder}
-                        required
-                        maxLength={19}
-                        value={form.cardNumber}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\s/g, '');
-                          const formatted = value.match(/.{1,4}/g)?.join(' ') || value;
-                          setForm({ ...form, cardNumber: formatted });
-                        }}
-                      />
-                      <InputField
-                        label={donateConfig.form.sections.payment.card.cardName.label}
-                        placeholder={donateConfig.form.sections.payment.card.cardName.placeholder}
-                        required
-                        value={form.cardName}
-                        onChange={(e) => setForm({ ...form, cardName: e.target.value })}
-                      />
-                      <div className="grid grid-cols-2 gap-3">
-                        <InputField
-                          label={donateConfig.form.sections.payment.card.expiry.label}
-                          placeholder={donateConfig.form.sections.payment.card.expiry.placeholder}
-                          required
-                          maxLength={5}
-                          value={form.cardExpiry}
-                          onChange={(e) => {
-                            let value = e.target.value.replace(/\D/g, '');
-                            if (value.length >= 2) {
-                              value = value.slice(0, 2) + '/' + value.slice(2, 4);
-                            }
-                            setForm({ ...form, cardExpiry: value });
-                          }}
-                        />
-                        <InputField
-                          label={donateConfig.form.sections.payment.card.cvv.label}
-                          placeholder={donateConfig.form.sections.payment.card.cvv.placeholder}
-                          required
-                          maxLength={3}
-                          type="password"
-                          value={form.cardCvv}
-                          onChange={(e) => setForm({ ...form, cardCvv: e.target.value.replace(/\D/g, '') })}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Net Banking Details */}
-                  {form.paymentMethod === "netbanking" && (
-                    <div className="bg-green-50 rounded-lg p-4 border-2 border-green-200 space-y-3">
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {donateConfig.form.sections.payment.netbanking.label} <span className="text-red-500">*</span>
-                        </label>
-                        <select
-                          required
-                          value={form.bankName}
-                          onChange={(e) => setForm({ ...form, bankName: e.target.value })}
-                          className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white font-medium"
-                        >
-                          <option value="">{donateConfig.form.sections.payment.netbanking.placeholder}</option>
-                          {donateConfig.form.sections.payment.netbanking.banks.map((bank) => (
-                            <option key={bank.value} value={bank.value}>{bank.label}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <p className="text-xs text-green-700 font-medium">{donateConfig.form.sections.payment.netbanking.helpText}</p>
-                    </div>
-                  )}
-
-                  {/* Wallet Details */}
-                  {form.paymentMethod === "wallet" && (
-                    <div className="bg-orange-50 rounded-lg p-4 border-2 border-orange-200 space-y-3">
-                      <div>
-                        <label className="block text-sm font-semibold text-stone-700 mb-2">
-                          {donateConfig.form.sections.payment.wallet.label} <span className="text-red-500">*</span>
-                        </label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {donateConfig.form.sections.payment.wallet.wallets.map((wallet) => (
-                            <button
-                              key={wallet.value}
-                              type="button"
-                              onClick={() => setForm({ ...form, walletType: wallet.value })}
-                              className={`px-3 py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
-                                form.walletType === wallet.value
-                                  ? "border-orange-600 bg-orange-600 text-white"
-                                  : "border-stone-300 bg-white text-stone-700 hover:border-orange-400"
-                              }`}
+                          <div>
+                            <label className="block text-sm font-semibold text-stone-700 mb-2">Purpose *</label>
+                            <select
+                              required
+                              value={form.donationPurpose}
+                              onChange={(e) => setForm({ ...form, donationPurpose: e.target.value })}
+                              className="w-full px-4 py-3 border-2 border-stone-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-saffron-500 focus:border-saffron-500 bg-white font-medium"
                             >
-                              {wallet.label}
-                            </button>
-                          ))}
+                              {donateConfig.form.sections.preferences.purpose.options.map((option) => (
+                                <option key={option.value} value={option.value}>{option.label}</option>
+                              ))}
+                            </select>
+                          </div>
                         </div>
                       </div>
-                      <InputField
-                        label={donateConfig.form.sections.payment.wallet.mobileLabel}
-                        placeholder={donateConfig.form.sections.payment.wallet.mobilePlaceholder}
-                        required
-                        value={form.walletNumber}
-                        onChange={(e) => setForm({ ...form, walletNumber: e.target.value })}
-                      />
+
+                      <div>
+                        <h4 className="font-bold text-stone-800 mb-4 pb-2 border-b-2 border-stone-200 flex items-center gap-2 lowercase tracking-wider text-sm">
+                          TAX SAVING (80G)
+                        </h4>
+                        <div className="space-y-4">
+                          <InputField
+                            label={donateConfig.form.sections.taxDetails.fields.panNumber.label}
+                            placeholder={donateConfig.form.sections.taxDetails.fields.panNumber.placeholder}
+                            maxLength={10}
+                            value={form.panNumber}
+                            onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
+                          />
+                          <p className="text-[10px] text-stone-500 leading-tight">
+                            Providing your PAN Number is required by the Income Tax Department to issue a valid 80G tax exemption receipt.
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                {/* Additional Preferences & Terms */}
-                <div className="space-y-4 pt-4 border-t-2 border-stone-200">
-                  <div className="space-y-3">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={form.isAnonymous}
-                        onChange={(e) => setForm({ ...form, isAnonymous: e.target.checked })}
-                        className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                      />
-                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{donateConfig.form.preferences.anonymous}</span>
-                    </label>
+                <div className="space-y-4 pt-6 mt-4 border-t-2 border-stone-200">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="flex items-center gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={form.isAnonymous}
+                          onChange={(e) => setForm({ ...form, isAnonymous: e.target.checked })}
+                          className="w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
+                        />
+                        <span className="text-sm text-stone-700 font-medium whitespace-nowrap">{donateConfig.form.preferences.anonymous}</span>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={form.taxReceiptRequired}
+                          onChange={(e) => setForm({ ...form, taxReceiptRequired: e.target.checked })}
+                          className="w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
+                        />
+                        <span className="text-sm text-stone-700 font-medium whitespace-nowrap">{donateConfig.form.preferences.taxReceipt}</span>
+                      </label>
+                    </div>
 
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={form.receiveUpdates}
-                        onChange={(e) => setForm({ ...form, receiveUpdates: e.target.checked })}
-                        className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                      />
-                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{donateConfig.form.preferences.updates}</span>
-                    </label>
-
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={form.taxReceiptRequired}
-                        onChange={(e) => setForm({ ...form, taxReceiptRequired: e.target.checked })}
-                        className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                      />
-                      <span className="text-sm text-stone-700 font-medium group-hover:text-stone-900">{donateConfig.form.preferences.taxReceipt}</span>
-                    </label>
-                  </div>
-
-                  <div className="space-y-3 pt-3 border-t border-stone-200">
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={form.agreeToTerms}
-                        onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
-                        className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                        required
-                      />
-                      <span className="text-sm text-stone-700 font-medium">
-                        {donateConfig.form.terms.termsLabel.split('Terms & Conditions')[0]}
-                        <Link href="/legal/terms" className="text-saffron-600 underline font-bold hover:text-saffron-700">Terms & Conditions</Link> <span className="text-red-500">*</span>
-                      </span>
-                    </label>
-
-                    <label className="flex items-start gap-3 cursor-pointer group">
-                      <input
-                        type="checkbox"
-                        checked={form.agreeToRefundPolicy}
-                        onChange={(e) => setForm({ ...form, agreeToRefundPolicy: e.target.checked })}
-                        className="mt-1 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded focus:ring-saffron-500"
-                        required
-                      />
-                      <span className="text-sm text-stone-700 font-medium">
-                        {donateConfig.form.terms.refundLabel.split('Refund Policy')[0]}
-                        <Link href="/donate/refund-policy" className="text-saffron-600 underline font-bold hover:text-saffron-700">Refund Policy</Link> <span className="text-red-500">*</span>
-                      </span>
-                    </label>
+                    <div className="space-y-2">
+                       <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={form.agreeToTerms}
+                          onChange={(e) => setForm({ ...form, agreeToTerms: e.target.checked })}
+                          className="mt-0.5 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded"
+                          required
+                        />
+                        <span className="text-xs text-stone-600">
+                          I agree to the <Link href="/legal/terms" className="text-saffron-600 underline font-bold">Terms & Conditions</Link> *
+                        </span>
+                      </label>
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input
+                          type="checkbox"
+                          checked={form.agreeToRefundPolicy}
+                          onChange={(e) => setForm({ ...form, agreeToRefundPolicy: e.target.checked })}
+                          className="mt-0.5 w-5 h-5 text-saffron-600 border-2 border-stone-300 rounded"
+                          required
+                        />
+                        <span className="text-xs text-stone-600">
+                          I accept the <Link href="/donate/refund-policy" className="text-saffron-600 underline font-bold">Refund Policy</Link> *
+                        </span>
+                      </label>
+                    </div>
                   </div>
                 </div>
 
-                {/* Submit Button */}
-                <div className="pt-6">
+                <div className="pt-8">
                   <Button
                     variant="primary"
                     size="lg"
-                    className="w-full text-lg py-4 bg-gradient-to-r from-saffron-600 to-orange-600 hover:from-saffron-700 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all"
+                    className="w-full text-lg py-5 bg-gradient-to-r from-saffron-600 to-orange-600 hover:from-saffron-700 hover:to-orange-700 shadow-xl"
                     loading={loading}
-                    disabled={loading || !isEmailVerified || !isMobileVerified || !finalAmount || !form.name || !form.email || !form.phone || !form.address || !form.city}
+                    disabled={loading || !isEmailVerified || !isMobileVerified || !finalAmount || !form.name || !form.email || !form.phone || !form.address || !form.city || !form.state || !form.pincode}
                     onClick={handleDonate}
                   >
-                    {loading ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <RefreshCw className="w-5 h-5 animate-spin" />
-                        Processing...
-                      </span>
-                    ) : (
-                      <span className="flex items-center justify-center gap-2">
-                        <Heart className="w-5 h-5 fill-white" />
-                        {donateConfig.form.submitButton} {finalAmount ? formatCurrency(finalAmount) : "Now"}
-                      </span>
-                    )}
+                    <span className="flex items-center justify-center gap-3">
+                      <Heart className="w-6 h-6 fill-white" />
+                      {loading ? "Initializing..." : `Donate ${formatCurrency(finalAmount || 0)} Now`}
+                    </span>
                   </Button>
                   
-                  <div className="flex items-center justify-center gap-2 text-stone-500 text-xs mt-4">
-                    <ShieldCheck className="w-4 h-4 text-green-600" />
-                    <span className="font-medium">{donateConfig.form.securityNote}</span>
+                  <div className="flex items-center justify-center gap-4 mt-6">
+                    <div className="flex items-center gap-1.5 text-stone-500 text-[10px] font-bold uppercase tracking-widest">
+                      <ShieldCheck className="w-3.5 h-3.5 text-green-600" /> SECURE SSL ENCRYPTION
+                    </div>
+                    <div className="w-px h-3 bg-stone-300" />
+                    <div className="flex items-center gap-1.5 text-stone-500 text-[10px] font-bold uppercase tracking-widest">
+                       80G TAX EXEMPTION
+                    </div>
                   </div>
-
-                  <Link 
-                    href="/donate/refund-policy"
-                    className="flex items-center justify-center gap-1 text-saffron-600 text-xs hover:underline mt-3 font-medium"
-                  >
-                    <FileText className="w-3 h-3" />
-                    {donateConfig.form.policyLink}
-                  </Link>
                 </div>
                 </div>
               </div>
