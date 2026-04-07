@@ -192,10 +192,10 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
             <div className="relative">
               <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.05)] transform group-hover:scale-105 transition-transform duration-500 border border-stone-200/60 p-2">
                 <div className="relative w-full h-full rounded-lg overflow-hidden">
-                  <NextImage 
-                    src="/logo.png" 
-                    alt="Moksha Sewa Logo" 
-                    fill 
+                  <NextImage
+                    src="/logo.png"
+                    alt="Moksha Sewa Logo"
+                    fill
                     className="object-contain"
                     priority
                   />
@@ -207,20 +207,6 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
               <h2 className="text-stone-900 font-black text-xs uppercase tracking-[0.2em]">
                 Moksha <span className="text-gold-600">Admin</span>
               </h2>
-              <div className="flex items-center gap-2 mt-1.5 px-2 py-0.5 rounded-full bg-gold-400/10 border border-gold-400/20 w-fit">
-                <div className="w-1 h-1 rounded-full bg-gold-500" />
-                <span className="text-[9px] text-gold-700 font-bold uppercase tracking-widest whitespace-nowrap">Core Command</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-8 flex items-center gap-3 p-3 rounded-2xl bg-stone-100/50 border border-stone-200/30">
-            <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center font-bold text-[10px] text-stone-600 uppercase">
-              {user.name?.[0] || 'A'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[11px] font-black text-stone-950 truncate uppercase tracking-tight">{user.name}</p>
-              <p className="text-[9px] text-stone-500 truncate uppercase mt-0.5 font-bold tracking-tighter italic">{user.role}</p>
             </div>
           </div>
         </div>
@@ -242,8 +228,8 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                 >
                   <div className={cn(
                     "p-2 rounded-xl transition-all duration-300",
-                    pathname === item.href 
-                      ? "bg-white ring-1 ring-gold-500/30 text-gold-600" 
+                    pathname === item.href
+                      ? "bg-white ring-1 ring-gold-500/30 text-gold-600"
                       : "bg-white ring-1 ring-stone-200 group-hover:ring-gold-500/30 group-hover:bg-gold-50/50 group-hover:text-gold-600"
                   )}>
                     <item.icon className="w-4 h-4 stroke-[1.5]" />
@@ -275,8 +261,8 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
                       >
                         <div className={cn(
                           "p-2 rounded-xl transition-all duration-300",
-                          pathname === subItem.href 
-                            ? "bg-white text-gold-600 shadow-sm" 
+                          pathname === subItem.href
+                            ? "bg-white text-gold-600 shadow-sm"
                             : "bg-stone-100/80 group-hover/sub:bg-gold-50 group-hover/sub:text-gold-600"
                         )}>
                           <subItem.icon className="w-3.5 h-3.5" />
@@ -306,14 +292,6 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
             <span className="relative z-10 italic">Exit System Console</span>
             <div className="absolute inset-0 bg-rose-50 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
           </button>
-          
-          <div className="mt-4 px-5 flex items-center justify-between opacity-30">
-            <span className="text-[8px] font-black text-stone-500 uppercase tracking-widest italic tracking-[0.2em]">v1.2.4-stable</span>
-            <div className="flex gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-              <div className="w-1.5 h-1.5 rounded-full bg-stone-300" />
-            </div>
-          </div>
         </div>
       </aside>
     </>
