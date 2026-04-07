@@ -205,7 +205,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
             </div>
             <div>
               <h2 className="text-stone-900 font-black text-xs uppercase tracking-[0.2em]">
-                Moksha <span className="text-gold-600">Admin</span>
+                Moksha <span className="text-gold-600">Pannel</span>
               </h2>
             </div>
           </div>
@@ -289,7 +289,7 @@ export default function AdminSidebar({ user, onLogout, isOpen, onClose }: { user
             <div className="p-2 rounded-xl bg-rose-100 text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-all duration-500 relative z-10">
               <LogOut className="w-4 h-4" />
             </div>
-            <span className="relative z-10 italic">Exit System Console</span>
+            <span className="relative z-10 italic">Logout</span>
             <div className="absolute inset-0 bg-rose-50 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
           </button>
         </div>
