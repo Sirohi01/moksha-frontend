@@ -113,6 +113,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
   const commsItems = filtered([
     { title: 'WhatsApp', href: '/admin/whatsapp-hub', icon: MessageSquare },
     { title: 'Support', href: '/admin/support', icon: MessageSquare },
+    { title: 'Live Streaming', href: '/admin/live-streaming', icon: Video },
     { title: 'Banners', href: '/admin/marketing/banners', icon: Layout },
     { title: 'Newsletters', href: '/admin/marketing/newsletter', icon: Mail },
   ]);
