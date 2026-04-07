@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import MobileMenu from '@/components/admin/MobileMenu';
 import GlobalNotification from '@/components/admin/GlobalNotification';
 import AdminSidebar from '@/components/admin/AdminSidebar';
-import { Menu, ShieldAlert, Lock, ArrowLeft } from 'lucide-react';
+import { Menu, ShieldAlert, Lock, ArrowLeft, User } from 'lucide-react';
 import Link from 'next/link';
 
 interface AdminUser {
@@ -94,64 +94,60 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen bg-[#fcfcfc] flex font-sans selection:bg-gold-600 selection:text-navy-950 overflow-x-hidden">
 
-      {/* Desktop Persistent Sidebar */}
+      {/* Desktop Persistent Sidebar Gap */}
       <AdminSidebar user={user} onLogout={handleLogout} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="hidden lg:block w-72 shrink-0 h-screen" aria-hidden="true" />
+      <div className="hidden xl:block w-[320px] shrink-0 h-screen" aria-hidden="true" />
+      <div className="hidden lg:block xl:hidden w-[288px] shrink-0 h-screen" aria-hidden="true" />
 
       {/* Main Administrative Deck */}
-      <div className="flex-1 h-screen flex flex-col min-w-0 bg-[#fcfcfc] overflow-x-hidden">
+      <div className="flex-1 h-screen flex flex-col min-w-0 bg-[#FCFAF7] overflow-x-hidden relative">
 
         {/* Sleek Top Deck (Navbar) */}
-        <header className="flex-shrink-0 bg-white/70 backdrop-blur-xl border-b border-navy-50 px-4 sm:px-8 py-5 h-20 flex items-center justify-between">
+        <header className="flex-shrink-0 bg-white/40 backdrop-blur-2xl border-b border-stone-200/40 px-4 sm:px-8 py-5 h-20 flex items-center justify-between relative z-30">
           <div className="flex items-center gap-4 sm:gap-6">
-            <button onClick={() => setSidebarOpen(prev => !prev)} className="lg:hidden p-2.5 text-navy-950 bg-navy-50 rounded-xl hover:bg-navy-100 transition-all active:scale-90">
+            <button onClick={() => setSidebarOpen(prev => !prev)} className="lg:hidden p-2.5 text-stone-950 bg-stone-100 rounded-xl hover:bg-stone-200 transition-all active:scale-90 shadow-sm border border-stone-200/50">
               <Menu className="w-6 h-6" />
             </button>
             <div className="flex flex-col">
-              <h1 className="text-xs font-black uppercase tracking-widest text-navy-700 italic hidden xs:block">Moksha Admin Platform</h1>
+              <h1 className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400 hidden xs:block">Moksha System</h1>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-lg sm:text-xl font-black text-navy-950 uppercase italic tracking-tighter truncate max-w-[120px] sm:max-w-none py-1 px-2 mb-2 inline-block leading-none">
+                <span className="text-lg sm:text-xl font-black text-stone-950 uppercase tracking-tighter truncate max-w-[120px] sm:max-w-none leading-none">
                   {pathname.split('/').pop()?.replace('-', ' ') || 'Dashboard'}
                 </span>
-                <div className="w-1.5 h-1.5 rounded-full bg-gold-600 shadow-[0_0_8px_rgba(184,135,33,0.5)]"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-gold-500 shadow-[0_0_10px_rgba(212,175,55,0.6)] animate-pulse"></div>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-4 sm:gap-8">
-            <div className="hidden lg:flex items-center gap-6 pr-8 border-r border-navy-50">
+            <div className="hidden lg:flex items-center gap-6 pr-8 border-r border-stone-200/60">
               <div className="text-right">
-                <p className="text-[11px] font-black uppercase text-gray-400 leading-none">Status</p>
-                <p className="text-[13px] font-black uppercase text-emerald-500 mt-1">Ready</p>
+                <p className="text-[9px] font-black uppercase text-stone-400 tracking-wider leading-none">Network</p>
+                <p className="text-[11px] font-black uppercase text-emerald-600 mt-1.5 flex items-center gap-1.5 justify-end">
+                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping"></span>
+                  Optimal
+                </p>
               </div>
               <div className="text-right">
-                <p className="text-[11px] font-black uppercase text-gray-400 leading-none">Session</p>
-                <p className="text-[13px] font-black uppercase text-navy-950 mt-1">Active</p>
+                <p className="text-[9px] font-black uppercase text-stone-400 tracking-wider leading-none">Access Level</p>
+                <p className="text-[11px] font-black uppercase text-stone-950 mt-1.5">Full Clearance</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer transition-all duration-300 bg-white sm:bg-navy-50/30 p-1.5 sm:p-2 pr-3 sm:pr-6 rounded-[1.5rem] border border-transparent hover:border-gold-500/20 hover:bg-white hover:shadow-[0_20px_40px_rgba(184,135,33,0.05)] active:scale-95">
-              <div className="relative group-hover:scale-105 transition-all duration-500">
-                <div className="w-11 h-11 rounded-2xl bg-navy-950 flex items-center justify-center shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-white/10 text-gold-500 relative z-10 overflow-hidden group/avatar">
-                  <div className="absolute inset-0 bg-gradient-to-br from-gold-600/10 via-transparent to-navy-900/50 opacity-50"></div>
-                  <svg className="w-7 h-7 relative z-20 drop-shadow-lg transform group-hover/avatar:rotate-[360deg] transition-transform duration-1000 ease-in-out" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2Z" className="stroke-gold-600/30" strokeWidth="1" />
-                    <circle cx="12" cy="11" r="3" className="fill-gold-500 animate-pulse" />
-                    <path d="M7 18C7 16.3431 8.34315 15 10 15H14C15.6569 15 17 16.3431 17 18" className="stroke-gold-500" strokeWidth="2" strokeLinecap="round" />
-                  </svg>
+            <div className="flex items-center gap-3 sm:gap-4 group cursor-pointer transition-all duration-500 bg-white shadow-sm border border-stone-200/60 p-1.5 rounded-2xl hover:border-gold-500/30 hover:shadow-xl hover:shadow-gold-500/5 active:scale-95">
+              <div className="relative">
+                <div className="w-11 h-11 rounded-xl bg-stone-900 flex items-center justify-center shadow-lg border border-white/10 text-gold-400 relative z-10 overflow-hidden transform group-hover:scale-105 transition-transform duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-br from-gold-500/10 via-transparent to-black/20"></div>
+                  <User className="w-6 h-6" />
                 </div>
-                <div className="absolute -bottom-1 -right-1 z-20 flex items-center justify-center">
-                  <div className="w-4 h-4 bg-emerald-500 rounded-full border-[3px] border-white relative z-10 shadow-sm shadow-emerald-500/50"></div>
+                <div className="absolute -bottom-1 -right-1 z-20">
+                  <div className="w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-white shadow-sm"></div>
                 </div>
               </div>
 
-              <div className="hidden xs:block">
-                <div className="flex items-center gap-1.5">
-                  <p className="text-xs font-black text-navy-950 uppercase tracking-tight group-hover:text-gold-600 transition-colors">{user.name}</p>
-                </div>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <span className="text-[10px] font-black text-gold-600 uppercase tracking-tighter italic opacity-80">{user.role}</span>
-                </div>
+              <div className="hidden xs:block pl-2">
+                <p className="text-[11px] font-black text-stone-950 uppercase tracking-tight group-hover:text-gold-600 transition-colors">{user.name}</p>
+                <p className="text-[9px] font-black text-gold-600 uppercase tracking-tighter mt-0.5 opacity-80">{user.role}</p>
               </div>
             </div>
           </div>
