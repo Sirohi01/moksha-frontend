@@ -56,13 +56,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <article className="min-h-screen bg-stone-50 pb-24 font-sans selection:bg-amber-100 selection:text-amber-900">
       {/* Cinematic Image Anchor */}
-      <div className="relative w-full aspect-[16/9] md:aspect-[21/9] max-h-[700px] overflow-hidden shadow-2xl">
+      <div className="relative w-full aspect-[16/9] md:aspect-[21/9] max-h-[850px] overflow-hidden shadow-2xl bg-stone-900 border-b border-stone-100">
         {post.featuredImage?.url && (
           <Image 
             src={post.featuredImage.url} 
             alt={getAlt(post.featuredImage.url, seo, post.featuredImage.alt || post.title)}
             fill
-            className="object-contain"
+            className="object-cover"
             priority
           />
         )}

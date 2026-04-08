@@ -46,5 +46,13 @@ export const contactsAPI = {
     },
 };
 
+export const emailTemplatesAPI = {
+    getAll: async () => apiRequest(`${API_BASE_URL}/api/email-templates`),
+    getOne: async (id: string) => apiRequest(`${API_BASE_URL}/api/email-templates/${id}`),
+    update: async (id: string, data: any) => apiRequest(`${API_BASE_URL}/api/email-templates/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    create: async (data: any) => apiRequest(`${API_BASE_URL}/api/email-templates`, { method: 'POST', body: JSON.stringify(data) }),
+    delete: async (id: string) => apiRequest(`${API_BASE_URL}/api/email-templates/${id}`, { method: 'DELETE' }),
+};
+
 import { API_BASE_URL } from './api-base';
 export default API_BASE_URL;

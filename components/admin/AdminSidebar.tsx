@@ -101,7 +101,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
   const mediaItems = filtered([
     { title: 'Visual Hub', href: '/admin/gallery-hub', icon: LucideImage },
     { title: 'Gallery', href: '/admin/gallery', icon: LucideImage },
-    { title: 'Videos', href: '/admin/documentaries', icon: Film },
+    { title: 'Documentaries', href: '/admin/documentaries', icon: Film },
     { title: 'Press Center', href: '/admin/press', icon: ShieldCheck },
   ]);
   if (mediaItems.length > 0) {
@@ -141,6 +141,7 @@ const getNavigationItems = (user: AdminUser): NavigationItem[] => {
     { title: 'System Health', href: '/admin/intelligence/system-logs', icon: ShieldCheck },
     { title: 'Maintenance', href: '/admin/system/maintenance', icon: Terminal },
     { title: 'Email Logs', href: '/admin/email-logs', icon: Mail },
+    { title: 'Email Templates', href: '/admin/email-templates', icon: Mail },
     { title: 'Interaction Logs', href: '/admin/intelligence/communication-logs', icon: MessageSquare },
   ]);
   if (logItems.length > 0) {
