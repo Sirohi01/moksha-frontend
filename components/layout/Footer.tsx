@@ -85,10 +85,10 @@ export default function Footer() {
           {/* Links Columns - Spacing fixed */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category} className="lg:col-span-1">
-              <h4 className="text-white font-black text-[10px] uppercase tracking-[0.25em] mb-8 relative">
+              <h3 className="text-white font-black text-[10px] uppercase tracking-[0.25em] mb-8 relative">
                 {category}
                 <span className="absolute -bottom-2.5 left-0 w-3 h-[1.5px] bg-[#7ab800]/60" />
-              </h4>
+              </h3>
               <ul className="space-y-3.5">
                 {links.map((link) => (
                   <li key={link.href}>
@@ -112,12 +112,12 @@ export default function Footer() {
             <div className="flex-1 space-y-1 text-center lg:text-left">
               <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
                 <div className="w-2 h-2 bg-[#7ab800] rounded-full shadow-[0_0_15px_rgba(122,184,0,0.6)] animate-pulse"></div>
-                <h4 className="text-[11px] font-black text-white uppercase tracking-[0.5em]">The Sacred Digest</h4>
+                <h3 className="text-[11px] font-black text-white uppercase tracking-[0.5em]">The Sacred Digest</h3>
               </div>
               <h3 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tighter leading-none italic">
                 Deploys weekly to <span className="text-[#7ab800]">your inbox.</span>
               </h3>
-              <p className="text-white/40 text-[12px] font-medium leading-relaxed max-w-xl mx-auto lg:ml-0">
+              <p className="text-white/70 text-[12px] font-medium leading-relaxed max-w-xl mx-auto lg:ml-0">
                 Join a global network of souls dedicated to the restoration of dignity. Mission reports, breakthroughs, and stories of service.
               </p>
             </div>
@@ -156,7 +156,7 @@ export default function Footer() {
                   type="email" 
                   name="email"
                   placeholder="DEPLOY EMAIL ADDRESS"
-                  className="bg-transparent border-none outline-none text-[12px] font-medium tracking-widest text-white px-8 py-4 w-full placeholder:text-white/20 placeholder:font-black placeholder:uppercase placeholder:tracking-[0.3em]"
+                  className="bg-transparent border-none outline-none text-[12px] font-medium tracking-widest text-white px-8 py-4 w-full placeholder:text-white/60 placeholder:font-black placeholder:uppercase placeholder:tracking-[0.3em]"
                   required
                 />
                 <button 

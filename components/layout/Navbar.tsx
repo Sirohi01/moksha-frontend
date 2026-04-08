@@ -151,7 +151,7 @@ export default function Navbar() {
                             : "text-stone-700 hover:text-[#f4c430]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#b45309]" : "text-stone-600")} />
                         <span className="hidden xl:block">{link.label}</span>
                       </Link>
                     ) : (
@@ -220,7 +220,7 @@ export default function Navbar() {
                             : "text-stone-700 hover:text-[#f4c430]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#b45309]" : "text-stone-600")} />
                         <span className="hidden xl:block text-sm">{link.label}</span>
                       </Link>
                     ) : (

@@ -203,11 +203,11 @@ export default function HomePage() {
                 <span className="text-gray-700 block">{config.about.titleHighlight}</span>
               </h2>
 
-              <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed font-medium">
+              <p className="text-xl md:text-2xl text-gray-800 mb-6 leading-relaxed font-medium">
                 {config.about.description}
               </p>
 
-              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl text-gray-700 mb-8 leading-relaxed">
                 {config.about.secondaryDescription}
               </p>
 
@@ -355,7 +355,7 @@ export default function HomePage() {
                     <div className="text-center">
                       <Link
                         href={p.href || '#'}
-                        className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium text-sm transition-colors group/link"
+                        className="inline-flex items-center gap-2 text-gray-800 hover:text-black font-semibold text-sm transition-colors group/link py-3 px-1"
                       >
                         {config.labels?.learnMore || "Learn More"}
                         <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
@@ -794,15 +794,15 @@ export default function HomePage() {
 
                       {/* Enhanced card content */}
                       <div className="p-6">
-                        <p className="text-gray-600 text-sm mb-5 leading-relaxed line-clamp-2">{c.description}</p>
+                        <p className="text-gray-800 text-sm mb-5 leading-relaxed line-clamp-2">{c.description}</p>
                         <Link href="/donate">
                           <Button
                             variant="ghost"
                             className={cn(
                               "w-full transition-all duration-300",
                               position === 0
-                                ? "bg-gradient-to-r from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900 shadow-lg"
-                                : "bg-gray-600 text-white hover:bg-gray-700"
+                               ? "bg-gradient-to-r from-gray-800 to-gray-900 text-white hover:from-black hover:to-gray-900 shadow-lg"
+                                : "bg-gray-800 text-white hover:bg-black font-bold"
                             )}
                           >
                             {position === 0 ? config.urgentCampaigns.labels.donateNow : config.urgentCampaigns.labels.viewCampaign}
@@ -890,7 +890,7 @@ export default function HomePage() {
                       </div>
                       <p className="text-white font-black text-base md:text-lg tracking-tighter leading-none">{item.year}</p>
                     </div>
-                    <p className="text-stone-500 font-bold uppercase text-[8px] md:text-[9px] leading-tight tracking-wider text-center xl:text-left">{item.event}</p>
+                    <p className="text-stone-400 font-bold uppercase text-[8px] md:text-[9px] leading-tight tracking-wider text-center xl:text-left">{item.event}</p>
                   </div>
                 );
               })}
@@ -906,9 +906,9 @@ export default function HomePage() {
             <div>
               <h2 className="text-4xl font-black uppercase tracking-tighter text-stone-900 leading-[0.85] mb-6">
                 {config.transparency.title} <br />
-                <span className="text-[#20b2aa]">{config.transparency.titleHighlight}</span>
+                <span className="text-[#158078]">{config.transparency.titleHighlight}</span>
               </h2>
-              <p className="text-stone-600 font-medium text-lg leading-snug mb-8 max-w-md">
+              <p className="text-stone-800 font-medium text-lg leading-snug mb-8 max-w-md">
                 {config.transparency.description}
               </p>
               <div className="space-y-4">
@@ -931,8 +931,8 @@ export default function HomePage() {
               <div className="grid grid-cols-2 gap-4">
                 {config.transparency.trustSection.badges.map((badge, index) => (
                   <div key={index} className="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
-                    <p className={`${badge.color || 'text-[#f4c430]'} font-black text-2xl tracking-tighter`}>{badge.text}</p>
-                    <p className="text-[8px] font-black uppercase tracking-widest text-stone-600">{badge.subtext}</p>
+                    <p className={`${badge.color || 'text-[#b45309]'} font-black text-2xl tracking-tighter`}>{badge.text}</p>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-stone-700">{badge.subtext}</p>
                   </div>
                 ))}
               </div>
@@ -963,7 +963,7 @@ export default function HomePage() {
                 {config.testimonials.slides.map((t, i) => (
                   <div key={i} className={cn("transition-all duration-1000", i === currentTestimonial ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 absolute inset-0")}>
                     <p className="text-white text-xl md:text-3xl font-black italic tracking-tighter leading-tight mb-6">&quot;{t.quote}&quot;</p>
-                    <p className="text-stone-400 font-bold uppercase text-xs tracking-widest">— {t.author}</p>
+                    <p className="text-stone-300 font-bold uppercase text-xs tracking-widest">— {t.author}</p>
                   </div>
                 ))}
               </div>
@@ -987,7 +987,7 @@ export default function HomePage() {
             {config.governmentPartners.partners.map((gp) => (
               <div key={gp.name} className="flex flex-col items-center">
                 <div className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 border-b-2 border-stone-900 pb-1">{gp.name}</div>
-                <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-700">{gp.label}</p>
+                <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-800">{gp.label}</p>
               </div>
             ))}
           </div>
