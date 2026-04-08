@@ -11,7 +11,7 @@ export const homepageConfig: HomepageConfig = {
       "/gallery/image6.png",
     ],
     autoSlideInterval: 5000,
-    mobileAspectRatio: "hero",
+    mobileAspectRatio: "square",
     aspectRatio: "hero"
   },
 

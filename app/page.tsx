@@ -159,9 +159,9 @@ export default function HomePage() {
       {/* Action Banner */}
       <div className="bg-black py-4">
         <Container className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <h2 className="text-white text-xl md:text-2xl font-semibold">
+          <h1 className="text-white text-xl md:text-2xl font-semibold">
             {config.actionBanner?.title}
-          </h2>
+          </h1>
           <div className="flex gap-4">
             {config.actionBanner?.buttons?.map((button, index) => (
               <Link key={index} href={button.href || '#'}>

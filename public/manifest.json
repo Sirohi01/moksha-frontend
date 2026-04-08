@@ -3,7 +3,7 @@
   "short_name": "Moksha Sewa",
   "description": "Providing dignified cremation services for unclaimed bodies and poor families across India",
   "start_url": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#ffffff",
   "theme_color": "#8B4513",
   "orientation": "portrait-primary",

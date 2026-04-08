@@ -45,12 +45,12 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             {/* Logo Section - Left */}
             <Link href="/" className="flex items-center gap-4 group shrink-0 relative z-50">
-              <div className="relative w-24 h-24 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-lg transform translate-y-6">
+              <div className="relative w-20 h-20 lg:w-24 lg:h-24 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-xl transform translate-y-3 lg:translate-y-6 z-[1050]">
                 <Image
                   src={getSafeSrc(activeConfig.navbar.logo.src)}
                   alt={activeConfig.navbar.logo.alt}
                   fill
-                  className="object-contain p-4 relative z-10 group-hover:scale-110 transition-transform duration-300"
+                  className="object-contain p-2 lg:p-4 relative z-10 group-hover:scale-110 transition-transform duration-300"
                 />
               </div>
               <div className="hidden sm:block">

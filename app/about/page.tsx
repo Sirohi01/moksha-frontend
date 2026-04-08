@@ -59,7 +59,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="absolute -top-4 -left-4 w-full h-full bg-amber-100 rounded-2xl"></div>
               <div className="relative bg-white rounded-2xl p-6 shadow-lg">
-                <div className="aspect-[1650/700] rounded-xl overflow-hidden mb-4 relative">
+                <div className="aspect-[3/2] md:aspect-[1650/700] rounded-xl overflow-hidden mb-4 relative">
                   <Image
                     src={getSafeSrc(config.hero?.image) || "/gallery/image007.png"}
                     alt={getAlt(config.hero?.image, seo, config.hero?.cardTitle || "About Moksha Sewa")}
@@ -138,7 +138,7 @@ export default function AboutPage() {
             </div>
 
             <div className="relative">
-              <div className="aspect-[1650/700] rounded-2xl overflow-hidden mb-4 relative">
+              <div className="aspect-[3/2] md:aspect-[1650/700] rounded-2xl overflow-hidden mb-4 relative">
                 <Image
                   src={getSafeSrc(config.story?.image) || "/gallery/image009.png"}
                   alt={getAlt(config.story?.image, seo, config.story?.imageAlt || "Our Journey")}
