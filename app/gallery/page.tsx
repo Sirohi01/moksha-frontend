@@ -36,10 +36,7 @@ export default function GalleryPage() {
                 if (response.success) {
                     const uniqueCats = Array.from(new Set([
                         "All",
-                        ...response.data.filter((c: string) => {
-                            const low = c.toLowerCase().trim();
-                            return low !== 'all' && low !== 'gallery';
-                        })
+                        ...response.data.filter((c: string) => c.toLowerCase().trim() !== 'all')
                     ]));
                     setCategories(uniqueCats);
                 }
@@ -69,7 +66,7 @@ export default function GalleryPage() {
         try {
             setLoading(true);
             const cat = category === "All" ? "all" : category.toLowerCase();
-            const response = await galleryAPI.getImages(pageNum, 12, cat, undefined, false);
+            const response = await galleryAPI.getImages(pageNum, 10, cat, undefined, false);
 
             if (response.success) {
                 const newImages = response.data.images.map((img: any) => ({
@@ -228,7 +225,7 @@ export default function GalleryPage() {
                             <button
                                 onClick={handleLoadMore}
                                 disabled={loading}
-                                className="group relative px-12 py-4.5 bg-navy-950 text-gold-500 rounded-xl font-black uppercase tracking-[0.3em] text-[9px] transition-all hover:bg-gold-600 hover:text-navy-950 shadow-2xl active:scale-95 disabled:opacity-50 overflow-hidden"
+                                className="group relative px-16 py-6 bg-navy-950 text-gold-500 rounded-full font-black uppercase tracking-[0.3em] text-[10px] transition-all hover:bg-gold-600 hover:text-navy-950 shadow-2xl active:scale-95 disabled:opacity-50 overflow-hidden border border-gold-500/20"
                             >
                                 <span className="relative z-10">{loading ? 'Accessing Data...' : 'Reveal More Chapters'}</span>
                                 <div className="absolute inset-0 bg-gold-600 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700" />
