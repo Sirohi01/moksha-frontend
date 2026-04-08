@@ -765,7 +765,7 @@ export default function HomePage() {
                             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                             <span className="text-white/80 text-xs font-medium uppercase tracking-wider">{config.urgentCampaigns.labels.activeCampaign}</span>
                           </div>
-                          <h4 className="text-white font-bold text-xl mb-3 leading-tight">{c.title}</h4>
+                          <h3 className="text-white font-bold text-xl mb-3 leading-tight">{c.title}</h3>
 
                           {/* Enhanced progress bar */}
                           <div className="relative mb-3">

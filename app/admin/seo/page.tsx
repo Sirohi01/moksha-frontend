@@ -303,10 +303,19 @@ export default function SEOCommandDeck() {
 
                    <div className="space-y-10">
                       <div className="space-y-4">
-                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-4">Google Search Title (Meta-Title)</label>
+                         <div className="flex justify-between items-center ml-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Google Search Title (Meta-Title)</label>
+                            <span className={cn(
+                               "text-[9px] font-black uppercase tracking-widest mr-4",
+                               (selectedPage?.metaTitle?.length || 0) > 65 ? "text-rose-500" : "text-emerald-500"
+                            )}>
+                               {(selectedPage?.metaTitle?.length || 0)} / 65
+                            </span>
+                         </div>
                          <input
                            type="text"
                            value={selectedPage?.metaTitle || ''}
+                           maxLength={65}
                            onChange={(e) => updateField('metaTitle', e.target.value)}
                            className="w-full h-16 bg-stone-50 border border-stone-50 rounded-3xl px-8 font-bold text-navy-950 focus:bg-white focus:border-gold-500 transition-all outline-none"
                          />
@@ -323,10 +332,19 @@ export default function SEOCommandDeck() {
                       </div>
 
                       <div className="space-y-4">
-                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-4">Search Snippet Intent (Meta-Description)</label>
+                         <div className="flex justify-between items-center ml-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Search Snippet Intent (Meta-Description)</label>
+                            <span className={cn(
+                               "text-[9px] font-black uppercase tracking-widest mr-4",
+                               (selectedPage?.metaDescription?.length || 0) > 155 ? "text-rose-500" : "text-emerald-500"
+                            )}>
+                               {(selectedPage?.metaDescription?.length || 0)} / 155
+                            </span>
+                         </div>
                          <textarea
                            rows={6}
                            value={selectedPage?.metaDescription || ''}
+                           maxLength={155}
                            onChange={(e) => updateField('metaDescription', e.target.value)}
                            className="w-full bg-stone-50 border border-stone-50 rounded-[3rem] p-10 font-bold text-navy-950 focus:bg-white focus:border-gold-500 transition-all outline-none resize-none leading-relaxed"
                          />
@@ -440,26 +458,76 @@ export default function SEOCommandDeck() {
                    </div>
 
                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
-                      <div className="space-y-10">
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">OG Share Title</label>
-                            <input 
-                              type="text" 
-                              value={selectedPage?.ogTitle || ''}
-                              onChange={(e) => updateField('ogTitle', e.target.value)}
-                              className="w-full h-14 bg-stone-50 border border-stone-100 rounded-2xl px-6 text-xs font-bold text-navy-950 outline-none focus:border-blue-500"
-                            />
-                         </div>
-                         <div className="space-y-4">
-                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">OG Share Description</label>
-                            <textarea 
-                              rows={5}
-                              value={selectedPage?.ogDescription || ''}
-                              onChange={(e) => updateField('ogDescription', e.target.value)}
-                              className="w-full bg-stone-50 border border-stone-100 rounded-2xl p-6 text-xs font-bold text-navy-950 outline-none focus:border-blue-500 resize-none leading-relaxed font-medium"
-                            />
-                         </div>
-                      </div>
+                       <div className="space-y-10">
+                          {/* OG SECTION */}
+                          <div className="p-8 bg-stone-50/50 rounded-[3rem] border border-stone-100 space-y-6">
+                             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-blue-500 italic">OpenGraph Protocol</p>
+                             <div className="space-y-4">
+                                <div className="flex justify-between items-center px-1">
+                                   <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">OG Title</label>
+                                   <span className="text-[9px] font-bold text-blue-400">{(selectedPage?.ogTitle?.length || 0)}/95</span>
+                                </div>
+                                <input 
+                                  type="text" 
+                                  value={selectedPage?.ogTitle || ''}
+                                  maxLength={95}
+                                  onChange={(e) => updateField('ogTitle', e.target.value)}
+                                  className="w-full h-12 bg-white border border-stone-100 rounded-xl px-5 text-xs font-bold text-navy-950 outline-none focus:border-blue-500 transition-all"
+                                />
+                             </div>
+                             <div className="space-y-4">
+                                <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest px-1">OG Description</label>
+                                <textarea 
+                                  rows={3}
+                                  value={selectedPage?.ogDescription || ''}
+                                  maxLength={200}
+                                  onChange={(e) => updateField('ogDescription', e.target.value)}
+                                  className="w-full bg-white border border-stone-100 rounded-2xl p-5 text-xs font-bold text-navy-950 outline-none focus:border-blue-500 resize-none transition-all"
+                                />
+                             </div>
+                          </div>
+
+                          {/* TWITTER SECTION */}
+                          <div className="p-8 bg-stone-50/50 rounded-[3rem] border border-stone-100 space-y-6">
+                             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-sky-500 italic">Twitter/X Metadata</p>
+                             <div className="grid grid-cols-2 gap-4">
+                               <div className="space-y-4">
+                                  <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest px-1">Card Type</label>
+                                  <select 
+                                     value={selectedPage?.twitterCard || 'summary_large_image'}
+                                     onChange={(e) => updateField('twitterCard', e.target.value)}
+                                     className="w-full h-12 bg-white border border-stone-100 rounded-xl px-4 text-[10px] font-black uppercase tracking-widest outline-none focus:border-sky-500 cursor-pointer"
+                                  >
+                                     <option value="summary">Summary</option>
+                                     <option value="summary_large_image">Large Image</option>
+                                  </select>
+                               </div>
+                               <div className="space-y-4">
+                                  <div className="flex justify-between items-center px-1">
+                                    <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest">Twitter Title</label>
+                                    <span className="text-[9px] font-bold text-sky-400">{(selectedPage?.twitterTitle?.length || 0)}/70</span>
+                                  </div>
+                                  <input 
+                                    type="text" 
+                                    value={selectedPage?.twitterTitle || ''}
+                                    maxLength={70}
+                                    onChange={(e) => updateField('twitterTitle', e.target.value)}
+                                    className="w-full h-12 bg-white border border-stone-100 rounded-xl px-5 text-xs font-bold text-navy-950 outline-none focus:border-sky-500"
+                                  />
+                               </div>
+                             </div>
+                             <div className="space-y-4">
+                                <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest px-1">Twitter Description</label>
+                                <textarea 
+                                  rows={2}
+                                  value={selectedPage?.twitterDescription || ''}
+                                  maxLength={160}
+                                  onChange={(e) => updateField('twitterDescription', e.target.value)}
+                                  className="w-full bg-white border border-stone-100 rounded-2xl p-5 text-xs font-bold text-navy-950 outline-none focus:border-sky-500 resize-none transition-all"
+                                />
+                             </div>
+                          </div>
+                       </div>
 
                       <div className="space-y-6">
                          <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">Social Thumbnail Payload (OG Image)</label>
@@ -492,6 +560,34 @@ export default function SEOCommandDeck() {
                                </button>
                             )}
                          </div>
+
+                          {/* 🧱 EDITABLE META CONSOLE */}
+                          <div className="p-8 bg-navy-950 rounded-[3rem] border border-white/5 space-y-6 shadow-2xl overflow-hidden relative group">
+                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent)]" />
+                             <div className="flex items-center justify-between relative z-10">
+                                <div className="flex items-center gap-3 text-blue-400">
+                                   <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                                      <Code2 size={16} />
+                                   </div>
+                                   <span className="text-[10px] font-black uppercase tracking-widest">Metadata Override Console</span>
+                                </div>
+                                <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Write_Custom_Meta_Tags</span>
+                             </div>
+                             <textarea 
+                                value={selectedPage?.headCode || `<!-- OpenGraph -->
+<meta property="og:title" content="${selectedPage?.ogTitle || selectedPage?.metaTitle || ''}" />
+<meta property="og:description" content="${selectedPage?.ogDescription || selectedPage?.metaDescription?.substring(0, 150) || ''}" />
+<meta property="og:image" content="${selectedPage?.ogImage || ''}" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="${selectedPage?.twitterCard || 'summary_large_image'}" />
+<meta name="twitter:title" content="${selectedPage?.twitterTitle || selectedPage?.ogTitle || selectedPage?.metaTitle || ''}" />`}
+                                onChange={(e) => updateField('headCode', e.target.value)}
+                                rows={8}
+                                className="w-full bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-[10px] text-blue-400/80 outline-none focus:border-blue-500/50 transition-all resize-none leading-relaxed scrollbar-hide relative z-10"
+                                placeholder="Paste additional meta tags here..."
+                             />
+                          </div>
                       </div>
                    </div>
                 </Card>
@@ -536,29 +632,51 @@ export default function SEOCommandDeck() {
                                <option value="noindex, nofollow">Exclusion Protocol</option>
                             </select>
                          </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">Custom Head Injection (Scripts/Meta)</label>
+                            <textarea
+                              rows={4}
+                              value={selectedPage?.headCode || ''}
+                              onChange={(e) => updateField('headCode', e.target.value)}
+                              className="w-full bg-stone-50 border border-stone-100 rounded-3xl p-6 font-mono text-[10px] text-navy-950 outline-none focus:border-gold-500 resize-none"
+                              placeholder="<meta name='custom' content='...' />"
+                            />
+                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                         <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">JSON-LD Structured Markup</label>
-                         <textarea
-                          rows={8}
-                          value={typeof selectedPage?.schemaMarkup === 'string' ? selectedPage.schemaMarkup : JSON.stringify(selectedPage?.schemaMarkup || {}, null, 2)}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            try {
-                              const json = JSON.parse(val);
-                              updateField('schemaMarkup', json);
-                              setSchemaError(null);
-                            } catch (err: any) {
-                              updateField('schemaMarkup', val);
-                              setSchemaError("JSON ERROR");
-                            }
-                          }}
-                          className={cn(
-                            "w-full bg-navy-950 text-gold-500 font-mono text-[11px] rounded-[3rem] p-10 outline-none resize-none transition-all shadow-xl leading-relaxed",
-                            schemaError ? "ring-2 ring-rose-500" : "border-transparent"
-                          )}
-                        />
+                      <div className="space-y-6">
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">JSON-LD Structured Markup</label>
+                            <textarea
+                              rows={8}
+                              value={typeof selectedPage?.schemaMarkup === 'string' ? selectedPage.schemaMarkup : JSON.stringify(selectedPage?.schemaMarkup || {}, null, 2)}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                try {
+                                  const json = JSON.parse(val);
+                                  updateField('schemaMarkup', json);
+                                  setSchemaError(null);
+                                } catch (err: any) {
+                                  updateField('schemaMarkup', val);
+                                  setSchemaError("JSON ERROR");
+                                }
+                              }}
+                              className={cn(
+                                "w-full bg-navy-950 text-gold-500 font-mono text-[11px] rounded-[3rem] p-10 outline-none resize-none transition-all shadow-xl leading-relaxed",
+                                schemaError ? "ring-2 ring-rose-500" : "border-transparent"
+                              )}
+                            />
+                         </div>
+                         <div className="space-y-4">
+                            <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest ml-3">Custom Body Injection (Footer Scripts)</label>
+                            <textarea
+                              rows={3}
+                              value={selectedPage?.bodyCode || ''}
+                              onChange={(e) => updateField('bodyCode', e.target.value)}
+                              className="w-full bg-stone-50 border border-stone-100 rounded-3xl p-6 font-mono text-[10px] text-navy-950 outline-none focus:border-gold-500 resize-none"
+                              placeholder="<script>...</script>"
+                            />
+                         </div>
                       </div>
                    </div>
                 </Card>

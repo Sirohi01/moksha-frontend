@@ -114,12 +114,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             />
           </>
         )}
-        {globalSeo?.headerScripts && (
-          <div dangerouslySetInnerHTML={{ __html: globalSeo.headerScripts }} />
-        )}
-        {pageSeo?.headCode && (
-          <div dangerouslySetInnerHTML={{ __html: pageSeo.headCode }} />
-        )}
         {pageSeo?.schemaMarkup && (
           <script
             type="application/ld+json"
@@ -146,6 +140,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="msapplication-tap-highlight" content="no" />
       </head>
       <body className="min-h-screen antialiased">
+        {/* Header Injectors (Moved from head to start of body to avoid hydration error) */}
+        {globalSeo?.headerScripts && (
+          <div dangerouslySetInnerHTML={{ __html: globalSeo.headerScripts }} />
+        )}
+        {pageSeo?.headCode && (
+          <div dangerouslySetInnerHTML={{ __html: pageSeo.headCode }} />
+        )}
         {/* Global Footer Scripts */}
         {globalSeo?.footerScripts && (
           <div dangerouslySetInnerHTML={{ __html: globalSeo.footerScripts }} />
