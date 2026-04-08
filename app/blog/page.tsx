@@ -175,12 +175,12 @@ export default function BlogPage() {
                   className="group flex flex-col bg-white rounded-[3rem] overflow-hidden border border-stone-50 hover:border-amber-100 transition-all duration-700 animate-fade-in"
                   style={{ animationDelay: `${idx * 0.1}s` }}
                 >
-                  <div className="aspect-[16/9] relative overflow-hidden rounded-[2.8rem] m-2">
+                  <div className="aspect-[21/9] relative overflow-hidden rounded-[2.8rem] m-2">
                     <Image 
                       src={getSafeSrc(blog.featuredImage?.url)} 
                       alt={getAlt(blog.featuredImage?.url, seo, blog.featuredImage?.alt || blog.title)} 
                       fill
-                      className="object-contain group-hover:scale-110 transition-transform duration-1000"
+                      className="object-cover group-hover:scale-110 transition-transform duration-1000"
                     />
                     <div className="absolute top-6 left-6 flex flex-col gap-2">
                       <div className="bg-white/95 backdrop-blur-md px-4 py-1.5 rounded-full shadow-2xl">

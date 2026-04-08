@@ -33,6 +33,9 @@ export const ROUTE_PERMISSIONS: Record<string, string> = {
   // Communication & Marketing
   '/admin/whatsapp-hub': 'page_whatsapp',
   '/admin/support': 'page_support',
+  '/admin/live-streaming': 'page_live',
+  '/admin/live-streaming/create': 'page_live',
+  '/admin/live-streaming/monitor': 'page_live',
   '/admin/marketing/banners': 'page_banners',
   '/admin/marketing/newsletter': 'page_newsletter',
 

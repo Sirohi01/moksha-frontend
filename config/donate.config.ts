@@ -173,7 +173,7 @@ export const donateConfig: DonatePageConfig = {
           label: "Purpose",
           options: [
             { value: "general", label: "General Fund" },
-            { value: "specific-campaign", label: "Specific Campaign" },
+            { value: "specific_campaign", label: "Specific Campaign" },
             { value: "memorial", label: "In Memory Of" },
             { value: "tribute", label: "In Honor Of" },
             { value: "ambulance", label: "Ambulance Service" },

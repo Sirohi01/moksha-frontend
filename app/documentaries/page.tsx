@@ -169,7 +169,7 @@ export default function DocumentariesPage() {
                 <Link key={doc._id} href={`/documentaries/${doc.slug}`} className="group relative block w-full h-full">
                   <div className="bg-white rounded-[3rem] p-6 border border-amber-50 shadow-[0_20px_60px_rgba(0,0,0,0.02)] hover:shadow-[0_45px_100px_rgba(217,119,6,0.08)] transition-all duration-700 translate-y-0 hover:translate-y-[-12px] flex flex-col h-full overflow-hidden">
                     
-                    <div className="aspect-[16/10] relative overflow-hidden rounded-[2.2rem] bg-stone-100 shadow-inner mb-8">
+                    <div className="aspect-[2/1] relative overflow-hidden rounded-[2.2rem] bg-stone-100 shadow-inner mb-8">
                       <Image 
                         src={getSafeSrc(doc.featuredImage?.url)} 
                         alt={doc.title}

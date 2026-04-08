@@ -41,22 +41,23 @@ export const loadRazorpayScript = (): Promise<boolean> => {
   });
 };
 
-export const createRazorpayOrder = async (amount: number, currency = 'INR') => {
+export const createRazorpayOrder = async (donorData: any) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/payments/create-order`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000'}/api/donations/initiate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ amount, currency }),
+      body: JSON.stringify(donorData),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create payment order');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to create payment order');
     }
 
     const result = await response.json();
-    return result.data;
+    return result; // contains { success, order, donationId }
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
     throw error;
