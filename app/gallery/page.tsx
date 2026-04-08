@@ -23,10 +23,33 @@ export default function GalleryPage() {
 
     const [selectedImg, setSelectedImg] = useState<null | any>(null);
     const [activeCategory, setActiveCategory] = useState("All");
+    const [categories, setCategories] = useState<string[]>(["All"]);
     const [galleryImages, setGalleryImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await galleryAPI.getCategories();
+                if (response.success) {
+                    const uniqueCats = Array.from(new Set([
+                        "All",
+                        ...response.data.filter((c: string) => {
+                            const low = c.toLowerCase().trim();
+                            return low !== 'all' && low !== 'gallery';
+                        })
+                    ]));
+                    setCategories(uniqueCats);
+                }
+            } catch (error) {
+                console.error("Failed to fetch gallery categories:", error);
+                setCategories(["All", ...initialCategories]);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         if (selectedImg) {
@@ -132,10 +155,27 @@ export default function GalleryPage() {
                         <p className="text-sm font-medium max-w-2xl text-navy-700/60 leading-relaxed tracking-tight italic border-l-4 border-gold-500/30 pl-6 uppercase">
                             {activeConfig.hero.description || "A curated collection of visual documentation showcasing our mission impact."}
                         </p>
+
+                        {/* 🕵️‍♂️ DYNAMIC FILTER INFRASTRUCTURE */}
+                        <div className="pt-8 flex flex-wrap gap-3 animate-in fade-in duration-1000 delay-300">
+                            {categories.map((cat) => (
+                                <button
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={cn(
+                                        "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border",
+                                        activeCategory === cat
+                                            ? "bg-navy-950 text-gold-500 border-navy-950 shadow-xl scale-105"
+                                            : "bg-white text-navy-400 border-stone-100 hover:border-gold-500 hover:text-navy-950"
+                                    )}
+                                >
+                                    {cat}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </Container>
             </section>
-
 
             {/* Grid Gallery */}
             <section className="py-16 bg-[#f8f7f4]">
@@ -222,7 +262,7 @@ export default function GalleryPage() {
                             {/* Subtle Overlays */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                         </div>
- 
+
                         {/* 50% Mission Data Sidebar - High-End Typography & Spacing */}
                         <div className="w-full md:w-1/2 p-10 lg:p-14 flex flex-col justify-between bg-white relative overflow-y-auto">
                             <div className="space-y-10">

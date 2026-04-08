@@ -36,4 +36,7 @@ export const mediaService = {
   getStats: async () => {
     return apiRequest(`${API_ENDPOINTS.GALLERY}/stats`);
   },
+  getCategories: async () => {
+    return apiRequest(`${API_ENDPOINTS.GALLERY}/categories`);
+  },
 };
