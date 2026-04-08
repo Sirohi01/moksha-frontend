@@ -156,7 +156,7 @@ export default function GalleryPage() {
                                         alt={getAlt(image.src, seo, image.altText || image.alt || image.title || "Gallery Image")}
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
-                                        className="object-contain transition-all duration-[2000ms] group-hover:scale-110"
+                                        className="object-cover transition-all duration-[2000ms] group-hover:scale-110"
                                     />
                                     <div className="absolute inset-0 bg-navy-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[1px]">
                                         <div className="w-14 h-14 bg-white rounded-xl flex items-center justify-center text-navy-950 scale-50 group-hover:scale-100 transition-all duration-500 shadow-2xl relative overflow-hidden group/btn">
@@ -216,7 +216,7 @@ export default function GalleryPage() {
                                 src={getSafeSrc(selectedImg.src)}
                                 alt={getAlt(selectedImg.src, seo, selectedImg.altText || selectedImg.alt || selectedImg.title || "Gallery Detailed Image")}
                                 fill
-                                className="object-contain transition-transform duration-1000 select-none animate-in fade-in duration-1000"
+                                className="object-cover transition-transform duration-1000 select-none animate-in fade-in duration-1000"
                                 priority
                             />
                             {/* Subtle Overlays */}

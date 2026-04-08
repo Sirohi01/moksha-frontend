@@ -175,7 +175,7 @@ export default function BlogPage() {
                   className="group flex flex-col bg-white rounded-[3rem] overflow-hidden border border-stone-50 hover:border-amber-100 transition-all duration-700 animate-fade-in"
                   style={{ animationDelay: `${idx * 0.1}s` }}
                 >
-                  <div className="aspect-[21/9] relative overflow-hidden rounded-[2.8rem] m-2">
+                  <div className="aspect-[3/2] md:aspect-[21/9] relative overflow-hidden rounded-[2.8rem] m-2">
                     <Image 
                       src={getSafeSrc(blog.featuredImage?.url)} 
                       alt={getAlt(blog.featuredImage?.url, seo, blog.featuredImage?.alt || blog.title)} 

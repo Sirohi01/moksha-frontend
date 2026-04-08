@@ -93,10 +93,10 @@ export default function HomePage() {
     <div className="bg-stone-50 min-h-screen font-sans">
       {/* ── SEO DYNAMIC H1 ── */}
       {config.seo?.h1Tag && (
-        <h1 className="sr-only">{config.seo.h1Tag}</h1>
+        <h2 className="sr-only">{config.seo.h1Tag}</h2>
       )}
       {!config.seo?.h1Tag && config.about?.title && (
-        <h1 className="sr-only">{config.about.title} {config.about.titleHighlight}</h1>
+        <h2 className="sr-only">{config.about.title} {config.about.titleHighlight}</h2>
       )}
       <section className={cn(
         "relative w-full overflow-hidden bg-white border-b-4 border-stone-100 transition-all duration-700",

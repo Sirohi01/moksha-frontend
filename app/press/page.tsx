@@ -170,12 +170,12 @@ export default function PressRoomPage() {
                 <Link key={pr._id} href={`/press/${pr.slug}`} className="group relative block w-full h-full">
                   <div className="bg-white rounded-[3rem] p-6 border border-navy-50 shadow-[0_20px_60px_rgba(26,46,74,0.02)] hover:shadow-[0_45px_100px_rgba(26,46,74,0.08)] transition-all duration-700 translate-y-0 hover:translate-y-[-12px] flex flex-col h-full overflow-hidden">
                     
-                    <div className="w-full aspect-[2/1] relative rounded-[2.2rem] overflow-hidden bg-navy-50 shadow-inner mb-8">
+                    <div className="w-full aspect-[3/2] md:aspect-[2/1] relative rounded-[2.2rem] overflow-hidden bg-navy-50 shadow-inner mb-8">
                       <Image 
                         src={getSafeSrc(pr.featuredImage?.url)} 
                         alt={pr.title}
                         fill
-                        className="object-contain group-hover:scale-105 transition-transform duration-[5000ms]"
+                        className="object-cover group-hover:scale-105 transition-transform duration-[5000ms]"
                       />
                       <div className="absolute inset-0 bg-navy-950/15 group-hover:bg-transparent transition-colors duration-1000" />
                       <div className="absolute top-6 left-6">

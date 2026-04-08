@@ -243,7 +243,7 @@ export default function VolunteerPage() {
                           <SectionTitle num={1} title={activeConfig.sections?.[0]?.title || "Identity Matrix"} icon={Camera} />
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16 items-center">
                              <div 
-                                className="w-full aspect-video bg-stone-50 rounded-[2rem] md:rounded-[3rem] border-2 border-dashed border-stone-200 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-white hover:border-gold-500 transition-all duration-700 group relative shadow-inner"
+                                className="w-full aspect-[3/2] md:aspect-video bg-stone-50 rounded-[2rem] md:rounded-[3rem] border-2 border-dashed border-stone-200 flex flex-col items-center justify-center overflow-hidden cursor-pointer hover:bg-white hover:border-gold-500 transition-all duration-700 group relative shadow-inner"
                                 onClick={() => photoFileInput.current?.click()}
                              >
                                 {profilePhoto ? (
@@ -252,7 +252,7 @@ export default function VolunteerPage() {
                                      alt={getAlt(profilePhoto, null, "Identity Profile")}
                                      fill
                                      unoptimized
-                                     className="object-contain transition-all duration-700 shadow-2xl" 
+                                     className="object-cover transition-all duration-700 shadow-2xl" 
                                    />
                                 ) : (
                                    <div className="text-center font-black uppercase tracking-widest text-navy-200 text-[10px] md:text-xs space-y-4 md:space-y-6 p-6 md:p-10">
