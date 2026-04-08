@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import RichTextEditor from '@/components/ui/RichTextEditor';
 
 export default function EditDocumentaryPage() {
     const router = useRouter();
@@ -206,8 +207,14 @@ export default function EditDocumentaryPage() {
                                     <textarea required value={formData.excerpt} onChange={(e) => setFormData({...formData, excerpt: e.target.value})} placeholder="SHORT SYNOPSIS..." className="w-full h-36 p-8 bg-stone-50 rounded-[2.5rem] border-none text-[11px] font-black uppercase tracking-[0.15em] outline-none text-navy-950 shadow-inner resize-none" />
                                 </div>
                                 <div className="space-y-4 pt-6">
-                                    <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest pl-8 flex items-center gap-2"><FileText size={12} /> Narrative Body (HTML Supported)</label>
-                                    <textarea required value={formData.content} onChange={(e) => setFormData({...formData, content: e.target.value})} placeholder="DETAILED DESCRIPTION..." className="w-full min-h-[500px] p-12 bg-stone-50 rounded-[3.5rem] border-none text-lg font-medium outline-none text-navy-950 shadow-inner" />
+                                    <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest pl-8 flex items-center gap-2">
+                                        <FileText size={12} /> Narrative Body (Advanced Editor)
+                                    </label>
+                                    <RichTextEditor
+                                        content={formData.content}
+                                        onChange={(content: string) => setFormData({ ...formData, content })}
+                                        placeholder="DETAILED DESCRIPTION..."
+                                    />
                                 </div>
                              </div>
                         </div>

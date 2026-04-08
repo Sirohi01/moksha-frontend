@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import RichTextEditor from '@/components/ui/RichTextEditor';
 
 export default function CreatePressReleasePage() {
     const router = useRouter();
@@ -199,8 +200,14 @@ export default function CreatePressReleasePage() {
                                 </div>
 
                                 <div className="space-y-4 pt-6">
-                                    <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest pl-8 flex items-center gap-2"><FileText size={12} /> Official Statement (Content)</label>
-                                    <textarea required value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} placeholder="FULL PRESS RELEASE BODY..." className="w-full min-h-[500px] p-12 bg-stone-50 rounded-[3.5rem] border-none text-lg font-medium leading-relaxed focus:ring-4 focus:ring-navy-500/10 focus:bg-white transition-all outline-none text-navy-950 shadow-inner" />
+                                    <label className="text-[10px] font-black text-stone-400 uppercase tracking-widest pl-8 flex items-center gap-2">
+                                        <FileText size={12} /> Official Statement (Advanced Editor)
+                                    </label>
+                                    <RichTextEditor
+                                        content={formData.content}
+                                        onChange={(content: string) => setFormData({ ...formData, content })}
+                                        placeholder="FULL PRESS RELEASE BODY..."
+                                    />
                                 </div>
                             </div>
                         </div>

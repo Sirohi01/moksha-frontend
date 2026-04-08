@@ -216,10 +216,13 @@ export default async function PressReleaseDetailPage({ params }: { params: { slu
         <div className="max-w-6xl mx-auto px-6">
           <div 
             className="prose prose-xl prose-stone max-w-none 
-              prose-headings:text-navy-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none
-              prose-p:text-navy-950/70 prose-p:leading-relaxed prose-p:text-2xl prose-p:font-medium prose-p:mb-12
+              prose-headings:text-navy-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none prose-headings:mb-8 prose-headings:mt-12
+              prose-p:text-navy-950/70 prose-p:leading-relaxed prose-p:text-xl md:prose-p:text-2xl prose-p:font-medium prose-p:mb-8
               prose-img:rounded-[3rem] prose-img:shadow-2xl prose-img:border prose-img:border-navy-50
-              prose-blockquote:border-l-4 prose-blockquote:border-gold-600 prose-blockquote:bg-navy-50/30 prose-blockquote:p-12 prose-blockquote:rounded-[3rem] prose-blockquote:italic"
+              prose-ul:list-disc prose-ul:marker:text-gold-600 prose-ul:space-y-4 prose-li:text-xl md:prose-li:text-2xl prose-li:leading-relaxed
+              prose-a:text-gold-700 prose-a:font-black prose-a:uppercase prose-a:tracking-widest prose-a:no-underline hover:prose-a:text-navy-950 transition-colors
+              prose-strong:text-navy-950 prose-strong:font-black
+              prose-blockquote:border-l-[8px] prose-blockquote:border-gold-600 prose-blockquote:bg-navy-50/30 prose-blockquote:p-10 prose-blockquote:rounded-[3rem] prose-blockquote:italic prose-blockquote:text-navy-950 prose-blockquote:font-black prose-blockquote:text-3xl md:prose-blockquote:text-4xl"
             dangerouslySetInnerHTML={{ __html: pr.content }}
           />
         </div>

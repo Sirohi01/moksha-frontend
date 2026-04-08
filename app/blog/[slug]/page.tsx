@@ -111,15 +111,15 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {/* Story Narrative Layer */}
           <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
             <div 
-              className="prose prose-2xl prose-stone max-w-none 
-                prose-headings:text-stone-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none prose-headings:mb-12 prose-headings:mt-24
-                prose-h2:text-4xl md:prose-h2:text-6xl prose-h3:text-3xl md:prose-h3:text-5xl
-                prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-2xl md:prose-p:text-[2.25rem] prose-p:font-medium prose-p:mb-16
+              className="prose prose-xl prose-stone max-w-none 
+                prose-headings:text-stone-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none prose-headings:mb-8 prose-headings:mt-12
+                prose-h2:text-4xl md:prose-h2:text-5xl prose-h3:text-3xl md:prose-h3:text-4xl
+                prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-xl md:prose-p:text-2xl prose-p:font-medium prose-p:mb-8
                 prose-img:rounded-[3rem] prose-img:shadow-2xl prose-img:border prose-img:border-stone-50
-                prose-ul:list-disc prose-ul:marker:text-amber-600 prose-ul:space-y-8 prose-li:text-2xl md:prose-li:text-[2.25rem] prose-li:leading-relaxed
+                prose-ul:list-disc prose-ul:marker:text-amber-600 prose-ul:space-y-4 prose-li:text-xl md:prose-li:text-2xl prose-li:leading-relaxed
                 prose-a:text-amber-700 prose-a:font-black prose-a:uppercase prose-a:tracking-widest prose-a:no-underline hover:prose-a:text-stone-950 transition-colors
                 prose-strong:text-stone-950 prose-strong:font-black
-                prose-blockquote:border-l-[12px] prose-blockquote:border-amber-600 prose-blockquote:bg-stone-50 prose-blockquote:p-14 prose-blockquote:rounded-[4rem] prose-blockquote:italic prose-blockquote:text-stone-950 prose-blockquote:font-black prose-blockquote:text-4xl md:prose-blockquote:text-5xl"
+                prose-blockquote:border-l-[8px] prose-blockquote:border-amber-600 prose-blockquote:bg-stone-50 prose-blockquote:p-10 prose-blockquote:rounded-[3rem] prose-blockquote:italic prose-blockquote:text-stone-950 prose-blockquote:font-black prose-blockquote:text-3xl md:prose-blockquote:text-4xl"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>

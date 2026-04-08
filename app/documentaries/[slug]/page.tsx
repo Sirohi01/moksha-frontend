@@ -157,10 +157,13 @@ export default async function DocumentaryDetailPage({ params }: { params: { slug
         <div className="max-w-6xl mx-auto px-6 py-12 md:py-20">
           <div 
             className="prose prose-xl prose-stone max-w-none 
-              prose-headings:text-stone-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none
-              prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-2xl prose-p:font-medium prose-p:mb-12
+              prose-headings:text-stone-950 prose-headings:font-black prose-headings:uppercase prose-headings:italic prose-headings:tracking-tighter prose-headings:leading-none prose-headings:mb-8 prose-headings:mt-12
+              prose-p:text-stone-600 prose-p:leading-relaxed prose-p:text-xl md:prose-p:text-2xl prose-p:font-medium prose-p:mb-8
               prose-img:rounded-[3rem] prose-img:shadow-2xl prose-img:border prose-img:border-stone-50
-              prose-blockquote:border-l-4 prose-blockquote:border-amber-600 prose-blockquote:bg-stone-50 prose-blockquote:p-10 prose-blockquote:rounded-[3rem] prose-blockquote:italic"
+              prose-ul:list-disc prose-ul:marker:text-amber-600 prose-ul:space-y-4 prose-li:text-xl md:prose-li:text-2xl prose-li:leading-relaxed
+              prose-a:text-amber-700 prose-a:font-black prose-a:uppercase prose-a:tracking-widest prose-a:no-underline hover:prose-a:text-stone-950 transition-colors
+              prose-strong:text-stone-950 prose-strong:font-black
+              prose-blockquote:border-l-[8px] prose-blockquote:border-amber-600 prose-blockquote:bg-stone-50 prose-blockquote:p-10 prose-blockquote:rounded-[3rem] prose-blockquote:italic prose-blockquote:text-stone-950 prose-blockquote:font-black prose-blockquote:text-3xl md:prose-blockquote:text-4xl"
             dangerouslySetInnerHTML={{ __html: doc.content }}
           />
         </div>
