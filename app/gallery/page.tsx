@@ -154,16 +154,17 @@ export default function GalleryPage() {
                         </p>
 
                         {/* 🕵️‍♂️ DYNAMIC FILTER INFRASTRUCTURE */}
-                        <div className="pt-8 flex flex-wrap gap-3 animate-in fade-in duration-1000 delay-300">
+                        <div className="pt-10 flex flex-wrap gap-4 animate-in fade-in duration-1000 delay-300">
                             {categories.map((cat) => (
                                 <button
                                     key={cat}
                                     onClick={() => setActiveCategory(cat)}
+                                    aria-label={`Filter gallery by ${cat}`}
                                     className={cn(
-                                        "px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all duration-500 border",
+                                        "px-10 py-4 rounded-full text-[11px] font-black uppercase tracking-widest transition-all duration-500 border-2",
                                         activeCategory === cat
                                             ? "bg-navy-950 text-gold-500 border-navy-950 shadow-xl scale-105"
-                                            : "bg-white text-navy-400 border-stone-100 hover:border-gold-500 hover:text-navy-950"
+                                            : "bg-white text-stone-700 border-stone-100 hover:border-gold-500 hover:text-navy-950"
                                     )}
                                 >
                                     {cat}

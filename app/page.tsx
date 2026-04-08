@@ -147,8 +147,8 @@ export default function HomePage() {
               }}
               aria-label={`Go to slide ${idx + 1}`}
               className={cn(
-                "h-2 rounded-full transition-all duration-500",
-                idx === currentSlide ? "w-12 bg-[#f4c430]" : "w-2 bg-white/30 hover:bg-white"
+                "h-4 rounded-full transition-all duration-500 hover:scale-110",
+                idx === currentSlide ? "w-12 bg-[#f4c430]" : "w-4 bg-white/40 hover:bg-white"
               )}
             />
           ))}
@@ -419,8 +419,7 @@ export default function HomePage() {
                         </div>
                       ))}
 
-                      {/* Carousel Controls */}
-                      <div className="absolute bottom-4 right-4 flex gap-2">
+                      <div className="absolute bottom-6 right-6 flex gap-3">
                         {config.whereWeServe.carousel.slides.map((_, idx) => (
                           <button
                             key={idx}
@@ -434,8 +433,8 @@ export default function HomePage() {
                             }}
                             aria-label={`Go to location slide ${idx + 1}`}
                             className={cn(
-                              "h-2 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80",
-                              idx === currentLocationSlide ? "w-8 bg-white" : "w-2 bg-white/50"
+                              "h-4 rounded-full transition-all duration-300 cursor-pointer hover:bg-white/80 hover:scale-110",
+                              idx === currentLocationSlide ? "w-10 bg-white" : "w-4 bg-white/50"
                             )}
                           />
                         ))}
@@ -848,7 +847,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
               </svg>
             </button>
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-50">
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4 z-50">
               {config.urgentCampaigns.campaigns.map((_, index) => (
                 <button
                   key={index}
@@ -861,10 +860,10 @@ export default function HomePage() {
                   }}
                   aria-label={`Go to campaign ${index + 1}`}
                   className={cn(
-                    "h-3 rounded-full transition-all duration-500 border-2",
+                    "h-4 rounded-full transition-all duration-500 border-2",
                     index === currentCampaignSlide
-                      ? "w-12 bg-gray-700 border-gray-700 shadow-lg"
-                      : "w-3 bg-white/70 border-gray-300 hover:bg-white hover:border-gray-400"
+                      ? "w-16 bg-gray-700 border-gray-700 shadow-lg"
+                      : "w-4 bg-white/70 border-gray-300 hover:bg-white hover:border-gray-400"
                   )}
                 />
               ))}
@@ -933,7 +932,7 @@ export default function HomePage() {
                 {config.transparency.trustSection.badges.map((badge, index) => (
                   <div key={index} className="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
                     <p className={`${badge.color || 'text-[#f4c430]'} font-black text-2xl tracking-tighter`}>{badge.text}</p>
-                    <p className="text-[8px] font-black uppercase tracking-widest text-stone-400">{badge.subtext}</p>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-stone-600">{badge.subtext}</p>
                   </div>
                 ))}
               </div>
@@ -946,7 +945,7 @@ export default function HomePage() {
       <section className="py-10 bg-white">
         <Container>
           <p className="text-center text-stone-600 font-black text-[10px] uppercase tracking-[0.4em] mb-8">{config.mediaRecognition.badge}</p>
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
             {config.mediaRecognition.logos.map((logo) => (
               <div key={logo} className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-900 border-x border-stone-900/10 px-4">{logo}</div>
             ))}
@@ -984,11 +983,11 @@ export default function HomePage() {
           <div className="text-center mb-10">
             <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-stone-600 leading-none underline decoration-stone-200 decoration-1 underline-offset-[10px]">{config.governmentPartners.title}</h2>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-40 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
+          <div className="flex flex-wrap items-center justify-center gap-10 md:gap-20 opacity-70 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
             {config.governmentPartners.partners.map((gp) => (
               <div key={gp.name} className="flex flex-col items-center">
                 <div className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 border-b-2 border-stone-900 pb-1">{gp.name}</div>
-                <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-600">{gp.label}</p>
+                <p className="text-[8px] font-black uppercase tracking-widest mt-2 text-stone-700">{gp.label}</p>
               </div>
             ))}
           </div>

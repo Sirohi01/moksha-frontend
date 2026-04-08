@@ -243,7 +243,7 @@ export default function ChatWidget() {
                   <p className="text-xs text-white font-bold uppercase tracking-tighter">Support Agent Call Request....</p>
                 </div>
               </div>
-              <button onClick={() => setCallAlert(null)} className="text-white hover:text-red-500"><X className="w-5 h-5" /></button>
+              <button onClick={() => setCallAlert(null)} className="text-white hover:text-red-500" aria-label="Dismiss call alert"><X className="w-5 h-5" /></button>
             </div>
           )}
 
@@ -261,11 +261,11 @@ export default function ChatWidget() {
             <div className="flex items-center gap-2">
               {step === 'chat' && isConnected && (
                 <>
-                  <button onClick={() => requestCall('audio')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"><Phone className="w-4 h-4" /></button>
-                  <button onClick={() => requestCall('video')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"><Video className="w-4 h-4" /></button>
+                   <button onClick={() => requestCall('audio')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors" aria-label="Request audio call"><Phone className="w-4 h-4" /></button>
+                   <button onClick={() => requestCall('video')} className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors" aria-label="Request video call"><Video className="w-4 h-4" /></button>
                 </>
               )}
-              <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white p-2"><X className="w-5 h-5" /></button>
+              <button onClick={() => setIsOpen(false)} className="text-white/70 hover:text-white p-2" aria-label="Close support chat"><X className="w-5 h-5" /></button>
             </div>
           </div>
 
@@ -370,6 +370,7 @@ export default function ChatWidget() {
             <div className="p-4 bg-white border-t border-stone-100 flex items-center gap-2">
               <button 
                 onClick={isRecording ? stopRecording : startRecording}
+                aria-label={isRecording ? "Stop recording voice note" : "Start recording voice note"}
                 className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                   isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-stone-50 text-stone-400 hover:text-stone-900'
                 }`}
@@ -384,13 +385,17 @@ export default function ChatWidget() {
                 onKeyPress={e => e.key === 'Enter' && sendMessage()} 
                 className="flex-1 bg-stone-50 rounded-xl py-3 px-4 text-xs font-bold outline-none" 
               />
-              <button onClick={sendMessage} className="w-10 h-10 bg-stone-900 text-[#f4c430] rounded-xl flex items-center justify-center"><Send className="w-4 h-4" /></button>
+              <button onClick={sendMessage} className="w-10 h-10 bg-stone-900 text-[#f4c430] rounded-xl flex items-center justify-center" aria-label="Send message"><Send className="w-4 h-4" /></button>
             </div>
           )}
         </div>
       )}
 
-      <button onClick={() => setIsOpen(!isOpen)} className="w-14 h-14 bg-stone-900 text-[#f4c430] rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 group relative">
+      <button 
+        onClick={() => setIsOpen(!isOpen)} 
+        aria-label={isOpen ? "Close support chat" : "Open support chat"}
+        className="w-14 h-14 bg-stone-900 text-[#f4c430] rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 group relative"
+      >
         <div className="absolute inset-0 bg-[#f4c430] rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity"></div>
         {isOpen ? <X className="w-6 h-6 relative z-10" /> : <MessageCircle className="w-6 h-6 relative z-10" />}
       </button>
