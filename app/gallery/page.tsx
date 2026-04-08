@@ -169,14 +169,14 @@ export default function GalleryPage() {
                                 <div className="mt-5 px-3 space-y-1.5 flex-grow">
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <div className="w-1.5 h-1.5 bg-gold-600 rounded-full animate-pulse shadow-[0_0_8px_rgba(212,163,47,0.4)]"></div>
-                                        <p className="text-[8px] font-black text-stone-400 uppercase tracking-[0.3em]">{image.location}</p>
+                                        <p className="text-[10px] font-black text-stone-500 uppercase tracking-[0.3em]">{image.location}</p>
                                     </div>
                                     <h3 className="text-lg font-black text-navy-950 uppercase tracking-tighter leading-tight group-hover:text-gold-600 transition-colors italic">
                                         {image.title}
                                     </h3>
                                     <div className="flex items-center justify-between pt-4 border-t border-stone-100">
-                                        <span className="text-[8px] font-black uppercase tracking-widest text-stone-300">{image.date}</span>
-                                        <span className="text-[8px] font-black text-gold-600/40 uppercase tracking-widest italic group-hover:text-gold-600 transition-colors">Verified</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-stone-500">{image.date}</span>
+                                        <span className="text-[10px] font-black text-gold-600 uppercase tracking-widest italic group-hover:text-gold-600/60 transition-colors">Verified</span>
                                     </div>
                                 </div>
                             </div>
