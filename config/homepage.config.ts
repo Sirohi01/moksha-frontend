@@ -307,7 +307,7 @@ export const homepageConfig: HomepageConfig = {
       title: "YOUR TRUST MATTERS",
       description: "We are committed to the values of absolute accountability as established by our founding charter.",
       badges: [
-        { text: "80G", subtext: "TAX EXEMPT READY", color: "text-[#f4c430]" },
+         { text: "80G", subtext: "TAX EXEMPT READY", color: "text-amber-700" },
         { text: "100%", subtext: "MISSION FOCUSED", color: "text-orange-600" }
       ]
     }

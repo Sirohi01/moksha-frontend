@@ -744,7 +744,7 @@ export default function HomePage() {
                       "w-80 bg-white rounded-3xl overflow-hidden transition-all duration-500",
                       position === 0
                         ? "shadow-2xl shadow-gray-900/20 ring-1 ring-gray-200"
-                        : "shadow-lg shadow-gray-500/20 hover:shadow-xl"
+                        : "shadow-lg shadow-gray-400/10 hover:shadow-xl opacity-90"
                     )}>
                       <div className="relative aspect-[3/2] overflow-hidden bg-stone-50">
                         <Image
@@ -794,15 +794,14 @@ export default function HomePage() {
 
                       {/* Enhanced card content */}
                       <div className="p-6">
-                        <p className="text-gray-800 text-sm mb-5 leading-relaxed line-clamp-2">{c.description}</p>
+                        <p className="text-gray-900 text-sm mb-5 leading-relaxed font-medium line-clamp-2">{c.description}</p>
                         <Link href="/donate">
                           <Button
-                            variant="ghost"
                             className={cn(
                               "w-full transition-all duration-300",
                               position === 0
-                               ? "bg-gradient-to-r from-gray-800 to-gray-900 text-white hover:from-black hover:to-gray-900 shadow-lg"
-                                : "bg-gray-800 text-white hover:bg-black font-bold"
+                                ? "bg-gray-900 text-white hover:bg-black shadow-lg"
+                                : "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 font-bold"
                             )}
                           >
                             {position === 0 ? config.urgentCampaigns.labels.donateNow : config.urgentCampaigns.labels.viewCampaign}
