@@ -45,12 +45,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (response.ok) {
       const result = await response.json();
       if (result.success && Array.isArray(result.data)) {
-        dynamicPages = result.data.map((item: any) => ({
-          url: `${baseUrl}/${item.type}/${item.slug}`,
-          lastModified: new Date(item.updatedAt),
-          changeFrequency: 'weekly',
-          priority: item.type === 'blog' ? 0.8 : item.type === 'campaign' ? 0.9 : 0.7
-        }));
+        dynamicPages = result.data.map((item: any) => {
+          const lastMod = item.updatedAt ? new Date(item.updatedAt) : currentDate;
+          const finalDate = isNaN(lastMod.getTime()) ? currentDate : lastMod;
+
+          return {
+            url: `${baseUrl}/${item.type}/${item.slug}`,
+            lastModified: finalDate,
+            changeFrequency: 'weekly',
+            priority: item.type === 'blog' ? 0.8 : item.type === 'campaign' ? 0.9 : 0.7
+          };
+        });
       }
     }
   } catch (error) {
