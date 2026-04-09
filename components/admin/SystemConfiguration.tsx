@@ -61,6 +61,20 @@ interface SystemConfig {
     enablePress: boolean;
     enableAnalytics: boolean;
   };
+  institutional: {
+    organizationName: string;
+    address: string;
+    pan: string;
+    gstin: string;
+    registrationNo: string;
+    eightyGNo: string;
+    twelveANo: string;
+    fcraNo: string;
+    authorizedSignatory: string;
+    designation: string;
+    contactPhone: string;
+    contactEmail: string;
+  };
 }
 
 export default function SystemConfiguration() {
@@ -71,6 +85,20 @@ export default function SystemConfiguration() {
     email: { smtpHost: '', smtpPort: 587, smtpUser: '', smtpPassword: '', fromEmail: '', fromName: '' },
     razorpay: { keyId: '', keySecret: '', webhookSecret: '', enableTestMode: true },
     features: { enableDonations: true, enableVolunteers: true, enableGallery: true, enablePress: true, enableAnalytics: true },
+    institutional: {
+        organizationName: '',
+        address: '',
+        pan: '',
+        gstin: '',
+        registrationNo: '',
+        eightyGNo: '',
+        twelveANo: '',
+        fcraNo: '',
+        authorizedSignatory: '',
+        designation: '',
+        contactPhone: '',
+        contactEmail: '',
+    }
   });
 
   const [activeTab, setActiveTab] = useState('general');
@@ -102,6 +130,7 @@ export default function SystemConfiguration() {
           email: { ...prev.email, ...data.email },
           razorpay: { ...prev.razorpay, ...data.razorpay },
           features: { ...prev.features, ...data.features },
+          institutional: { ...prev.institutional, ...data.institutional },
         }));
       }
     } catch (error) {
@@ -153,6 +182,7 @@ export default function SystemConfiguration() {
     { id: 'razorpay', label: 'Payment Gateway', icon: CreditCard, description: 'Razorpay credentials and transaction logic' },
     { id: 'security', label: 'Security Protocols', icon: Shield, description: 'Access control and session integrity' },
     { id: 'features', label: 'System Features', icon: Zap, description: 'Modular platform feature toggles' },
+    { id: 'institutional', label: 'Institutional Data', icon: AppWindow, description: 'Organization legal credentials and receipt layout details' },
   ];
 
   if (loading) {
@@ -383,6 +413,74 @@ export default function SystemConfiguration() {
                     description="Track visitor traffic and interaction logs."
                     checked={config.features.enableAnalytics} 
                     onChange={(val: boolean) => updateSection('features', { enableAnalytics: val })} 
+                  />
+               </div>
+            )}
+
+            {activeTab === 'institutional' && (
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                   <div className="md:col-span-2 border-b border-navy-50 pb-2 mb-2">
+                       <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-500">Legal Credentials</h4>
+                   </div>
+                  <ConfigInput 
+                    label="Organization Legal Name" 
+                    value={config.institutional.organizationName} 
+                    onChange={(val: string) => updateSection('institutional', { organizationName: val })} 
+                    placeholder="e.g. Moksha Sewa Foundation"
+                  />
+                  <ConfigInput 
+                    label="PAN Number" 
+                    value={config.institutional.pan} 
+                    onChange={(val: string) => updateSection('institutional', { pan: val })} 
+                  />
+                  <ConfigInput 
+                    label="Registration Number" 
+                    value={config.institutional.registrationNo} 
+                    onChange={(val: string) => updateSection('institutional', { registrationNo: val })} 
+                  />
+                  <ConfigInput 
+                    label="80G Registration" 
+                    value={config.institutional.eightyGNo} 
+                    onChange={(val: string) => updateSection('institutional', { eightyGNo: val })} 
+                  />
+                  <ConfigInput 
+                    label="12A Registration" 
+                    value={config.institutional.twelveANo} 
+                    onChange={(val: string) => updateSection('institutional', { twelveANo: val })} 
+                  />
+                  <ConfigInput 
+                    label="FCRA Number" 
+                    value={config.institutional.fcraNo} 
+                    onChange={(val: string) => updateSection('institutional', { fcraNo: val })} 
+                  />
+                  
+                  <div className="md:col-span-2 border-b border-navy-50 pb-2 mb-2 mt-4">
+                       <h4 className="text-[10px] font-black uppercase tracking-widest text-rose-500">Signatory & Contact</h4>
+                  </div>
+                  <ConfigInput 
+                    label="Authorized Signatory" 
+                    value={config.institutional.authorizedSignatory} 
+                    onChange={(val: string) => updateSection('institutional', { authorizedSignatory: val })} 
+                  />
+                  <ConfigInput 
+                    label="Designation" 
+                    value={config.institutional.designation} 
+                    onChange={(val: string) => updateSection('institutional', { designation: val })} 
+                  />
+                  <ConfigInput 
+                    label="Official Address" 
+                    value={config.institutional.address} 
+                    onChange={(val: string) => updateSection('institutional', { address: val })} 
+                  />
+                  <ConfigInput 
+                    label="Contact Phone" 
+                    value={config.institutional.contactPhone} 
+                    onChange={(val: string) => updateSection('institutional', { contactPhone: val })} 
+                  />
+                  <ConfigInput 
+                    label="Contact Email" 
+                    value={config.institutional.contactEmail} 
+                    onChange={(val: string) => updateSection('institutional', { contactEmail: val })} 
                   />
                </div>
             )}

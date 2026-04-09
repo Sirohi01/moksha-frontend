@@ -67,11 +67,24 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
         let reconnectInterval: any;
 
         const connectWS = () => {
+            if (socket) {
+                socket.onopen = null;
+                socket.onmessage = null;
+                socket.onclose = null;
+                socket.close();
+            }
+
             socket = new WebSocket(WS_URL);
 
             socket.onopen = () => {
-                socket?.send(JSON.stringify({ type: 'auth', userId: 'admin_dashboard', role: 'admin' }));
-                if (reconnectInterval) clearInterval(reconnectInterval);
+                console.log('🔌 WebSocket Connected');
+                if (socket?.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({ type: 'auth', userId: 'admin_dashboard', role: 'admin' }));
+                }
+                if (reconnectInterval) {
+                    clearInterval(reconnectInterval);
+                    reconnectInterval = null;
+                }
             };
 
             socket.onmessage = (event) => {
@@ -94,7 +107,9 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
             socket.onclose = () => {
                 console.log('🔌 WebSocket Disconnected. Reconnecting...');
-                reconnectInterval = setInterval(connectWS, 5000);
+                if (!reconnectInterval) {
+                   reconnectInterval = setInterval(connectWS, 5000);
+                }
             };
         };
 
