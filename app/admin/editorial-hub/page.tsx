@@ -57,38 +57,43 @@ export default function EditorialHub() {
   const currentPageData = pages.find(p => p.slug === selectedSlug);
 
   // RECURSIVE TEXT HARVESTER (Excludes URLs, Images, Colors, etc.)
-  const harvestText = (obj: any, path: string = '', section: string = ''): any[] => {
+  const harvestText = (obj: any, path: string = '', section: string = '', keyName: string = ''): any[] => {
     let fields: any[] = [];
-    if (!obj || typeof obj !== 'object') return fields;
+    if (!obj) return fields;
 
     const excludedKeys = ['image', 'img', 'src', 'url', 'href', 'color', 'variant', 'autoSlideInterval', 'icon', 'slug', 'aspectRatio'];
 
-    for (let key in obj) {
-        const val = obj[key];
-        const currentPath = path ? `${path}.${key}` : key;
-        const currentSection = section || key;
+    if (typeof obj === 'string' && obj.length > 1) {
+        const isImage = /\.(jpg|jpeg|png|webp|gif|svg|avif)($|\?)/i.test(obj) || obj.startsWith('http') || obj.startsWith('/gallery/') || obj.startsWith('data:');
+        const isSpecialKey = excludedKeys.some(k => keyName.toLowerCase().includes(k));
 
-        if (typeof val === 'string' && val.length > 0) {
-            // Filter out non-content strings
-            const isImage = /\.(jpg|jpeg|png|webp|gif|svg|avif)($|\?)/i.test(val) || val.startsWith('http') || val.startsWith('/gallery/') || val.startsWith('data:');
-            const isSpecialKey = excludedKeys.some(k => key.toLowerCase().includes(k));
-
-            if (!isImage && !isSpecialKey && val.length > 1) {
-                fields.push({
-                    content: val,
-                    path: currentPath,
-                    section: currentSection,
-                    key: key
-                });
-            }
-        } else if (Array.isArray(val)) {
-            val.forEach((item, idx) => {
-                fields = fields.concat(harvestText(item, `${currentPath}[${idx}]`, currentSection));
+        if (!isImage && !isSpecialKey) {
+            fields.push({
+                content: obj,
+                path: path,
+                section: section,
+                key: keyName || path.split('.').pop()
             });
-        } else if (typeof val === 'object' && val !== null) {
-            fields = fields.concat(harvestText(val, currentPath, currentSection));
+        }
+        return fields;
+    }
+
+    if (Array.isArray(obj)) {
+        obj.forEach((item, idx) => {
+            fields = fields.concat(harvestText(item, `${path}[${idx}]`, section, `${keyName}_${idx}`));
+        });
+        return fields;
+    }
+
+    if (typeof obj === 'object') {
+        for (let key in obj) {
+            const val = obj[key];
+            const currentPath = path ? `${path}.${key}` : key;
+            const currentSection = section || key;
+            fields = fields.concat(harvestText(val, currentPath, currentSection, key));
         }
     }
+    
     return fields;
   };
 
