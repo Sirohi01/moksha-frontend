@@ -12,6 +12,7 @@ import {
 import { PageHeader, LoadingSpinner } from '@/components/admin/AdminComponents';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import RichTextEditor from '@/components/ui/RichTextEditor';
 
 export default function EditSOP() {
   const router = useRouter();
@@ -159,17 +160,11 @@ export default function EditSOP() {
                   <BookOpen size={12} /> Documentation Content (Rich Text Terminal)
                 </label>
                 <div className="relative group">
-                  <textarea
-                    required
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    className="w-full min-h-[600px] p-12 bg-navy-50 rounded-[3rem] border-none text-lg font-medium leading-relaxed focus:ring-4 focus:ring-gold-500/10 focus:bg-white transition-all outline-none text-navy-950 shadow-inner"
+                  <RichTextEditor
+                    content={formData.content}
+                    onChange={(content) => setFormData({ ...formData, content })}
+                    placeholder="DEFINE THE SURGICAL OPERATING STEPS HERE..."
                   />
-                  <div className="absolute top-8 right-8 flex flex-col gap-4">
-                    <div className="w-12 h-12 bg-white rounded-xl shadow-xl flex items-center justify-center text-navy-200 group-hover:text-gold-500 transition-all cursor-help" title="HTML Support Active">
-                      <Sparkles size={20} />
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

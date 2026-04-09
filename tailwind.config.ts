@@ -10,15 +10,15 @@ const config: Config = {
     extend: {
       colors: {
         gold: {
-          50: "#fefce8",
-          100: "#fef9c3",
-          200: "#fef08a",
-          300: "#fde047",
-          400: "#f4c430",
-          500: "#eab308",
-          600: "#ca8a04",
-          700: "#a16207",
-          800: "#854d0e",
+          50: "#fffbeb",
+          100: "#fef3c7",
+          200: "#fde68a",
+          300: "#fcd34d",
+          400: "#b45309",
+          500: "#92400e",
+          600: "#78350f",
+          700: "#451a03",
+          800: "#af4d08",
           900: "#713f12",
         },
         teal: {
@@ -71,9 +71,9 @@ const config: Config = {
           900: "#1c1917",
         },
         primary: {
-          DEFAULT: "#f4c430",
-          light: "#fde047",
-          dark: "#eab308",
+          DEFAULT: "#b45309",
+          light: "#d97706",
+          dark: "#92400e",
         },
         saffron: {
           50: "#fff7ed",

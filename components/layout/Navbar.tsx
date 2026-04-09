@@ -54,7 +54,7 @@ export default function Navbar() {
                 />
               </div>
               <div className="hidden sm:block">
-                <span className="font-sans text-2xl font-bold leading-tight tracking-tight bg-gradient-to-r from-[#f4c430] via-[#20b2aa] to-[#f4c430] bg-clip-text text-transparent group-hover:from-[#eab308] group-hover:via-[#1a9d94] group-hover:to-[#eab308] transition-all duration-300 group-hover:scale-[1.02] inline-block">
+                <span className="font-sans text-2xl font-bold leading-tight tracking-tight bg-gradient-to-r from-[#b45309] via-[#20b2aa] to-[#b45309] bg-clip-text text-transparent group-hover:from-[#92400e] group-hover:via-[#1a9d94] group-hover:to-[#92400e] transition-all duration-300 group-hover:scale-[1.02] inline-block">
                   {activeConfig.navbar.logo.title}
                 </span>
                 <span className="text-[13px] text-stone-500 font-normal leading-none uppercase tracking-wider block group-hover:text-stone-600 transition-colors duration-300">
@@ -76,25 +76,35 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "px-3 py-3 text-base font-medium transition-all flex items-center gap-2.5 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-3 py-3 text-base font-medium transition-all flex items-center gap-2.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           pathname === link.href
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-5 h-5", pathname === link.href ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon 
+                          className={cn("w-5 h-5 transition-all duration-300", 
+                            pathname === link.href ? "text-[#b45309]" : "text-stone-400 group-hover/item:text-[#b45309] group-hover/item:scale-110"
+                          )} 
+                          strokeWidth={2.5}
+                        />
                         {link.label}
                       </Link>
                     ) : (
                       <button
                         className={cn(
-                          "px-3 py-3 text-base font-medium transition-all flex items-center gap-2.5 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-3 py-3 text-base font-medium transition-all flex items-center gap-2.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 group-hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 group-hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-5 h-5", link.subLinks?.some(sub => sub.href === pathname) ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon 
+                          className={cn("w-5 h-5 transition-all duration-300", 
+                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-400 group-hover/item:text-[#b45309] group-hover/item:scale-110"
+                          )} 
+                          strokeWidth={2.5}
+                        />
                         {link.label}
                         <ChevronDown className="w-4 h-4 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
                       </button>
@@ -111,13 +121,13 @@ export default function Navbar() {
                                 key={sub.href}
                                 href={sub.href}
                                 className={cn(
-                                  "flex items-center gap-3.5 px-4 py-3 rounded-lg transition-all text-[0.95rem]",
+                                  "flex items-center gap-3.5 px-4 py-3 rounded-lg transition-all text-[0.95rem] group/subitem",
                                   pathname === sub.href
-                                    ? "bg-[#f4c430]/10 text-[#f4c430]"
-                                    : "text-stone-600 hover:bg-stone-50 hover:text-[#f4c430]"
+                                    ? "bg-amber-50 text-[#b45309]"
+                                    : "text-stone-600 hover:bg-amber-50/80 hover:text-[#b45309]"
                                 )}
                               >
-                                <SubIcon className="w-5 h-5 opacity-60" />
+                                <SubIcon className="w-5 h-5 opacity-70 group-hover/subitem:scale-110 transition-transform" strokeWidth={2.2} />
                                 <span>{sub.label}</span>
                               </Link>
                             )
@@ -145,25 +155,35 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "px-3 py-3 text-sm font-medium transition-all flex items-center gap-2 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-3 py-3 text-sm font-medium transition-all flex items-center gap-2 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           pathname === link.href
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#b45309]" : "text-stone-600")} />
+                        <LinkIcon 
+                          className={cn("w-4 h-4 transition-all duration-300", 
+                            pathname === link.href ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
+                          )} 
+                          strokeWidth={2.2}
+                        />
                         <span className="hidden xl:block">{link.label}</span>
                       </Link>
                     ) : (
                       <button
                         className={cn(
-                          "px-3 py-3 text-sm font-medium transition-all flex items-center gap-2 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-3 py-3 text-sm font-medium transition-all flex items-center gap-2 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 group-hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 group-hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", link.subLinks?.some(sub => sub.href === pathname) ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon 
+                          className={cn("w-4 h-4 transition-all duration-300", 
+                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
+                          )} 
+                          strokeWidth={2.2} 
+                        />
                         <span className="hidden xl:block">{link.label}</span>
                         <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
                       </button>
@@ -214,25 +234,35 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           pathname === link.href
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#b45309]" : "text-stone-600")} />
+                        <LinkIcon 
+                          className={cn("w-4 h-4 transition-all duration-300", 
+                            pathname === link.href ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
+                          )} 
+                          strokeWidth={2.2}
+                        />
                         <span className="hidden xl:block text-sm">{link.label}</span>
                       </Link>
                     ) : (
                       <button
                         className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 group-hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 group-hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", link.subLinks?.some(sub => sub.href === pathname) ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon 
+                          className={cn("w-4 h-4 transition-all duration-300", 
+                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
+                          )} 
+                          strokeWidth={2.2}
+                        />
                         <span className="hidden xl:block text-sm">{link.label}</span>
                         <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
                       </button>
@@ -283,25 +313,35 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           pathname === link.href
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", pathname === link.href ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon 
+                          className={cn("w-4 h-4 transition-all duration-300", 
+                            pathname === link.href ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
+                          )} 
+                          strokeWidth={2.2}
+                        />
                         <span className="hidden xl:block text-sm">{link.label}</span>
                       </Link>
                     ) : (
                       <button
                         className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-stone-50/80 rounded-lg whitespace-nowrap",
+                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#f4c430]"
-                            : "text-stone-700 group-hover:text-[#f4c430]"
+                            ? "text-[#b45309]"
+                            : "text-stone-600 group-hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon className={cn("w-4 h-4", link.subLinks?.some(sub => sub.href === pathname) ? "text-[#f4c430]" : "text-stone-400")} />
+                        <LinkIcon 
+                          className={cn("w-4 h-4 transition-all duration-300", 
+                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
+                          )} 
+                          strokeWidth={2.2}
+                        />
                         <span className="hidden xl:block text-sm">{link.label}</span>
                         <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
                       </button>
@@ -429,10 +469,10 @@ export default function Navbar() {
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-lg text-stone-600 hover:bg-stone-50 transition-colors"
+              className="lg:hidden p-2 rounded-lg text-stone-600 hover:bg-amber-50 transition-colors"
               aria-label={mobileOpen ? activeConfig.navbar.mobile.closeLabel : activeConfig.navbar.mobile.openLabel}
             >
-              {mobileOpen ? <X className="w-5 h-5 text-[#f4c430]" /> : <Menu className="w-5 h-5" />}
+              {mobileOpen ? <X className="w-5 h-5 text-[#b45309]" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -451,10 +491,10 @@ export default function Navbar() {
                         onClick={() => setMobileOpen(false)}
                         className={cn(
                           "flex items-center gap-4 px-4 py-4 text-base font-medium rounded-lg transition-all",
-                          pathname === link.href ? "text-[#f4c430] bg-[#f4c430]/5" : "text-stone-700"
+                          pathname === link.href ? "text-[#b45309] bg-amber-50" : "text-stone-700"
                         )}
                       >
-                        <LinkIcon className="w-5 h-5" />
+                        <LinkIcon className="w-5 h-5" strokeWidth={2.2} />
                         {link.label}
                       </Link>
                     ) : (
@@ -463,11 +503,11 @@ export default function Navbar() {
                           onClick={() => setOpenDropdown(openDropdown === link.label ? null : link.label)}
                           className={cn(
                             "w-full flex items-center justify-between px-4 py-4 text-base font-medium rounded-lg transition-all",
-                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#f4c430]" : "text-stone-700"
+                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-700"
                           )}
                         >
                           <div className="flex items-center gap-4">
-                            <LinkIcon className="w-5 h-5" />
+                            <LinkIcon className="w-5 h-5" strokeWidth={2.2} />
                             {link.label}
                           </div>
                           <ChevronDown className={cn("w-5 h-5 transition-transform", openDropdown === link.label && "rotate-180")} />
@@ -483,10 +523,10 @@ export default function Navbar() {
                                   onClick={() => setMobileOpen(false)}
                                   className={cn(
                                     "flex items-center gap-4 px-4 py-3 text-[0.95rem] rounded-lg transition-all",
-                                    pathname === sub.href ? "text-[#f4c430] bg-[#f4c430]/5" : "text-stone-500 hover:text-stone-700"
+                                    pathname === sub.href ? "text-[#b45309] bg-amber-50" : "text-stone-500 hover:text-stone-700"
                                   )}
                                 >
-                                  <SubIcon className="w-4.5 h-4.5" />
+                                  <SubIcon className="w-4.5 h-4.5" strokeWidth={2} />
                                   {sub.label}
                                 </Link>
                               )
