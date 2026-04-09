@@ -18,6 +18,7 @@ export interface ProgrammeConfig {
   image: string;
   alt?: string;
   href: string;
+  linkText?: string;
 }
 
 export interface CarouselSlideConfig {

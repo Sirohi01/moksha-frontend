@@ -46,7 +46,7 @@ export const homepageConfig: HomepageConfig = {
     ],
     buttons: [
       {
-        text: "Learn More",
+        text: "Explore Our Legacy",
         href: "/about",
         variant: "primary"
       },
@@ -78,7 +78,8 @@ export const homepageConfig: HomepageConfig = {
         description: "Providing dignified transportation and sacred final rites for unclaimed souls with complete respect and traditional ceremonies.",
         image: "/gallery/image001.png",
         alt: "Final Journey Service Image",
-        href: "/services"
+        href: "/services",
+        linkText: "Explore Final Journey Services"
       },
       {
         title: "Compassionate Care",
@@ -86,7 +87,8 @@ export const homepageConfig: HomepageConfig = {
         description: "Supporting families in need with emotional, logistical and financial assistance during their most difficult times.",
         image: "/gallery/image002.png",
         alt: "Compassionate Care Service Image",
-        href: "/services"
+        href: "/services",
+        linkText: "Discover Compassionate Care"
       },
       {
         title: "Community Outreach",
@@ -94,7 +96,8 @@ export const homepageConfig: HomepageConfig = {
         description: "Educating communities about dignity in death and building awareness for those who have no one to care.",
         image: "/gallery/image003.png",
         alt: "Community Outreach - Building Awareness",
-        href: "/services"
+        href: "/services",
+        linkText: "View Community Initiatives"
       },
       {
         title: "Sacred Documentation",
@@ -102,7 +105,8 @@ export const homepageConfig: HomepageConfig = {
         description: "Maintaining proper records and ensuring legal compliance while honoring the memory of every soul we serve.",
         image: "/gallery/image004.png",
         alt: "Sacred Documentation - Record Keeping",
-        href: "/services"
+        href: "/services",
+        linkText: "Read About Documentation"
       }
     ]
   },

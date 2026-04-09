@@ -357,7 +357,7 @@ export default function HomePage() {
                         href={p.href || '#'}
                         className="inline-flex items-center gap-2 text-gray-800 hover:text-black font-semibold text-sm transition-colors group/link py-3 px-1"
                       >
-                        {config.labels?.learnMore || "Learn More"}
+                        {p.linkText || config.labels?.learnMore || "Learn More"}
                         <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                       </Link>
                     </div>
