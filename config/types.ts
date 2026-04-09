@@ -1,5 +1,3 @@
-// Type definitions for homepage configuration
-
 export interface ButtonConfig {
   text: string;
   href: string;
@@ -260,78 +258,5 @@ export interface LegalPageConfig {
   };
 }
 
-export interface DonatePageConfig {
-  hero: {
-    badge: { icon: string; text: string };
-    title: { line1: string; line2: string; line3: string };
-    subtitle: string;
-    impactStats: { value: string; label: string }[];
-    ctaButtons: { primary: string; secondary: string };
-    startingAmount: string;
-  };
-  trustSignals: string[];
-  amountSelection: {
-    title: string;
-    subtitle: string;
-    customAmountLabel: string;
-    customAmountPlaceholder: string;
-  };
-  donationTiers: { amount: number; label: string; desc: string }[];
-  form: {
-    title: string;
-    subtitle: string;
-    sections: {
-      personalInfo: {
-        title: string;
-        fields: {
-          fullName: { label: string; placeholder: string };
-          email: { label: string; placeholder: string };
-          phone: { label: string; placeholder: string };
-        };
-      };
-      address: {
-        title: string;
-        fields: {
-          address: { label: string; placeholder: string };
-          city: { label: string; placeholder: string };
-          pincode: { label: string; placeholder: string };
-          state: { label: string; placeholder: string };
-        };
-      };
-      taxDetails: {
-        title: string;
-        fields: {
-          panNumber: { label: string; placeholder: string };
-          note: string;
-        };
-      };
-      preferences: {
-        title: string;
-        frequency: { label: string; types: { label: string; value: string }[] };
-        purpose: { label: string; options: { label: string; value: string }[] };
-      };
-    };
-    preferences: {
-      anonymous: string;
-      taxReceipt: string;
-      terms: { text: string; link: string; linkText: string };
-      refund: { text: string; link: string; linkText: string };
-    };
-    buttonText: string;
-    secureLabel: string;
-    taxLabel: string;
-  };
-  success: {
-    title: string;
-    message: string;
-    fallbackAmount: string;
-    receiptNote: string;
-    homeButton: string;
-  };
-  validation: {
-    minAmount: string;
-    requiredFields: string;
-    agreeTerms: string;
-  };
-  states: string[];
-}
+import { DonatePageConfig } from './donate.types';
+export type { DonatePageConfig };

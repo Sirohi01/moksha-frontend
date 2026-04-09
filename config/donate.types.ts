@@ -1,11 +1,8 @@
-// Donate Page Type Definitions
-// TypeScript interfaces for all donate page configuration
-
 export interface DonationTier {
   amount: number;
   label: string;
   desc: string;
-  impact: string;
+  impact?: string;
 }
 
 export interface ImpactStat {
@@ -21,7 +18,7 @@ export interface TrustIndicator {
 export interface DonationType {
   value: string;
   label: string;
-  desc: string;
+  desc?: string;
 }
 
 export interface DonationPurpose {
@@ -48,7 +45,7 @@ export interface WalletOption {
 
 export interface DonatePageConfig {
   // Page Metadata
-  metadata: {
+  metadata?: {
     title: string;
   };
 
@@ -69,9 +66,9 @@ export interface DonatePageConfig {
       primary: string;
       secondary: string;
     };
-    trustIndicators: TrustIndicator[];
+    trustIndicators?: TrustIndicator[];
     startingAmount: string;
-    trustMessage: string;
+    trustMessage?: string;
   };
 
   // Trust Signals
@@ -86,11 +83,11 @@ export interface DonatePageConfig {
     subtitle: string;
     customAmountLabel: string;
     customAmountPlaceholder: string;
-    impactTitle: string;
+    impactTitle?: string;
   };
 
   // Trust Badges
-  trustBadges: {
+  trustBadges?: {
     title: string;
     badges: TrustIndicator[];
   };
@@ -99,11 +96,11 @@ export interface DonatePageConfig {
   form: {
     title: string;
     subtitle: string;
-    defaultCountry: string;
+    defaultCountry?: string;
     sections: {
       personalInfo: {
         title: string;
-        stepNumber: number;
+        stepNumber?: number;
         fields: {
           fullName: {
             label: string;
@@ -121,7 +118,7 @@ export interface DonatePageConfig {
       };
       address: {
         title: string;
-        stepNumber: number;
+        stepNumber?: number;
         fields: {
           address: {
             label: string;
@@ -143,46 +140,47 @@ export interface DonatePageConfig {
       };
       taxDetails: {
         title: string;
-        stepNumber: number;
+        stepNumber?: number;
         fields: {
           panNumber: {
             label: string;
             placeholder: string;
           };
-          aadharNumber: {
+          aadharNumber?: {
             label: string;
             placeholder: string;
           };
+          note?: string;
         };
       };
       preferences: {
         title: string;
-        stepNumber: number;
+        stepNumber?: number;
         frequency: {
           label: string;
-          types: DonationType[];
+          types: DonationType[] | { label: string; value: string }[];
         };
         purpose: {
           label: string;
-          options: DonationPurpose[];
+          options: DonationPurpose[] | { label: string; value: string }[];
         };
-        tribute: {
+        tribute?: {
           memorialLabel: string;
           honorLabel: string;
           nameLabel: string;
           messagePlaceholder: string;
         };
       };
-      payment: {
+      payment?: {
         title: string;
-        stepNumber: number;
+        stepNumber?: number;
         methods: PaymentMethod[];
-        upi: {
+        upi?: {
           label: string;
           placeholder: string;
           helpText: string;
         };
-        card: {
+        card?: {
           cardNumber: {
             label: string;
             placeholder: string;
@@ -200,13 +198,13 @@ export interface DonatePageConfig {
             placeholder: string;
           };
         };
-        netbanking: {
+        netbanking?: {
           label: string;
           placeholder: string;
           helpText: string;
           banks: BankOption[];
         };
-        wallet: {
+        wallet?: {
           label: string;
           mobileLabel: string;
           mobilePlaceholder: string;
@@ -216,17 +214,16 @@ export interface DonatePageConfig {
     };
     preferences: {
       anonymous: string;
-      updates: string;
+      updates?: string;
       taxReceipt: string;
+      terms?: { text: string; link: string; linkText: string };
+      refund?: { text: string; link: string; linkText: string };
     };
-    terms: {
-      termsLabel: string;
-      refundLabel: string;
-    };
-    submitButton: string;
-    securityNote: string;
-    policyLink: string;
-    tribute: {
+    buttonText?: string;
+    secureLabel?: string;
+    taxLabel?: string;
+    policyLink?: string;
+    tribute?: {
       messageLabel: string;
     };
   };
@@ -236,8 +233,9 @@ export interface DonatePageConfig {
     title: string;
     message: string;
     receiptNote: string;
-    anotherDonationButton: string;
+    anotherDonationButton?: string;
     fallbackAmount: string;
+    homeButton?: string;
   };
 
   // Validation Messages
@@ -245,10 +243,10 @@ export interface DonatePageConfig {
     minAmount: string;
     requiredFields: string;
     agreeTerms: string;
-    upiRequired: string;
-    cardRequired: string;
-    bankRequired: string;
-    walletRequired: string;
+    upiRequired?: string;
+    cardRequired?: string;
+    bankRequired?: string;
+    walletRequired?: string;
   };
 
   // States List
