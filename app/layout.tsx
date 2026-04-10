@@ -114,27 +114,38 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             />
           </>
         )}
-        {pageSeo?.schemaMarkup && (
-          (typeof pageSeo.schemaMarkup === 'string' && pageSeo.schemaMarkup.includes('<script')) ? (
+        {pageSeo?.schemaMarkup && (() => {
+          if (typeof pageSeo.schemaMarkup !== 'string') {
+            return (
+              <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSeo.schemaMarkup, null, 2) }}
+              />
+            );
+          }
+
+          if (pageSeo.schemaMarkup.includes('<script')) {
+            const scripts = pageSeo.schemaMarkup.split(/<\/script>/i).filter((s: string) => s.trim());
+            return scripts.map((script: string, index: number) => {
+              const content = script.replace(/<script[^>]*>/i, '').trim();
+              if (!content) return null;
+              return (
+                <script
+                  key={`schema-${index}`}
+                  type="application/ld+json"
+                  dangerouslySetInnerHTML={{ __html: content }}
+                />
+              );
+            });
+          }
+
+          return (
             <script
-              id="manual-schema"
-              dangerouslySetInnerHTML={{
-                __html: pageSeo.schemaMarkup.replace(/<\/?script[^>]*>/gi, '')
-              }}
               type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: pageSeo.schemaMarkup }}
             />
-          ) : (
-            <script
-              id="auto-schema"
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: typeof pageSeo.schemaMarkup === 'string'
-                  ? pageSeo.schemaMarkup
-                  : JSON.stringify(pageSeo.schemaMarkup, null, 2)
-              }}
-            />
-          )
-        )}
+          );
+        })()}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
