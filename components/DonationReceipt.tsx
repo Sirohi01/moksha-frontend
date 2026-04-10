@@ -22,10 +22,33 @@ interface DonationReceiptProps {
     address?: string;
     panNumber?: string;
   };
+  settings?: {
+    general?: {
+      siteName?: string;
+      siteUrl?: string;
+    };
+    institutional?: {
+      organizationName?: string;
+      address?: string;
+      pan?: string;
+      gstin?: string;
+      registrationNo?: string;
+      eightyGNo?: string;
+      twelveANo?: string;
+      fcraNo?: string;
+      authorizedSignatory?: string;
+      designation?: string;
+      contactPhone?: string;
+      contactEmail?: string;
+    };
+  };
 }
 
 const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
-  ({ donation }, ref) => {
+  ({ donation, settings }, ref) => {
+    const inst = settings?.institutional || {};
+    const general = settings?.general || {};
+
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleDateString('en-IN', {
         year: 'numeric',
@@ -50,7 +73,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
       >
         {/* Decorative Watermark / Background Pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center -rotate-12 select-none">
-          <p className="text-[12rem] font-black tracking-tighter">MOKSHA SEWA</p>
+          <p className="text-[12rem] font-black tracking-tighter uppercase">{general.siteName || 'MOKSHA SEWA'}</p>
         </div>
 
         {/* Outer Decorative Border */}
@@ -71,7 +94,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
                 />
               </div>
               <div className="text-center">
-                <h1 className="text-4xl font-black text-navy-950 tracking-tighter uppercase mb-1">Moksha Sewa Foundation</h1>
+                <h1 className="text-4xl font-black text-navy-950 tracking-tighter uppercase mb-1">{inst.organizationName || 'Moksha Sewa Foundation'}</h1>
                 <p className="text-xs text-orange-600 font-black uppercase tracking-[0.3em]">Compassion in every departure</p>
               </div>
             </div>
@@ -82,7 +105,7 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
 
             <div className="text-center space-y-1">
               <p className="text-gray-600 text-sm italic">"Thank you for your generous contribution toward a dignified final journey."</p>
-              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Registration No: MSF-80G-2024-001 | 80G Tax Exempted</p>
+              <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Registration No: {inst.registrationNo || 'MSF-2024-001'} | 80G Tax Exempted</p>
             </div>
           </div>
 
@@ -184,8 +207,8 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
                 <h4 className="text-[10px] font-black text-navy-950 uppercase tracking-widest mb-4">Tax & Legal Compliance</h4>
                 <div className="space-y-2">
                   <p className="text-[9px] text-gray-600 leading-relaxed">• This contribution is eligible for tax deduction under Section 80G of the Income Tax Act.</p>
-                  <p className="text-[9px] text-gray-600 leading-relaxed">• Moksha Sewa Foundation is a registered charitable trust (Reg No: [12345/2024]).</p>
-                  <p className="text-[9px] text-gray-600 leading-relaxed">• PAN: [ORG-PAN-NUMBER] | GSTIN: [ORG-GST-NUMBER]</p>
+                  <p className="text-[9px] text-gray-600 leading-relaxed">• {inst.organizationName || 'Moksha Sewa Foundation'} is a registered charitable trust (Reg No: {inst.registrationNo || 'N/A'}).</p>
+                  <p className="text-[9px] text-gray-600 leading-relaxed">• PAN: {inst.pan || 'N/A'} | 80G Registration: {inst.eightyGNo || 'N/A'}</p>
                 </div>
               </div>
 
@@ -195,14 +218,14 @@ const DonationReceipt = forwardRef<HTMLDivElement, DonationReceiptProps>(
                     {/* Placeholder for Signature Image if exists */}
                     <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-300 font-black uppercase opacity-50 italic">Electronic Signature</div>
                   </div>
-                  <p className="text-xs font-black text-navy-950 uppercase mb-0.5">Vijay Sharma</p>
-                  <p className="text-[10px] text-orange-600 font-bold uppercase tracking-widest">General Secretary</p>
+                  <p className="text-xs font-black text-navy-950 uppercase mb-0.5">{inst.authorizedSignatory || 'Authorized Person'}</p>
+                  <p className="text-[10px] text-orange-600 font-bold uppercase tracking-widest">{inst.designation || 'Signatory'}</p>
                 </div>
               </div>
             </div>
 
             <div className="text-center py-6 bg-navy-950 -mx-12 -mb-12 mt-4 text-white">
-              <p className="text-[10px] font-black uppercase tracking-[0.5em]">www.mokshasewa.org | info@mokshasewa.org</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.5em]">{general.siteUrl?.replace('https://', '') || 'www.mokshasewa.org'} | {inst.contactEmail || 'info@mokshasewa.org'}</p>
               <p className="text-[8px] opacity-40 mt-1">Computer Generated | Verifiable Receipt | Generated at: {new Date().toLocaleString()}</p>
             </div>
           </div>

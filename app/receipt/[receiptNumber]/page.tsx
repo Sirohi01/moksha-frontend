@@ -28,35 +28,44 @@ export default function PublicReceiptPage() {
   const params = useParams();
   const receiptNumber = params.receiptNumber as string;
   const [donation, setDonation] = useState<Donation | null>(null);
+  const [settings, setSettings] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (receiptNumber) {
-      fetchReceipt();
+      fetchReceiptAndSettings();
     }
   }, [receiptNumber]);
 
-  const fetchReceipt = async () => {
+  const fetchReceiptAndSettings = async () => {
     try {
       setLoading(true);
       setError('');
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/donations/receipt/${receiptNumber}`
-      );
+      // Fetch both in parallel
+      const [receiptRes, settingsRes] = await Promise.all([
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/donations/receipt/${receiptNumber}`),
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/settings/public`)
+      ]);
 
-      if (response.ok) {
-        const data = await response.json();
-        setDonation(data.data);
-      } else if (response.status === 404) {
+      if (receiptRes.ok) {
+        const receiptData = await receiptRes.json();
+        setDonation(receiptData.data);
+      } else if (receiptRes.status === 404) {
         setError('Receipt not found. Please check the receipt number and try again.');
+        return;
       } else {
-        setError('Failed to load receipt. Please try again later.');
+        throw new Error('Failed to load receipt');
+      }
+
+      if (settingsRes.ok) {
+        const settingsData = await settingsRes.json();
+        setSettings(settingsData.data);
       }
     } catch (error) {
-      console.error('Failed to fetch receipt:', error);
-      setError('Failed to load receipt. Please check your internet connection and try again.');
+      console.error('Failed to fetch data:', error);
+      setError('Failed to load receipt information. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -150,7 +159,7 @@ export default function PublicReceiptPage() {
       {/* Receipt Content */}
       <div className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <DonationReceipt donation={donation} />
+          <DonationReceipt donation={donation} settings={settings} />
         </div>
       </div>
 

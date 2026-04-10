@@ -482,10 +482,21 @@ export default function SystemConfiguration() {
                     value={config.institutional.contactEmail} 
                     onChange={(val: string) => updateSection('institutional', { contactEmail: val })} 
                   />
-               </div>
-            )}
+                </div>
+             )}
 
-         </div>
+             {/* Secondary Save Button at Bottom of Content */}
+             <div className="pt-10 border-t border-navy-50 flex justify-end">
+                <button 
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="bg-navy-950 hover:bg-navy-900 text-gold-500 px-10 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 shadow-2xl transition-all active:scale-95 disabled:grayscale"
+                >
+                  {saving ? <RefreshCw className="w-4 h-4 animate-spin text-rose-500" /> : <Save className="w-4 h-4 text-rose-500" />}
+                  Deploy System Changes
+                </button>
+             </div>
+          </div>
       </div>
 
     </div>
