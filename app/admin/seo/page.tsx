@@ -76,10 +76,10 @@ export default function SEOCommandDeck() {
   };
 
   const handleSave = async () => {
-    if (!selectedPage || !selectedPage._id) return;
+    if (!selectedPage || !selectedPage._id || saving) return;
     setSaving(true);
     try {
-      const { _id, ...updatedData } = selectedPage;
+      const { _id, __v, createdAt, updatedAt, ...updatedData } = selectedPage;
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/seo/${_id}`, {
         method: 'PUT',
         headers: {
@@ -93,9 +93,12 @@ export default function SEOCommandDeck() {
         setPages(prev => prev.map(p => p._id === selectedPage._id ? data.data : p));
         setSelectedPage(data.data);
         alert("SEO Evolution Synchronized.");
+      } else {
+        alert("Sync Failed: " + (data.message || "Unknown error"));
       }
     } catch (error) {
-      alert("Encryption Error.");
+      console.error("Save error:", error);
+      alert("Encryption Error / Network Failure.");
     } finally {
       setSaving(false);
     }
@@ -573,8 +576,10 @@ export default function SEOCommandDeck() {
                                 </div>
                                 <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Write_Custom_Meta_Tags</span>
                              </div>
-                             <textarea 
-                                value={selectedPage?.headCode || `<!-- OpenGraph -->
+                             <div className="relative group/console">
+                                <textarea 
+                                   readOnly
+                                   value={`<!-- Generated Structural Preview -->
 <meta property="og:title" content="${selectedPage?.ogTitle || selectedPage?.metaTitle || ''}" />
 <meta property="og:description" content="${selectedPage?.ogDescription || selectedPage?.metaDescription?.substring(0, 150) || ''}" />
 <meta property="og:image" content="${selectedPage?.ogImage || ''}" />
@@ -582,11 +587,16 @@ export default function SEOCommandDeck() {
 <!-- Twitter -->
 <meta name="twitter:card" content="${selectedPage?.twitterCard || 'summary_large_image'}" />
 <meta name="twitter:title" content="${selectedPage?.twitterTitle || selectedPage?.ogTitle || selectedPage?.metaTitle || ''}" />`}
-                                onChange={(e) => updateField('headCode', e.target.value)}
-                                rows={8}
-                                className="w-full bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-[10px] text-blue-400/80 outline-none focus:border-blue-500/50 transition-all resize-none leading-relaxed scrollbar-hide relative z-10"
-                                placeholder="Paste additional meta tags here..."
-                             />
+                                   rows={10}
+                                   className="w-full bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-[10px] text-blue-400/30 outline-none cursor-default truncate transition-all resize-none leading-relaxed scrollbar-hide relative z-10"
+                                />
+                                <div className="absolute inset-x-8 bottom-8 top-16 flex flex-col items-center justify-center bg-navy-950/40 backdrop-blur-[1px] opacity-0 group-hover/console:opacity-100 transition-all duration-500 z-20 rounded-2xl pointer-events-none">
+                                   <div className="bg-navy-950 border border-white/10 p-6 rounded-3xl shadow-2xl text-center space-y-3">
+                                      <p className="text-[10px] font-black uppercase tracking-widest text-gold-500 italic">Dynamic Metadata Preview</p>
+                                      <p className="text-[8px] font-bold uppercase tracking-widest text-white/50 leading-relaxed italic">Generated from fields above.<br/>Use Technical Tab for manual head injections.</p>
+                                   </div>
+                                </div>
+                              </div>
                           </div>
                       </div>
                    </div>
