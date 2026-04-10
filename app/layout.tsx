@@ -114,16 +114,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             />
           </>
         )}
-        {pageSeo?.schemaMarkup && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: typeof pageSeo.schemaMarkup === 'string'
-                ? pageSeo.schemaMarkup
-                : JSON.stringify(pageSeo.schemaMarkup)
-            }}
-          />
-        )}
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -143,6 +133,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Header Injectors (Moved from head to start of body to avoid hydration error) */}
         {globalSeo?.headerScripts && (
           <div dangerouslySetInnerHTML={{ __html: globalSeo.headerScripts }} />
+        )}
+        {pageSeo?.schemaMarkup && (
+          (typeof pageSeo.schemaMarkup === 'string' && pageSeo.schemaMarkup.includes('<script')) ? (
+            <div dangerouslySetInnerHTML={{ __html: pageSeo.schemaMarkup }} />
+          ) : (
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: typeof pageSeo.schemaMarkup === 'string'
+                  ? pageSeo.schemaMarkup
+                  : JSON.stringify(pageSeo.schemaMarkup, null, 2)
+              }}
+            />
+          )
         )}
         {pageSeo?.headCode && (
           <div dangerouslySetInnerHTML={{ __html: pageSeo.headCode }} />
