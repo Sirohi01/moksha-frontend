@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-    Search, 
-    Filter, 
-    Edit, 
-    Save, 
-    X, 
-    Plus, 
-    Mail, 
-    ChevronDown, 
-    Info, 
+import {
+    Search,
+    Filter,
+    Edit,
+    Save,
+    X,
+    Plus,
+    Mail,
+    ChevronDown,
+    Info,
     AlertCircle,
     CheckCircle2,
     Terminal,
@@ -84,7 +84,7 @@ export default function EmailTemplateManager() {
 
     const filteredTemplates = templates.filter(template => {
         const matchesSearch = template.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             template.subject.toLowerCase().includes(searchTerm.toLowerCase());
+            template.subject.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === 'All' || template.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
@@ -112,8 +112,8 @@ export default function EmailTemplateManager() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                     {/* Compact Search */}
-                     <div className="relative group hidden sm:block">
+                    {/* Compact Search */}
+                    <div className="relative group hidden sm:block">
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 group-focus-within:text-gold-600 transition-colors" />
                         <input
                             type="text"
@@ -127,9 +127,8 @@ export default function EmailTemplateManager() {
                     <div className="relative">
                         <button
                             onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                            className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-widest ${
-                                showFilterDropdown ? 'bg-gold-600 border-gold-500 text-white' : 'bg-white border-stone-200 text-stone-600'
-                            }`}
+                            className={`flex items-center gap-3 px-5 py-2.5 rounded-xl border transition-all text-[11px] font-bold uppercase tracking-widest ${showFilterDropdown ? 'bg-gold-600 border-gold-500 text-white' : 'bg-white border-stone-200 text-stone-600'
+                                }`}
                         >
                             <Filter className="w-3.5 h-3.5" />
                             {selectedCategory}
@@ -146,11 +145,10 @@ export default function EmailTemplateManager() {
                                                 setSelectedCategory(category);
                                                 setShowFilterDropdown(false);
                                             }}
-                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-left transition-all ${
-                                                selectedCategory === category 
-                                                ? 'bg-gold-50 text-gold-700 font-black' 
+                                            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-left transition-all ${selectedCategory === category
+                                                ? 'bg-gold-50 text-gold-700 font-black'
                                                 : 'text-stone-500 hover:bg-stone-50 hover:text-stone-900 font-bold'
-                                            }`}
+                                                }`}
                                         >
                                             <span className="text-[10px] uppercase tracking-wider">{category}</span>
                                             <span className="text-[9px] bg-stone-100 px-2 py-0.5 rounded-md text-stone-400">
@@ -162,14 +160,22 @@ export default function EmailTemplateManager() {
                             </div>
                         )}
                     </div>
+
+                    <button
+                        onClick={() => router.push('/admin/system/maintenance')}
+                        className="flex items-center gap-3 px-6 py-2.5 bg-white-950 text-gold-500 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-white-900 transition-all shadow-lg active:scale-95"
+                    >
+                        <Terminal className="w-4 h-4" />
+                        Sync Protocols
+                    </button>
                 </div>
             </div>
 
             {/* Compact Templates Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
                 {filteredTemplates.map(template => (
-                    <div 
-                        key={template._id} 
+                    <div
+                        key={template._id}
                         className="group bg-white rounded-2xl border border-stone-200 p-5 hover:border-gold-400 hover:shadow-xl transition-all duration-300 flex flex-col relative overflow-hidden h-[240px]"
                     >
                         {/* Compact Header */}
@@ -185,7 +191,7 @@ export default function EmailTemplateManager() {
                                     {template.name.replace(/([A-Z])/g, ' $1').trim()}
                                 </h3>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => handleEdit(template._id)}
                                 className="p-2.5 bg-stone-50 text-stone-400 hover:bg-gold-600 hover:text-white rounded-xl transition-all shadow-sm"
                             >
@@ -222,7 +228,7 @@ export default function EmailTemplateManager() {
                                     </div>
                                 )}
                             </div>
-                            <button 
+                            <button
                                 onClick={() => handleEdit(template._id)}
                                 className="flex items-center gap-1.5 group/btn shrink-0"
                             >
