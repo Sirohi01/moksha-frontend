@@ -869,26 +869,65 @@ export default function SEOCommandDeck() {
 function AssetPickerHub({ onClose, onSelect }: { onClose: () => void, onSelect: (url: string) => void }) {
     const [images, setImages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useState<any>(null); // Using a simpler state for the ref reference or just a plain ref
+    const hiddenInputRef =  (null as any); 
+
+    const fetchGallery = async () => {
+        try {
+            setLoading(true);
+            const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+            const response = await fetch(`${API_BASE_URL}/api/media?limit=100`, {
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
+            });
+            const data = await response.json();
+            if (data.success) {
+                setImages(Array.isArray(data.data) ? data.data : (data.data.images || []));
+            }
+        } catch (error) { console.error("Picker error:", error); } 
+        finally { setLoading(false); }
+    };
 
     useEffect(() => {
         document.body.style.overflow = 'hidden';
-        const fetchGallery = async () => {
-            try {
-                setLoading(true);
-                const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-                const response = await fetch(`${API_BASE_URL}/api/media?limit=100`, {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    setImages(Array.isArray(data.data) ? data.data : (data.data.images || []));
-                }
-            } catch (error) { console.error("Picker error:", error); } 
-            finally { setLoading(false); }
-        };
         fetchGallery();
         return () => { document.body.style.overflow = 'auto'; };
     }, []);
+
+    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            setUploading(true);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('title', file.name || 'OG Image');
+            formData.append('category', 'SEO Asset');
+            formData.append('isPublic', 'true');
+
+            const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+            const response = await fetch(`${API_BASE_URL}/api/media`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${localStorage.getItem('adminToken')}` },
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                // Autoselect the uploaded image
+                onSelect(data.data.url);
+                onClose();
+            } else {
+                alert("Upload failed: " + data.message);
+            }
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert("Network error during upload.");
+        } finally {
+            setUploading(false);
+        }
+    };
 
     return (
         <div className="fixed inset-0 z-[9999] bg-stone-50 flex flex-col animate-in slide-in-from-bottom duration-700">
@@ -908,6 +947,14 @@ function AssetPickerHub({ onClose, onSelect }: { onClose: () => void, onSelect: 
             </div>
 
             <div className="flex-grow overflow-y-auto p-12 bg-stone-50/50">
+                <input 
+                    type="file" 
+                    id="seo-image-upload"
+                    className="hidden" 
+                    accept="image/*"
+                    onChange={handleUpload}
+                />
+                
                 {loading ? (
                     <div className="h-full flex flex-col items-center justify-center space-y-6 animate-pulse">
                         <RefreshCcw size={48} className="text-navy-200 animate-spin" />
@@ -915,6 +962,24 @@ function AssetPickerHub({ onClose, onSelect }: { onClose: () => void, onSelect: 
                     </div>
                 ) : (
                     <div className="max-w-[1700px] mx-auto grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-10 pb-32">
+                        {/* New Upload Tile */}
+                        <label 
+                            htmlFor="seo-image-upload"
+                            className={cn(
+                                "flex flex-col items-center justify-center gap-6 group relative aspect-[4/5] rounded-[3.5rem] border-4 border-dashed border-stone-200 bg-white cursor-pointer hover:border-gold-500 hover:bg-gold-50/10 transition-all duration-500",
+                                uploading && "opacity-50 pointer-events-none"
+                            )}
+                        >
+                            <div className="w-20 h-20 rounded-full bg-gold-100 flex items-center justify-center text-gold-600 transition-transform group-hover:scale-110 shadow-inner">
+                                {uploading ? <RefreshCcw size={32} className="animate-spin" /> : <Upload size={32} />}
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[12px] font-black text-navy-950 uppercase tracking-widest">
+                                    {uploading ? 'UPLOADING...' : 'UPLOAD NEW'}
+                                </p>
+                                <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest mt-2">{uploading ? 'STAGING ASSET' : 'FROM DEVICE'}</p>
+                            </div>
+                        </label>
                         {images.map((img: any) => (
                             <div
                                 key={img._id || img.id}
