@@ -166,10 +166,10 @@ export default function HomePage() {
             {config.actionBanner?.buttons?.map((button, index) => (
               <Link key={index} href={button.href || '#'}>
                 <Button className={cn(
-                  "px-6 py-2 font-medium",
+                  "px-6 py-3 min-h-[44px] font-medium",
                   button.variant === "primary"
                     ? "bg-white text-black hover:bg-gray-100"
-                    : "bg-gray-800 text-white hover:bg-gray-700"
+                    : "bg-gray-700 text-white hover:bg-gray-600"
                 )}>
                   {button.text}
                 </Button>
@@ -801,7 +801,7 @@ export default function HomePage() {
                               "w-full transition-all duration-300",
                               position === 0
                                 ? "bg-gray-900 text-white hover:bg-black shadow-lg"
-                                : "bg-white text-gray-900 border border-gray-200 hover:bg-gray-50 font-bold"
+                                : "bg-white text-gray-900 border border-gray-500 hover:bg-gray-50 font-bold"
                             )}
                           >
                             {position === 0 ? config.urgentCampaigns.labels.donateNow : config.urgentCampaigns.labels.viewCampaign}
@@ -931,7 +931,7 @@ export default function HomePage() {
                 {config.transparency.trustSection.badges.map((badge, index) => (
                   <div key={index} className="p-4 bg-white rounded-2xl shadow-sm border border-stone-100">
                     <p className={`${badge.color || 'text-[#b45309]'} font-black text-2xl tracking-tighter`}>{badge.text}</p>
-                    <p className="text-[8px] font-black uppercase tracking-widest text-stone-700">{badge.subtext}</p>
+                    <p className="text-[8px] font-black uppercase tracking-widest text-stone-600">{badge.subtext}</p>
                   </div>
                 ))}
               </div>
