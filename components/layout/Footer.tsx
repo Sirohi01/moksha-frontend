@@ -30,7 +30,7 @@ export default function Footer() {
             <Link 
               href={activeConfig.footer.emergency.reportLink.href} 
               onClick={() => handleTrack('report')}
-              className="text-white font-black text-[9px] uppercase tracking-widest hover:text-red-500 transition-all flex items-center gap-2"
+              className="text-white font-black text-[11px] uppercase tracking-widest hover:text-red-400 transition-all flex items-center gap-2 py-2 px-3 min-h-[44px]"
             >
               {activeConfig.footer.emergency.reportLink.text} <ArrowUpRight size={12} />
             </Link>
