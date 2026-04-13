@@ -44,20 +44,20 @@ export default function Navbar() {
         <div className="w-full px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo Section - Left */}
-            <Link href="/" className="flex items-center gap-2 lg:gap-3 group shrink-0 relative z-50">
-              <div className="relative w-10 h-10 lg:w-12 lg:h-12 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-md z-[1050]">
+            <Link href="/" className="flex items-center gap-4 group shrink-0 relative z-50">
+              <div className="relative w-20 h-20 lg:w-24 lg:h-24 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-xl transform translate-y-3 lg:translate-y-6 z-[1050]">
                 <Image
                   src={getSafeSrc(activeConfig.navbar.logo.src)}
                   alt={activeConfig.navbar.logo.alt}
                   fill
-                  className="object-contain p-1 relative z-10 group-hover:scale-110 transition-transform duration-300"
+                  className="object-contain p-2 lg:p-4 relative z-10 group-hover:scale-110 transition-transform duration-300"
                 />
               </div>
               <div className="hidden sm:block">
-                <span className="font-sans text-base lg:text-lg font-bold leading-tight tracking-tight bg-gradient-to-r from-[#b45309] via-[#20b2aa] to-[#b45309] bg-clip-text text-transparent group-hover:from-[#92400e] group-hover:via-[#1a9d94] group-hover:to-[#92400e] transition-all duration-300 inline-block">
+                <span className="font-sans text-2xl font-bold leading-tight tracking-tight bg-gradient-to-r from-[#b45309] via-[#20b2aa] to-[#b45309] bg-clip-text text-transparent group-hover:from-[#92400e] group-hover:via-[#1a9d94] group-hover:to-[#92400e] transition-all duration-300 group-hover:scale-[1.02] inline-block">
                   {activeConfig.navbar.logo.title}
                 </span>
-                <span className="text-[10px] text-stone-500 font-normal leading-none uppercase tracking-wider block group-hover:text-stone-600 transition-colors duration-300">
+                <span className="text-[13px] text-stone-500 font-normal leading-none uppercase tracking-wider block group-hover:text-stone-600 transition-colors duration-300">
                   {activeConfig.navbar.logo.subtitle}
                 </span>
               </div>
