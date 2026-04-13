@@ -514,7 +514,7 @@ export default function HomePage() {
               <span className="text-amber-800 text-sm uppercase tracking-wider">{config.missionPillars.badge}</span>
               <div className="w-8 h-px bg-amber-700"></div>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-amber-900 mb-6 uppercase tracking-tighter italic">{config.missionPillars.title}</h2>
+            <h2 className="text-3xl md:text-5xl font-semibold text-amber-900 mb-6 uppercase tracking-tighter italic">{config.missionPillars.title}</h2>
             <p className="text-xl md:text-2xl text-amber-800 max-w-3xl mx-auto font-medium leading-relaxed">
               {config.missionPillars.description}
             </p>
@@ -580,7 +580,7 @@ export default function HomePage() {
         <section className="py-12 bg-white overflow-hidden">
           <Container>
             <div className="text-center mb-10">
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-stone-900 leading-none border-b-4 border-[#f4c430] inline-block pb-1">{config.storiesInMotion.title}</h2>
+              <h2 className="text-2xl md:text-3xl font-semibold uppercase tracking-tighter text-stone-900 leading-none border-b-4 border-[#f4c430] inline-block pb-1">{config.storiesInMotion.title}</h2>
             </div>
 
             <div className="relative group/carousel">
@@ -676,7 +676,7 @@ export default function HomePage() {
               <span className="text-amber-700 text-sm uppercase tracking-wider font-medium">{config.urgentCampaigns.badge}</span>
               <div className="w-12 h-px bg-gradient-to-r from-transparent via-amber-600 to-transparent"></div>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-black text-black mb-8 uppercase tracking-tighter italic">{config.urgentCampaigns.title}</h2>
+            <h2 className="text-4xl lg:text-5xl font-semibold text-black mb-8 uppercase tracking-tighter italic">{config.urgentCampaigns.title}</h2>
             <p className="text-xl md:text-2xl text-black font-medium leading-relaxed max-w-3xl mx-auto">{config.urgentCampaigns.description}</p>
           </div>
 

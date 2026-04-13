@@ -8,7 +8,7 @@ A production-ready Next.js 14 platform for providing dignified cremation service
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS (custom saffron/cream/gold design system)
 - **Icons**: Lucide React
-- **Fonts**: Playfair Display (serif headings) + DM Sans (body)
+- **Fonts**: Inter (sans-serif)
 
 ## Project Structure
 
@@ -86,8 +86,8 @@ Open [http://localhost:3000](http://localhost:3000) to view the platform.
 - Text: Stone (`#1c1917`)
 
 **Typography**
-- Headings: Playfair Display (Google Fonts)
-- Body: DM Sans (Google Fonts)
+- Headings: Inter (Google Fonts)
+- Body: Inter (Google Fonts)
 
 ## Backend Integration
 

@@ -89,9 +89,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ["'Playfair Display'", "Georgia", "serif"],
-        sans: ["'DM Sans'", "system-ui", "sans-serif"],
-        body: ["'Lato'", "sans-serif"],
+        serif: ["'Inter'", "sans-serif"],
+        sans: ["'Inter'", "sans-serif"],
+        body: ["'Inter'", "sans-serif"],
+        mono: ["'Inter'", "sans-serif"],
       },
       animation: {
         "fade-in": "fadeIn 0.6s ease-out forwards",

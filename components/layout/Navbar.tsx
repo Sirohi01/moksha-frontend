@@ -41,28 +41,28 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-[1000] bg-white/95 backdrop-blur-md border-b border-stone-200/50 shadow-sm">
-        <div className="max-w-full mx-auto px-6 lg:px-8">
+        <div className="w-full px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
             {/* Logo Section - Left */}
-            <Link href="/" className="flex items-center gap-4 group shrink-0 relative z-50">
-              <div className="relative w-20 h-20 lg:w-24 lg:h-24 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-xl transform translate-y-3 lg:translate-y-6 z-[1050]">
+            <Link href="/" className="flex items-center gap-2 lg:gap-3 group shrink-0 relative z-50">
+              <div className="relative w-10 h-10 lg:w-12 lg:h-12 overflow-hidden rounded-full bg-white border-2 border-gray-200 group-hover:border-gray-300 transition-all duration-300 group-hover:scale-105 shadow-md z-[1050]">
                 <Image
                   src={getSafeSrc(activeConfig.navbar.logo.src)}
                   alt={activeConfig.navbar.logo.alt}
                   fill
-                  className="object-contain p-2 lg:p-4 relative z-10 group-hover:scale-110 transition-transform duration-300"
+                  className="object-contain p-1 relative z-10 group-hover:scale-110 transition-transform duration-300"
                 />
               </div>
               <div className="hidden sm:block">
-                <span className="font-sans text-2xl font-bold leading-tight tracking-tight bg-gradient-to-r from-[#b45309] via-[#20b2aa] to-[#b45309] bg-clip-text text-transparent group-hover:from-[#92400e] group-hover:via-[#1a9d94] group-hover:to-[#92400e] transition-all duration-300 group-hover:scale-[1.02] inline-block">
+                <span className="font-sans text-base lg:text-lg font-bold leading-tight tracking-tight bg-gradient-to-r from-[#b45309] via-[#20b2aa] to-[#b45309] bg-clip-text text-transparent group-hover:from-[#92400e] group-hover:via-[#1a9d94] group-hover:to-[#92400e] transition-all duration-300 inline-block">
                   {activeConfig.navbar.logo.title}
                 </span>
-                <span className="text-[13px] text-stone-500 font-normal leading-none uppercase tracking-wider block group-hover:text-stone-600 transition-colors duration-300">
+                <span className="text-[10px] text-stone-500 font-normal leading-none uppercase tracking-wider block group-hover:text-stone-600 transition-colors duration-300">
                   {activeConfig.navbar.logo.subtitle}
                 </span>
               </div>
             </Link>
-            <nav className="hidden 3xl:flex items-center gap-0" aria-label="Main navigation">
+            <nav className="hidden lg:flex items-center gap-0 flex-1 justify-center min-w-0" aria-label="Main navigation">
               {navLinks.map((link) => {
                 const LinkIcon = getIcon(link.icon);
                 return (
@@ -76,120 +76,41 @@ export default function Navbar() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "px-3 py-3 text-base font-medium transition-all flex items-center gap-2.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
+                          "px-2 xl:px-3 py-3 text-[13px] xl:text-sm font-medium transition-all flex items-center gap-1 xl:gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           pathname === link.href
                             ? "text-[#b45309]"
                             : "text-stone-600 hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon 
-                          className={cn("w-5 h-5 transition-all duration-300", 
-                            pathname === link.href ? "text-[#b45309]" : "text-stone-400 group-hover/item:text-[#b45309] group-hover/item:scale-110"
-                          )} 
-                          strokeWidth={2.5}
+                        <LinkIcon
+                          className={cn("w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0 transition-all duration-300",
+                            pathname === link.href ? "text-[#b45309]" : "text-stone-400 group-hover/item:text-[#b45309]"
+                          )}
+                          strokeWidth={2.2}
                         />
-                        {link.label}
+                        <span>{link.label}</span>
                       </Link>
                     ) : (
                       <button
                         className={cn(
-                          "px-3 py-3 text-base font-medium transition-all flex items-center gap-2.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
+                          "px-2 xl:px-3 py-3 text-[13px] xl:text-sm font-medium transition-all flex items-center gap-1 xl:gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
                           link.subLinks?.some(sub => sub.href === pathname)
                             ? "text-[#b45309]"
                             : "text-stone-600 group-hover:text-[#b45309]"
                         )}
                       >
-                        <LinkIcon 
-                          className={cn("w-5 h-5 transition-all duration-300", 
-                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-400 group-hover/item:text-[#b45309] group-hover/item:scale-110"
-                          )} 
-                          strokeWidth={2.5}
+                        <LinkIcon
+                          className={cn("w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0 transition-all duration-300",
+                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-400 group-hover/item:text-[#b45309]"
+                          )}
+                          strokeWidth={2.2}
                         />
-                        {link.label}
-                        <ChevronDown className="w-4 h-4 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
+                        <span>{link.label}</span>
+                        <ChevronDown className="w-3 h-3 xl:w-3.5 xl:h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
                       </button>
                     )}
 
                     {/* Dropdown Menu */}
-                    {link.subLinks && (
-                      <div className="absolute top-full left-0 pt-1 opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200">
-                        <div className="bg-white border border-stone-200/60 shadow-xl rounded-xl p-1 min-w-[220px] backdrop-blur-sm">
-                          {link.subLinks.map((sub) => {
-                            const SubIcon = getIcon(sub.icon);
-                            return (
-                              <Link
-                                key={sub.href}
-                                href={sub.href}
-                                className={cn(
-                                  "flex items-center gap-3.5 px-4 py-3 rounded-lg transition-all text-[0.95rem] group/subitem",
-                                  pathname === sub.href
-                                    ? "bg-amber-50 text-[#b45309]"
-                                    : "text-stone-600 hover:bg-amber-50/80 hover:text-[#b45309]"
-                                )}
-                              >
-                                <SubIcon className="w-5 h-5 opacity-70 group-hover/subitem:scale-110 transition-transform" strokeWidth={2.2} />
-                                <span>{sub.label}</span>
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </nav>
-
-            {/* Compact Navigation for large screens (2xl to 3xl) */}
-            <nav className="hidden 2xl:flex 3xl:hidden items-center gap-0" aria-label="Large screen navigation">
-              {navLinks.map((link) => {
-                const LinkIcon = getIcon(link.icon);
-                return (
-                  <div
-                    key={link.label}
-                    className="relative group"
-                    onMouseEnter={() => setOpenDropdown(link.label)}
-                    onMouseLeave={() => setOpenDropdown(null)}
-                  >
-                    {link.href ? (
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "px-3 py-3 text-sm font-medium transition-all flex items-center gap-2 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
-                          pathname === link.href
-                            ? "text-[#b45309]"
-                            : "text-stone-600 hover:text-[#b45309]"
-                        )}
-                      >
-                        <LinkIcon 
-                          className={cn("w-4 h-4 transition-all duration-300", 
-                            pathname === link.href ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
-                          )} 
-                          strokeWidth={2.2}
-                        />
-                        <span className="hidden xl:block">{link.label}</span>
-                      </Link>
-                    ) : (
-                      <button
-                        className={cn(
-                          "px-3 py-3 text-sm font-medium transition-all flex items-center gap-2 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
-                          link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#b45309]"
-                            : "text-stone-600 group-hover:text-[#b45309]"
-                        )}
-                      >
-                        <LinkIcon 
-                          className={cn("w-4 h-4 transition-all duration-300", 
-                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
-                          )} 
-                          strokeWidth={2.2} 
-                        />
-                        <span className="hidden xl:block">{link.label}</span>
-                        <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
-                      </button>
-                    )}
-
-                    {/* Compact Dropdown */}
                     {link.subLinks && (
                       <div className="absolute top-full left-0 pt-1 opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200">
                         <div className="bg-white border border-stone-200/60 shadow-xl rounded-xl p-1 min-w-[200px] backdrop-blur-sm">
@@ -200,13 +121,13 @@ export default function Navbar() {
                                 key={sub.href}
                                 href={sub.href}
                                 className={cn(
-                                  "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm",
+                                  "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all text-sm group/subitem",
                                   pathname === sub.href
-                                    ? "bg-[#f4c430]/10 text-[#f4c430]"
-                                    : "text-stone-600 hover:bg-stone-50 hover:text-[#f4c430]"
+                                    ? "bg-amber-50 text-[#b45309]"
+                                    : "text-stone-600 hover:bg-amber-50/80 hover:text-[#b45309]"
                                 )}
                               >
-                                <SubIcon className="w-4 h-4 opacity-60" />
+                                <SubIcon className="w-4 h-4 opacity-70 group-hover/subitem:scale-110 transition-transform" strokeWidth={2.2} />
                                 <span>{sub.label}</span>
                               </Link>
                             )
@@ -217,250 +138,22 @@ export default function Navbar() {
                   </div>
                 )
               })}
-            </nav>
-
-            {/* Large-Medium Navigation for standard desktop (xl to 2xl) */}
-            <nav className="hidden xl:flex 2xl:hidden items-center gap-0" aria-label="Standard desktop navigation">
-              {navLinks.map((link) => {
-                const LinkIcon = getIcon(link.icon);
-                return (
-                  <div
-                    key={link.label}
-                    className="relative group"
-                    onMouseEnter={() => setOpenDropdown(link.label)}
-                    onMouseLeave={() => setOpenDropdown(null)}
-                  >
-                    {link.href ? (
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
-                          pathname === link.href
-                            ? "text-[#b45309]"
-                            : "text-stone-600 hover:text-[#b45309]"
-                        )}
-                      >
-                        <LinkIcon 
-                          className={cn("w-4 h-4 transition-all duration-300", 
-                            pathname === link.href ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
-                          )} 
-                          strokeWidth={2.2}
-                        />
-                        <span className="hidden xl:block text-sm">{link.label}</span>
-                      </Link>
-                    ) : (
-                      <button
-                        className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
-                          link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#b45309]"
-                            : "text-stone-600 group-hover:text-[#b45309]"
-                        )}
-                      >
-                        <LinkIcon 
-                          className={cn("w-4 h-4 transition-all duration-300", 
-                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
-                          )} 
-                          strokeWidth={2.2}
-                        />
-                        <span className="hidden xl:block text-sm">{link.label}</span>
-                        <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
-                      </button>
-                    )}
-
-                    {/* Compact Dropdown */}
-                    {link.subLinks && (
-                      <div className="absolute top-full left-0 pt-1 opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200">
-                        <div className="bg-white border border-stone-200/60 shadow-xl rounded-xl p-1 min-w-[180px] backdrop-blur-sm">
-                          {link.subLinks.map((sub) => {
-                            const SubIcon = getIcon(sub.icon);
-                            return (
-                              <Link
-                                key={sub.href}
-                                href={sub.href}
-                                className={cn(
-                                  "flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all text-sm",
-                                  pathname === sub.href
-                                    ? "bg-[#f4c430]/10 text-[#f4c430]"
-                                    : "text-stone-600 hover:bg-stone-50 hover:text-[#f4c430]"
-                                )}
-                              >
-                                <SubIcon className="w-4 h-4 opacity-60" />
-                                <span>{sub.label}</span>
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-            </nav>
-
-            {/* Medium Navigation for medium screens (lg to xl) */}
-            <nav className="hidden lg:flex xl:hidden items-center gap-0" aria-label="Compact navigation">
-              {navLinks.slice(0, 5).map((link) => {
-                const LinkIcon = getIcon(link.icon);
-                return (
-                  <div
-                    key={link.label}
-                    className="relative group"
-                    onMouseEnter={() => setOpenDropdown(link.label)}
-                    onMouseLeave={() => setOpenDropdown(null)}
-                  >
-                    {link.href ? (
-                      <Link
-                        href={link.href}
-                        className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
-                          pathname === link.href
-                            ? "text-[#b45309]"
-                            : "text-stone-600 hover:text-[#b45309]"
-                        )}
-                      >
-                        <LinkIcon 
-                          className={cn("w-4 h-4 transition-all duration-300", 
-                            pathname === link.href ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
-                          )} 
-                          strokeWidth={2.2}
-                        />
-                        <span className="hidden xl:block text-sm">{link.label}</span>
-                      </Link>
-                    ) : (
-                      <button
-                        className={cn(
-                          "px-2 py-3 text-sm font-medium transition-all flex items-center gap-1.5 hover:bg-amber-50/50 rounded-lg whitespace-nowrap group/item",
-                          link.subLinks?.some(sub => sub.href === pathname)
-                            ? "text-[#b45309]"
-                            : "text-stone-600 group-hover:text-[#b45309]"
-                        )}
-                      >
-                        <LinkIcon 
-                          className={cn("w-4 h-4 transition-all duration-300", 
-                            link.subLinks?.some(sub => sub.href === pathname) ? "text-[#b45309]" : "text-stone-500 group-hover/item:text-[#b45309]"
-                          )} 
-                          strokeWidth={2.2}
-                        />
-                        <span className="hidden xl:block text-sm">{link.label}</span>
-                        <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
-                      </button>
-                    )}
-
-                    {/* Compact Dropdown */}
-                    {link.subLinks && (
-                      <div className="absolute top-full left-0 pt-1 opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-200">
-                        <div className="bg-white border border-stone-200/60 shadow-xl rounded-xl p-1 min-w-[180px] backdrop-blur-sm">
-                          {link.subLinks.map((sub) => {
-                            const SubIcon = getIcon(sub.icon);
-                            return (
-                              <Link
-                                key={sub.href}
-                                href={sub.href}
-                                className={cn(
-                                  "flex items-center gap-2 px-3 py-2 rounded-lg transition-all text-sm",
-                                  pathname === sub.href
-                                    ? "bg-[#f4c430]/10 text-[#f4c430]"
-                                    : "text-stone-600 hover:bg-stone-50 hover:text-[#f4c430]"
-                                )}
-                              >
-                                <SubIcon className="w-4 h-4 opacity-60" />
-                                <span>{sub.label}</span>
-                              </Link>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-
-              {/* More menu for remaining items */}
-              {navLinks.length > 5 && (
-                <div
-                  className="relative group"
-                  onMouseEnter={() => setOpenDropdown('more-lg')}
-                  onMouseLeave={() => setOpenDropdown(null)}
-                >
-                  <button className="px-2.5 py-3 text-sm font-medium text-stone-700 hover:text-[#f4c430] transition-all flex items-center gap-1.5 hover:bg-stone-50/80 rounded-lg">
-                    <Menu className="w-4 h-4" />
-                    <span className="hidden lg:block text-sm">{activeConfig.navbar.mobile.moreLabel}</span>
-                    <ChevronDown className="w-3.5 h-3.5 opacity-50 group-hover:rotate-180 transition-transform duration-300" />
-                  </button>
-
-                  <div className={cn(
-                    "absolute top-full right-0 pt-1 transition-all duration-200",
-                    openDropdown === 'more-lg'
-                      ? "opacity-100 translate-y-0 pointer-events-auto"
-                      : "opacity-0 translate-y-1 pointer-events-none"
-                  )}>
-                    <div className="bg-white border border-stone-200/60 shadow-xl rounded-xl p-1 min-w-[180px] backdrop-blur-sm">
-                      {navLinks.slice(5).map((link) => {
-                        const LinkIcon = getIcon(link.icon);
-                        return (
-                          <div key={link.label}>
-                            {link.href ? (
-                              <Link
-                                href={link.href}
-                                onClick={() => setOpenDropdown(null)}
-                                className={cn(
-                                  "flex items-center gap-2 px-2 py-1.5 rounded-lg transition-all text-xs",
-                                  pathname === link.href
-                                    ? "bg-[#f4c430]/10 text-[#f4c430]"
-                                    : "text-stone-600 hover:bg-stone-50 hover:text-[#f4c430]"
-                                )}
-                              >
-                                <LinkIcon className="w-3 h-3 opacity-60" />
-                                <span>{link.label}</span>
-                              </Link>
-                            ) : (
-                              <div className="px-2 py-1">
-                                <div className="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">{link.label}</div>
-                                {link.subLinks?.map((sub) => {
-                                  const SubIcon = getIcon(sub.icon);
-                                  return (
-                                    <Link
-                                      key={sub.href}
-                                      href={sub.href}
-                                      onClick={() => setOpenDropdown(null)}
-                                      className={cn(
-                                        "flex items-center gap-2 px-1.5 py-1 rounded-lg transition-all text-xs ml-1",
-                                        pathname === sub.href
-                                          ? "bg-[#f4c430]/10 text-[#f4c430]"
-                                          : "text-stone-500 hover:bg-stone-50 hover:text-[#f4c430]"
-                                      )}
-                                    >
-                                      <SubIcon className="w-3 h-3 opacity-60" />
-                                      <span>{sub.label}</span>
-                                    </Link>
-                                  )
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                </div>
-              )}
             </nav>
 
             {/* Actions - Right */}
-            <div className="hidden lg:flex items-center gap-2 shrink-0">
+            <div className="hidden lg:flex items-center gap-1.5 shrink-0">
               {/* Search Button */}
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="p-2 text-stone-600 hover:text-stone-900 transition-colors rounded-lg hover:bg-stone-100 shrink-0"
+                className="p-1.5 text-stone-600 hover:text-stone-900 transition-colors rounded-lg hover:bg-stone-100 shrink-0"
                 aria-label={activeConfig.navbar.actions.search.label}
               >
-                <Search className="w-5 h-5" />
+                <Search className="w-4 h-4" />
               </button>
 
               {/* Donate Button */}
               <Link href="/donate" className="shrink-0">
-                <Button size="sm" className="px-4 lg:px-6 py-2 text-sm font-normal bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400 transition-all duration-200 rounded-md whitespace-nowrap">
+                <Button size="sm" className="px-3 xl:px-5 py-1.5 text-[13px] xl:text-sm font-normal bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 hover:border-gray-400 transition-all duration-200 rounded-md whitespace-nowrap">
                   {activeConfig.navbar.actions.donate.label}
                 </Button>
               </Link>

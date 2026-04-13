@@ -33,7 +33,7 @@ export default function ReceiptModal({ isOpen, onClose, donation }: ReceiptModal
                 }
                 
                 body {
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  font-family: 'Inter', sans-serif;
                   line-height: 1.6;
                   color: #333;
                   background: white;
@@ -234,7 +234,7 @@ export default function ReceiptModal({ isOpen, onClose, donation }: ReceiptModal
         // Success notification
         const notification = document.createElement('div');
         notification.innerHTML = `
-          <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; font-family: Arial, sans-serif; max-width: 400px;">
+          <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; font-family: 'Inter', sans-serif; max-width: 400px;">
             <div style="display: flex; align-items: center; gap: 12px;">
               <div style="font-size: 24px;">✅</div>
               <div>
@@ -258,7 +258,7 @@ export default function ReceiptModal({ isOpen, onClose, donation }: ReceiptModal
         const errorMsg = result.message || 'Failed to send email';
         const notification = document.createElement('div');
         notification.innerHTML = `
-          <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; font-family: Arial, sans-serif; max-width: 400px;">
+          <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; font-family: 'Inter', sans-serif; max-width: 400px;">
             <div style="display: flex; align-items: center; gap: 12px;">
               <div style="font-size: 24px;">❌</div>
               <div>
@@ -282,7 +282,7 @@ export default function ReceiptModal({ isOpen, onClose, donation }: ReceiptModal
       // Network error notification
       const notification = document.createElement('div');
       notification.innerHTML = `
-        <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; font-family: Arial, sans-serif; max-width: 400px;">
+        <div style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 16px 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 10000; font-family: 'Inter', sans-serif; max-width: 400px;">
           <div style="display: flex; align-items: center; gap: 12px;">
             <div style="font-size: 24px;">⚠️</div>
             <div>
