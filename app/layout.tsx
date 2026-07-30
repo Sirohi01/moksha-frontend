@@ -63,6 +63,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description: seo?.ogDescription || seo?.metaDescription || defaultDesc,
       images: [seo?.ogImage || "/twitter-image.png"],
     },
+    verification: {
+      google: "DrK0RECDQk-wNxlDzdezBrdLw5b2I0kg10B8J727hCQ",
+    },
   };
 }
 
